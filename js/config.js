@@ -1,0 +1,5 @@
+// Supabase configuration — preconfigured for Haroon Ibn Rasheed Online Quran Academy
+window.SUPABASE_CONFIG = {
+  url: 'https://olxytsmwqkrrnutsegtr.supabase.co',
+  anonKey: 'sb_publishable_v6mVlP78c6ezbGT8cwREqQ_JBzL51xt'
+};
