@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn-Rasheed-Online-Quran-Acadmey./sitemap.xml
