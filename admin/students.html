@@ -1,1 +1,598 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Students | Admin</title><link rel="stylesheet" href="../css/admin.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../js/config.js"></script><script src="../js/admin.js"></script></head><body><div class="admin-layout"><aside class="sidebar"><div class="brand">HR Admin<span>Haroon Ibn Rasheed Online Quran Academy</span></div><nav class="nav"><a href="dashboard.html">Dashboard</a><a href="admissions.html">Admissions / Leads</a><a href="users.html">Portal Users</a><a href="students.html">Students</a><a href="enrollments.html">Enrollments</a><a href="teachers.html">Teachers</a><a href="schedule.html">Schedule</a><a href="classes.html">Classes</a><a href="attendance.html">Attendance</a><a href="payments.html">Payments</a><a href="leaves.html">Leaves</a><a href="salaries.html">Salaries</a><a href="courses.html">Courses</a><a href="fees.html">Fees</a><a href="payment-methods.html">Payment Methods</a><a href="messages.html">Messages</a><a href="testimonials.html">Testimonials</a><a href="articles.html">Blog / Articles</a><a href="notifications.html">Notifications</a><a href="faqs.html">FAQs</a><a href="content.html">Website Content</a><a href="settings.html">Settings</a><a href="../index.html">View Website</a><a href="#" onclick="logout();return false">Logout</a></nav></aside><main class="main"><div class="top"><h1 id="title">Students</h1></div><div id="msg" class="msg"></div><div id="formBox" class="card"><form id="form" class="form-grid"></form></div><div class="card"><div class="table-wrap"><table class="table"><thead><tr id="head"></tr></thead><tbody id="rows"></tbody></table></div></div></main></div><script src="../js/manage.js"></script><script>kind='students';def=defs[kind];document.getElementById('title').textContent=def.title;resetForm();init();</script></body></html>
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Students | Admin</title>
+
+<link rel="stylesheet" href="../css/admin.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script src="../js/admin.js"></script>
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+<aside class="sidebar">
+
+<div class="brand">
+HR Admin
+<span>Haroon Ibn Rasheed Online Quran Academy</span>
+</div>
+
+<nav class="nav">
+
+<a href="dashboard.html">Dashboard</a>
+<a href="admissions.html">Admissions / Leads</a>
+<a href="users.html">Portal Users</a>
+<a class="active" href="students.html">Students</a>
+<a href="enrollments.html">Enrollments</a>
+<a href="teachers.html">Teachers</a>
+<a href="schedule.html">Schedule</a>
+<a href="classes.html">Classes</a>
+<a href="attendance.html">Attendance</a>
+<a href="payments.html">Payments</a>
+<a href="leaves.html">Leaves</a>
+<a href="salaries.html">Salaries</a>
+<a href="courses.html">Courses</a>
+<a href="fees.html">Fees</a>
+<a href="payment-methods.html">Payment Methods</a>
+<a href="messages.html">Messages</a>
+<a href="testimonials.html">Testimonials</a>
+<a href="articles.html">Blog / Articles</a>
+<a href="notifications.html">Notifications</a>
+<a href="faqs.html">FAQs</a>
+<a href="content.html">Website Content</a>
+<a href="settings.html">Settings</a>
+<a href="../index.html">View Website</a>
+<a href="#" onclick="logout();return false">Logout</a>
+
+</nav>
+</aside>
+
+
+<main class="main">
+
+<div class="top">
+<h1>Students</h1>
+</div>
+
+<div id="msg" class="msg"></div>
+
+
+<!-- CREATE STUDENT -->
+
+<div class="card">
+
+<h2>Create Student Account</h2>
+
+<form id="studentForm" class="form-grid">
+
+<div class="field">
+<label>Student Name</label>
+<input
+id="student_name"
+class="input"
+type="text"
+placeholder="Enter student name"
+required>
+</div>
+
+
+<div class="field">
+<label>Email</label>
+<input
+id="student_email"
+class="input"
+type="email"
+placeholder="student@example.com"
+required>
+</div>
+
+
+<div class="field">
+<label>Password</label>
+<input
+id="student_password"
+class="input"
+type="password"
+placeholder="Create password"
+required
+minlength="6">
+</div>
+
+
+<div class="field">
+<label>Father Name</label>
+<input
+id="father_name"
+class="input"
+type="text"
+placeholder="Enter father name">
+</div>
+
+
+<div class="field">
+<label>Phone</label>
+<input
+id="student_phone"
+class="input"
+type="text"
+placeholder="Enter phone number">
+</div>
+
+
+<div class="field">
+<label>Course</label>
+<input
+id="student_course"
+class="input"
+type="text"
+placeholder="Example: Quran with Tajweed">
+</div>
+
+
+<div class="field">
+<label>Teacher</label>
+
+<select id="teacher_id" class="input" required>
+
+<option value="">Loading teachers...</option>
+
+</select>
+
+</div>
+
+
+<div class="field">
+<label>Status</label>
+
+<select id="student_status" class="input">
+
+<option value="active">Active</option>
+<option value="inactive">Inactive</option>
+
+</select>
+
+</div>
+
+
+<div class="field full">
+
+<button
+id="createStudentBtn"
+class="btn"
+type="submit">
+
+Create Student Account
+
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+
+<!-- STUDENT LIST -->
+
+<div class="card">
+
+<h2>Students</h2>
+
+<div class="table-wrap">
+
+<table class="table">
+
+<thead>
+
+<tr>
+
+<th>Name</th>
+<th>Father Name</th>
+<th>Phone</th>
+<th>Email</th>
+<th>Course</th>
+<th>Teacher</th>
+<th>Status</th>
+
+</tr>
+
+</thead>
+
+<tbody id="rows">
+
+<tr>
+<td colspan="7">Loading...</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</main>
+
+</div>
+
+
+<script>
+
+let teachers = [];
+
+
+/* LOAD TEACHERS */
+
+async function loadTeachers(){
+
+const { data, error } = await db
+.from("teachers")
+.select("id,name,active")
+.eq("active", true)
+.order("name", { ascending:true });
+
+
+if(error){
+
+showMsg("msg", error.message, "error");
+return;
+
+}
+
+
+teachers = data || [];
+
+const select = document.getElementById("teacher_id");
+
+select.innerHTML =
+'<option value="">Select Teacher</option>';
+
+
+teachers.forEach(function(teacher){
+
+const option = document.createElement("option");
+
+option.value = teacher.id;
+option.textContent = teacher.name;
+
+select.appendChild(option);
+
+});
+
+}
+
+
+/* LOAD STUDENTS */
+
+async function loadStudents(){
+
+const { data, error } = await db
+.from("students")
+.select(`
+id,
+full_name,
+father_name,
+phone,
+email,
+course,
+status,
+teacher_id,
+teachers:teacher_id (
+name
+)
+`)
+.order("created_at", { ascending:false });
+
+
+if(error){
+
+showMsg("msg", error.message, "error");
+return;
+
+}
+
+
+const rows = document.getElementById("rows");
+
+
+if(!data || data.length === 0){
+
+rows.innerHTML =
+'<tr><td colspan="7">No students found.</td></tr>';
+
+return;
+
+}
+
+
+rows.innerHTML = data.map(function(student){
+
+const teacherName =
+student.teachers?.name || "Not Assigned";
+
+
+return `
+
+<tr>
+
+<td>${escapeHtml(student.full_name || "")}</td>
+
+<td>${escapeHtml(student.father_name || "")}</td>
+
+<td>${escapeHtml(student.phone || "")}</td>
+
+<td>${escapeHtml(student.email || "")}</td>
+
+<td>${escapeHtml(student.course || "")}</td>
+
+<td>${escapeHtml(teacherName)}</td>
+
+<td>${escapeHtml(student.status || "")}</td>
+
+</tr>
+
+`;
+
+}).join("");
+
+}
+
+
+/* CREATE STUDENT */
+
+document
+.getElementById("studentForm")
+.addEventListener("submit", async function(e){
+
+e.preventDefault();
+
+
+const button =
+document.getElementById("createStudentBtn");
+
+
+button.disabled = true;
+button.textContent = "Creating...";
+
+
+const name =
+document.getElementById("student_name")
+.value.trim();
+
+const email =
+document.getElementById("student_email")
+.value.trim();
+
+const password =
+document.getElementById("student_password")
+.value;
+
+const fatherName =
+document.getElementById("father_name")
+.value.trim();
+
+const phone =
+document.getElementById("student_phone")
+.value.trim();
+
+const course =
+document.getElementById("student_course")
+.value.trim();
+
+const teacherId =
+document.getElementById("teacher_id")
+.value;
+
+const status =
+document.getElementById("student_status")
+.value;
+
+
+try{
+
+
+if(!teacherId){
+
+throw new Error("Please select a teacher.");
+
+}
+
+
+/* CURRENT ADMIN SESSION */
+
+const {
+data: { session }
+} = await db.auth.getSession();
+
+
+if(!session){
+
+location.href = "login.html";
+return;
+
+}
+
+
+/* CREATE AUTH + PROFILE + STUDENT */
+
+const response = await fetch(
+
+"https://olxytsmwqkrrnutsegtr.supabase.co/functions/v1/create-portal-user",
+
+{
+
+method:"POST",
+
+headers:{
+
+"Authorization":
+"Bearer " + session.access_token,
+
+"apikey":
+window.SUPABASE_CONFIG.anonKey,
+
+"Content-Type":
+"application/json"
+
+},
+
+body:JSON.stringify({
+
+role:"student",
+
+email:email,
+
+password:password,
+
+full_name:name,
+
+father_name:fatherName || null,
+
+phone:phone || null,
+
+course:course || null
+
+})
+
+}
+
+);
+
+
+const result = await response.json();
+
+
+if(!response.ok || !result.success){
+
+throw new Error(
+result.error ||
+"Student account could not be created."
+);
+
+}
+
+
+/* NEW STUDENT UUID */
+
+const studentId = result.user_id;
+
+
+/* SAVE TEACHER ASSIGNMENT */
+
+const {
+error: studentUpdateError
+} = await db
+.from("students")
+.update({
+
+teacher_id:teacherId,
+status:status
+
+})
+.eq("id", studentId);
+
+
+if(studentUpdateError){
+
+throw new Error(
+"Student account created, but teacher assignment failed: "
++
+studentUpdateError.message
+);
+
+}
+
+
+/* SAVE ASSIGNMENT RECORD */
+
+const {
+error: assignmentError
+} = await db
+.from("teacher_student_assignments")
+.insert({
+
+student_id:studentId,
+teacher_id:teacherId,
+assignment_type:"permanent",
+start_date:new Date()
+.toISOString()
+.slice(0,10),
+active:true
+
+});
+
+
+if(assignmentError){
+
+throw new Error(
+"Student created, but assignment record failed: "
++
+assignmentError.message
+);
+
+}
+
+
+showMsg(
+"msg",
+"Student account created and teacher assigned successfully.",
+"ok"
+);
+
+
+document
+.getElementById("studentForm")
+.reset();
+
+
+await loadStudents();
+
+
+}
+catch(error){
+
+showMsg(
+"msg",
+error.message ||
+"Something went wrong.",
+"error"
+);
+
+}
+finally{
+
+button.disabled = false;
+button.textContent =
+"Create Student Account";
+
+}
+
+});
+
+
+/* START */
+
+async function initStudents(){
+
+if(!(await adminGuard())) return;
+
+await loadTeachers();
+
+await loadStudents();
+
+}
+
+
+initStudents();
+
+</script>
+
+</body>
+</html>
