@@ -230,14 +230,10 @@ function nowMinutes(){
 }
 
 
-/*
-  Class can be activated exactly 5 minutes
-  before scheduled start.
+/* =========================
+   TEACHER ACTIVATION
+========================= */
 
-  Example:
-  7:00 PM class
-  Active button from 6:55 PM
-*/
 function canTeacherActivate(schedule){
 
   const start = timeToMinutes(schedule.class_time);
@@ -251,10 +247,6 @@ function canTeacherActivate(schedule){
 }
 
 
-/*
-  Before teacher manually activates,
-  class stays Upcoming.
-*/
 function getAutomaticStatus(schedule,savedStatus){
 
   if(savedStatus)
@@ -293,6 +285,7 @@ async function getTodaySessions(teacherId){
 
   return r.data || [];
 }
+
 
 async function ensureTodaySession(schedule,teacherId){
 
@@ -372,7 +365,7 @@ async function loadTeacherDashboard(g){
 
   /* =========================
      STUDENT NAMES
-  ========================= */
+========================= */
 
   const studentIds = [
     ...new Set(
@@ -404,7 +397,7 @@ async function loadTeacherDashboard(g){
 
   /* =========================
      TODAY
-  ========================= */
+========================= */
 
   const todaySchedules =
     schedules.filter(isToday);
@@ -429,7 +422,7 @@ async function loadTeacherDashboard(g){
 
   /* =========================
      SUMMARY
-  ========================= */
+========================= */
 
   set('totalClasses',schedules.length);
 
@@ -464,7 +457,7 @@ async function loadTeacherDashboard(g){
 
   /* =========================
      SALARY
-  ========================= */
+========================= */
 
   const salaryResult = await db
     .from('teacher_salaries')
@@ -493,7 +486,7 @@ async function loadTeacherDashboard(g){
 
   /* =========================
      REMINDERS
-  ========================= */
+========================= */
 
   const notificationResult = await db
     .from('notifications')
@@ -518,7 +511,7 @@ async function loadTeacherDashboard(g){
 
   /* =========================
      TODAY CLASSES ONLY
-  ========================= */
+========================= */
 
   if(!todaySchedules.length){
 
@@ -562,7 +555,7 @@ async function loadTeacherDashboard(g){
 
       /* =========================
          ACTIVE BUTTON
-      ========================= */
+========================= */
 
       if(
         (status === 'upcoming' || status === 'late') &&
@@ -591,7 +584,7 @@ async function loadTeacherDashboard(g){
 
       /* =========================
          GOOGLE MEET
-      ========================= */
+========================= */
 
       if(schedule.google_meet_url){
 
@@ -608,7 +601,7 @@ async function loadTeacherDashboard(g){
 
       /* =========================
          CLASSROOM
-      ========================= */
+========================= */
 
       const classroomUrl =
         schedule.classroom_code
@@ -631,7 +624,7 @@ async function loadTeacherDashboard(g){
 
       /* =========================
          ACTIVE ACTIONS
-      ========================= */
+========================= */
 
       if(
         status === 'active' ||
@@ -658,7 +651,7 @@ async function loadTeacherDashboard(g){
 
       /* =========================
          FINAL
-      ========================= */
+========================= */
 
       if(status === 'completed'){
 
@@ -721,7 +714,9 @@ async function loadTeacherDashboard(g){
     }).join('')
   );
 }
-  /* =========================
+
+
+/* =========================
    START / ACTIVE CLASS
 ========================= */
 
@@ -771,6 +766,7 @@ window.teacherStartClass = async(scheduleId)=>{
 
 
   const today = todayISO();
+  const now = new Date().toISOString();
 
 
   const existing = await db
@@ -798,8 +794,8 @@ window.teacherStartClass = async(scheduleId)=>{
       .from('teacher_class_sessions')
       .update({
         status:'active',
-        started_at:new Date().toISOString(),
-        updated_at:new Date().toISOString()
+        started_at:now,
+        updated_at:now
       })
       .eq('id',existing.data.id)
       .eq('teacher_id',uid);
@@ -814,8 +810,8 @@ window.teacherStartClass = async(scheduleId)=>{
         student_id:schedule.student_id,
         class_date:today,
         status:'active',
-        started_at:new Date().toISOString(),
-        updated_at:new Date().toISOString()
+        started_at:now,
+        updated_at:now
       });
 
   }
@@ -974,6 +970,26 @@ async function teacherData(){
 
     await loadTeacherDashboard(g);
 
+    /*
+      Refresh dashboard every 15 seconds.
+      This allows Teacher Dashboard to detect
+      when Student joins the class.
+    */
+
+    setInterval(async()=>{
+
+      const current = await db.auth.getSession();
+
+      if(!current.data.session)
+        return;
+
+      await loadTeacherDashboard({
+        s:current.data.session,
+        p:g.p
+      });
+
+    },15000);
+
     return;
   }
 
@@ -983,7 +999,7 @@ async function teacherData(){
 
   /* =========================
      TEACHER SCHEDULE
-  ========================= */
+========================= */
 
   if(page === 'teacher-schedule'){
 
@@ -1080,7 +1096,7 @@ async function teacherData(){
 
   /* =========================
      TEACHER STUDENTS
-  ========================= */
+========================= */
 
   if(page === 'teacher-students'){
 
@@ -1141,7 +1157,7 @@ async function teacherData(){
 
   /* =========================
      COURSES
-  ========================= */
+========================= */
 
   if(page === 'teacher-courses'){
 
@@ -1179,7 +1195,7 @@ async function teacherData(){
 
   /* =========================
      LEAVES
-  ========================= */
+========================= */
 
   if(page === 'teacher-leaves'){
 
@@ -1248,7 +1264,7 @@ async function teacherData(){
 
   /* =========================
      SALARY
-  ========================= */
+========================= */
 
   if(page === 'teacher-salary'){
 
@@ -1293,7 +1309,7 @@ async function teacherData(){
 
   /* =========================
      PROFILE
-  ========================= */
+========================= */
 
   if(page === 'teacher-profile'){
 
@@ -1333,6 +1349,90 @@ async function teacherData(){
       });
   }
 }
+
+
+/* =========================
+   STUDENT JOIN CLASS
+========================= */
+
+window.studentJoinClass = async(scheduleId,meetUrl)=>{
+
+  const g = await guard('student');
+
+  if(!g) return;
+
+  const uid = g.s.user.id;
+  const today = todayISO();
+  const now = new Date().toISOString();
+
+
+  /* =========================
+     FIND TODAY SESSION
+========================= */
+
+  const existing = await db
+    .from('teacher_class_sessions')
+    .select('id,status')
+    .eq('schedule_id',scheduleId)
+    .eq('student_id',uid)
+    .eq('class_date',today)
+    .maybeSingle();
+
+
+  if(existing.error){
+
+    alert(existing.error.message);
+    return;
+  }
+
+
+  if(!existing.data){
+
+    alert(
+      'Teacher has not activated this class yet.'
+    );
+
+    return;
+  }
+
+
+  /* =========================
+     UPDATE STUDENT JOIN
+========================= */
+
+  const r = await db
+    .from('teacher_class_sessions')
+    .update({
+      status:'student_joined',
+      student_joining_at:now,
+      updated_at:now
+    })
+    .eq('id',existing.data.id)
+    .eq('student_id',uid);
+
+
+  if(r.error){
+
+    alert(r.error.message);
+    return;
+  }
+
+
+  /* =========================
+     OPEN GOOGLE MEET
+========================= */
+
+  if(meetUrl){
+
+    window.open(
+      meetUrl,
+      '_blank',
+      'noopener,noreferrer'
+    );
+
+  }
+
+};
 
 
 /* =========================
@@ -1453,11 +1553,31 @@ async function studentData(){
     );
 
 
+    /* =========================
+       STUDENT SCHEDULE + JOIN
+    ========================= */
+
     set(
       'scheduleRows',
 
-      (s.data || []).map(x=>`
+      (s.data || []).map(x=>{
 
+        const meetUrl = x.google_meet_url || '';
+
+        const joinButton =
+          meetUrl
+          ? `
+            <a
+              class="btn-small"
+              href="#"
+              onclick="studentJoinClass(${JSON.stringify(x.id)},${JSON.stringify(meetUrl)});return false;">
+              Join
+            </a>
+          `
+          : '—';
+
+
+        return `
         <tr>
 
           <td>
@@ -1479,18 +1599,7 @@ async function studentData(){
           </td>
 
           <td>
-            ${
-              x.google_meet_url
-              ? `
-                <a
-                  class="btn-small"
-                  target="_blank"
-                  href="${esc(x.google_meet_url)}">
-                  Join
-                </a>
-              `
-              : '—'
-            }
+            ${joinButton}
           </td>
 
           <td>
@@ -1498,8 +1607,9 @@ async function studentData(){
           </td>
 
         </tr>
+        `;
 
-      `).join('') || rowEmpty(6)
+      }).join('') || rowEmpty(6)
     );
 
 
@@ -1576,7 +1686,7 @@ async function studentData(){
 
   /* =========================
      STUDENT ATTENDANCE
-  ========================= */
+========================= */
 
   if(page === 'student-attendance'){
 
@@ -1635,7 +1745,7 @@ async function studentData(){
 
   /* =========================
      STUDENT FEES
-  ========================= */
+========================= */
 
   if(page === 'student-fees'){
 
@@ -1685,7 +1795,7 @@ async function studentData(){
 
   /* =========================
      STUDENT LEAVES
-  ========================= */
+========================= */
 
   if(page === 'student-leaves'){
 
@@ -1749,7 +1859,7 @@ async function studentData(){
 
   /* =========================
      STUDENT PROFILE
-  ========================= */
+========================= */
 
   if(page === 'student-profile'){
 
