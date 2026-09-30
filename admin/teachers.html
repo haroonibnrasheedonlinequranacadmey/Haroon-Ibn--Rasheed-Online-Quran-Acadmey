@@ -1,8 +1,9 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>Teachers | Admin</title>
 
 <link rel="stylesheet" href="../css/admin.css">
@@ -63,7 +64,7 @@ HR Admin
 <div id="msg" class="msg"></div>
 
 
-<!-- CREATE TEACHER ACCOUNT -->
+<!-- CREATE TEACHER -->
 
 <div class="card">
 
@@ -72,29 +73,37 @@ HR Admin
 <form id="teacherForm" class="form-grid">
 
 <div class="field">
+
 <label>Teacher Name</label>
+
 <input
 id="teacher_name"
 class="input"
 type="text"
 placeholder="Enter teacher name"
 required>
+
 </div>
 
 
 <div class="field">
+
 <label>Email</label>
+
 <input
 id="teacher_email"
 class="input"
 type="email"
 placeholder="teacher@example.com"
 required>
+
 </div>
 
 
 <div class="field">
+
 <label>Password</label>
+
 <input
 id="teacher_password"
 class="input"
@@ -102,17 +111,27 @@ type="password"
 placeholder="Create password"
 required
 minlength="6">
+
 </div>
 
 
 <div class="field">
+
 <label>Gender</label>
 
-<select id="teacher_gender" class="input">
+<select
+id="teacher_gender"
+class="input">
 
 <option value="">Select Gender</option>
-<option value="Male">Male</option>
-<option value="Female">Female</option>
+
+<option value="Male">
+Male
+</option>
+
+<option value="Female">
+Female
+</option>
 
 </select>
 
@@ -120,6 +139,7 @@ minlength="6">
 
 
 <div class="field full">
+
 <label>Bio</label>
 
 <textarea
@@ -153,7 +173,7 @@ Create Teacher Account
 
 <div class="card">
 
-<h2>Teachers</h2>
+<h2>All Teachers</h2>
 
 <div class="table-wrap">
 
@@ -162,19 +182,34 @@ Create Teacher Account
 <thead>
 
 <tr>
+
 <th>Name</th>
+
 <th>Gender</th>
+
 <th>Bio</th>
+
 <th>Status</th>
+
+<th>Classroom</th>
+
 <th>Account ID</th>
+
+<th>Actions</th>
+
 </tr>
 
 </thead>
 
+
 <tbody id="rows">
 
 <tr>
-<td colspan="5">Loading...</td>
+
+<td colspan="7">
+Loading...
+</td>
+
 </tr>
 
 </tbody>
@@ -192,116 +227,412 @@ Create Teacher Account
 
 <script>
 
+/* =========================================================
+   CONFIG
+========================================================= */
+
+const EDGE_FUNCTION_URL =
+"https://olxytsmwqkrrnutsegtr.supabase.co/functions/v1/create-portal-user";
+
+
+/* =========================================================
+   LOAD TEACHERS
+========================================================= */
+
 async function loadTeachers(){
 
-if(!(await adminGuard())) return;
+const guardResult = await adminGuard();
 
-const { data, error } = await db
+if(!guardResult) return;
+
+
+const rows =
+document.getElementById("rows");
+
+
+rows.innerHTML = `
+<tr>
+<td colspan="7">
+Loading teachers...
+</td>
+</tr>
+`;
+
+
+/* Get teachers */
+
+const {
+data: teachers,
+error: teacherError
+} = await db
 .from("teachers")
-.select("id,name,gender,bio,active,created_at")
-.order("created_at",{ascending:false});
+.select(
+"id,name,gender,bio,active,created_at"
+)
+.order(
+"created_at",
+{
+ascending:false
+}
+);
 
-if(error){
 
-showMsg("msg",error.message,"error");
+if(teacherError){
+
+showMsg(
+"msg",
+teacherError.message,
+"error"
+);
+
+rows.innerHTML = `
+<tr>
+<td colspan="7">
+Could not load teachers.
+</td>
+</tr>
+`;
+
 return;
 
 }
 
-const rows = document.getElementById("rows");
 
-rows.innerHTML = (data || []).map(t => `
+/* Get classroom access */
 
+const {
+data: classrooms,
+error: classroomError
+} = await db
+.from("class_access")
+.select(
+"teacher_id,access_code,room,active"
+)
+.eq(
+"role",
+"teacher"
+);
+
+
+if(classroomError){
+
+console.warn(
+"Classroom data could not be loaded:",
+classroomError.message
+);
+
+}
+
+
+/* Create classroom lookup */
+
+const classroomMap = {};
+
+(classrooms || []).forEach(
+function(c){
+
+classroomMap[c.teacher_id] = c;
+
+});
+
+
+/* No teachers */
+
+if(!teachers || teachers.length === 0){
+
+rows.innerHTML = `
 <tr>
-
-<td>${escapeHtml(t.name || "")}</td>
-
-<td>${escapeHtml(t.gender || "")}</td>
-
-<td>${escapeHtml(t.bio || "")}</td>
-
-<td>
-${t.active ? "Active" : "Inactive"}
+<td colspan="7">
+No teachers found.
 </td>
-
-<td>
-${escapeHtml(t.id || "")}
-</td>
-
 </tr>
+`;
 
-`).join("") || `
+return;
 
-<tr>
-<td colspan="5">No teachers found.</td>
-</tr>
+}
 
+
+/* Render */
+
+rows.innerHTML =
+teachers.map(
+function(t){
+
+const classroom =
+classroomMap[t.id];
+
+
+let classroomHtml = "";
+
+
+if(classroom){
+
+classroomHtml = `
+
+<div>
+<strong>
+${escapeHtml(
+classroom.access_code || ""
+)}
+</strong>
+</div>
+
+<div style="font-size:12px;opacity:.75">
+${classroom.active
+? "Classroom Active"
+: "Classroom Disabled"}
+</div>
+
+`;
+
+}else{
+
+classroomHtml = `
+<span style="opacity:.65">
+No Classroom
+</span>
 `;
 
 }
 
 
+/* Status */
+
+const statusHtml = t.active
+
+? `<span style="color:green;font-weight:600">
+Active
+</span>`
+
+: `<span style="color:#b45309;font-weight:600">
+Inactive
+</span>`;
+
+
+/* Action */
+
+const actionHtml = t.active
+
+? `
+
+<button
+type="button"
+class="btn"
+style="margin:2px"
+onclick="deactivateTeacher('${t.id}')">
+
+Deactivate
+
+</button>
+
+<button
+type="button"
+class="btn"
+style="margin:2px;background:#b91c1c"
+onclick="deleteTeacher('${t.id}','${escapeJs(t.name || "")}')">
+
+Delete
+
+</button>
+
+`
+
+: `
+
+<button
+type="button"
+class="btn"
+style="margin:2px"
+onclick="activateTeacher('${t.id}')">
+
+Activate
+
+</button>
+
+<button
+type="button"
+class="btn"
+style="margin:2px;background:#b91c1c"
+onclick="deleteTeacher('${t.id}','${escapeJs(t.name || "")}')">
+
+Delete
+
+</button>
+
+`;
+
+
+return `
+
+<tr>
+
+<td>
+${escapeHtml(t.name || "")}
+</td>
+
+
+<td>
+${escapeHtml(t.gender || "")}
+</td>
+
+
+<td>
+${escapeHtml(t.bio || "")}
+</td>
+
+
+<td>
+${statusHtml}
+</td>
+
+
+<td>
+${classroomHtml}
+</td>
+
+
+<td style="font-size:11px;word-break:break-all">
+${escapeHtml(t.id || "")}
+</td>
+
+
+<td>
+${actionHtml}
+</td>
+
+</tr>
+
+`;
+
+}
+).join("");
+
+}
+
+
+/* =========================================================
+   ESCAPE JS STRING
+========================================================= */
+
+function escapeJs(value){
+
+return String(value || "")
+.replace(/\\/g,"\\\\")
+.replace(/'/g,"\\'")
+.replace(/"/g,'\\"')
+.replace(/\n/g," ")
+.replace(/\r/g," ");
+
+}
+
+
+/* =========================================================
+   CREATE TEACHER
+========================================================= */
+
 document
 .getElementById("teacherForm")
-.addEventListener("submit", async function(e){
+.addEventListener(
+"submit",
+async function(e){
 
 e.preventDefault();
 
+
 const button =
-document.getElementById("createTeacherBtn");
+document.getElementById(
+"createTeacherBtn"
+);
+
 
 button.disabled = true;
-button.textContent = "Creating...";
+
+button.textContent =
+"Creating...";
 
 
 const name =
-document.getElementById("teacher_name").value.trim();
+document
+.getElementById("teacher_name")
+.value
+.trim();
+
 
 const email =
-document.getElementById("teacher_email").value.trim();
+document
+.getElementById("teacher_email")
+.value
+.trim();
+
 
 const password =
-document.getElementById("teacher_password").value;
+document
+.getElementById("teacher_password")
+.value;
+
 
 const gender =
-document.getElementById("teacher_gender").value;
+document
+.getElementById("teacher_gender")
+.value;
+
 
 const bio =
-document.getElementById("teacher_bio").value.trim();
+document
+.getElementById("teacher_bio")
+.value
+.trim();
 
 
 try{
 
+
 const {
-data: { session }
-} = await db.auth.getSession();
+data: {
+session
+}
+} =
+await db.auth.getSession();
 
 
 if(!session){
 
-location.href="login.html";
+location.href =
+"login.html";
+
 return;
 
 }
 
 
-const response = await fetch(
-"https://olxytsmwqkrrnutsegtr.supabase.co/functions/v1/create-portal-user",
+/* Call Edge Function */
+
+const response =
+await fetch(
+EDGE_FUNCTION_URL,
 {
+
 method:"POST",
 
 headers:{
+
 "Authorization":
-"Bearer " + session.access_token,
+"Bearer " +
+session.access_token,
 
 "apikey":
-window.SUPABASE_CONFIG.anonKey,
+window
+.SUPABASE_CONFIG
+.anonKey,
 
 "Content-Type":
 "application/json"
+
 },
 
-body:JSON.stringify({
+body:
+JSON.stringify({
 
 role:"teacher",
 
@@ -311,56 +642,413 @@ password:password,
 
 full_name:name,
 
-gender:gender || null,
+gender:
+gender || null,
 
-bio:bio || null
+bio:
+bio || null
 
 })
 
 });
 
 
-const result = await response.json();
+const result =
+await response.json();
 
 
-if(!response.ok || !result.success){
+if(
+!response.ok ||
+!result.success
+){
 
 throw new Error(
-result.error || "Teacher account could not be created."
+result.error ||
+"Teacher account could not be created."
 );
+
+}
+
+
+/* Success */
+
+let successMessage =
+"Teacher account created successfully.";
+
+
+if(
+result.classroom &&
+result.classroom.access_code
+){
+
+successMessage +=
+" Classroom Code: " +
+result.classroom.access_code;
 
 }
 
 
 showMsg(
 "msg",
-"Teacher account created successfully.",
+successMessage,
 "ok"
 );
 
 
-document.getElementById("teacherForm").reset();
+document
+.getElementById(
+"teacherForm"
+)
+.reset();
+
 
 await loadTeachers();
 
 
-}catch(error){
+}
+catch(error){
 
 showMsg(
 "msg",
-error.message || "Something went wrong.",
+error.message ||
+"Something went wrong.",
 "error"
 );
 
-}finally{
+}
+finally{
 
 button.disabled = false;
-button.textContent = "Create Teacher Account";
+
+button.textContent =
+"Create Teacher Account";
 
 }
 
+}
+);
+
+
+/* =========================================================
+   DEACTIVATE TEACHER
+========================================================= */
+
+async function deactivateTeacher(
+teacherId
+){
+
+if(
+!confirm(
+"Is teacher ko deactivate karna hai?\n\n" +
+"Teacher inactive ho jayega aur Classroom access bhi disable ho jayega."
+)
+){
+
+return;
+
+}
+
+
+await changeTeacherStatus(
+teacherId,
+"deactivate"
+);
+
+}
+
+
+/* =========================================================
+   ACTIVATE TEACHER
+========================================================= */
+
+async function activateTeacher(
+teacherId
+){
+
+if(
+!confirm(
+"Is teacher ko dobara activate karna hai?"
+)
+){
+
+return;
+
+}
+
+
+await changeTeacherStatus(
+teacherId,
+"activate"
+);
+
+}
+
+
+/* =========================================================
+   CHANGE STATUS
+========================================================= */
+
+async function changeTeacherStatus(
+teacherId,
+action
+){
+
+try{
+
+
+const {
+data:{
+session
+}
+} =
+await db.auth.getSession();
+
+
+if(!session){
+
+location.href =
+"login.html";
+
+return;
+
+}
+
+
+const response =
+await fetch(
+EDGE_FUNCTION_URL,
+{
+
+method:"POST",
+
+headers:{
+
+"Authorization":
+"Bearer " +
+session.access_token,
+
+"apikey":
+window
+.SUPABASE_CONFIG
+.anonKey,
+
+"Content-Type":
+"application/json"
+
+},
+
+body:
+JSON.stringify({
+
+action:
+action,
+
+user_id:
+teacherId
+
+})
+
 });
 
+
+const result =
+await response.json();
+
+
+if(
+!response.ok ||
+!result.success
+){
+
+throw new Error(
+result.error ||
+"Could not update teacher."
+);
+
+}
+
+
+showMsg(
+"msg",
+result.message ||
+"Teacher status updated.",
+"ok"
+);
+
+
+await loadTeachers();
+
+
+}
+catch(error){
+
+showMsg(
+"msg",
+error.message ||
+"Something went wrong.",
+"error"
+);
+
+}
+
+}
+
+
+/* =========================================================
+   DELETE TEACHER
+========================================================= */
+
+async function deleteTeacher(
+teacherId,
+teacherName
+){
+
+const firstConfirm =
+confirm(
+"WARNING!\n\n" +
+"Teacher: " +
+teacherName +
+"\n\n" +
+"Ye account permanently delete hoga."
+);
+
+
+if(!firstConfirm){
+
+return;
+
+}
+
+
+const secondConfirm =
+confirm(
+"FINAL CONFIRMATION\n\n" +
+"Teacher account, Classroom access aur related assignment records delete ho jayenge.\n\n" +
+"Ye action undo nahi kiya ja sakta.\n\n" +
+"Delete permanently?"
+);
+
+
+if(!secondConfirm){
+
+return;
+
+}
+
+
+try{
+
+
+const {
+data:{
+session
+}
+} =
+await db.auth.getSession();
+
+
+if(!session){
+
+location.href =
+"login.html";
+
+return;
+
+}
+
+
+/* Show deleting message */
+
+showMsg(
+"msg",
+"Deleting teacher...",
+"ok"
+);
+
+
+/* Call Edge Function */
+
+const response =
+await fetch(
+EDGE_FUNCTION_URL,
+{
+
+method:"POST",
+
+headers:{
+
+"Authorization":
+"Bearer " +
+session.access_token,
+
+"apikey":
+window
+.SUPABASE_CONFIG
+.anonKey,
+
+"Content-Type":
+"application/json"
+
+},
+
+body:
+JSON.stringify({
+
+action:"delete",
+
+user_id:
+teacherId
+
+})
+
+});
+
+
+const result =
+await response.json();
+
+
+if(
+!response.ok ||
+!result.success
+){
+
+throw new Error(
+result.error ||
+"Teacher could not be deleted."
+);
+
+}
+
+
+showMsg(
+"msg",
+"Teacher permanently deleted successfully.",
+"ok"
+);
+
+
+await loadTeachers();
+
+
+}
+catch(error){
+
+showMsg(
+"msg",
+error.message ||
+"Something went wrong.",
+"error"
+);
+
+}
+
+}
+
+
+/* =========================================================
+   INITIAL LOAD
+========================================================= */
 
 loadTeachers();
 
