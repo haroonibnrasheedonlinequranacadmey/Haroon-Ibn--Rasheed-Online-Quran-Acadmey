@@ -1,1 +1,947 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>My Schedule | Haroon Ibn Rasheed Online Quran Academy</title><link rel="stylesheet" href="../css/portal.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../js/config.js"></script><script src="../js/portal.js" defer></script></head><body class="dashboard" data-page="teacher-schedule"><div class="side-layout"><aside class="side"><img src="../assets/hr-logo.svg" alt="HR"><h3>Haroon Ibn Rasheed</h3><small>Teacher Portal</small><nav style="margin-top:16px"><a href="dashboard.html">Dashboard</a><a href="students.html">My Students</a><a href="classes.html">My Classes</a><a href="schedule.html" class="active">Schedule</a><a href="attendance.html">Attendance</a><a href="courses.html">Courses</a><a href="leaves.html">Leaves</a><a href="salary.html">Salary</a><a href="profile.html">Profile</a></nav><a href="#" onclick="portalLogout();return false">Logout</a></aside><main class="content"><section class="card"><h1>My Schedule</h1><div class="table-wrap"><table class="table"><thead><tr><th>Date</th><th>Time</th><th>Student</th><th>Course</th><th>Status</th><th>Meeting</th></tr></thead><tbody id="classRows"></tbody></table></div></section></main></div></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>My Schedule | Haroon Ibn Rasheed Online Quran Academy</title>
+
+<link rel="stylesheet" href="../css/portal.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script src="../js/portal.js" defer></script>
+
+<style>
+.schedule-page{
+  padding:20px;
+}
+
+.schedule-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  margin-bottom:20px;
+  flex-wrap:wrap;
+}
+
+.schedule-header h1{
+  margin:0;
+}
+
+.schedule-info{
+  color:#666;
+  font-size:14px;
+}
+
+.schedule-section{
+  margin-top:25px;
+}
+
+.schedule-section h2{
+  margin:0 0 12px;
+  font-size:20px;
+}
+
+.schedule-scroll{
+  width:100%;
+  overflow-x:auto;
+  border:1px solid #ddd;
+  border-radius:12px;
+  background:#fff;
+}
+
+.week-grid{
+  min-width:1050px;
+  display:grid;
+  grid-template-columns:95px repeat(7,1fr);
+}
+
+.grid-head{
+  background:#454d59;
+  color:#fff;
+  padding:11px 7px;
+  text-align:center;
+  font-weight:700;
+  border-right:1px solid rgba(255,255,255,.15);
+}
+
+.time-head{
+  background:#2f9fba;
+}
+
+.time-cell{
+  min-height:70px;
+  padding:8px 5px;
+  background:#f7f8fa;
+  border-right:1px solid #ddd;
+  border-bottom:1px solid #ddd;
+  text-align:center;
+  font-size:12px;
+  font-weight:600;
+}
+
+.day-cell{
+  min-height:70px;
+  padding:5px;
+  border-right:1px solid #ddd;
+  border-bottom:1px solid #ddd;
+  background:#fff;
+}
+
+.class-box{
+  background:#f18b82;
+  color:#fff;
+  border-radius:9px;
+  padding:8px;
+  margin-bottom:4px;
+  font-size:12px;
+  line-height:1.35;
+  box-shadow:0 2px 5px rgba(0,0,0,.12);
+}
+
+.class-box strong{
+  display:block;
+  font-size:13px;
+}
+
+.class-box .course{
+  font-weight:600;
+}
+
+.class-box .duration{
+  opacity:.95;
+}
+
+.class-actions{
+  display:flex;
+  gap:4px;
+  flex-wrap:wrap;
+  margin-top:6px;
+}
+
+.class-actions a{
+  display:inline-block;
+  text-decoration:none;
+  background:#fff;
+  color:#333;
+  padding:4px 6px;
+  border-radius:5px;
+  font-size:10px;
+  font-weight:700;
+}
+
+.class-actions a:hover{
+  opacity:.85;
+}
+
+.empty{
+  text-align:center;
+  padding:25px;
+  color:#777;
+}
+
+.loading{
+  text-align:center;
+  padding:30px;
+  color:#777;
+}
+
+.error-box{
+  background:#fff1f1;
+  border:1px solid #e3aaaa;
+  color:#a33;
+  padding:15px;
+  border-radius:9px;
+  margin-bottom:15px;
+}
+
+.refresh-btn{
+  border:0;
+  background:#2f9fba;
+  color:#fff;
+  padding:10px 16px;
+  border-radius:7px;
+  cursor:pointer;
+  font-weight:700;
+}
+
+.refresh-btn:hover{
+  opacity:.9;
+}
+
+@media(max-width:700px){
+  .schedule-page{
+    padding:10px;
+  }
+
+  .schedule-header h1{
+    font-size:24px;
+  }
+}
+</style>
+</head>
+
+<body class="dashboard" data-page="teacher-schedule">
+
+<div class="side-layout">
+
+  <aside class="side">
+
+    <img src="../assets/hr-logo.svg" alt="HR">
+
+    <h3>Haroon Ibn Rasheed</h3>
+    <small>Teacher Portal</small>
+
+    <nav style="margin-top:16px">
+
+      <a href="dashboard.html">Dashboard</a>
+
+      <a href="students.html">My Students</a>
+
+      <a href="classes.html">My Classes</a>
+
+      <a href="schedule.html" class="active">Schedule</a>
+
+      <a href="attendance.html">Attendance</a>
+
+      <a href="courses.html">Courses</a>
+
+      <a href="leaves.html">Leaves</a>
+
+      <a href="salary.html">Salary</a>
+
+      <a href="profile.html">Profile</a>
+
+    </nav>
+
+    <a href="#" onclick="portalLogout();return false">
+      Logout
+    </a>
+
+  </aside>
+
+
+  <main class="content">
+
+    <section class="card schedule-page">
+
+      <div class="schedule-header">
+
+        <div>
+          <h1>My Schedule</h1>
+
+          <div class="schedule-info">
+            This schedule is managed by the Academy Admin.
+          </div>
+        </div>
+
+        <button
+          class="refresh-btn"
+          onclick="loadTeacherSchedule()">
+          Refresh Schedule
+        </button>
+
+      </div>
+
+
+      <div id="messageArea"></div>
+
+
+      <!-- AM -->
+
+      <div class="schedule-section">
+
+        <h2>☀️ AM Schedule</h2>
+
+        <div class="schedule-scroll">
+
+          <div
+            id="amGrid"
+            class="week-grid">
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- PM -->
+
+      <div class="schedule-section">
+
+        <h2>🌙 PM Schedule</h2>
+
+        <div class="schedule-scroll">
+
+          <div
+            id="pmGrid"
+            class="week-grid">
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+
+<script>
+
+const db = supabase.createClient(
+  window.SUPABASE_CONFIG.url,
+  window.SUPABASE_CONFIG.anonKey
+);
+
+
+const DAYS = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday"
+];
+
+
+const DAY_SHORT = {
+  Monday:"Mon",
+  Tuesday:"Tue",
+  Wednesday:"Wed",
+  Thursday:"Thu",
+  Friday:"Fri",
+  Saturday:"Sat",
+  Sunday:"Sun"
+};
+
+
+let teacherId = null;
+let schedules = [];
+
+
+/* ================================
+   HTML SAFETY
+================================ */
+
+function safeHtml(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+/* ================================
+   TIME HELPERS
+================================ */
+
+function timeToMinutes(time){
+
+  if(!time) return null;
+
+  const parts = String(time).split(":");
+
+  const hour = parseInt(parts[0],10);
+  const minute = parseInt(parts[1] || "0",10);
+
+  if(isNaN(hour) || isNaN(minute)){
+    return null;
+  }
+
+  return hour * 60 + minute;
+}
+
+
+function formatTime(time){
+
+  const total = timeToMinutes(time);
+
+  if(total === null){
+    return "";
+  }
+
+  let hour = Math.floor(total / 60);
+  const minute = total % 60;
+
+  const ampm = hour >= 12 ? "PM" : "AM";
+
+  hour = hour % 12;
+
+  if(hour === 0){
+    hour = 12;
+  }
+
+  return (
+    hour +
+    ":" +
+    String(minute).padStart(2,"0") +
+    " " +
+    ampm
+  );
+
+}
+
+
+function formatDuration(minutes){
+
+  const m = parseInt(minutes,10);
+
+  if(!m || m <= 0){
+    return "";
+  }
+
+  if(m < 60){
+    return m + " min";
+  }
+
+  const h = Math.floor(m / 60);
+  const r = m % 60;
+
+  if(r === 0){
+    return h + (h === 1 ? " hour" : " hours");
+  }
+
+  return h + "h " + r + "m";
+
+}
+
+
+/* ================================
+   DAY NORMALIZATION
+================================ */
+
+function normalizeDay(day){
+
+  if(!day) return "";
+
+  const value =
+    String(day)
+      .trim()
+      .toLowerCase();
+
+  const map = {
+
+    mon:"Monday",
+    monday:"Monday",
+
+    tue:"Tuesday",
+    tues:"Tuesday",
+    tuesday:"Tuesday",
+
+    wed:"Wednesday",
+    wednesday:"Wednesday",
+
+    thu:"Thursday",
+    thur:"Thursday",
+    thurs:"Thursday",
+    thursday:"Thursday",
+
+    fri:"Friday",
+    friday:"Friday",
+
+    sat:"Saturday",
+    saturday:"Saturday",
+
+    sun:"Sunday",
+    sunday:"Sunday"
+
+  };
+
+  return map[value] || day;
+
+}
+
+
+/* ================================
+   CREATE GRID
+================================ */
+
+function createGrid(gridId,startHour,endHour){
+
+  const grid =
+    document.getElementById(gridId);
+
+  grid.innerHTML = "";
+
+  /* Header */
+
+  let html = "";
+
+  html += `
+    <div class="grid-head time-head">
+      Time
+    </div>
+  `;
+
+  DAYS.forEach(day => {
+
+    html += `
+      <div class="grid-head">
+        ${safeHtml(day)}
+      </div>
+    `;
+
+  });
+
+
+  /* 30 minute slots */
+
+  for(
+    let minutes = startHour * 60;
+    minutes <= endHour * 60 + 30;
+    minutes += 30
+  ){
+
+    html += `
+      <div class="time-cell">
+        ${formatMinutes(minutes)}
+      </div>
+    `;
+
+
+    DAYS.forEach(day => {
+
+      html += `
+        <div
+          class="day-cell"
+          data-day="${day}"
+          data-time="${minutes}">
+        </div>
+      `;
+
+    });
+
+  }
+
+
+  grid.innerHTML = html;
+
+}
+
+
+/* ================================
+   FORMAT GRID TIME
+================================ */
+
+function formatMinutes(total){
+
+  let hour =
+    Math.floor(total / 60);
+
+  const minute =
+    total % 60;
+
+  const ampm =
+    hour >= 12 ? "PM" : "AM";
+
+  hour = hour % 12;
+
+  if(hour === 0){
+    hour = 12;
+  }
+
+  return (
+    hour +
+    ":" +
+    String(minute).padStart(2,"0") +
+    " " +
+    ampm
+  );
+
+}
+
+
+/* ================================
+   RENDER SCHEDULE
+================================ */
+
+function renderSchedules(){
+
+  createGrid("amGrid",0,11);
+
+  createGrid("pmGrid",12,23);
+
+
+  if(!schedules.length){
+
+    document.getElementById("amGrid").innerHTML =
+      `<div class="empty" style="grid-column:1/-1">
+        No classes scheduled.
+      </div>`;
+
+    document.getElementById("pmGrid").innerHTML =
+      `<div class="empty" style="grid-column:1/-1">
+        No classes scheduled.
+      </div>`;
+
+    return;
+
+  }
+
+
+  schedules.forEach(schedule => {
+
+    let days = schedule.class_days;
+
+    if(!Array.isArray(days)){
+      days = [days];
+    }
+
+
+    days.forEach(rawDay => {
+
+      const day =
+        normalizeDay(rawDay);
+
+      if(!DAYS.includes(day)){
+        return;
+      }
+
+
+      const total =
+        timeToMinutes(schedule.class_time);
+
+      if(total === null){
+        return;
+      }
+
+
+      const targetGrid =
+        total < 720
+          ? document.getElementById("amGrid")
+          : document.getElementById("pmGrid");
+
+
+      const cell =
+        targetGrid.querySelector(
+          `.day-cell[data-day="${day}"][data-time="${total}"]`
+        );
+
+
+      if(!cell){
+        return;
+      }
+
+
+      const student =
+        schedule.student_name ||
+        "Student";
+
+
+      const course =
+        schedule.course ||
+        "Quran";
+
+
+      const duration =
+        formatDuration(
+          schedule.duration_minutes
+        );
+
+
+      let actions = "";
+
+
+      if(schedule.google_meet_url){
+
+        actions += `
+          <a
+            href="${safeHtml(schedule.google_meet_url)}"
+            target="_blank"
+            rel="noopener">
+            Meet
+          </a>
+        `;
+
+      }
+
+
+      if(schedule.classroom_code){
+
+        const classroomUrl =
+          "https://haroonibnrasheedonlinequranacadmey.github.io/haroon-quran-classroom/?code="
+          +
+          encodeURIComponent(
+            schedule.classroom_code
+          );
+
+
+        actions += `
+          <a
+            href="${classroomUrl}"
+            target="_blank"
+            rel="noopener">
+            Classroom
+          </a>
+        `;
+
+      }
+
+
+      cell.innerHTML += `
+
+        <div class="class-box">
+
+          <strong>
+            ${safeHtml(student)}
+          </strong>
+
+          <div class="course">
+            ${safeHtml(course)}
+          </div>
+
+          <div>
+            ${formatTime(schedule.class_time)}
+          </div>
+
+          <div class="duration">
+            ${safeHtml(duration)}
+          </div>
+
+          ${
+            actions
+              ? `<div class="class-actions">${actions}</div>`
+              : ""
+          }
+
+        </div>
+
+      `;
+
+    });
+
+  });
+
+}
+
+
+/* ================================
+   LOAD TEACHER SCHEDULE
+================================ */
+
+async function loadTeacherSchedule(){
+
+  const message =
+    document.getElementById("messageArea");
+
+  message.innerHTML = `
+    <div class="loading">
+      Loading your schedule...
+    </div>
+  `;
+
+
+  try{
+
+    const {
+      data:{
+        user
+      },
+      error:authError
+    } =
+      await db.auth.getUser();
+
+
+    if(authError){
+      throw authError;
+    }
+
+
+    if(!user){
+
+      throw new Error(
+        "Teacher login session not found. Please login again."
+      );
+
+    }
+
+
+    teacherId = user.id;
+
+
+    /*
+      IMPORTANT:
+      Teacher can only request schedules
+      where teacher_id = current auth user.
+    */
+
+    const {
+      data,
+      error
+    } =
+      await db
+        .from("class_schedules")
+        .select(`
+          id,
+          teacher_id,
+          student_id,
+          course,
+          class_days,
+          class_time,
+          duration_minutes,
+          google_meet_url,
+          classroom_code,
+          active
+        `)
+        .eq("teacher_id",teacherId)
+        .eq("active",true)
+        .order("class_time",{ascending:true});
+
+
+    if(error){
+
+      throw error;
+
+    }
+
+
+    schedules = data || [];
+
+
+    /*
+      Get student names separately.
+      This avoids depending on a nested
+      Supabase relationship.
+    */
+
+    const studentIds =
+      [
+        ...new Set(
+          schedules
+            .map(x => x.student_id)
+            .filter(Boolean)
+        )
+      ];
+
+
+    if(studentIds.length){
+
+      const {
+        data:students,
+        error:studentError
+      } =
+        await db
+          .from("students")
+          .select(`
+            id,
+            full_name
+          `)
+          .in("id",studentIds);
+
+
+      if(studentError){
+
+        console.warn(
+          "Student lookup error:",
+          studentError
+        );
+
+      }else{
+
+        const studentMap = {};
+
+        (students || []).forEach(student => {
+
+          studentMap[student.id] =
+            student.full_name;
+
+        });
+
+
+        schedules =
+          schedules.map(schedule => ({
+
+            ...schedule,
+
+            student_name:
+              studentMap[schedule.student_id]
+              || "Student"
+
+          }));
+
+      }
+
+    }
+
+
+    message.innerHTML = "";
+
+
+    renderSchedules();
+
+
+    if(!schedules.length){
+
+      message.innerHTML = `
+        <div class="empty">
+          Admin has not assigned any active classes to your schedule yet.
+        </div>
+      `;
+
+    }
+
+
+  }catch(error){
+
+    console.error(
+      "Teacher schedule error:",
+      error
+    );
+
+
+    message.innerHTML = `
+
+      <div class="error-box">
+
+        <strong>
+          Could not load your schedule.
+        </strong>
+
+        <br><br>
+
+        ${safeHtml(
+          error?.message ||
+          "Unknown error"
+        )}
+
+      </div>
+
+    `;
+
+
+    document.getElementById("amGrid").innerHTML = "";
+
+    document.getElementById("pmGrid").innerHTML = "";
+
+  }
+
+}
+
+
+/* ================================
+   START
+================================ */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  function(){
+
+    loadTeacherSchedule();
+
+  }
+);
+
+</script>
+
+</body>
+</html>
