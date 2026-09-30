@@ -1,5 +1,6 @@
 <!doctype html>
 <html>
+
 <head>
 
 <meta charset="utf-8">
@@ -192,8 +193,6 @@ id="studentForm"
 class="form-grid">
 
 
-<!-- STUDENT NAME -->
-
 <div class="field">
 
 <label>
@@ -211,8 +210,6 @@ required>
 
 
 
-<!-- EMAIL -->
-
 <div class="field">
 
 <label>
@@ -229,8 +226,6 @@ required>
 </div>
 
 
-
-<!-- PASSWORD -->
 
 <div class="field">
 
@@ -250,8 +245,6 @@ minlength="6">
 
 
 
-<!-- FATHER NAME -->
-
 <div class="field">
 
 <label>
@@ -267,8 +260,6 @@ placeholder="Enter father name">
 </div>
 
 
-
-<!-- PHONE -->
 
 <div class="field">
 
@@ -286,8 +277,6 @@ placeholder="Enter phone number">
 
 
 
-<!-- COURSE -->
-
 <div class="field">
 
 <label>
@@ -304,33 +293,26 @@ placeholder="Example: Quran with Tajweed">
 
 
 
-<!-- TEACHER -->
-
 <div class="field">
 
 <label>
 Teacher
 </label>
 
-
 <select
 id="teacher_id"
 class="input"
 required>
 
-
 <option value="">
 Loading teachers...
 </option>
-
 
 </select>
 
 </div>
 
 
-
-<!-- STATUS -->
 
 <div class="field">
 
@@ -338,21 +320,17 @@ Loading teachers...
 Status
 </label>
 
-
 <select
 id="student_status"
 class="input">
-
 
 <option value="active">
 Active
 </option>
 
-
 <option value="inactive">
 Inactive
 </option>
-
 
 </select>
 
@@ -360,28 +338,21 @@ Inactive
 
 
 
-<!-- BUTTON -->
-
 <div class="field full">
-
 
 <button
 id="createStudentBtn"
 class="btn"
 type="submit">
 
-
 Create Student Account
 
-
 </button>
-
 
 </div>
 
 
 </form>
-
 
 </div>
 
@@ -407,71 +378,58 @@ Students
 
 <thead>
 
-
 <tr>
-
 
 <th>
 Student ID
 </th>
 
-
 <th>
 Name
 </th>
-
 
 <th>
 Father Name
 </th>
 
-
 <th>
 Phone
 </th>
-
 
 <th>
 Email
 </th>
 
-
 <th>
 Course
 </th>
-
 
 <th>
 Teacher
 </th>
 
-
 <th>
 Status
 </th>
 
+<th>
+Actions
+</th>
 
 </tr>
-
 
 </thead>
 
 
-
-<tbody
-id="rows">
-
+<tbody id="rows">
 
 <tr>
 
-
-<td colspan="8">
+<td colspan="9">
 Loading...
 </td>
 
-
 </tr>
-
 
 </tbody>
 
@@ -481,12 +439,10 @@ Loading...
 
 </div>
 
-
 </div>
 
 
 </main>
-
 
 </div>
 
@@ -496,8 +452,12 @@ Loading...
 
 
 /* =====================================================
-   TEACHERS ARRAY
+   SETTINGS
 ===================================================== */
+
+const EDGE_FUNCTION_URL =
+"https://olxytsmwqkrrnutsegtr.supabase.co/functions/v1/create-portal-user";
+
 
 let teachers = [];
 
@@ -537,7 +497,6 @@ ascending:true
 
 if(error){
 
-
 showMsg(
 "msg",
 "Teachers could not be loaded: " +
@@ -545,16 +504,13 @@ error.message,
 "error"
 );
 
-
 return;
 
 }
 
 
-
 teachers =
 data || [];
-
 
 
 const select =
@@ -563,37 +519,29 @@ document.getElementById(
 );
 
 
-
 select.innerHTML =
 '<option value="">Select Teacher</option>';
 
 
-
 teachers.forEach(
 function(teacher){
-
 
 const option =
 document.createElement(
 "option"
 );
 
-
 option.value =
 teacher.id;
 
-
 option.textContent =
 teacher.name;
-
 
 select.appendChild(
 option
 );
 
-
 });
-
 
 }
 
@@ -639,7 +587,6 @@ ascending:false
 
 if(error){
 
-
 showMsg(
 "msg",
 "Students could not be loaded: " +
@@ -648,17 +595,13 @@ error.message,
 );
 
 
-const rows =
 document.getElementById(
 "rows"
-);
-
-
-rows.innerHTML = `
+).innerHTML = `
 
 <tr>
 
-<td colspan="8">
+<td colspan="9">
 
 Unable to load students.
 
@@ -668,7 +611,6 @@ Unable to load students.
 
 `;
 
-
 return;
 
 }
@@ -682,19 +624,16 @@ document.getElementById(
 
 
 
-/* NO STUDENTS */
-
 if(
 !data ||
 data.length === 0
 ){
 
-
 rows.innerHTML = `
 
 <tr>
 
-<td colspan="8">
+<td colspan="9">
 
 No students found.
 
@@ -704,7 +643,6 @@ No students found.
 
 `;
 
-
 return;
 
 }
@@ -712,7 +650,7 @@ return;
 
 
 /* =====================================================
-   DISPLAY STUDENTS
+   STUDENT ROWS
 ===================================================== */
 
 rows.innerHTML =
@@ -722,10 +660,12 @@ function(student){
 
 
 const teacherName =
-
 student.teachers?.name ||
-
 "Not Assigned";
+
+
+const isActive =
+student.status === "active";
 
 
 
@@ -733,8 +673,6 @@ return `
 
 <tr>
 
-
-<!-- STUDENT ID -->
 
 <td>
 
@@ -754,8 +692,6 @@ student.id || ""
 
 
 
-<!-- NAME -->
-
 <td>
 
 ${escapeHtml(
@@ -766,55 +702,45 @@ student.full_name || ""
 
 
 
-<!-- FATHER NAME -->
-
 <td>
 
 ${escapeHtml(
-student.father_name || ""
+student.father_name || "-"
 )}
 
 </td>
 
 
 
-<!-- PHONE -->
-
 <td>
 
 ${escapeHtml(
-student.phone || ""
+student.phone || "-"
 )}
 
 </td>
 
 
 
-<!-- EMAIL -->
-
 <td>
 
 ${escapeHtml(
-student.email || ""
+student.email || "-"
 )}
 
 </td>
 
 
 
-<!-- COURSE -->
-
 <td>
 
 ${escapeHtml(
-student.course || ""
+student.course || "-"
 )}
 
 </td>
 
 
-
-<!-- TEACHER -->
 
 <td>
 
@@ -826,13 +752,102 @@ teacherName
 
 
 
-<!-- STATUS -->
+<td>
+
+<strong>
+
+${isActive
+? "Active"
+: "Inactive"
+}
+
+</strong>
+
+</td>
+
+
 
 <td>
 
-${escapeHtml(
-student.status || ""
-)}
+<div
+style="
+display:flex;
+gap:6px;
+flex-wrap:wrap;
+">
+
+
+${
+isActive
+
+?
+
+`
+
+<button
+type="button"
+class="btn"
+style="
+background:#d97706;
+padding:7px 10px;
+font-size:12px;
+"
+onclick="changeStudentStatus(
+'${student.id}',
+'inactive'
+)">
+
+Deactivate
+
+</button>
+
+`
+
+:
+
+`
+
+<button
+type="button"
+class="btn"
+style="
+background:#16a34a;
+padding:7px 10px;
+font-size:12px;
+"
+onclick="changeStudentStatus(
+'${student.id}',
+'active'
+)">
+
+Activate
+
+</button>
+
+`
+}
+
+
+
+<button
+type="button"
+class="btn"
+style="
+background:#dc2626;
+padding:7px 10px;
+font-size:12px;
+"
+onclick="deleteStudent(
+'${student.id}',
+'${escapeHtml(student.full_name || "this student")}'
+)">
+
+Delete
+
+</button>
+
+
+</div>
 
 </td>
 
@@ -842,6 +857,355 @@ student.status || ""
 `;
 
 }).join("");
+
+}
+
+
+
+/* =====================================================
+   CHANGE STUDENT STATUS
+===================================================== */
+
+async function changeStudentStatus(
+studentId,
+newStatus
+){
+
+
+const actionText =
+newStatus === "active"
+? "activate"
+: "deactivate";
+
+
+const confirmed =
+confirm(
+"Are you sure you want to " +
+actionText +
+" this student?"
+);
+
+
+if(!confirmed){
+
+return;
+
+}
+
+
+
+try{
+
+
+showMsg(
+"msg",
+"Updating student status...",
+"ok"
+);
+
+
+
+/* UPDATE STUDENT STATUS */
+
+const {
+error
+} = await db
+
+.from("students")
+
+.update({
+
+status:
+newStatus
+
+})
+
+.eq(
+"id",
+studentId
+);
+
+
+
+if(error){
+
+throw error;
+
+}
+
+
+
+/* =====================================================
+   UPDATE STUDENT CLASSROOM ACCESS
+===================================================== */
+
+const {
+error:
+classAccessError
+} = await db
+
+.from("class_access")
+
+.update({
+
+active:
+newStatus === "active"
+
+})
+
+.eq(
+"student_id",
+studentId
+);
+
+
+
+/*
+   If Classroom access has no matching row,
+   student status should still remain changed.
+*/
+
+if(classAccessError){
+
+console.warn(
+"Classroom access status could not be updated:",
+classAccessError.message
+);
+
+}
+
+
+
+/* RELOAD */
+
+await loadStudents();
+
+
+
+showMsg(
+"msg",
+
+"Student successfully " +
+(
+newStatus === "active"
+? "activated."
+: "deactivated."
+),
+
+"ok"
+);
+
+
+}
+catch(error){
+
+
+console.error(
+"Student status error:",
+error
+);
+
+
+showMsg(
+"msg",
+
+"Could not update student status: " +
+error.message,
+
+"error"
+);
+
+}
+
+}
+
+
+
+/* =====================================================
+   DELETE STUDENT
+===================================================== */
+
+async function deleteStudent(
+studentId,
+studentName
+){
+
+
+const confirmed =
+
+confirm(
+
+"PERMANENT DELETE\n\n" +
+
+"Student: " +
+studentName +
+
+"\n\n" +
+
+"This will permanently remove the student's portal account, student record, assignments and classroom access.\n\n" +
+
+"This action cannot be undone.\n\n" +
+
+"Do you want to continue?"
+
+);
+
+
+
+if(!confirmed){
+
+return;
+
+}
+
+
+
+try{
+
+
+showMsg(
+"msg",
+"Deleting student account...",
+"ok"
+);
+
+
+
+/* =====================================================
+   CURRENT ADMIN SESSION
+===================================================== */
+
+const {
+
+data:{
+session
+}
+
+} = await db.auth.getSession();
+
+
+
+if(!session){
+
+location.href =
+"login.html";
+
+return;
+
+}
+
+
+
+/* =====================================================
+   DELETE THROUGH EDGE FUNCTION
+===================================================== */
+
+const response =
+
+await fetch(
+
+EDGE_FUNCTION_URL,
+
+{
+
+method:
+"POST",
+
+headers:{
+
+"Authorization":
+"Bearer " +
+session.access_token,
+
+"apikey":
+window.SUPABASE_CONFIG.anonKey,
+
+"Content-Type":
+"application/json"
+
+},
+
+body:
+
+JSON.stringify({
+
+action:
+"delete",
+
+user_id:
+studentId
+
+})
+
+}
+
+);
+
+
+
+const result =
+await response.json();
+
+
+
+if(
+!response.ok ||
+!result.success
+){
+
+throw new Error(
+
+result.error ||
+
+"Student could not be deleted."
+
+);
+
+}
+
+
+
+/* =====================================================
+   SUCCESS
+===================================================== */
+
+showMsg(
+
+"msg",
+
+"Student account permanently deleted successfully.",
+
+"ok"
+
+);
+
+
+
+/* REFRESH */
+
+await loadStudents();
+
+
+}
+catch(error){
+
+
+console.error(
+"Delete student error:",
+error
+);
+
+
+showMsg(
+
+"msg",
+
+"Student could not be deleted: " +
+error.message,
+
+"error"
+
+);
 
 }
 
@@ -872,20 +1236,14 @@ document.getElementById(
 );
 
 
-
 button.disabled =
 true;
-
 
 
 button.textContent =
 "Creating Student...";
 
 
-
-/* =====================================================
-   GET FORM VALUES
-===================================================== */
 
 const name =
 
@@ -975,10 +1333,7 @@ document
 try{
 
 
-/* =====================================================
-   VALIDATION
-===================================================== */
-
+/* VALIDATION */
 
 if(!name){
 
@@ -989,7 +1344,6 @@ throw new Error(
 }
 
 
-
 if(!email){
 
 throw new Error(
@@ -997,7 +1351,6 @@ throw new Error(
 );
 
 }
-
 
 
 if(
@@ -1012,7 +1365,6 @@ throw new Error(
 }
 
 
-
 if(!teacherId){
 
 throw new Error(
@@ -1023,9 +1375,7 @@ throw new Error(
 
 
 
-/* =====================================================
-   FIND SELECTED TEACHER
-===================================================== */
+/* SELECTED TEACHER */
 
 const selectedTeacher =
 
@@ -1048,19 +1398,15 @@ throw new Error(
 
 
 
-/* =====================================================
-   GET ADMIN SESSION
-===================================================== */
+/* ADMIN SESSION */
 
 const {
 
-data: {
+data:{
 session
 }
 
-} =
-
-await db.auth.getSession();
+} = await db.auth.getSession();
 
 
 
@@ -1076,20 +1422,19 @@ return;
 
 
 /* =====================================================
-   CREATE STUDENT ACCOUNT
+   CREATE ACCOUNT
 ===================================================== */
 
 const response =
 
 await fetch(
 
-"https://olxytsmwqkrrnutsegtr.supabase.co/functions/v1/create-portal-user",
+EDGE_FUNCTION_URL,
 
 {
 
 method:
 "POST",
-
 
 headers:{
 
@@ -1097,16 +1442,13 @@ headers:{
 "Bearer " +
 session.access_token,
 
-
 "apikey":
 window.SUPABASE_CONFIG.anonKey,
-
 
 "Content-Type":
 "application/json"
 
 },
-
 
 body:
 
@@ -1115,30 +1457,23 @@ JSON.stringify({
 role:
 "student",
 
-
 email:
 email,
-
 
 password:
 password,
 
-
 full_name:
 name,
-
 
 father_name:
 fatherName || null,
 
-
 phone:
 phone || null,
 
-
 course:
 course || null,
-
 
 teacher_id:
 teacherId
@@ -1173,9 +1508,7 @@ result.error ||
 
 
 
-/* =====================================================
-   STUDENT UUID
-===================================================== */
+/* NEW STUDENT ID */
 
 const studentId =
 result.user_id;
@@ -1200,14 +1533,13 @@ throw new Error(
 
 const {
 
-data: studentData,
+data:
+studentData,
 
 error:
 studentUpdateError
 
-} =
-
-await db
+} = await db
 
 .from("students")
 
@@ -1256,7 +1588,7 @@ teacherId
 
 throw new Error(
 
-"Student was created but could not be connected to the selected teacher."
+"Student could not be connected to the selected teacher."
 
 );
 
@@ -1276,9 +1608,7 @@ existingAssignment,
 error:
 assignmentCheckError
 
-} =
-
-await db
+} = await db
 
 .from(
 "teacher_student_assignments"
@@ -1321,9 +1651,7 @@ assignmentCheckError.message
 
 
 
-/* =====================================================
-   CREATE ASSIGNMENT IF NEEDED
-===================================================== */
+/* CREATE ASSIGNMENT IF MISSING */
 
 if(!existingAssignment){
 
@@ -1333,9 +1661,7 @@ const {
 error:
 assignmentError
 
-} =
-
-await db
+} = await db
 
 .from(
 "teacher_student_assignments"
@@ -1408,25 +1734,18 @@ studentId,
 
 
 
-/* RESET FORM */
-
 document
-
 .getElementById(
 "studentForm"
 )
-
 .reset();
 
 
-
-/* REFRESH STUDENT LIST */
 
 await loadStudents();
 
 
 }
-
 catch(error){
 
 
@@ -1436,22 +1755,19 @@ error
 );
 
 
-
 showMsg(
 
 "msg",
 
 error.message ||
-
 "Something went wrong.",
 
 "error"
 
 );
 
+
 }
-
-
 finally{
 
 
@@ -1485,7 +1801,6 @@ return;
 }
 
 
-
 await loadTeachers();
 
 
@@ -1495,7 +1810,6 @@ await loadStudents();
 }
 
 
-
 initStudents();
 
 
@@ -1503,4 +1817,5 @@ initStudents();
 
 
 </body>
+
 </html>
