@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -10,7 +11,8 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../js/config.js"></script>
-  <script src="../js/portal.js"></script>
+  <script src="../js/admin.js"></script>
+
 </head>
 
 <body class="dashboard" data-page="admin-accounts">
@@ -18,15 +20,29 @@
 <header class="topbar">
 
   <div class="brand">
-    <img src="../assets/hr-logo.svg" alt="HR Logo">
+
+    <img
+      src="../assets/hr-logo.svg"
+      alt="HR Logo"
+    >
 
     <div>
+
       <h1>Haroon Ibn Rasheed</h1>
-      <span>Online Quran Academy</span>
+
+      <span>
+        Online Quran Academy
+      </span>
+
     </div>
+
   </div>
 
-  <button class="logout-btn" onclick="logout()">
+
+  <button
+    class="logout-btn"
+    onclick="logout()"
+  >
     Logout
   </button>
 
@@ -35,29 +51,45 @@
 
 <main class="portal-container">
 
+
   <div class="page-header">
 
     <div>
-      <h2>Account Credentials</h2>
-      <p>Teacher & Student account information</p>
+
+      <h2>
+        Account Credentials
+      </h2>
+
+      <p>
+        Teacher & Student account information
+      </p>
+
     </div>
 
   </div>
+
 
 
   <!-- ADD ACCOUNT -->
 
   <section class="portal-card">
 
-    <h3>Add Account</h3>
+    <h3>
+      Add Account
+    </h3>
+
 
     <form id="accountForm">
 
+
       <div class="form-grid">
+
 
         <div class="form-group">
 
-          <label>Full Name</label>
+          <label>
+            Full Name
+          </label>
 
           <input
             type="text"
@@ -69,11 +101,17 @@
         </div>
 
 
+
         <div class="form-group">
 
-          <label>Role</label>
+          <label>
+            Role
+          </label>
 
-          <select id="accountRole" required>
+          <select
+            id="accountRole"
+            required
+          >
 
             <option value="">
               Select Role
@@ -92,9 +130,12 @@
         </div>
 
 
+
         <div class="form-group">
 
-          <label>Email</label>
+          <label>
+            Email
+          </label>
 
           <input
             type="email"
@@ -106,9 +147,12 @@
         </div>
 
 
+
         <div class="form-group">
 
-          <label>Password</label>
+          <label>
+            Password
+          </label>
 
           <input
             type="text"
@@ -120,9 +164,12 @@
         </div>
 
 
+
         <div class="form-group">
 
-          <label>Account UUID</label>
+          <label>
+            Account UUID
+          </label>
 
           <input
             type="text"
@@ -131,6 +178,7 @@
           >
 
         </div>
+
 
       </div>
 
@@ -143,6 +191,7 @@
         Save Account
       </button>
 
+
     </form>
 
   </section>
@@ -153,11 +202,14 @@
 
   <section class="portal-card">
 
+
     <div class="section-heading">
 
       <div>
 
-        <h3>Saved Accounts</h3>
+        <h3>
+          Saved Accounts
+        </h3>
 
         <p>
           Teacher and Student credentials saved by Admin.
@@ -168,24 +220,45 @@
     </div>
 
 
+
     <div class="table-wrapper">
 
+
       <table class="portal-table">
+
 
         <thead>
 
           <tr>
 
-            <th>Name</th>
-            <th>Role</th>
-            <th>Email</th>
-            <th>Password</th>
-            <th>UUID</th>
-            <th>Actions</th>
+            <th>
+              Name
+            </th>
+
+            <th>
+              Role
+            </th>
+
+            <th>
+              Email
+            </th>
+
+            <th>
+              Password
+            </th>
+
+            <th>
+              UUID
+            </th>
+
+            <th>
+              Actions
+            </th>
 
           </tr>
 
         </thead>
+
 
 
         <tbody id="accountsRows">
@@ -197,18 +270,20 @@
               style="text-align:center;"
             >
               Loading accounts...
-
             </td>
 
           </tr>
 
         </tbody>
 
+
       </table>
+
 
     </div>
 
   </section>
+
 
 </main>
 
@@ -216,14 +291,27 @@
 
 <script>
 
+
+/* ==========================================
+   SUPABASE CONNECTION
+========================================== */
+
 const accountDB = window.db;
 
+
+
+/* ==========================================
+   ADMIN ACCESS CHECK
+========================================== */
 
 async function checkAdminAccess(){
 
   if(!accountDB){
 
-    alert("Supabase connection not found.");
+    alert(
+      "Supabase connection not found."
+    );
+
     return false;
 
   }
@@ -239,7 +327,9 @@ async function checkAdminAccess(){
 
   if(!session){
 
-    window.location.href = "index.html";
+    window.location.href =
+      "login.html";
+
     return false;
 
   }
@@ -249,7 +339,10 @@ async function checkAdminAccess(){
     await accountDB
       .from("profiles")
       .select("role")
-      .eq("id", session.user.id)
+      .eq(
+        "id",
+        session.user.id
+      )
       .maybeSingle();
 
 
@@ -259,10 +352,12 @@ async function checkAdminAccess(){
     profileResult.data.role !== "admin"
   ){
 
-    alert("Admin access only.");
+    alert(
+      "Admin access only."
+    );
 
     window.location.href =
-      "../index.html";
+      "login.html";
 
     return false;
 
@@ -275,29 +370,51 @@ async function checkAdminAccess(){
 
 
 
+/* ==========================================
+   LOAD SAVED ACCOUNTS
+========================================== */
+
 async function loadAccounts(){
 
   const tbody =
-    document.getElementById("accountsRows");
+    document.getElementById(
+      "accountsRows"
+    );
 
 
   const result =
     await accountDB
-      .from("account_credentials")
+      .from(
+        "account_credentials"
+      )
       .select("*")
-      .order("created_at", {
-        ascending:false
-      });
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
+      );
 
 
   if(result.error){
 
     tbody.innerHTML = `
+
       <tr>
-        <td colspan="6" style="text-align:center;color:red;">
-          ${escapeHTML(result.error.message)}
+
+        <td
+          colspan="6"
+          style="text-align:center;color:red;"
+        >
+
+          ${escapeHTML(
+            result.error.message
+          )}
+
         </td>
+
       </tr>
+
     `;
 
     return;
@@ -305,109 +422,173 @@ async function loadAccounts(){
   }
 
 
-  if(!result.data || result.data.length === 0){
+
+  if(
+    !result.data ||
+    result.data.length === 0
+  ){
 
     tbody.innerHTML = `
+
       <tr>
-        <td colspan="6" style="text-align:center;">
+
+        <td
+          colspan="6"
+          style="text-align:center;"
+        >
+
           No accounts saved yet.
+
         </td>
+
       </tr>
+
     `;
 
     return;
 
   }
+
 
 
   tbody.innerHTML =
-    result.data.map(account => {
-
-      const role =
-        account.role === "teacher"
-          ? "Teacher"
-          : "Student";
+    result.data.map(
+      account => {
 
 
-      return `
-
-        <tr>
-
-          <td>
-            ${escapeHTML(account.full_name)}
-          </td>
+        const role =
+          account.role === "teacher"
+            ? "Teacher"
+            : "Student";
 
 
-          <td>
-            <strong>${role}</strong>
-          </td>
+        return `
+
+          <tr>
 
 
-          <td>
+            <td>
 
-            <span>
-              ${escapeHTML(account.email)}
-            </span>
+              ${escapeHTML(
+                account.full_name
+              )}
 
-            <br>
-
-            <button
-              class="btn-small"
-              onclick="copyText(${JSON.stringify(account.email)})"
-            >
-              Copy Email
-            </button>
-
-          </td>
+            </td>
 
 
-          <td>
 
-            <span>
-              ${escapeHTML(account.password)}
-            </span>
+            <td>
 
-            <br>
+              <strong>
+                ${role}
+              </strong>
 
-            <button
-              class="btn-small"
-              onclick="copyText(${JSON.stringify(account.password)})"
-            >
-              Copy Password
-            </button>
-
-          </td>
+            </td>
 
 
-          <td>
 
-            <span style="font-size:12px;">
-              ${escapeHTML(account.auth_user_id || "—")}
-            </span>
+            <td>
 
-          </td>
+              <span>
+
+                ${escapeHTML(
+                  account.email
+                )}
+
+              </span>
+
+              <br>
 
 
-          <td>
+              <button
+                class="btn-small"
+                onclick='copyText(${JSON.stringify(
+                  account.email
+                )})'
+              >
 
-            <button
-              class="btn-small"
-              onclick="deleteAccount(${JSON.stringify(account.id)})"
-            >
-              Delete
-            </button>
+                Copy Email
 
-          </td>
+              </button>
 
-        </tr>
+            </td>
 
-      `;
 
-    }).join("");
+
+            <td>
+
+              <span>
+
+                ${escapeHTML(
+                  account.password
+                )}
+
+              </span>
+
+              <br>
+
+
+              <button
+                class="btn-small"
+                onclick='copyText(${JSON.stringify(
+                  account.password
+                )})'
+              >
+
+                Copy Password
+
+              </button>
+
+            </td>
+
+
+
+            <td>
+
+              <span
+                style="font-size:12px;"
+              >
+
+                ${escapeHTML(
+                  account.auth_user_id || "—"
+                )}
+
+              </span>
+
+            </td>
+
+
+
+            <td>
+
+              <button
+                class="btn-small"
+                onclick='deleteAccount(${JSON.stringify(
+                  account.id
+                )})'
+              >
+
+                Delete
+
+              </button>
+
+            </td>
+
+
+          </tr>
+
+        `;
+
+      }
+    ).join("");
 
 }
 
 
+
+/* ==========================================
+   SAVE ACCOUNT
+========================================== */
 
 async function saveAccount(event){
 
@@ -416,53 +597,83 @@ async function saveAccount(event){
 
   const name =
     document
-      .getElementById("accountName")
-      .value.trim();
+      .getElementById(
+        "accountName"
+      )
+      .value
+      .trim();
 
 
   const role =
     document
-      .getElementById("accountRole")
+      .getElementById(
+        "accountRole"
+      )
       .value;
 
 
   const email =
     document
-      .getElementById("accountEmail")
-      .value.trim();
+      .getElementById(
+        "accountEmail"
+      )
+      .value
+      .trim();
 
 
   const password =
     document
-      .getElementById("accountPassword")
+      .getElementById(
+        "accountPassword"
+      )
       .value;
 
 
   const uuid =
     document
-      .getElementById("accountUUID")
-      .value.trim();
+      .getElementById(
+        "accountUUID"
+      )
+      .value
+      .trim();
 
 
-  if(!name || !role || !email || !password){
 
-    alert("Please fill all required fields.");
+  if(
+    !name ||
+    !role ||
+    !email ||
+    !password
+  ){
+
+    alert(
+      "Please fill all required fields."
+    );
+
     return;
 
   }
 
 
+
   const button =
-    document.getElementById("saveAccountBtn");
+    document.getElementById(
+      "saveAccountBtn"
+    );
 
 
   button.disabled = true;
-  button.textContent = "Saving...";
+
+  button.textContent =
+    "Saving...";
+
 
 
   const result =
     await accountDB
-      .from("account_credentials")
+      .from(
+        "account_credentials"
+      )
       .insert({
 
         full_name:name,
@@ -473,13 +684,18 @@ async function saveAccount(event){
 
         password:password,
 
-        auth_user_id:uuid || null
+        auth_user_id:
+          uuid || null
 
       });
 
 
+
   button.disabled = false;
-  button.textContent = "Save Account";
+
+  button.textContent =
+    "Save Account";
+
 
 
   if(result.error){
@@ -494,12 +710,19 @@ async function saveAccount(event){
   }
 
 
-  alert("Account saved successfully.");
+
+  alert(
+    "Account saved successfully."
+  );
+
 
 
   document
-    .getElementById("accountForm")
+    .getElementById(
+      "accountForm"
+    )
     .reset();
+
 
 
   await loadAccounts();
@@ -507,6 +730,10 @@ async function saveAccount(event){
 }
 
 
+
+/* ==========================================
+   DELETE ACCOUNT
+========================================== */
 
 async function deleteAccount(id){
 
@@ -517,15 +744,24 @@ async function deleteAccount(id){
 
 
   if(!confirmDelete){
+
     return;
+
   }
+
 
 
   const result =
     await accountDB
-      .from("account_credentials")
+      .from(
+        "account_credentials"
+      )
       .delete()
-      .eq("id",id);
+      .eq(
+        "id",
+        id
+      );
+
 
 
   if(result.error){
@@ -540,7 +776,10 @@ async function deleteAccount(id){
   }
 
 
-  alert("Account deleted.");
+
+  alert(
+    "Account deleted."
+  );
 
 
   await loadAccounts();
@@ -549,15 +788,26 @@ async function deleteAccount(id){
 
 
 
+/* ==========================================
+   COPY
+========================================== */
+
 async function copyText(text){
 
   try{
 
-    await navigator.clipboard.writeText(text);
+    await navigator
+      .clipboard
+      .writeText(text);
 
-    alert("Copied.");
 
-  }catch(error){
+    alert(
+      "Copied."
+    );
+
+  }
+
+  catch(error){
 
     alert(
       "Copy failed. Please copy it manually."
@@ -569,27 +819,63 @@ async function copyText(text){
 
 
 
+/* ==========================================
+   HTML SECURITY
+========================================== */
+
 function escapeHTML(value){
 
-  return String(value ?? "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
+  return String(
+    value ?? ""
+  )
+
+  .replace(
+    /&/g,
+    "&amp;"
+  )
+
+  .replace(
+    /</g,
+    "&lt;"
+  )
+
+  .replace(
+    />/g,
+    "&gt;"
+  )
+
+  .replace(
+    /"/g,
+    "&quot;"
+  )
+
+  .replace(
+    /'/g,
+    "&#039;"
+  );
 
 }
 
 
 
+/* ==========================================
+   FORM
+========================================== */
+
 document
-  .getElementById("accountForm")
+  .getElementById(
+    "accountForm"
+  )
   .addEventListener(
     "submit",
     saveAccount
   );
 
 
+
+/* ==========================================
+   START
+========================================== */
 
 (async function(){
 
@@ -604,6 +890,7 @@ document
   }
 
 })();
+
 
 </script>
 
