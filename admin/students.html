@@ -228,7 +228,9 @@ Create Student Account
 let teachers = [];
 
 
-/* LOAD TEACHERS */
+/* =========================================================
+   LOAD TEACHERS
+========================================================= */
 
 async function loadTeachers(){
 
@@ -241,7 +243,12 @@ const { data, error } = await db
 
 if(error){
 
-showMsg("msg", error.message, "error");
+showMsg(
+"msg",
+"Teachers could not be loaded: " + error.message,
+"error"
+);
+
 return;
 
 }
@@ -249,7 +256,9 @@ return;
 
 teachers = data || [];
 
-const select = document.getElementById("teacher_id");
+const select =
+document.getElementById("teacher_id");
+
 
 select.innerHTML =
 '<option value="">Select Teacher</option>';
@@ -257,10 +266,13 @@ select.innerHTML =
 
 teachers.forEach(function(teacher){
 
-const option = document.createElement("option");
+const option =
+document.createElement("option");
 
 option.value = teacher.id;
-option.textContent = teacher.name;
+
+option.textContent =
+teacher.name;
 
 select.appendChild(option);
 
@@ -269,7 +281,9 @@ select.appendChild(option);
 }
 
 
-/* LOAD STUDENTS */
+/* =========================================================
+   LOAD STUDENTS
+========================================================= */
 
 async function loadStudents(){
 
@@ -285,6 +299,7 @@ course,
 status,
 teacher_id,
 teachers:teacher_id (
+id,
 name
 )
 `)
@@ -293,13 +308,19 @@ name
 
 if(error){
 
-showMsg("msg", error.message, "error");
+showMsg(
+"msg",
+"Students could not be loaded: " + error.message,
+"error"
+);
+
 return;
 
 }
 
 
-const rows = document.getElementById("rows");
+const rows =
+document.getElementById("rows");
 
 
 if(!data || data.length === 0){
@@ -312,29 +333,45 @@ return;
 }
 
 
-rows.innerHTML = data.map(function(student){
+rows.innerHTML =
+data.map(function(student){
 
 const teacherName =
-student.teachers?.name || "Not Assigned";
+student.teachers?.name ||
+"Not Assigned";
 
 
 return `
 
 <tr>
 
-<td>${escapeHtml(student.full_name || "")}</td>
+<td>
+${escapeHtml(student.full_name || "")}
+</td>
 
-<td>${escapeHtml(student.father_name || "")}</td>
+<td>
+${escapeHtml(student.father_name || "")}
+</td>
 
-<td>${escapeHtml(student.phone || "")}</td>
+<td>
+${escapeHtml(student.phone || "")}
+</td>
 
-<td>${escapeHtml(student.email || "")}</td>
+<td>
+${escapeHtml(student.email || "")}
+</td>
 
-<td>${escapeHtml(student.course || "")}</td>
+<td>
+${escapeHtml(student.course || "")}
+</td>
 
-<td>${escapeHtml(teacherName)}</td>
+<td>
+${escapeHtml(teacherName)}
+</td>
 
-<td>${escapeHtml(student.status || "")}</td>
+<td>
+${escapeHtml(student.status || "")}
+</td>
 
 </tr>
 
@@ -345,11 +382,15 @@ return `
 }
 
 
-/* CREATE STUDENT */
+/* =========================================================
+   CREATE STUDENT
+========================================================= */
 
 document
 .getElementById("studentForm")
-.addEventListener("submit", async function(e){
+.addEventListener(
+"submit",
+async function(e){
 
 e.preventDefault();
 
@@ -359,70 +400,154 @@ document.getElementById("createStudentBtn");
 
 
 button.disabled = true;
-button.textContent = "Creating...";
+
+button.textContent =
+"Creating Student...";
 
 
 const name =
-document.getElementById("student_name")
-.value.trim();
+document
+.getElementById("student_name")
+.value
+.trim();
+
 
 const email =
-document.getElementById("student_email")
-.value.trim();
+document
+.getElementById("student_email")
+.value
+.trim();
+
 
 const password =
-document.getElementById("student_password")
+document
+.getElementById("student_password")
 .value;
+
 
 const fatherName =
-document.getElementById("father_name")
-.value.trim();
+document
+.getElementById("father_name")
+.value
+.trim();
+
 
 const phone =
-document.getElementById("student_phone")
-.value.trim();
+document
+.getElementById("student_phone")
+.value
+.trim();
+
 
 const course =
-document.getElementById("student_course")
-.value.trim();
+document
+.getElementById("student_course")
+.value
+.trim();
+
 
 const teacherId =
-document.getElementById("teacher_id")
+document
+.getElementById("teacher_id")
 .value;
 
+
 const status =
-document.getElementById("student_status")
+document
+.getElementById("student_status")
 .value;
 
 
 try{
 
 
-if(!teacherId){
+/* -----------------------------------------
+   VALIDATION
+----------------------------------------- */
 
-throw new Error("Please select a teacher.");
+if(!name){
+
+throw new Error(
+"Please enter student name."
+);
 
 }
 
 
-/* CURRENT ADMIN SESSION */
+if(!email){
+
+throw new Error(
+"Please enter student email."
+);
+
+}
+
+
+if(!password || password.length < 6){
+
+throw new Error(
+"Password must be at least 6 characters."
+);
+
+}
+
+
+if(!teacherId){
+
+throw new Error(
+"Please select a teacher."
+);
+
+}
+
+
+/* -----------------------------------------
+   CHECK SELECTED TEACHER
+----------------------------------------- */
+
+const selectedTeacher =
+teachers.find(function(t){
+
+return t.id === teacherId;
+
+});
+
+
+if(!selectedTeacher){
+
+throw new Error(
+"Selected teacher was not found."
+);
+
+}
+
+
+/* -----------------------------------------
+   ADMIN SESSION
+----------------------------------------- */
 
 const {
 data: { session }
-} = await db.auth.getSession();
+} =
+await db.auth.getSession();
 
 
 if(!session){
 
-location.href = "login.html";
+location.href =
+"login.html";
+
 return;
 
 }
 
 
-/* CREATE AUTH + PROFILE + STUDENT */
+/* -----------------------------------------
+   CREATE STUDENT ACCOUNT
+----------------------------------------- */
 
-const response = await fetch(
+const response =
+await fetch(
 
 "https://olxytsmwqkrrnutsegtr.supabase.co/functions/v1/create-portal-user",
 
@@ -433,7 +558,8 @@ method:"POST",
 headers:{
 
 "Authorization":
-"Bearer " + session.access_token,
+"Bearer " +
+session.access_token,
 
 "apikey":
 window.SUPABASE_CONFIG.anonKey,
@@ -453,11 +579,17 @@ password:password,
 
 full_name:name,
 
-father_name:fatherName || null,
+father_name:
+fatherName || null,
 
-phone:phone || null,
+phone:
+phone || null,
 
-course:course || null
+course:
+course || null,
+
+teacher_id:
+teacherId
 
 })
 
@@ -466,10 +598,14 @@ course:course || null
 );
 
 
-const result = await response.json();
+const result =
+await response.json();
 
 
-if(!response.ok || !result.success){
+if(
+!response.ok ||
+!result.success
+){
 
 throw new Error(
 result.error ||
@@ -479,52 +615,126 @@ result.error ||
 }
 
 
-/* NEW STUDENT UUID */
+/* -----------------------------------------
+   NEW STUDENT UUID
+----------------------------------------- */
 
-const studentId = result.user_id;
+const studentId =
+result.user_id;
 
 
-/* SAVE TEACHER ASSIGNMENT */
+if(!studentId){
+
+throw new Error(
+"Student account was created but student ID was not returned."
+);
+
+}
+
+
+/* -----------------------------------------
+   MAKE SURE STUDENT IS ASSIGNED
+   TO SELECTED TEACHER
+----------------------------------------- */
 
 const {
+data: studentData,
 error: studentUpdateError
-} = await db
+} =
+await db
 .from("students")
 .update({
 
-teacher_id:teacherId,
-status:status
+teacher_id:
+teacherId,
+
+status:
+status
 
 })
-.eq("id", studentId);
+.eq("id", studentId)
+.select("id,teacher_id")
+.maybeSingle();
 
 
 if(studentUpdateError){
 
 throw new Error(
-"Student account created, but teacher assignment failed: "
-+
+"Student account created, but teacher assignment failed: " +
 studentUpdateError.message
 );
 
 }
 
 
-/* SAVE ASSIGNMENT RECORD */
+if(
+!studentData ||
+studentData.teacher_id !== teacherId
+){
+
+throw new Error(
+"Student was created but could not be connected to the selected teacher."
+);
+
+}
+
+
+/* -----------------------------------------
+   CHECK EXISTING ASSIGNMENT
+----------------------------------------- */
+
+const {
+data: existingAssignment,
+error: assignmentCheckError
+} =
+await db
+.from("teacher_student_assignments")
+.select("id")
+.eq("student_id", studentId)
+.eq("teacher_id", teacherId)
+.eq("active", true)
+.maybeSingle();
+
+
+if(assignmentCheckError){
+
+throw new Error(
+"Could not verify teacher assignment: " +
+assignmentCheckError.message
+);
+
+}
+
+
+/* -----------------------------------------
+   CREATE ASSIGNMENT ONLY IF MISSING
+----------------------------------------- */
+
+if(!existingAssignment){
 
 const {
 error: assignmentError
-} = await db
+} =
+await db
 .from("teacher_student_assignments")
 .insert({
 
-student_id:studentId,
-teacher_id:teacherId,
-assignment_type:"permanent",
-start_date:new Date()
+student_id:
+studentId,
+
+teacher_id:
+teacherId,
+
+assignment_type:
+"permanent",
+
+start_date:
+new Date()
 .toISOString()
 .slice(0,10),
-active:true
+
+active:
+true
 
 });
 
@@ -532,25 +742,38 @@ active:true
 if(assignmentError){
 
 throw new Error(
-"Student created, but assignment record failed: "
-+
+"Student created, but assignment record failed: " +
 assignmentError.message
 );
 
 }
 
+}
+
+
+/* -----------------------------------------
+   SUCCESS
+----------------------------------------- */
 
 showMsg(
 "msg",
-"Student account created and teacher assigned successfully.",
+
+"Student account created successfully and assigned to " +
+selectedTeacher.name +
+". The student will now appear in this teacher's student list.",
+
 "ok"
 );
 
+
+/* RESET FORM */
 
 document
 .getElementById("studentForm")
 .reset();
 
+
+/* REFRESH LIST */
 
 await loadStudents();
 
@@ -558,10 +781,17 @@ await loadStudents();
 }
 catch(error){
 
+console.error(
+"Create student error:",
+error
+);
+
 showMsg(
 "msg",
+
 error.message ||
 "Something went wrong.",
+
 "error"
 );
 
@@ -569,6 +799,7 @@ error.message ||
 finally{
 
 button.disabled = false;
+
 button.textContent =
 "Create Student Account";
 
@@ -577,11 +808,16 @@ button.textContent =
 });
 
 
-/* START */
+/* =========================================================
+   START
+========================================================= */
 
 async function initStudents(){
 
-if(!(await adminGuard())) return;
+if(
+!(await adminGuard())
+)return;
+
 
 await loadTeachers();
 
