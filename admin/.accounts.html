@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Account Credentials | Haroon Ibn Rasheed Online Quran Academy</title>
+
+  <link rel="stylesheet" href="../css/portal.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/portal.js"></script>
+</head>
+
+<body class="dashboard" data-page="admin-accounts">
+
+<header class="topbar">
+
+  <div class="brand">
+    <img src="../assets/hr-logo.svg" alt="HR Logo">
+
+    <div>
+      <h1>Haroon Ibn Rasheed</h1>
+      <span>Online Quran Academy</span>
+    </div>
+  </div>
+
+  <button class="logout-btn" onclick="logout()">
+    Logout
+  </button>
+
+</header>
+
+
+<main class="portal-container">
+
+  <div class="page-header">
+
+    <div>
+      <h2>Account Credentials</h2>
+      <p>Teacher & Student account information</p>
+    </div>
+
+  </div>
+
+
+  <!-- ADD ACCOUNT -->
+
+  <section class="portal-card">
+
+    <h3>Add Account</h3>
+
+    <form id="accountForm">
+
+      <div class="form-grid">
+
+        <div class="form-group">
+
+          <label>Full Name</label>
+
+          <input
+            type="text"
+            id="accountName"
+            placeholder="Enter full name"
+            required
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>Role</label>
+
+          <select id="accountRole" required>
+
+            <option value="">
+              Select Role
+            </option>
+
+            <option value="teacher">
+              Teacher
+            </option>
+
+            <option value="student">
+              Student
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>Email</label>
+
+          <input
+            type="email"
+            id="accountEmail"
+            placeholder="example@email.com"
+            required
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>Password</label>
+
+          <input
+            type="text"
+            id="accountPassword"
+            placeholder="Enter password"
+            required
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>Account UUID</label>
+
+          <input
+            type="text"
+            id="accountUUID"
+            placeholder="Paste Supabase User UUID"
+          >
+
+        </div>
+
+      </div>
+
+
+      <button
+        type="submit"
+        class="btn-primary"
+        id="saveAccountBtn"
+      >
+        Save Account
+      </button>
+
+    </form>
+
+  </section>
+
+
+
+  <!-- SAVED ACCOUNTS -->
+
+  <section class="portal-card">
+
+    <div class="section-heading">
+
+      <div>
+
+        <h3>Saved Accounts</h3>
+
+        <p>
+          Teacher and Student credentials saved by Admin.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="table-wrapper">
+
+      <table class="portal-table">
+
+        <thead>
+
+          <tr>
+
+            <th>Name</th>
+            <th>Role</th>
+            <th>Email</th>
+            <th>Password</th>
+            <th>UUID</th>
+            <th>Actions</th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody id="accountsRows">
+
+          <tr>
+
+            <td
+              colspan="6"
+              style="text-align:center;"
+            >
+              Loading accounts...
+
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+
+<script>
+
+const accountDB = window.db;
+
+
+async function checkAdminAccess(){
+
+  if(!accountDB){
+
+    alert("Supabase connection not found.");
+    return false;
+
+  }
+
+
+  const sessionResult =
+    await accountDB.auth.getSession();
+
+
+  const session =
+    sessionResult.data.session;
+
+
+  if(!session){
+
+    window.location.href = "index.html";
+    return false;
+
+  }
+
+
+  const profileResult =
+    await accountDB
+      .from("profiles")
+      .select("role")
+      .eq("id", session.user.id)
+      .maybeSingle();
+
+
+  if(
+    profileResult.error ||
+    !profileResult.data ||
+    profileResult.data.role !== "admin"
+  ){
+
+    alert("Admin access only.");
+
+    window.location.href =
+      "../index.html";
+
+    return false;
+
+  }
+
+
+  return true;
+
+}
+
+
+
+async function loadAccounts(){
+
+  const tbody =
+    document.getElementById("accountsRows");
+
+
+  const result =
+    await accountDB
+      .from("account_credentials")
+      .select("*")
+      .order("created_at", {
+        ascending:false
+      });
+
+
+  if(result.error){
+
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="6" style="text-align:center;color:red;">
+          ${escapeHTML(result.error.message)}
+        </td>
+      </tr>
+    `;
+
+    return;
+
+  }
+
+
+  if(!result.data || result.data.length === 0){
+
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="6" style="text-align:center;">
+          No accounts saved yet.
+        </td>
+      </tr>
+    `;
+
+    return;
+
+  }
+
+
+  tbody.innerHTML =
+    result.data.map(account => {
+
+      const role =
+        account.role === "teacher"
+          ? "Teacher"
+          : "Student";
+
+
+      return `
+
+        <tr>
+
+          <td>
+            ${escapeHTML(account.full_name)}
+          </td>
+
+
+          <td>
+            <strong>${role}</strong>
+          </td>
+
+
+          <td>
+
+            <span>
+              ${escapeHTML(account.email)}
+            </span>
+
+            <br>
+
+            <button
+              class="btn-small"
+              onclick="copyText(${JSON.stringify(account.email)})"
+            >
+              Copy Email
+            </button>
+
+          </td>
+
+
+          <td>
+
+            <span>
+              ${escapeHTML(account.password)}
+            </span>
+
+            <br>
+
+            <button
+              class="btn-small"
+              onclick="copyText(${JSON.stringify(account.password)})"
+            >
+              Copy Password
+            </button>
+
+          </td>
+
+
+          <td>
+
+            <span style="font-size:12px;">
+              ${escapeHTML(account.auth_user_id || "—")}
+            </span>
+
+          </td>
+
+
+          <td>
+
+            <button
+              class="btn-small"
+              onclick="deleteAccount(${JSON.stringify(account.id)})"
+            >
+              Delete
+            </button>
+
+          </td>
+
+        </tr>
+
+      `;
+
+    }).join("");
+
+}
+
+
+
+async function saveAccount(event){
+
+  event.preventDefault();
+
+
+  const name =
+    document
+      .getElementById("accountName")
+      .value.trim();
+
+
+  const role =
+    document
+      .getElementById("accountRole")
+      .value;
+
+
+  const email =
+    document
+      .getElementById("accountEmail")
+      .value.trim();
+
+
+  const password =
+    document
+      .getElementById("accountPassword")
+      .value;
+
+
+  const uuid =
+    document
+      .getElementById("accountUUID")
+      .value.trim();
+
+
+  if(!name || !role || !email || !password){
+
+    alert("Please fill all required fields.");
+    return;
+
+  }
+
+
+  const button =
+    document.getElementById("saveAccountBtn");
+
+
+  button.disabled = true;
+  button.textContent = "Saving...";
+
+
+  const result =
+    await accountDB
+      .from("account_credentials")
+      .insert({
+
+        full_name:name,
+
+        role:role,
+
+        email:email,
+
+        password:password,
+
+        auth_user_id:uuid || null
+
+      });
+
+
+  button.disabled = false;
+  button.textContent = "Save Account";
+
+
+  if(result.error){
+
+    alert(
+      "Save failed: " +
+      result.error.message
+    );
+
+    return;
+
+  }
+
+
+  alert("Account saved successfully.");
+
+
+  document
+    .getElementById("accountForm")
+    .reset();
+
+
+  await loadAccounts();
+
+}
+
+
+
+async function deleteAccount(id){
+
+  const confirmDelete =
+    confirm(
+      "Are you sure you want to delete this saved account?"
+    );
+
+
+  if(!confirmDelete){
+    return;
+  }
+
+
+  const result =
+    await accountDB
+      .from("account_credentials")
+      .delete()
+      .eq("id",id);
+
+
+  if(result.error){
+
+    alert(
+      "Delete failed: " +
+      result.error.message
+    );
+
+    return;
+
+  }
+
+
+  alert("Account deleted.");
+
+
+  await loadAccounts();
+
+}
+
+
+
+async function copyText(text){
+
+  try{
+
+    await navigator.clipboard.writeText(text);
+
+    alert("Copied.");
+
+  }catch(error){
+
+    alert(
+      "Copy failed. Please copy it manually."
+    );
+
+  }
+
+}
+
+
+
+function escapeHTML(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+
+document
+  .getElementById("accountForm")
+  .addEventListener(
+    "submit",
+    saveAccount
+  );
+
+
+
+(async function(){
+
+  const allowed =
+    await checkAdminAccess();
+
+
+  if(allowed){
+
+    await loadAccounts();
+
+  }
+
+})();
+
+</script>
+
+</body>
+</html>
