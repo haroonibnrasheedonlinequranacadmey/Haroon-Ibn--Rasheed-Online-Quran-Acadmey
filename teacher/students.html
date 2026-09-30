@@ -19,6 +19,14 @@ href="../css/portal.css">
 
 <script src="../js/config.js"></script>
 
+<!-- SUPABASE DATABASE CLIENT -->
+<script>
+const db = supabase.createClient(
+  window.SUPABASE_CONFIG.url,
+  window.SUPABASE_CONFIG.anonKey
+);
+</script>
+
 <script src="../js/portal.js" defer></script>
 
 </head>
@@ -32,7 +40,9 @@ data-page="teacher-students">
 <div class="side-layout">
 
 
-<!-- SIDEBAR -->
+<!-- =====================================================
+     SIDEBAR
+===================================================== -->
 
 <aside class="side">
 
@@ -99,20 +109,23 @@ Logout
 </aside>
 
 
-
-<!-- MAIN -->
+<!-- =====================================================
+     MAIN
+===================================================== -->
 
 <main class="content">
 
 
 <section class="card">
 
+
 <h1>
 My Students
 </h1>
 
 
-<div id="studentMessage"
+<div
+id="studentMessage"
 style="
 margin:15px 0;
 padding:12px;
@@ -132,19 +145,33 @@ display:none;
 
 <tr>
 
-<th>Name</th>
+<th>
+Name
+</th>
 
-<th>Father Name</th>
+<th>
+Father Name
+</th>
 
-<th>Email</th>
+<th>
+Email
+</th>
 
-<th>Phone</th>
+<th>
+Phone
+</th>
 
-<th>Course</th>
+<th>
+Course
+</th>
 
-<th>Status</th>
+<th>
+Status
+</th>
 
-<th>Account ID</th>
+<th>
+Account ID
+</th>
 
 </tr>
 
@@ -155,8 +182,11 @@ display:none;
 
 <tr>
 
-<td colspan="7">
+<td colspan="7"
+style="text-align:center;padding:25px">
+
 Loading students...
+
 </td>
 
 </tr>
@@ -180,18 +210,53 @@ Loading students...
 
 <script>
 
+/* =====================================================
+   SAFE HTML FUNCTION
+===================================================== */
 
-/* =========================================================
+function safeStudentHtml(value){
+
+if(
+value === null ||
+value === undefined
+){
+
+return "";
+
+}
+
+return String(value)
+
+.replace(/&/g,"&amp;")
+
+.replace(/</g,"&lt;")
+
+.replace(/>/g,"&gt;")
+
+.replace(/"/g,"&quot;")
+
+.replace(/'/g,"&#039;");
+
+}
+
+
+/* =====================================================
    TEACHER STUDENTS
-========================================================= */
+===================================================== */
 
 async function loadMyStudents(){
 
+
 const rows =
-document.getElementById("studentRows");
+document.getElementById(
+"studentRows"
+);
+
 
 const message =
-document.getElementById("studentMessage");
+document.getElementById(
+"studentMessage"
+);
 
 
 try{
@@ -202,7 +267,9 @@ try{
 ----------------------------------------- */
 
 const {
-data: { user },
+data: {
+user
+},
 error: userError
 } = await db.auth.getUser();
 
@@ -224,21 +291,19 @@ return;
 }
 
 
-/*
-   IMPORTANT:
+/* -----------------------------------------
+   TEACHER ID
+-----------------------------------------
 
-   Teacher Auth UUID and teachers.id
-   are the same UUID in our system.
+   In our system:
 
-   Example:
-
-   Auth User ID
-   ↓
+   Auth User UUID
+        ↓
    teachers.id
-   ↓
+        ↓
    students.teacher_id
-*/
 
+----------------------------------------- */
 
 const teacherId =
 user.id;
@@ -266,7 +331,10 @@ status,
 teacher_id
 `)
 
-.eq("teacher_id", teacherId)
+.eq(
+"teacher_id",
+teacherId
+)
 
 .order(
 "full_name",
@@ -287,7 +355,10 @@ throw error;
    NO STUDENTS
 ----------------------------------------- */
 
-if(!students || students.length === 0){
+if(
+!students ||
+students.length === 0
+){
 
 rows.innerHTML = `
 
@@ -295,7 +366,10 @@ rows.innerHTML = `
 
 <td
 colspan="7"
-style="text-align:center;padding:25px">
+style="
+text-align:center;
+padding:25px;
+">
 
 No students are currently assigned to you.
 
@@ -315,57 +389,89 @@ return;
 ----------------------------------------- */
 
 rows.innerHTML =
-students.map(function(student){
+
+students.map(
+function(student){
 
 return `
 
 <tr>
 
+
 <td>
-${escapeHtml(
+
+${safeStudentHtml(
 student.full_name || ""
 )}
+
 </td>
 
+
 <td>
-${escapeHtml(
+
+${safeStudentHtml(
 student.father_name || "-"
 )}
+
 </td>
 
+
 <td>
-${escapeHtml(
+
+${safeStudentHtml(
 student.email || "-"
 )}
+
 </td>
 
+
 <td>
-${escapeHtml(
+
+${safeStudentHtml(
 student.phone || "-"
 )}
+
 </td>
 
+
 <td>
-${escapeHtml(
+
+${safeStudentHtml(
 student.course || "-"
 )}
+
 </td>
 
+
 <td>
-${escapeHtml(
+
+<strong>
+
+${safeStudentHtml(
 student.status || "-"
 )}
+
+</strong>
+
 </td>
+
 
 <td>
 
-<small>
-${escapeHtml(
+<small
+style="
+font-size:11px;
+word-break:break-all;
+">
+
+${safeStudentHtml(
 student.id || ""
 )}
+
 </small>
 
 </td>
+
 
 </tr>
 
@@ -375,7 +481,14 @@ student.id || ""
 
 
 }
+
+
+/* =====================================================
+   ERROR
+===================================================== */
+
 catch(error){
+
 
 console.error(
 "Teacher students error:",
@@ -389,9 +502,23 @@ rows.innerHTML = `
 
 <td
 colspan="7"
-style="text-align:center">
+style="
+text-align:center;
+padding:25px;
+">
 
 Unable to load students.
+
+<br>
+
+<small>
+
+${safeStudentHtml(
+error.message ||
+"Unknown error"
+)}
+
+</small>
 
 </td>
 
@@ -403,11 +530,14 @@ Unable to load students.
 message.style.display =
 "block";
 
+
 message.style.background =
 "#fee2e2";
 
+
 message.style.color =
 "#991b1b";
+
 
 message.textContent =
 error.message ||
@@ -418,23 +548,36 @@ error.message ||
 }
 
 
-/* =========================================================
+/* =====================================================
    START
-========================================================= */
+===================================================== */
 
 async function initTeacherStudents(){
 
+try{
+
 /*
-   portal.js/admin protection remains active.
+   portal.js remains responsible
+   for the normal portal session.
 */
 
 await loadMyStudents();
 
 }
 
+catch(error){
+
+console.error(
+"Teacher students initialization error:",
+error
+);
+
+}
+
+}
+
 
 initTeacherStudents();
-
 
 </script>
 
