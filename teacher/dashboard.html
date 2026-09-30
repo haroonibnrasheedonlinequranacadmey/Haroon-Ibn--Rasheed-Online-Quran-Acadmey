@@ -38,10 +38,60 @@
   font-weight:700;
 }
 
+.action-group button:disabled{
+  background:#d8e3e6;
+  color:#58717a;
+  cursor:not-allowed;
+}
+
 .action-group .danger-action{
   background:#f18b82;
   color:#07394a;
 }
+
+.action-group .absent-action{
+  background:#4d9ed8;
+  color:#fff;
+}
+
+/* Whole row colors */
+
+.class-row.status-upcoming{
+  background:#eef9fb;
+}
+
+.class-row.status-active{
+  background:#f7c6cf;
+}
+
+.class-row.status-student_joined{
+  background:#fff2a8;
+}
+
+.class-row.status-completed{
+  background:#cceccc;
+}
+
+.class-row.status-absent{
+  background:#b9dcf5;
+}
+
+.class-row.status-late{
+  background:#ffe0d9;
+}
+
+.class-row.status-on_leave,
+.class-row.status-cancelled{
+  background:#eeeeee;
+}
+
+/* Keep cells transparent so whole row color shows */
+
+.class-row td{
+  background:transparent !important;
+}
+
+/* Status pill */
 
 .status-upcoming{
   background:#eef9fb;
@@ -49,17 +99,27 @@
 }
 
 .status-active{
-  background:#e8f7ed;
-  color:#16834b;
+  background:#f7c6cf;
+  color:#8b2942;
+}
+
+.status-student_joined{
+  background:#fff2a8;
+  color:#735c00;
 }
 
 .status-completed{
-  background:#e9f5e9;
+  background:#cceccc;
   color:#257a32;
 }
 
+.status-absent{
+  background:#b9dcf5;
+  color:#155b91;
+}
+
 .status-late{
-  background:#fff1ed;
+  background:#ffe0d9;
   color:#b42318;
 }
 
@@ -75,19 +135,39 @@
   color:#58717a;
 }
 
-.copy-ok{
+.action-done{
+  display:inline-block;
+  padding:7px 10px;
+  border-radius:7px;
+  background:#257a32;
+  color:#fff;
   font-size:12px;
-  color:#16834b;
-  margin-left:5px;
+  font-weight:700;
 }
 
-@media(max-width:600px){
+.action-absent{
+  display:inline-block;
+  padding:7px 10px;
+  border-radius:7px;
+  background:#4d9ed8;
+  color:#fff;
+  font-size:12px;
+  font-weight:700;
+}
+
+@media(max-width:700px){
+
+  .table-wrap{
+    overflow-x:auto;
+  }
+
   .action-group{
     flex-direction:column;
   }
 
   .action-group button,
   .action-group a{
+    width:100%;
     text-align:center;
   }
 }
@@ -103,31 +183,52 @@
 <img src="../assets/hr-logo.svg" alt="HR">
 
 <h3>Haroon Ibn Rasheed</h3>
+
 <small>Teacher Portal</small>
 
 <nav style="margin-top:16px">
 
-<a href="dashboard.html" class="active">Dashboard</a>
+<a href="dashboard.html" class="active">
+Dashboard
+</a>
 
-<a href="students.html">My Students</a>
+<a href="students.html">
+My Students
+</a>
 
-<a href="classes.html">My Classes</a>
+<a href="classes.html">
+My Classes
+</a>
 
-<a href="schedule.html">Schedule</a>
+<a href="schedule.html">
+Schedule
+</a>
 
-<a href="attendance.html">Attendance</a>
+<a href="attendance.html">
+Attendance
+</a>
 
-<a href="courses.html">Courses</a>
+<a href="courses.html">
+Courses
+</a>
 
-<a href="leaves.html">Leaves</a>
+<a href="leaves.html">
+Leaves
+</a>
 
-<a href="salary.html">Salary</a>
+<a href="salary.html">
+Salary
+</a>
 
-<a href="profile.html">Profile</a>
+<a href="profile.html">
+Profile
+</a>
 
 </nav>
 
-<a href="#" onclick="portalLogout();return false">Logout</a>
+<a href="#" onclick="portalLogout();return false">
+Logout
+</a>
 
 </aside>
 
@@ -145,13 +246,14 @@ Manage your assigned academy work.
 </p>
 
 <div class="dashboard-date">
-Today: <b id="dashboardDate">Loading...</b>
+Today:
+<b id="dashboardDate">
+Loading...
+</b>
 </div>
 
 </section>
 
-
-<!-- SUMMARY -->
 
 <section class="cards">
 
@@ -188,11 +290,11 @@ Today: <b id="dashboardDate">Loading...</b>
 </section>
 
 
-<!-- TODAY -->
-
 <section class="card">
 
-<h2>Today's Classes</h2>
+<h2>
+Today's Classes
+</h2>
 
 <p id="todaySummary">
 Loading today's classes...
@@ -205,12 +307,31 @@ Loading today's classes...
 <thead>
 
 <tr>
-<th>Teacher Time</th>
-<th>Student Name</th>
-<th>Course</th>
-<th>Duration</th>
-<th>Status</th>
-<th>Action</th>
+
+<th>
+Teacher Time
+</th>
+
+<th>
+Student Name
+</th>
+
+<th>
+Course
+</th>
+
+<th>
+Duration
+</th>
+
+<th>
+Status
+</th>
+
+<th>
+Action
+</th>
+
 </tr>
 
 </thead>
@@ -218,46 +339,14 @@ Loading today's classes...
 <tbody id="todayClassRows">
 
 <tr>
+
 <td colspan="6" class="today-empty">
 Loading...
 </td>
+
 </tr>
 
 </tbody>
-
-</table>
-
-</div>
-
-</section>
-
-
-<!-- EXISTING MY CLASSES -->
-
-<section class="card">
-
-<h2>My Classes</h2>
-
-<div class="table-wrap">
-
-<table class="table">
-
-<thead>
-
-<tr>
-<th>Date</th>
-<th>Time</th>
-<th>Student</th>
-<th>Course</th>
-<th>Status</th>
-<th>Meeting</th>
-<th>Attendance</th>
-<th>Actions</th>
-</tr>
-
-</thead>
-
-<tbody id="classRows"></tbody>
 
 </table>
 
