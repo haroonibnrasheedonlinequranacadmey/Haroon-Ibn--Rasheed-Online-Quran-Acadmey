@@ -1,1 +1,444 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>My Students | Haroon Ibn Rasheed Online Quran Academy</title><link rel="stylesheet" href="../css/portal.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../js/config.js"></script><script src="../js/portal.js" defer></script></head><body class="dashboard" data-page="teacher-students"><div class="side-layout"><aside class="side"><img src="../assets/hr-logo.svg" alt="HR"><h3>Haroon Ibn Rasheed</h3><small>Teacher Portal</small><nav style="margin-top:16px"><a href="dashboard.html">Dashboard</a><a href="students.html" class="active">My Students</a><a href="classes.html">My Classes</a><a href="schedule.html">Schedule</a><a href="attendance.html">Attendance</a><a href="courses.html">Courses</a><a href="leaves.html">Leaves</a><a href="salary.html">Salary</a><a href="profile.html">Profile</a></nav><a href="#" onclick="portalLogout();return false">Logout</a></aside><main class="content"><section class="card"><h1>My Students</h1><div class="table-wrap"><table class="table"><thead><tr><th>Name</th><th>Email</th><th>Account ID</th></tr></thead><tbody id="studentRows"></tbody></table></div></section></main></div></body></html>
+<!doctype html>
+<html lang="en">
+
+<head>
+
+<meta charset="utf-8">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>
+My Students | Haroon Ibn Rasheed Online Quran Academy
+</title>
+
+<link rel="stylesheet"
+href="../css/portal.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="../js/config.js"></script>
+
+<script src="../js/portal.js" defer></script>
+
+</head>
+
+
+<body
+class="dashboard"
+data-page="teacher-students">
+
+
+<div class="side-layout">
+
+
+<!-- SIDEBAR -->
+
+<aside class="side">
+
+<img
+src="../assets/hr-logo.svg"
+alt="HR">
+
+<h3>
+Haroon Ibn Rasheed
+</h3>
+
+<small>
+Teacher Portal
+</small>
+
+
+<nav style="margin-top:16px">
+
+<a href="dashboard.html">
+Dashboard
+</a>
+
+<a href="students.html"
+class="active">
+My Students
+</a>
+
+<a href="classes.html">
+My Classes
+</a>
+
+<a href="schedule.html">
+Schedule
+</a>
+
+<a href="attendance.html">
+Attendance
+</a>
+
+<a href="courses.html">
+Courses
+</a>
+
+<a href="leaves.html">
+Leaves
+</a>
+
+<a href="salary.html">
+Salary
+</a>
+
+<a href="profile.html">
+Profile
+</a>
+
+</nav>
+
+
+<a href="#"
+onclick="portalLogout();return false">
+Logout
+</a>
+
+</aside>
+
+
+
+<!-- MAIN -->
+
+<main class="content">
+
+
+<section class="card">
+
+<h1>
+My Students
+</h1>
+
+
+<div id="studentMessage"
+style="
+margin:15px 0;
+padding:12px;
+border-radius:8px;
+display:none;
+">
+</div>
+
+
+<div class="table-wrap">
+
+
+<table class="table">
+
+
+<thead>
+
+<tr>
+
+<th>Name</th>
+
+<th>Father Name</th>
+
+<th>Email</th>
+
+<th>Phone</th>
+
+<th>Course</th>
+
+<th>Status</th>
+
+<th>Account ID</th>
+
+</tr>
+
+</thead>
+
+
+<tbody id="studentRows">
+
+<tr>
+
+<td colspan="7">
+Loading students...
+</td>
+
+</tr>
+
+</tbody>
+
+
+</table>
+
+</div>
+
+
+</section>
+
+
+</main>
+
+</div>
+
+
+
+<script>
+
+
+/* =========================================================
+   TEACHER STUDENTS
+========================================================= */
+
+async function loadMyStudents(){
+
+const rows =
+document.getElementById("studentRows");
+
+const message =
+document.getElementById("studentMessage");
+
+
+try{
+
+
+/* -----------------------------------------
+   GET CURRENT LOGGED-IN USER
+----------------------------------------- */
+
+const {
+data: { user },
+error: userError
+} = await db.auth.getUser();
+
+
+if(userError){
+
+throw userError;
+
+}
+
+
+if(!user){
+
+window.location.href =
+"login.html";
+
+return;
+
+}
+
+
+/*
+   IMPORTANT:
+
+   Teacher Auth UUID and teachers.id
+   are the same UUID in our system.
+
+   Example:
+
+   Auth User ID
+   ↓
+   teachers.id
+   ↓
+   students.teacher_id
+*/
+
+
+const teacherId =
+user.id;
+
+
+/* -----------------------------------------
+   LOAD ONLY THIS TEACHER'S STUDENTS
+----------------------------------------- */
+
+const {
+data: students,
+error
+} = await db
+
+.from("students")
+
+.select(`
+id,
+full_name,
+father_name,
+email,
+phone,
+course,
+status,
+teacher_id
+`)
+
+.eq("teacher_id", teacherId)
+
+.order(
+"full_name",
+{
+ascending:true
+}
+);
+
+
+if(error){
+
+throw error;
+
+}
+
+
+/* -----------------------------------------
+   NO STUDENTS
+----------------------------------------- */
+
+if(!students || students.length === 0){
+
+rows.innerHTML = `
+
+<tr>
+
+<td
+colspan="7"
+style="text-align:center;padding:25px">
+
+No students are currently assigned to you.
+
+</td>
+
+</tr>
+
+`;
+
+return;
+
+}
+
+
+/* -----------------------------------------
+   SHOW STUDENTS
+----------------------------------------- */
+
+rows.innerHTML =
+students.map(function(student){
+
+return `
+
+<tr>
+
+<td>
+${escapeHtml(
+student.full_name || ""
+)}
+</td>
+
+<td>
+${escapeHtml(
+student.father_name || "-"
+)}
+</td>
+
+<td>
+${escapeHtml(
+student.email || "-"
+)}
+</td>
+
+<td>
+${escapeHtml(
+student.phone || "-"
+)}
+</td>
+
+<td>
+${escapeHtml(
+student.course || "-"
+)}
+</td>
+
+<td>
+${escapeHtml(
+student.status || "-"
+)}
+</td>
+
+<td>
+
+<small>
+${escapeHtml(
+student.id || ""
+)}
+</small>
+
+</td>
+
+</tr>
+
+`;
+
+}).join("");
+
+
+}
+catch(error){
+
+console.error(
+"Teacher students error:",
+error
+);
+
+
+rows.innerHTML = `
+
+<tr>
+
+<td
+colspan="7"
+style="text-align:center">
+
+Unable to load students.
+
+</td>
+
+</tr>
+
+`;
+
+
+message.style.display =
+"block";
+
+message.style.background =
+"#fee2e2";
+
+message.style.color =
+"#991b1b";
+
+message.textContent =
+error.message ||
+"Unable to load students.";
+
+}
+
+}
+
+
+/* =========================================================
+   START
+========================================================= */
+
+async function initTeacherStudents(){
+
+/*
+   portal.js/admin protection remains active.
+*/
+
+await loadMyStudents();
+
+}
+
+
+initTeacherStudents();
+
+
+</script>
+
+
+</body>
+
+</html>
