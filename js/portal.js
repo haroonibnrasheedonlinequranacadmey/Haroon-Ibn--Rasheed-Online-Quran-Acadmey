@@ -18,11 +18,9 @@ const esc = v =>
 const page = document.body.dataset.page;
 
 async function session(){
-
   const r = await db.auth.getSession();
 
   if(!r.data.session){
-
     location.href =
       location.pathname.includes('/teacher/') ||
       location.pathname.includes('/student/')
@@ -35,9 +33,7 @@ async function session(){
   return r.data.session;
 }
 
-
 async function profile(uid){
-
   const r = await db
     .from('profiles')
     .select('*')
@@ -47,9 +43,7 @@ async function profile(uid){
   return r.data;
 }
 
-
 async function guard(role){
-
   const s = await session();
 
   if(!s) return;
@@ -57,24 +51,18 @@ async function guard(role){
   const p = await profile(s.user.id);
 
   if(!p || p.role !== role){
-
     location.href = '../portal-login.html';
-
     return;
   }
 
-  document
-    .querySelectorAll('[data-name]')
-    .forEach(x=>{
-      x.textContent = p.full_name || s.user.email;
-    });
+  document.querySelectorAll('[data-name]').forEach(x=>{
+    x.textContent = p.full_name || s.user.email;
+  });
 
   return {s,p};
 }
 
-
 window.portalLogout = async()=>{
-
   await db.auth.signOut();
 
   location.href =
@@ -83,17 +71,12 @@ window.portalLogout = async()=>{
     : '../portal-login.html';
 };
 
-
 const set = (id,v)=>{
-
   const e = document.getElementById(id);
-
   if(e) e.innerHTML = v;
 };
 
-
 function rowEmpty(cols,msg='No records found.'){
-
   return `
     <tr>
       <td colspan="${cols}" class="empty">
@@ -118,29 +101,21 @@ const DAYS = [
   'Saturday'
 ];
 
-
 function todayISO(){
-
   const d = new Date();
 
   const y = d.getFullYear();
-
   const m = String(d.getMonth()+1).padStart(2,'0');
-
   const day = String(d.getDate()).padStart(2,'0');
 
   return `${y}-${m}-${day}`;
 }
 
-
 function todayName(){
-
   return DAYS[new Date().getDay()];
 }
 
-
 function prettyDate(){
-
   return new Date().toLocaleDateString(
     'en-US',
     {
@@ -152,9 +127,7 @@ function prettyDate(){
   );
 }
 
-
 function timeToMinutes(t){
-
   if(!t) return 0;
 
   const p = String(t).split(':');
@@ -162,15 +135,12 @@ function timeToMinutes(t){
   return (+p[0] * 60) + (+p[1] || 0);
 }
 
-
 function formatTime12(t){
-
   if(!t) return '';
 
   const p = String(t).split(':');
 
   let h = +p[0];
-
   const m = p[1] || '00';
 
   const a = h >= 12 ? 'PM' : 'AM';
@@ -180,11 +150,9 @@ function formatTime12(t){
   return `${String(h).padStart(2,'0')}:${m} ${a}`;
 }
 
-
 function normalizeDays(value){
 
   if(Array.isArray(value)){
-
     return value
       .map(x=>String(x).trim())
       .filter(Boolean);
@@ -196,18 +164,9 @@ function normalizeDays(value){
 
     if(!v) return [];
 
-    /*
-      Supports:
-      Monday
-      Monday,Wednesday
-      Monday, Wednesday
-      ["Monday","Wednesday"]
-    */
-
     if(v.startsWith('[')){
 
       try{
-
         const parsed = JSON.parse(v);
 
         if(Array.isArray(parsed))
@@ -225,7 +184,6 @@ function normalizeDays(value){
   return [];
 }
 
-
 function isToday(schedule){
 
   const today = todayName();
@@ -238,7 +196,7 @@ function isToday(schedule){
 
 
 /* =========================
-   SESSION STATUS
+   STATUS
 ========================= */
 
 function statusClass(status){
@@ -248,14 +206,21 @@ function statusClass(status){
     .replace(/\s+/g,'_')}`;
 }
 
-
 function statusText(status){
 
-  return String(status || 'upcoming')
-    .replace('_',' ')
-    .replace(/\b\w/g,x=>x.toUpperCase());
-}
+  const map = {
+    upcoming:'Upcoming',
+    active:'Active',
+    student_joined:'Student Joined',
+    completed:'Completed',
+    absent:'Absent',
+    late:'Late',
+    on_leave:'On Leave',
+    cancelled:'Cancelled'
+  };
 
+  return map[status] || 'Upcoming';
+}
 
 function nowMinutes(){
 
@@ -265,7 +230,32 @@ function nowMinutes(){
 }
 
 
-function getAutomaticStatus(schedule, savedStatus){
+/*
+  Class can be activated exactly 5 minutes
+  before scheduled start.
+
+  Example:
+  7:00 PM class
+  Active button from 6:55 PM
+*/
+function canTeacherActivate(schedule){
+
+  const start = timeToMinutes(schedule.class_time);
+
+  const end =
+    start + (+schedule.duration_minutes || 30);
+
+  const now = nowMinutes();
+
+  return now >= start - 5 && now < end;
+}
+
+
+/*
+  Before teacher manually activates,
+  class stays Upcoming.
+*/
+function getAutomaticStatus(schedule,savedStatus){
 
   if(savedStatus)
     return savedStatus;
@@ -277,18 +267,18 @@ function getAutomaticStatus(schedule, savedStatus){
 
   const now = nowMinutes();
 
-  if(now < start)
+  if(now < start - 5)
     return 'upcoming';
 
-  if(now >= start && now < end)
-    return 'active';
+  if(now < end)
+    return 'upcoming';
 
   return 'late';
 }
 
 
 /* =========================
-   TEACHER SESSIONS
+   TEACHER SESSION
 ========================= */
 
 async function getTodaySessions(teacherId){
@@ -303,7 +293,6 @@ async function getTodaySessions(teacherId){
 
   return r.data || [];
 }
-
 
 async function ensureTodaySession(schedule,teacherId){
 
@@ -320,11 +309,6 @@ async function ensureTodaySession(schedule,teacherId){
     return existing.data;
 
   const initial = getAutomaticStatus(schedule,null);
-
-  /*
-    If today's class time has already passed,
-    initially show Late.
-  */
 
   const insert = await db
     .from('teacher_class_sessions')
@@ -353,8 +337,6 @@ async function loadTeacherDashboard(g){
   set('dashboardDate',prettyDate());
 
 
-  /* LOAD ADMIN SAVED SCHEDULES */
-
   const scheduleResult = await db
     .from('class_schedules')
     .select(`
@@ -378,10 +360,7 @@ async function loadTeacherDashboard(g){
 
     set(
       'todayClassRows',
-      rowEmpty(
-        6,
-        scheduleResult.error.message
-      )
+      rowEmpty(6,scheduleResult.error.message)
     );
 
     return;
@@ -391,7 +370,9 @@ async function loadTeacherDashboard(g){
   const schedules = scheduleResult.data || [];
 
 
-  /* STUDENTS */
+  /* =========================
+     STUDENT NAMES
+  ========================= */
 
   const studentIds = [
     ...new Set(
@@ -400,7 +381,6 @@ async function loadTeacherDashboard(g){
         .filter(Boolean)
     )
   ];
-
 
   let students = [];
 
@@ -411,9 +391,9 @@ async function loadTeacherDashboard(g){
       .select('id,full_name,teacher_id,status')
       .in('id',studentIds);
 
-    students = sr.data || [];
+    if(!sr.error)
+      students = sr.data || [];
   }
-
 
   const studentMap = {};
 
@@ -422,13 +402,12 @@ async function loadTeacherDashboard(g){
   });
 
 
-  /* TODAY'S SCHEDULES */
+  /* =========================
+     TODAY
+  ========================= */
 
   const todaySchedules =
     schedules.filter(isToday);
-
-
-  /* CREATE TODAY SESSION RECORDS */
 
   const todaySessions = [];
 
@@ -441,7 +420,6 @@ async function loadTeacherDashboard(g){
       todaySessions.push(s);
   }
 
-
   const sessionMap = {};
 
   todaySessions.forEach(s=>{
@@ -449,15 +427,11 @@ async function loadTeacherDashboard(g){
   });
 
 
-  /* TOTAL CLASSES */
+  /* =========================
+     SUMMARY
+  ========================= */
 
-  set(
-    'totalClasses',
-    schedules.length
-  );
-
-
-  /* CLASS RATE */
+  set('totalClasses',schedules.length);
 
   const completed =
     todaySessions.filter(
@@ -473,18 +447,12 @@ async function loadTeacherDashboard(g){
 
   set('classRate',rate+'%');
 
-
-  /* LATE */
-
   const late =
     todaySessions.filter(
       x=>x.status === 'late'
     ).length;
 
   set('lateClasses',late);
-
-
-  /* LEFT CLASSES */
 
   const left =
     todaySessions.filter(
@@ -494,7 +462,9 @@ async function loadTeacherDashboard(g){
   set('leftClasses',left);
 
 
-  /* SALARY */
+  /* =========================
+     SALARY
+  ========================= */
 
   const salaryResult = await db
     .from('teacher_salaries')
@@ -521,26 +491,22 @@ async function loadTeacherDashboard(g){
   );
 
 
-  /* REMINDERS */
-
-  let reminderCount = 0;
+  /* =========================
+     REMINDERS
+  ========================= */
 
   const notificationResult = await db
     .from('notifications')
     .select('id')
     .eq('user_id',uid);
 
-  if(!notificationResult.error)
-    reminderCount =
-      (notificationResult.data || []).length;
+  const reminderCount =
+    !notificationResult.error
+      ? (notificationResult.data || []).length
+      : 0;
 
-  set(
-    'reminderCount',
-    reminderCount
-  );
+  set('reminderCount',reminderCount);
 
-
-  /* TODAY SUMMARY */
 
   set(
     'todaySummary',
@@ -550,7 +516,9 @@ async function loadTeacherDashboard(g){
   );
 
 
-  /* TODAY TABLE */
+  /* =========================
+     TODAY CLASSES ONLY
+  ========================= */
 
   if(!todaySchedules.length){
 
@@ -565,134 +533,14 @@ async function loadTeacherDashboard(g){
       `
     );
 
-  }else{
-
-    set(
-      'todayClassRows',
-      todaySchedules.map(schedule=>{
-
-        const student =
-          studentMap[schedule.student_id];
-
-        const session =
-          sessionMap[schedule.id];
-
-        const status =
-          session?.status ||
-          getAutomaticStatus(schedule,null);
-
-        const classroomUrl =
-          schedule.classroom_code
-          ? `https://haroonibnrasheedonlinequranacadmey.github.io/haroon-quran-classroom/?code=${encodeURIComponent(schedule.classroom_code)}`
-          : '';
-
-
-        let actions = '';
-
-
-        if(status === 'upcoming' || status === 'late'){
-
-          actions += `
-            <button
-              onclick="teacherStartClass('${esc(schedule.id)}')">
-              Start Class
-            </button>
-          `;
-        }
-
-
-        if(schedule.google_meet_url){
-
-          actions += `
-            <a
-              href="${esc(schedule.google_meet_url)}"
-              target="_blank"
-              rel="noopener">
-              Join Class
-            </a>
-          `;
-        }
-
-
-        if(classroomUrl){
-
-          actions += `
-            <a
-              href="${esc(classroomUrl)}"
-              target="_blank"
-              rel="noopener">
-              Google Classroom
-            </a>
-          `;
-        }
-
-
-        if(status === 'active'){
-
-          actions += `
-            <button
-              class="danger-action"
-              onclick="teacherEndClass('${esc(schedule.id)}')">
-              End Class
-            </button>
-          `;
-        }
-
-
-        actions += `
-          <button
-            onclick="teacherCopyLink('${esc(schedule.google_meet_url || classroomUrl || '')}')">
-            Copy Link
-          </button>
-        `;
-
-
-        return `
-        <tr>
-
-          <td>
-            ${esc(formatTime12(schedule.class_time))}
-          </td>
-
-          <td>
-            ${esc(student?.full_name || schedule.student_id || '—')}
-          </td>
-
-          <td>
-            ${esc(schedule.course || '—')}
-          </td>
-
-          <td>
-            ${esc(schedule.duration_minutes || 30)} min
-          </td>
-
-          <td>
-            <span class="pill ${statusClass(status)}">
-              ${esc(statusText(status))}
-            </span>
-          </td>
-
-          <td>
-
-            <div class="action-group">
-              ${actions}
-            </div>
-
-          </td>
-
-        </tr>
-        `;
-
-      }).join('')
-    );
+    return;
   }
 
 
-  /* EXISTING MY CLASSES */
-
   set(
-    'classRows',
-    schedules.map(schedule=>{
+    'todayClassRows',
+
+    todaySchedules.map(schedule=>{
 
       const student =
         studentMap[schedule.student_id];
@@ -705,23 +553,154 @@ async function loadTeacherDashboard(g){
         getAutomaticStatus(schedule,null);
 
 
+      const studentName =
+        student?.full_name || 'Student';
+
+
+      let actions = '';
+
+
+      /* =========================
+         ACTIVE BUTTON
+      ========================= */
+
+      if(
+        (status === 'upcoming' || status === 'late') &&
+        canTeacherActivate(schedule)
+      ){
+
+        actions += `
+          <button
+            onclick="teacherStartClass('${esc(schedule.id)}')">
+            Active Class
+          </button>
+        `;
+
+      }else if(
+        status === 'upcoming' &&
+        !canTeacherActivate(schedule)
+      ){
+
+        actions += `
+          <button disabled>
+            Active at 5 min before
+          </button>
+        `;
+      }
+
+
+      /* =========================
+         GOOGLE MEET
+      ========================= */
+
+      if(schedule.google_meet_url){
+
+        actions += `
+          <a
+            href="${esc(schedule.google_meet_url)}"
+            target="_blank"
+            rel="noopener">
+            Join Class
+          </a>
+        `;
+      }
+
+
+      /* =========================
+         CLASSROOM
+      ========================= */
+
+      const classroomUrl =
+        schedule.classroom_code
+        ? `https://haroonibnrasheedonlinequranacadmey.github.io/haroon-quran-classroom/?code=${encodeURIComponent(schedule.classroom_code)}`
+        : '';
+
+
+      if(classroomUrl){
+
+        actions += `
+          <a
+            href="${esc(classroomUrl)}"
+            target="_blank"
+            rel="noopener">
+            Google Classroom
+          </a>
+        `;
+      }
+
+
+      /* =========================
+         ACTIVE ACTIONS
+      ========================= */
+
+      if(
+        status === 'active' ||
+        status === 'student_joined'
+      ){
+
+        actions += `
+          <button
+            class="danger-action"
+            onclick="teacherEndClass('${esc(schedule.id)}')">
+            End Class
+          </button>
+        `;
+
+        actions += `
+          <button
+            class="absent-action"
+            onclick="teacherMarkAbsent('${esc(schedule.id)}')">
+            Mark Absent
+          </button>
+        `;
+      }
+
+
+      /* =========================
+         FINAL
+      ========================= */
+
+      if(status === 'completed'){
+
+        actions += `
+          <span class="action-done">
+            Class Completed
+          </span>
+        `;
+      }
+
+
+      if(status === 'absent'){
+
+        actions += `
+          <span class="action-absent">
+            Student Absent
+          </span>
+        `;
+      }
+
+
       return `
-      <tr>
+      <tr class="class-row ${statusClass(status)}">
 
         <td>
-          ${esc(todayName())}
+          <strong>
+            ${esc(formatTime12(schedule.class_time))}
+          </strong>
         </td>
 
         <td>
-          ${esc(formatTime12(schedule.class_time))}
+          <strong>
+            ${esc(studentName)}
+          </strong>
         </td>
 
         <td>
-          ${esc(student?.full_name || schedule.student_id || '')}
+          ${esc(schedule.course || '—')}
         </td>
 
         <td>
-          ${esc(schedule.course || '')}
+          ${esc(schedule.duration_minutes || 30)} min
         </td>
 
         <td>
@@ -731,63 +710,19 @@ async function loadTeacherDashboard(g){
         </td>
 
         <td>
-          ${
-            schedule.google_meet_url
-            ? `
-              <a
-                class="btn-small"
-                target="_blank"
-                rel="noopener"
-                href="${esc(schedule.google_meet_url)}">
-                Join
-              </a>
-            `
-            : '—'
-          }
-        </td>
-
-        <td>
-          <select
-            onchange="markAttendance('${esc(schedule.id)}','${esc(schedule.student_id)}',this.value)">
-            <option value="">Mark</option>
-            <option value="present">Present</option>
-            <option value="absent">Absent</option>
-            <option value="late">Late</option>
-          </select>
-        </td>
-
-        <td>
-
-          ${
-            status !== 'active'
-            ? `
-              <button
-                class="btn-small"
-                onclick="teacherStartClass('${esc(schedule.id)}')">
-                Start
-              </button>
-            `
-            : `
-              <button
-                class="btn-small"
-                onclick="teacherEndClass('${esc(schedule.id)}')">
-                Complete
-              </button>
-            `
-          }
-
+          <div class="action-group">
+            ${actions}
+          </div>
         </td>
 
       </tr>
       `;
 
-    }).join('') || rowEmpty(8)
+    }).join('')
   );
 }
-
-
-/* =========================
-   START CLASS
+  /* =========================
+   START / ACTIVE CLASS
 ========================= */
 
 window.teacherStartClass = async(scheduleId)=>{
@@ -798,71 +733,100 @@ window.teacherStartClass = async(scheduleId)=>{
 
   const uid = g.s.user.id;
 
+
+  const sr = await db
+    .from('class_schedules')
+    .select(`
+      id,
+      teacher_id,
+      student_id,
+      class_time,
+      duration_minutes,
+      active
+    `)
+    .eq('id',scheduleId)
+    .eq('teacher_id',uid)
+    .eq('active',true)
+    .single();
+
+
+  if(sr.error || !sr.data){
+
+    alert('Class schedule not found.');
+    return;
+  }
+
+
+  const schedule = sr.data;
+
+
+  if(!canTeacherActivate(schedule)){
+
+    alert(
+      'Class can be activated only 5 minutes before the scheduled time.'
+    );
+
+    return;
+  }
+
+
   const today = todayISO();
 
 
-  const r = await db
+  const existing = await db
     .from('teacher_class_sessions')
-    .upsert(
-      {
+    .select('id,status')
+    .eq('schedule_id',scheduleId)
+    .eq('teacher_id',uid)
+    .eq('class_date',today)
+    .maybeSingle();
+
+
+  if(existing.error){
+
+    alert(existing.error.message);
+    return;
+  }
+
+
+  let result;
+
+
+  if(existing.data){
+
+    result = await db
+      .from('teacher_class_sessions')
+      .update({
+        status:'active',
+        started_at:new Date().toISOString(),
+        updated_at:new Date().toISOString()
+      })
+      .eq('id',existing.data.id)
+      .eq('teacher_id',uid);
+
+  }else{
+
+    result = await db
+      .from('teacher_class_sessions')
+      .insert({
         schedule_id:scheduleId,
         teacher_id:uid,
+        student_id:schedule.student_id,
         class_date:today,
         status:'active',
         started_at:new Date().toISOString(),
-        student_id:null
-      },
-      {
-        onConflict:'schedule_id,class_date'
-      }
-    );
+        updated_at:new Date().toISOString()
+      });
 
-
-  /*
-    student_id is required by the table.
-    If the first request fails because of that,
-    load the schedule and retry with its student.
-  */
-
-  if(r.error){
-
-    const sr = await db
-      .from('class_schedules')
-      .select('student_id')
-      .eq('id',scheduleId)
-      .eq('teacher_id',uid)
-      .single();
-
-    if(sr.data){
-
-      const retry = await db
-        .from('teacher_class_sessions')
-        .upsert(
-          {
-            schedule_id:scheduleId,
-            teacher_id:uid,
-            student_id:sr.data.student_id,
-            class_date:today,
-            status:'active',
-            started_at:new Date().toISOString()
-          },
-          {
-            onConflict:'schedule_id,class_date'
-          }
-        );
-
-      if(retry.error){
-
-        alert(retry.error.message);
-        return;
-      }
-
-    }else{
-
-      alert(r.error.message);
-      return;
-    }
   }
+
+
+  if(result.error){
+
+    alert(result.error.message);
+    return;
+  }
+
 
   location.reload();
 };
@@ -878,6 +842,7 @@ window.teacherEndClass = async(scheduleId)=>{
 
   if(!g) return;
 
+
   const r = await db
     .from('teacher_class_sessions')
     .update({
@@ -889,75 +854,108 @@ window.teacherEndClass = async(scheduleId)=>{
     .eq('teacher_id',g.s.user.id)
     .eq('class_date',todayISO());
 
+
   if(r.error){
 
     alert(r.error.message);
     return;
   }
 
+
   location.reload();
 };
 
 
 /* =========================
-   COPY LINK
+   MARK ABSENT
 ========================= */
 
-window.teacherCopyLink = async(link)=>{
-
-  if(!link){
-
-    alert('No class link saved by Admin.');
-    return;
-  }
-
-  try{
-
-    await navigator.clipboard.writeText(link);
-
-    alert('Class link copied.');
-
-  }catch(e){
-
-    prompt('Copy this class link:',link);
-  }
-};
-
-
-/* =========================
-   ATTENDANCE
-========================= */
-
-window.markAttendance = async(
-  scheduleId,
-  student,
-  status
-)=>{
-
-  if(!status) return;
+window.teacherMarkAbsent = async(scheduleId)=>{
 
   const g = await guard('teacher');
 
   if(!g) return;
 
 
-  const r = await db
-    .from('attendance')
-    .upsert(
-      {
+  if(
+    !confirm(
+      'Mark this student absent for today’s class?'
+    )
+  )
+    return;
+
+
+  const today = todayISO();
+
+
+  const existing = await db
+    .from('teacher_class_sessions')
+    .select('id')
+    .eq('schedule_id',scheduleId)
+    .eq('teacher_id',g.s.user.id)
+    .eq('class_date',today)
+    .maybeSingle();
+
+
+  if(existing.error){
+
+    alert(existing.error.message);
+    return;
+  }
+
+
+  let r;
+
+
+  if(existing.data){
+
+    r = await db
+      .from('teacher_class_sessions')
+      .update({
+        status:'absent',
+        updated_at:new Date().toISOString()
+      })
+      .eq('id',existing.data.id)
+      .eq('teacher_id',g.s.user.id);
+
+  }else{
+
+    const sr = await db
+      .from('class_schedules')
+      .select('student_id')
+      .eq('id',scheduleId)
+      .eq('teacher_id',g.s.user.id)
+      .single();
+
+
+    if(sr.error || !sr.data){
+
+      alert('Class schedule not found.');
+      return;
+    }
+
+
+    r = await db
+      .from('teacher_class_sessions')
+      .insert({
         schedule_id:scheduleId,
-        student_id:student,
         teacher_id:g.s.user.id,
-        status
-      },
-      {
-        onConflict:'schedule_id,student_id'
-      }
-    );
+        student_id:sr.data.student_id,
+        class_date:today,
+        status:'absent',
+        updated_at:new Date().toISOString()
+      });
+  }
 
 
-  if(r.error)
+  if(r.error){
+
     alert(r.error.message);
+    return;
+  }
+
+
+  location.reload();
 };
 
 
@@ -972,9 +970,7 @@ async function teacherData(){
   if(!g) return;
 
 
-  if(
-    page === 'teacher-dashboard'
-  ){
+  if(page === 'teacher-dashboard'){
 
     await loadTeacherDashboard(g);
 
@@ -985,11 +981,11 @@ async function teacherData(){
   const uid = g.s.user.id;
 
 
-  /* SCHEDULE */
+  /* =========================
+     TEACHER SCHEDULE
+  ========================= */
 
-  if(
-    page === 'teacher-schedule'
-  ){
+  if(page === 'teacher-schedule'){
 
     const r = await db
       .from('class_schedules')
@@ -1020,6 +1016,7 @@ async function teacherData(){
 
     let studentMap = {};
 
+
     if(studentIds.length){
 
       const sr = await db
@@ -1027,19 +1024,16 @@ async function teacherData(){
         .select('id,full_name')
         .in('id',studentIds);
 
+
       (sr.data || []).forEach(s=>{
         studentMap[s.id] = s;
       });
     }
 
 
-    /*
-      Schedule page intentionally has
-      NO Meet/Classroom buttons.
-    */
-
     set(
       'scheduleRows',
+
       data.map(x=>`
 
         <tr>
@@ -1053,7 +1047,7 @@ async function teacherData(){
           <td>
             ${esc(
               studentMap[x.student_id]?.full_name ||
-              x.student_id
+              'Student'
             )}
           </td>
 
@@ -1084,7 +1078,9 @@ async function teacherData(){
   }
 
 
-  /* STUDENTS */
+  /* =========================
+     TEACHER STUDENTS
+  ========================= */
 
   if(page === 'teacher-students'){
 
@@ -1117,12 +1113,23 @@ async function teacherData(){
 
     set(
       'studentRows',
+
       (sr.data || []).map(x=>`
 
         <tr>
-          <td>${esc(x.full_name)}</td>
-          <td>${esc(x.status || 'Active')}</td>
-          <td>${esc(x.id)}</td>
+
+          <td>
+            ${esc(x.full_name)}
+          </td>
+
+          <td>
+            ${esc(x.status || 'Active')}
+          </td>
+
+          <td>
+            ${esc(x.id)}
+          </td>
+
         </tr>
 
       `).join('') || rowEmpty(3)
@@ -1132,7 +1139,9 @@ async function teacherData(){
   }
 
 
-  /* COURSES */
+  /* =========================
+     COURSES
+  ========================= */
 
   if(page === 'teacher-courses'){
 
@@ -1154,6 +1163,7 @@ async function teacherData(){
 
     set(
       'courseRows',
+
       courses.map(x=>`
 
         <tr>
@@ -1167,7 +1177,9 @@ async function teacherData(){
   }
 
 
-  /* LEAVES */
+  /* =========================
+     LEAVES
+  ========================= */
 
   if(page === 'teacher-leaves'){
 
@@ -1180,17 +1192,23 @@ async function teacherData(){
 
     set(
       'leaveRows',
+
       (r.data || []).map(x=>`
 
         <tr>
+
           <td>${esc(x.start_date)}</td>
+
           <td>${esc(x.end_date)}</td>
+
           <td>${esc(x.reason)}</td>
+
           <td>
             <span class="pill">
               ${esc(x.status)}
             </span>
           </td>
+
         </tr>
 
       `).join('') || rowEmpty(4)
@@ -1204,6 +1222,7 @@ async function teacherData(){
         e.preventDefault();
 
         const f = new FormData(e.target);
+
 
         const r = await db
           .from('leaves')
@@ -1227,7 +1246,9 @@ async function teacherData(){
   }
 
 
-  /* SALARY */
+  /* =========================
+     SALARY
+  ========================= */
 
   if(page === 'teacher-salary'){
 
@@ -1240,17 +1261,27 @@ async function teacherData(){
 
     set(
       'salaryRows',
+
       (r.data || []).map(x=>`
 
         <tr>
+
           <td>${esc(x.salary_month)}</td>
-          <td>${esc(x.amount)} ${esc(x.currency)}</td>
+
+          <td>
+            ${esc(x.amount)} ${esc(x.currency)}
+          </td>
+
           <td>
             <span class="pill">
               ${esc(x.status)}
             </span>
           </td>
-          <td>${esc(x.paid_at || '')}</td>
+
+          <td>
+            ${esc(x.paid_at || '')}
+          </td>
+
         </tr>
 
       `).join('') || rowEmpty(4)
@@ -1260,7 +1291,9 @@ async function teacherData(){
   }
 
 
-  /* PROFILE */
+  /* =========================
+     PROFILE
+  ========================= */
 
   if(page === 'teacher-profile'){
 
@@ -1283,6 +1316,7 @@ async function teacherData(){
 
         const f = new FormData(e.target);
 
+
         const r = await db.rpc(
           'update_my_profile',
           {
@@ -1297,9 +1331,7 @@ async function teacherData(){
           alert('Profile updated.');
 
       });
-
   }
-
 }
 
 
@@ -1367,6 +1399,7 @@ async function studentData(){
         .from('certificates')
         .select('*,courses(title)')
         .eq('student_id',uid)
+        .order('issued_at',{ascending:false})
 
     ]);
 
@@ -1376,12 +1409,10 @@ async function studentData(){
       e.data?.length || 0
     );
 
-
     set(
       'classCount',
       s.data?.length || 0
     );
-
 
     set(
       'attendanceRate',
@@ -1398,13 +1429,24 @@ async function studentData(){
 
     set(
       'paymentRows',
+
       (p.data || []).map(x=>`
 
         <tr>
-          <td>${esc(x.amount)} ${esc(x.currency || '')}</td>
+
+          <td>
+            ${esc(x.amount)}
+            ${esc(x.currency || '')}
+          </td>
+
           <td>${esc(x.method)}</td>
+
           <td>${esc(x.status)}</td>
-          <td>${esc(x.created_at?.slice(0,10))}</td>
+
+          <td>
+            ${esc(x.created_at?.slice(0,10))}
+          </td>
+
         </tr>
 
       `).join('') || rowEmpty(4)
@@ -1413,18 +1455,48 @@ async function studentData(){
 
     set(
       'scheduleRows',
+
       (s.data || []).map(x=>`
 
         <tr>
-          <td>${esc(x.class_days)}</td>
-          <td>${esc(formatTime12(x.class_time))}</td>
-          <td>${esc(x.course || '')}</td>
-          <td>${esc(x.teacher?.full_name || '')}</td>
-          <td>${x.google_meet_url
-            ? `<a class="btn-small" target="_blank" href="${esc(x.google_meet_url)}">Join</a>`
-            : '—'}
+
+          <td>
+            ${esc(
+              normalizeDays(x.class_days).join(', ')
+            )}
           </td>
-          <td>${x.active ? 'Active' : 'Inactive'}</td>
+
+          <td>
+            ${esc(formatTime12(x.class_time))}
+          </td>
+
+          <td>
+            ${esc(x.course || '')}
+          </td>
+
+          <td>
+            ${esc(x.teacher?.full_name || '')}
+          </td>
+
+          <td>
+            ${
+              x.google_meet_url
+              ? `
+                <a
+                  class="btn-small"
+                  target="_blank"
+                  href="${esc(x.google_meet_url)}">
+                  Join
+                </a>
+              `
+              : '—'
+            }
+          </td>
+
+          <td>
+            ${x.active ? 'Active' : 'Inactive'}
+          </td>
+
         </tr>
 
       `).join('') || rowEmpty(6)
@@ -1433,12 +1505,23 @@ async function studentData(){
 
     set(
       'courseRows',
+
       (e.data || []).map(x=>`
 
         <tr>
-          <td>${esc(x.courses?.title || '')}</td>
-          <td>${esc(x.status)}</td>
-          <td>${x.progress || 0}%</td>
+
+          <td>
+            ${esc(x.courses?.title || '')}
+          </td>
+
+          <td>
+            ${esc(x.status)}
+          </td>
+
+          <td>
+            ${x.progress || 0}%
+          </td>
+
         </tr>
 
       `).join('') || rowEmpty(3)
@@ -1447,11 +1530,15 @@ async function studentData(){
 
     set(
       'notificationRows',
+
       (n.data || []).map(x=>`
 
         <div class="card">
+
           <b>${esc(x.title)}</b>
+
           <p>${esc(x.body)}</p>
+
         </div>
 
       `).join('') ||
@@ -1461,12 +1548,23 @@ async function studentData(){
 
     set(
       'certRows',
+
       (c.data || []).map(x=>`
 
         <tr>
-          <td>${esc(x.courses?.title || '')}</td>
-          <td>${esc(x.certificate_no || '')}</td>
-          <td>${esc(x.issued_at || '')}</td>
+
+          <td>
+            ${esc(x.courses?.title || '')}
+          </td>
+
+          <td>
+            ${esc(x.certificate_no || '')}
+          </td>
+
+          <td>
+            ${esc(x.issued_at || '')}
+          </td>
+
         </tr>
 
       `).join('') || rowEmpty(3)
@@ -1475,6 +1573,10 @@ async function studentData(){
     return;
   }
 
+
+  /* =========================
+     STUDENT ATTENDANCE
+  ========================= */
 
   if(page === 'student-attendance'){
 
@@ -1495,13 +1597,33 @@ async function studentData(){
 
     set(
       'attendanceRows',
+
       (r.data || []).map(x=>`
 
         <tr>
-          <td>${esc(x.class_schedules?.class_days || '')}</td>
-          <td>${esc(x.class_schedules?.course || '')}</td>
-          <td>${esc(x.status)}</td>
-          <td>${esc(x.notes || '')}</td>
+
+          <td>
+            ${esc(
+              normalizeDays(
+                x.class_schedules?.class_days
+              ).join(', ')
+            )}
+          </td>
+
+          <td>
+            ${esc(
+              x.class_schedules?.course || ''
+            )}
+          </td>
+
+          <td>
+            ${esc(x.status)}
+          </td>
+
+          <td>
+            ${esc(x.notes || '')}
+          </td>
+
         </tr>
 
       `).join('') || rowEmpty(4)
@@ -1510,6 +1632,10 @@ async function studentData(){
     return;
   }
 
+
+  /* =========================
+     STUDENT FEES
+  ========================= */
 
   if(page === 'student-fees'){
 
@@ -1522,14 +1648,32 @@ async function studentData(){
 
     set(
       'paymentRows',
+
       (r.data || []).map(x=>`
 
         <tr>
-          <td>${esc(x.amount)} ${esc(x.currency || '')}</td>
-          <td>${esc(x.method)}</td>
-          <td>${esc(x.status)}</td>
-          <td>${esc(x.reference || '')}</td>
-          <td>${esc(x.created_at?.slice(0,10))}</td>
+
+          <td>
+            ${esc(x.amount)}
+            ${esc(x.currency || '')}
+          </td>
+
+          <td>
+            ${esc(x.method)}
+          </td>
+
+          <td>
+            ${esc(x.status)}
+          </td>
+
+          <td>
+            ${esc(x.reference || '')}
+          </td>
+
+          <td>
+            ${esc(x.created_at?.slice(0,10))}
+          </td>
+
         </tr>
 
       `).join('') || rowEmpty(5)
@@ -1538,6 +1682,10 @@ async function studentData(){
     return;
   }
 
+
+  /* =========================
+     STUDENT LEAVES
+  ========================= */
 
   if(page === 'student-leaves'){
 
@@ -1550,13 +1698,19 @@ async function studentData(){
 
     set(
       'leaveRows',
+
       (r.data || []).map(x=>`
 
         <tr>
+
           <td>${esc(x.start_date)}</td>
+
           <td>${esc(x.end_date)}</td>
+
           <td>${esc(x.reason)}</td>
+
           <td>${esc(x.status)}</td>
+
         </tr>
 
       `).join('') || rowEmpty(4)
@@ -1570,6 +1724,7 @@ async function studentData(){
         e.preventDefault();
 
         const f = new FormData(e.target);
+
 
         const r = await db
           .from('leaves')
@@ -1592,6 +1747,10 @@ async function studentData(){
   }
 
 
+  /* =========================
+     STUDENT PROFILE
+  ========================= */
+
   if(page === 'student-profile'){
 
     set(
@@ -1613,6 +1772,7 @@ async function studentData(){
 
         const f = new FormData(e.target);
 
+
         const r = await db.rpc(
           'update_my_profile',
           {
@@ -1627,9 +1787,7 @@ async function studentData(){
           alert('Profile updated.');
 
       });
-
   }
-
 }
 
 
