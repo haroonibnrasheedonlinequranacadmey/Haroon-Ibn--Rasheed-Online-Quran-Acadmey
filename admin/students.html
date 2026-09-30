@@ -1,100 +1,243 @@
 <!doctype html>
 <html>
 <head>
+
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
 <title>Students | Admin</title>
 
-<link rel="stylesheet" href="../css/admin.css">
+<link rel="stylesheet"
+href="../css/admin.css">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="../js/config.js"></script>
+
 <script src="../js/admin.js"></script>
+
 </head>
+
 
 <body>
 
+
 <div class="admin-layout">
+
+
+<!-- =====================================================
+     SIDEBAR
+===================================================== -->
 
 <aside class="sidebar">
 
+
 <div class="brand">
+
 HR Admin
-<span>Haroon Ibn Rasheed Online Quran Academy</span>
+
+<span>
+Haroon Ibn Rasheed Online Quran Academy
+</span>
+
 </div>
+
 
 <nav class="nav">
 
-<a href="dashboard.html">Dashboard</a>
-<a href="admissions.html">Admissions / Leads</a>
-<a href="users.html">Portal Users</a>
-<a class="active" href="students.html">Students</a>
-<a href="enrollments.html">Enrollments</a>
-<a href="teachers.html">Teachers</a>
-<a href="schedule.html">Schedule</a>
-<a href="classes.html">Classes</a>
-<a href="attendance.html">Attendance</a>
-<a href="payments.html">Payments</a>
-<a href="leaves.html">Leaves</a>
-<a href="salaries.html">Salaries</a>
-<a href="courses.html">Courses</a>
-<a href="fees.html">Fees</a>
-<a href="payment-methods.html">Payment Methods</a>
-<a href="messages.html">Messages</a>
-<a href="testimonials.html">Testimonials</a>
-<a href="articles.html">Blog / Articles</a>
-<a href="notifications.html">Notifications</a>
-<a href="faqs.html">FAQs</a>
-<a href="content.html">Website Content</a>
-<a href="settings.html">Settings</a>
-<a href="../index.html">View Website</a>
-<a href="#" onclick="logout();return false">Logout</a>
+
+<a href="dashboard.html">
+Dashboard
+</a>
+
+<a href="admissions.html">
+Admissions / Leads
+</a>
+
+<a href="users.html">
+Portal Users
+</a>
+
+<a class="active"
+href="students.html">
+Students
+</a>
+
+<a href="enrollments.html">
+Enrollments
+</a>
+
+<a href="teachers.html">
+Teachers
+</a>
+
+<a href="schedule.html">
+Schedule
+</a>
+
+<a href="classes.html">
+Classes
+</a>
+
+<a href="attendance.html">
+Attendance
+</a>
+
+<a href="payments.html">
+Payments
+</a>
+
+<a href="leaves.html">
+Leaves
+</a>
+
+<a href="salaries.html">
+Salaries
+</a>
+
+<a href="courses.html">
+Courses
+</a>
+
+<a href="fees.html">
+Fees
+</a>
+
+<a href="payment-methods.html">
+Payment Methods
+</a>
+
+<a href="messages.html">
+Messages
+</a>
+
+<a href="testimonials.html">
+Testimonials
+</a>
+
+<a href="articles.html">
+Blog / Articles
+</a>
+
+<a href="notifications.html">
+Notifications
+</a>
+
+<a href="faqs.html">
+FAQs
+</a>
+
+<a href="content.html">
+Website Content
+</a>
+
+<a href="settings.html">
+Settings
+</a>
+
+<a href="../index.html">
+View Website
+</a>
+
+<a href="#"
+onclick="logout();return false">
+Logout
+</a>
+
 
 </nav>
+
 </aside>
 
 
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
 <main class="main">
 
+
 <div class="top">
-<h1>Students</h1>
+
+<h1>
+Students
+</h1>
+
 </div>
 
-<div id="msg" class="msg"></div>
+
+<div id="msg"
+class="msg">
+</div>
 
 
-<!-- CREATE STUDENT -->
+
+<!-- =====================================================
+     CREATE STUDENT
+===================================================== -->
 
 <div class="card">
 
-<h2>Create Student Account</h2>
 
-<form id="studentForm" class="form-grid">
+<h2>
+Create Student Account
+</h2>
+
+
+<form
+id="studentForm"
+class="form-grid">
+
+
+<!-- STUDENT NAME -->
 
 <div class="field">
-<label>Student Name</label>
+
+<label>
+Student Name
+</label>
+
 <input
 id="student_name"
 class="input"
 type="text"
 placeholder="Enter student name"
 required>
+
 </div>
 
 
+
+<!-- EMAIL -->
+
 <div class="field">
-<label>Email</label>
+
+<label>
+Email
+</label>
+
 <input
 id="student_email"
 class="input"
 type="email"
 placeholder="student@example.com"
 required>
+
 </div>
 
 
+
+<!-- PASSWORD -->
+
 <div class="field">
-<label>Password</label>
+
+<label>
+Password
+</label>
+
 <input
 id="student_password"
 class="input"
@@ -102,193 +245,374 @@ type="password"
 placeholder="Create password"
 required
 minlength="6">
+
 </div>
 
 
+
+<!-- FATHER NAME -->
+
 <div class="field">
-<label>Father Name</label>
+
+<label>
+Father Name
+</label>
+
 <input
 id="father_name"
 class="input"
 type="text"
 placeholder="Enter father name">
+
 </div>
 
 
+
+<!-- PHONE -->
+
 <div class="field">
-<label>Phone</label>
+
+<label>
+Phone
+</label>
+
 <input
 id="student_phone"
 class="input"
 type="text"
 placeholder="Enter phone number">
+
 </div>
 
 
+
+<!-- COURSE -->
+
 <div class="field">
-<label>Course</label>
+
+<label>
+Course
+</label>
+
 <input
 id="student_course"
 class="input"
 type="text"
 placeholder="Example: Quran with Tajweed">
+
 </div>
 
 
+
+<!-- TEACHER -->
+
 <div class="field">
-<label>Teacher</label>
 
-<select id="teacher_id" class="input" required>
+<label>
+Teacher
+</label>
 
-<option value="">Loading teachers...</option>
+
+<select
+id="teacher_id"
+class="input"
+required>
+
+
+<option value="">
+Loading teachers...
+</option>
+
 
 </select>
 
 </div>
 
 
+
+<!-- STATUS -->
+
 <div class="field">
-<label>Status</label>
 
-<select id="student_status" class="input">
+<label>
+Status
+</label>
 
-<option value="active">Active</option>
-<option value="inactive">Inactive</option>
+
+<select
+id="student_status"
+class="input">
+
+
+<option value="active">
+Active
+</option>
+
+
+<option value="inactive">
+Inactive
+</option>
+
 
 </select>
 
 </div>
 
+
+
+<!-- BUTTON -->
 
 <div class="field full">
+
 
 <button
 id="createStudentBtn"
 class="btn"
 type="submit">
 
+
 Create Student Account
+
 
 </button>
 
+
 </div>
+
 
 </form>
 
+
 </div>
 
 
-<!-- STUDENT LIST -->
+
+<!-- =====================================================
+     STUDENT LIST
+===================================================== -->
 
 <div class="card">
 
-<h2>Students</h2>
+
+<h2>
+Students
+</h2>
+
 
 <div class="table-wrap">
 
+
 <table class="table">
+
 
 <thead>
 
+
 <tr>
 
-<th>Name</th>
-<th>Father Name</th>
-<th>Phone</th>
-<th>Email</th>
-<th>Course</th>
-<th>Teacher</th>
-<th>Status</th>
+
+<th>
+Student ID
+</th>
+
+
+<th>
+Name
+</th>
+
+
+<th>
+Father Name
+</th>
+
+
+<th>
+Phone
+</th>
+
+
+<th>
+Email
+</th>
+
+
+<th>
+Course
+</th>
+
+
+<th>
+Teacher
+</th>
+
+
+<th>
+Status
+</th>
+
 
 </tr>
+
 
 </thead>
 
-<tbody id="rows">
+
+
+<tbody
+id="rows">
+
 
 <tr>
-<td colspan="7">Loading...</td>
+
+
+<td colspan="8">
+Loading...
+</td>
+
+
 </tr>
+
 
 </tbody>
 
+
 </table>
 
-</div>
 
 </div>
+
+
+</div>
+
 
 </main>
 
+
 </div>
+
 
 
 <script>
 
+
+/* =====================================================
+   TEACHERS ARRAY
+===================================================== */
+
 let teachers = [];
 
 
-/* =========================================================
+
+/* =====================================================
    LOAD TEACHERS
-========================================================= */
+===================================================== */
 
 async function loadTeachers(){
 
-const { data, error } = await db
+
+const {
+data,
+error
+} = await db
+
 .from("teachers")
-.select("id,name,active")
-.eq("active", true)
-.order("name", { ascending:true });
+
+.select(
+"id,name,active"
+)
+
+.eq(
+"active",
+true
+)
+
+.order(
+"name",
+{
+ascending:true
+}
+);
+
 
 
 if(error){
 
+
 showMsg(
 "msg",
-"Teachers could not be loaded: " + error.message,
+"Teachers could not be loaded: " +
+error.message,
 "error"
 );
+
 
 return;
 
 }
 
 
-teachers = data || [];
+
+teachers =
+data || [];
+
+
 
 const select =
-document.getElementById("teacher_id");
+document.getElementById(
+"teacher_id"
+);
+
 
 
 select.innerHTML =
 '<option value="">Select Teacher</option>';
 
 
-teachers.forEach(function(teacher){
+
+teachers.forEach(
+function(teacher){
+
 
 const option =
-document.createElement("option");
+document.createElement(
+"option"
+);
 
-option.value = teacher.id;
+
+option.value =
+teacher.id;
+
 
 option.textContent =
 teacher.name;
 
-select.appendChild(option);
+
+select.appendChild(
+option
+);
+
 
 });
+
 
 }
 
 
-/* =========================================================
+
+/* =====================================================
    LOAD STUDENTS
-========================================================= */
+===================================================== */
 
 async function loadStudents(){
 
-const { data, error } = await db
+
+const {
+data,
+error
+} = await db
+
 .from("students")
+
 .select(`
 id,
 full_name,
@@ -303,75 +627,215 @@ id,
 name
 )
 `)
-.order("created_at", { ascending:false });
+
+.order(
+"created_at",
+{
+ascending:false
+}
+);
+
 
 
 if(error){
 
+
 showMsg(
 "msg",
-"Students could not be loaded: " + error.message,
+"Students could not be loaded: " +
+error.message,
 "error"
 );
 
+
+const rows =
+document.getElementById(
+"rows"
+);
+
+
+rows.innerHTML = `
+
+<tr>
+
+<td colspan="8">
+
+Unable to load students.
+
+</td>
+
+</tr>
+
+`;
+
+
 return;
 
 }
+
 
 
 const rows =
-document.getElementById("rows");
+document.getElementById(
+"rows"
+);
 
 
-if(!data || data.length === 0){
 
-rows.innerHTML =
-'<tr><td colspan="7">No students found.</td></tr>';
+/* NO STUDENTS */
+
+if(
+!data ||
+data.length === 0
+){
+
+
+rows.innerHTML = `
+
+<tr>
+
+<td colspan="8">
+
+No students found.
+
+</td>
+
+</tr>
+
+`;
+
 
 return;
 
 }
 
 
+
+/* =====================================================
+   DISPLAY STUDENTS
+===================================================== */
+
 rows.innerHTML =
-data.map(function(student){
+
+data.map(
+function(student){
+
 
 const teacherName =
+
 student.teachers?.name ||
+
 "Not Assigned";
+
 
 
 return `
 
 <tr>
 
-<td>
-${escapeHtml(student.full_name || "")}
-</td>
+
+<!-- STUDENT ID -->
 
 <td>
-${escapeHtml(student.father_name || "")}
+
+<small
+style="
+font-size:11px;
+word-break:break-all;
+">
+
+${escapeHtml(
+student.id || ""
+)}
+
+</small>
+
 </td>
 
-<td>
-${escapeHtml(student.phone || "")}
-</td>
+
+
+<!-- NAME -->
 
 <td>
-${escapeHtml(student.email || "")}
+
+${escapeHtml(
+student.full_name || ""
+)}
+
 </td>
 
-<td>
-${escapeHtml(student.course || "")}
-</td>
+
+
+<!-- FATHER NAME -->
 
 <td>
-${escapeHtml(teacherName)}
+
+${escapeHtml(
+student.father_name || ""
+)}
+
 </td>
 
+
+
+<!-- PHONE -->
+
 <td>
-${escapeHtml(student.status || "")}
+
+${escapeHtml(
+student.phone || ""
+)}
+
 </td>
+
+
+
+<!-- EMAIL -->
+
+<td>
+
+${escapeHtml(
+student.email || ""
+)}
+
+</td>
+
+
+
+<!-- COURSE -->
+
+<td>
+
+${escapeHtml(
+student.course || ""
+)}
+
+</td>
+
+
+
+<!-- TEACHER -->
+
+<td>
+
+${escapeHtml(
+teacherName
+)}
+
+</td>
+
+
+
+<!-- STATUS -->
+
+<td>
+
+${escapeHtml(
+student.status || ""
+)}
+
+</td>
+
 
 </tr>
 
@@ -382,88 +846,139 @@ ${escapeHtml(student.status || "")}
 }
 
 
-/* =========================================================
+
+/* =====================================================
    CREATE STUDENT
-========================================================= */
+===================================================== */
 
 document
-.getElementById("studentForm")
+
+.getElementById(
+"studentForm"
+)
+
 .addEventListener(
 "submit",
 async function(e){
 
+
 e.preventDefault();
 
 
+
 const button =
-document.getElementById("createStudentBtn");
+document.getElementById(
+"createStudentBtn"
+);
 
 
-button.disabled = true;
+
+button.disabled =
+true;
+
+
 
 button.textContent =
 "Creating Student...";
 
 
+
+/* =====================================================
+   GET FORM VALUES
+===================================================== */
+
 const name =
+
 document
-.getElementById("student_name")
+.getElementById(
+"student_name"
+)
 .value
 .trim();
+
 
 
 const email =
+
 document
-.getElementById("student_email")
+.getElementById(
+"student_email"
+)
 .value
 .trim();
+
 
 
 const password =
+
 document
-.getElementById("student_password")
+.getElementById(
+"student_password"
+)
 .value;
+
 
 
 const fatherName =
+
 document
-.getElementById("father_name")
+.getElementById(
+"father_name"
+)
 .value
 .trim();
+
 
 
 const phone =
+
 document
-.getElementById("student_phone")
+.getElementById(
+"student_phone"
+)
 .value
 .trim();
+
 
 
 const course =
+
 document
-.getElementById("student_course")
+.getElementById(
+"student_course"
+)
 .value
 .trim();
 
 
+
 const teacherId =
+
 document
-.getElementById("teacher_id")
+.getElementById(
+"teacher_id"
+)
 .value;
+
 
 
 const status =
+
 document
-.getElementById("student_status")
+.getElementById(
+"student_status"
+)
 .value;
+
 
 
 try{
 
 
-/* -----------------------------------------
+/* =====================================================
    VALIDATION
------------------------------------------ */
+===================================================== */
+
 
 if(!name){
 
@@ -472,6 +987,7 @@ throw new Error(
 );
 
 }
+
 
 
 if(!email){
@@ -483,13 +999,18 @@ throw new Error(
 }
 
 
-if(!password || password.length < 6){
+
+if(
+!password ||
+password.length < 6
+){
 
 throw new Error(
 "Password must be at least 6 characters."
 );
 
 }
+
 
 
 if(!teacherId){
@@ -501,14 +1022,18 @@ throw new Error(
 }
 
 
-/* -----------------------------------------
-   CHECK SELECTED TEACHER
------------------------------------------ */
+
+/* =====================================================
+   FIND SELECTED TEACHER
+===================================================== */
 
 const selectedTeacher =
-teachers.find(function(t){
 
-return t.id === teacherId;
+teachers.find(
+function(teacher){
+
+return teacher.id ===
+teacherId;
 
 });
 
@@ -522,14 +1047,21 @@ throw new Error(
 }
 
 
-/* -----------------------------------------
-   ADMIN SESSION
------------------------------------------ */
+
+/* =====================================================
+   GET ADMIN SESSION
+===================================================== */
 
 const {
-data: { session }
+
+data: {
+session
+}
+
 } =
+
 await db.auth.getSession();
+
 
 
 if(!session){
@@ -542,18 +1074,22 @@ return;
 }
 
 
-/* -----------------------------------------
+
+/* =====================================================
    CREATE STUDENT ACCOUNT
------------------------------------------ */
+===================================================== */
 
 const response =
+
 await fetch(
 
 "https://olxytsmwqkrrnutsegtr.supabase.co/functions/v1/create-portal-user",
 
 {
 
-method:"POST",
+method:
+"POST",
+
 
 headers:{
 
@@ -561,32 +1097,48 @@ headers:{
 "Bearer " +
 session.access_token,
 
+
 "apikey":
 window.SUPABASE_CONFIG.anonKey,
+
 
 "Content-Type":
 "application/json"
 
 },
 
-body:JSON.stringify({
 
-role:"student",
+body:
 
-email:email,
+JSON.stringify({
 
-password:password,
+role:
+"student",
 
-full_name:name,
+
+email:
+email,
+
+
+password:
+password,
+
+
+full_name:
+name,
+
 
 father_name:
 fatherName || null,
 
+
 phone:
 phone || null,
 
+
 course:
 course || null,
+
 
 teacher_id:
 teacherId
@@ -598,8 +1150,10 @@ teacherId
 );
 
 
+
 const result =
 await response.json();
+
 
 
 if(
@@ -608,41 +1162,55 @@ if(
 ){
 
 throw new Error(
+
 result.error ||
+
 "Student account could not be created."
+
 );
 
 }
 
 
-/* -----------------------------------------
-   NEW STUDENT UUID
------------------------------------------ */
+
+/* =====================================================
+   STUDENT UUID
+===================================================== */
 
 const studentId =
 result.user_id;
 
 
+
 if(!studentId){
 
 throw new Error(
+
 "Student account was created but student ID was not returned."
+
 );
 
 }
 
 
-/* -----------------------------------------
-   MAKE SURE STUDENT IS ASSIGNED
-   TO SELECTED TEACHER
------------------------------------------ */
+
+/* =====================================================
+   SAVE TEACHER + STATUS
+===================================================== */
 
 const {
+
 data: studentData,
-error: studentUpdateError
+
+error:
+studentUpdateError
+
 } =
+
 await db
+
 .from("students")
+
 .update({
 
 teacher_id:
@@ -652,71 +1220,127 @@ status:
 status
 
 })
-.eq("id", studentId)
-.select("id,teacher_id")
+
+.eq(
+"id",
+studentId
+)
+
+.select(
+"id,teacher_id"
+)
+
 .maybeSingle();
+
 
 
 if(studentUpdateError){
 
 throw new Error(
+
 "Student account created, but teacher assignment failed: " +
+
 studentUpdateError.message
+
 );
 
 }
+
 
 
 if(
 !studentData ||
-studentData.teacher_id !== teacherId
+studentData.teacher_id !==
+teacherId
 ){
 
 throw new Error(
+
 "Student was created but could not be connected to the selected teacher."
+
 );
 
 }
 
 
-/* -----------------------------------------
-   CHECK EXISTING ASSIGNMENT
------------------------------------------ */
+
+/* =====================================================
+   CHECK ASSIGNMENT
+===================================================== */
 
 const {
-data: existingAssignment,
-error: assignmentCheckError
+
+data:
+existingAssignment,
+
+error:
+assignmentCheckError
+
 } =
+
 await db
-.from("teacher_student_assignments")
-.select("id")
-.eq("student_id", studentId)
-.eq("teacher_id", teacherId)
-.eq("active", true)
+
+.from(
+"teacher_student_assignments"
+)
+
+.select(
+"id"
+)
+
+.eq(
+"student_id",
+studentId
+)
+
+.eq(
+"teacher_id",
+teacherId
+)
+
+.eq(
+"active",
+true
+)
+
 .maybeSingle();
+
 
 
 if(assignmentCheckError){
 
 throw new Error(
+
 "Could not verify teacher assignment: " +
+
 assignmentCheckError.message
+
 );
 
 }
 
 
-/* -----------------------------------------
-   CREATE ASSIGNMENT ONLY IF MISSING
------------------------------------------ */
+
+/* =====================================================
+   CREATE ASSIGNMENT IF NEEDED
+===================================================== */
 
 if(!existingAssignment){
 
+
 const {
-error: assignmentError
+
+error:
+assignmentError
+
 } =
+
 await db
-.from("teacher_student_assignments")
+
+.from(
+"teacher_student_assignments"
+)
+
 .insert({
 
 student_id:
@@ -729,9 +1353,15 @@ assignment_type:
 "permanent",
 
 start_date:
+
 new Date()
+
 .toISOString()
-.slice(0,10),
+
+.slice(
+0,
+10
+),
 
 active:
 true
@@ -739,11 +1369,15 @@ true
 });
 
 
+
 if(assignmentError){
 
 throw new Error(
+
 "Student created, but assignment record failed: " +
+
 assignmentError.message
+
 );
 
 }
@@ -751,84 +1385,122 @@ assignmentError.message
 }
 
 
-/* -----------------------------------------
+
+/* =====================================================
    SUCCESS
------------------------------------------ */
+===================================================== */
 
 showMsg(
+
 "msg",
 
 "Student account created successfully and assigned to " +
+
 selectedTeacher.name +
-". The student will now appear in this teacher's student list.",
+
+". Student ID: " +
+
+studentId,
 
 "ok"
+
 );
+
 
 
 /* RESET FORM */
 
 document
-.getElementById("studentForm")
+
+.getElementById(
+"studentForm"
+)
+
 .reset();
 
 
-/* REFRESH LIST */
+
+/* REFRESH STUDENT LIST */
 
 await loadStudents();
 
 
 }
+
 catch(error){
+
 
 console.error(
 "Create student error:",
 error
 );
 
+
+
 showMsg(
+
 "msg",
 
 error.message ||
+
 "Something went wrong.",
 
 "error"
+
 );
 
 }
+
+
 finally{
 
-button.disabled = false;
+
+button.disabled =
+false;
+
 
 button.textContent =
 "Create Student Account";
+
 
 }
 
 });
 
 
-/* =========================================================
+
+/* =====================================================
    START
-========================================================= */
+===================================================== */
 
 async function initStudents(){
 
+
 if(
 !(await adminGuard())
-)return;
+){
 
-
-await loadTeachers();
-
-await loadStudents();
+return;
 
 }
 
 
+
+await loadTeachers();
+
+
+await loadStudents();
+
+
+}
+
+
+
 initStudents();
 
+
 </script>
+
 
 </body>
 </html>
