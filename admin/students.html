@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="en">
 
 <head>
 
@@ -21,19 +21,13 @@ href="../css/admin.css">
 
 </head>
 
-
 <body>
-
 
 <div class="admin-layout">
 
-
-<!-- =====================================================
-     SIDEBAR
-===================================================== -->
+<!-- SIDEBAR -->
 
 <aside class="sidebar">
-
 
 <div class="brand">
 
@@ -45,159 +39,90 @@ Haroon Ibn Rasheed Online Quran Academy
 
 </div>
 
-
 <nav class="nav">
 
+<a href="dashboard.html">Dashboard</a>
 
-<a href="dashboard.html">
-Dashboard
-</a>
+<a href="admissions.html">Admissions / Leads</a>
 
-<a href="admissions.html">
-Admissions / Leads
-</a>
+<a href="users.html">Portal Users</a>
 
-<a href="users.html">
-Portal Users
-</a>
+<a class="active" href="students.html">Students</a>
 
-<a class="active"
-href="students.html">
-Students
-</a>
+<a href="enrollments.html">Enrollments</a>
 
-<a href="enrollments.html">
-Enrollments
-</a>
+<a href="teachers.html">Teachers</a>
 
-<a href="teachers.html">
-Teachers
-</a>
+<a href="schedule.html">Schedule</a>
 
-<a href="schedule.html">
-Schedule
-</a>
+<a href="classes.html">Classes</a>
 
-<a href="classes.html">
-Classes
-</a>
+<a href="attendance.html">Attendance</a>
 
-<a href="attendance.html">
-Attendance
-</a>
+<a href="payments.html">Payments</a>
 
-<a href="payments.html">
-Payments
-</a>
+<a href="leaves.html">Leaves</a>
 
-<a href="leaves.html">
-Leaves
-</a>
+<a href="salaries.html">Salaries</a>
 
-<a href="salaries.html">
-Salaries
-</a>
+<a href="courses.html">Courses</a>
 
-<a href="courses.html">
-Courses
-</a>
+<a href="fees.html">Fees</a>
 
-<a href="fees.html">
-Fees
-</a>
+<a href="payment-methods.html">Payment Methods</a>
 
-<a href="payment-methods.html">
-Payment Methods
-</a>
+<a href="messages.html">Messages</a>
 
-<a href="messages.html">
-Messages
-</a>
+<a href="testimonials.html">Testimonials</a>
 
-<a href="testimonials.html">
-Testimonials
-</a>
+<a href="articles.html">Blog / Articles</a>
 
-<a href="articles.html">
-Blog / Articles
-</a>
+<a href="notifications.html">Notifications</a>
 
-<a href="notifications.html">
-Notifications
-</a>
+<a href="faqs.html">FAQs</a>
 
-<a href="faqs.html">
-FAQs
-</a>
+<a href="content.html">Website Content</a>
 
-<a href="content.html">
-Website Content
-</a>
+<a href="settings.html">Settings</a>
 
-<a href="settings.html">
-Settings
-</a>
-
-<a href="../index.html">
-View Website
-</a>
+<a href="../index.html">View Website</a>
 
 <a href="#"
 onclick="logout();return false">
 Logout
 </a>
 
-
 </nav>
 
 </aside>
 
 
-
-<!-- =====================================================
-     MAIN
-===================================================== -->
+<!-- MAIN -->
 
 <main class="main">
 
-
 <div class="top">
 
-<h1>
-Students
-</h1>
+<h1>Students</h1>
 
 </div>
 
 
-<div id="msg"
-class="msg">
-</div>
+<div id="msg" class="msg"></div>
 
 
-
-<!-- =====================================================
-     CREATE STUDENT
-===================================================== -->
+<!-- CREATE STUDENT -->
 
 <div class="card">
 
+<h2>Create Student Account</h2>
 
-<h2>
-Create Student Account
-</h2>
-
-
-<form
-id="studentForm"
-class="form-grid">
+<form id="studentForm" class="form-grid">
 
 
 <div class="field">
 
-<label>
-Student Name
-</label>
+<label>Student Name</label>
 
 <input
 id="student_name"
@@ -209,12 +134,9 @@ required>
 </div>
 
 
-
 <div class="field">
 
-<label>
-Email
-</label>
+<label>Email</label>
 
 <input
 id="student_email"
@@ -226,12 +148,9 @@ required>
 </div>
 
 
-
 <div class="field">
 
-<label>
-Password
-</label>
+<label>Password</label>
 
 <input
 id="student_password"
@@ -244,12 +163,9 @@ minlength="6">
 </div>
 
 
-
 <div class="field">
 
-<label>
-Father Name
-</label>
+<label>Father Name</label>
 
 <input
 id="father_name"
@@ -260,12 +176,9 @@ placeholder="Enter father name">
 </div>
 
 
-
 <div class="field">
 
-<label>
-Phone
-</label>
+<label>Phone</label>
 
 <input
 id="student_phone"
@@ -276,12 +189,9 @@ placeholder="Enter phone number">
 </div>
 
 
-
 <div class="field">
 
-<label>
-Course
-</label>
+<label>Course</label>
 
 <input
 id="student_course"
@@ -292,12 +202,9 @@ placeholder="Example: Quran with Tajweed">
 </div>
 
 
-
 <div class="field">
 
-<label>
-Teacher
-</label>
+<label>Teacher</label>
 
 <select
 id="teacher_id"
@@ -313,12 +220,9 @@ Loading teachers...
 </div>
 
 
-
 <div class="field">
 
-<label>
-Status
-</label>
+<label>Status</label>
 
 <select
 id="student_status"
@@ -337,7 +241,6 @@ Inactive
 </div>
 
 
-
 <div class="field full">
 
 <button
@@ -351,70 +254,42 @@ Create Student Account
 
 </div>
 
-
 </form>
 
 </div>
 
 
-
-<!-- =====================================================
-     STUDENT LIST
-===================================================== -->
+<!-- STUDENT LIST -->
 
 <div class="card">
 
-
-<h2>
-Students
-</h2>
-
+<h2>Students</h2>
 
 <div class="table-wrap">
 
-
 <table class="table">
-
 
 <thead>
 
 <tr>
 
-<th>
-Student ID
-</th>
+<th>Student ID</th>
 
-<th>
-Name
-</th>
+<th>Name</th>
 
-<th>
-Father Name
-</th>
+<th>Father Name</th>
 
-<th>
-Phone
-</th>
+<th>Phone</th>
 
-<th>
-Email
-</th>
+<th>Email</th>
 
-<th>
-Course
-</th>
+<th>Course</th>
 
-<th>
-Teacher
-</th>
+<th>Teacher</th>
 
-<th>
-Status
-</th>
+<th>Status</th>
 
-<th>
-Actions
-</th>
+<th>Actions</th>
 
 </tr>
 
@@ -433,23 +308,18 @@ Loading...
 
 </tbody>
 
-
 </table>
 
-
 </div>
 
 </div>
-
 
 </main>
 
 </div>
 
 
-
 <script>
-
 
 /* =====================================================
    SETTINGS
@@ -462,6 +332,76 @@ const EDGE_FUNCTION_URL =
 let teachers = [];
 
 
+/* =====================================================
+   SAFE HTML
+===================================================== */
+
+function safeHtml(value){
+
+if(value === null || value === undefined){
+
+return "";
+
+}
+
+return String(value)
+
+.replace(/&/g,"&amp;")
+
+.replace(/</g,"&lt;")
+
+.replace(/>/g,"&gt;")
+
+.replace(/"/g,"&quot;")
+
+.replace(/'/g,"&#039;");
+
+}
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+function studentMessage(message,type){
+
+const box =
+document.getElementById("msg");
+
+if(!box){
+
+return;
+
+}
+
+box.textContent =
+message;
+
+box.style.display =
+"block";
+
+if(type === "error"){
+
+box.style.color = "#b91c1c";
+
+box.style.background = "#fee2e2";
+
+}else{
+
+box.style.color = "#166534";
+
+box.style.background = "#dcfce7";
+
+}
+
+box.style.padding = "10px";
+
+box.style.marginBottom = "15px";
+
+box.style.borderRadius = "8px";
+
+}
+
 
 /* =====================================================
    LOAD TEACHERS
@@ -469,82 +409,75 @@ let teachers = [];
 
 async function loadTeachers(){
 
+try{
 
-const {
-data,
-error
-} = await db
+const result = await db
 
 .from("teachers")
 
-.select(
-"id,name,active"
-)
+.select("id,name,active")
 
-.eq(
-"active",
-true
-)
+.eq("active",true)
 
-.order(
-"name",
-{
-ascending:true
-}
-);
+.order("name",{ascending:true});
 
 
+if(result.error){
 
-if(error){
-
-showMsg(
-"msg",
-"Teachers could not be loaded: " +
-error.message,
-"error"
-);
-
-return;
+throw result.error;
 
 }
 
 
 teachers =
-data || [];
+result.data || [];
 
 
 const select =
-document.getElementById(
-"teacher_id"
-);
+document.getElementById("teacher_id");
 
 
 select.innerHTML =
 '<option value="">Select Teacher</option>';
 
 
-teachers.forEach(
-function(teacher){
+teachers.forEach(function(teacher){
 
 const option =
-document.createElement(
-"option"
-);
+document.createElement("option");
 
 option.value =
 teacher.id;
 
 option.textContent =
-teacher.name;
+teacher.name || "Unnamed Teacher";
 
-select.appendChild(
-option
-);
+select.appendChild(option);
 
 });
 
+
+}catch(error){
+
+console.error(
+"Teacher loading error:",
+error
+);
+
+studentMessage(
+"Teachers could not be loaded: " +
+error.message,
+"error"
+);
+
+document.getElementById(
+"teacher_id"
+).innerHTML =
+'<option value="">Unable to load teachers</option>';
+
 }
 
+}
 
 
 /* =====================================================
@@ -553,11 +486,32 @@ option
 
 async function loadStudents(){
 
+const rows =
+document.getElementById("rows");
 
-const {
-data,
-error
-} = await db
+
+rows.innerHTML = `
+
+<tr>
+
+<td colspan="9">
+
+Loading students...
+
+</td>
+
+</tr>
+
+`;
+
+
+try{
+
+
+/* LOAD STUDENTS ONLY */
+
+const studentResult =
+await db
 
 .from("students")
 
@@ -570,10 +524,7 @@ email,
 course,
 status,
 teacher_id,
-teachers:teacher_id (
-id,
-name
-)
+created_at
 `)
 
 .order(
@@ -584,50 +535,20 @@ ascending:false
 );
 
 
+if(studentResult.error){
 
-if(error){
-
-showMsg(
-"msg",
-"Students could not be loaded: " +
-error.message,
-"error"
-);
-
-
-document.getElementById(
-"rows"
-).innerHTML = `
-
-<tr>
-
-<td colspan="9">
-
-Unable to load students.
-
-</td>
-
-</tr>
-
-`;
-
-return;
+throw studentResult.error;
 
 }
 
 
-
-const rows =
-document.getElementById(
-"rows"
-);
+const students =
+studentResult.data || [];
 
 
+/* NO STUDENTS */
 
-if(
-!data ||
-data.length === 0
-){
+if(students.length === 0){
 
 rows.innerHTML = `
 
@@ -648,25 +569,124 @@ return;
 }
 
 
+/* =====================================================
+   CREATE TEACHER LOOKUP
+===================================================== */
+
+const teacherMap = {};
+
+teachers.forEach(function(teacher){
+
+teacherMap[teacher.id] =
+teacher.name;
+
+});
+
 
 /* =====================================================
-   STUDENT ROWS
+   LOAD ANY TEACHERS USED BY STUDENTS
+   INCLUDING INACTIVE TEACHERS
+===================================================== */
+
+const teacherIds =
+students
+
+.map(function(student){
+
+return student.teacher_id;
+
+})
+
+.filter(Boolean);
+
+
+const uniqueTeacherIds =
+[...new Set(teacherIds)];
+
+
+if(uniqueTeacherIds.length > 0){
+
+const teacherResult =
+await db
+
+.from("teachers")
+
+.select("id,name,active")
+
+.in(
+"id",
+uniqueTeacherIds
+);
+
+
+if(!teacherResult.error){
+
+(teacherResult.data || [])
+.forEach(function(teacher){
+
+teacherMap[teacher.id] =
+teacher.name;
+
+});
+
+}
+
+}
+
+
+/* =====================================================
+   RENDER STUDENTS
 ===================================================== */
 
 rows.innerHTML =
-
-data.map(
-function(student){
+students.map(function(student){
 
 
 const teacherName =
-student.teachers?.name ||
+student.teacher_id &&
+teacherMap[student.teacher_id]
+
+?
+
+teacherMap[student.teacher_id]
+
+:
+
 "Not Assigned";
 
 
 const isActive =
-student.status === "active";
+String(student.status || "")
+.toLowerCase()
+=== "active";
 
+
+const safeId =
+safeHtml(student.id);
+
+
+const safeName =
+safeHtml(student.full_name || "");
+
+
+const safeFather =
+safeHtml(student.father_name || "-");
+
+
+const safePhone =
+safeHtml(student.phone || "-");
+
+
+const safeEmail =
+safeHtml(student.email || "-");
+
+
+const safeCourse =
+safeHtml(student.course || "-");
+
+
+const safeTeacher =
+safeHtml(teacherName);
 
 
 return `
@@ -682,89 +702,64 @@ font-size:11px;
 word-break:break-all;
 ">
 
-${escapeHtml(
-student.id || ""
-)}
+${safeId}
 
 </small>
 
 </td>
 
 
-
 <td>
 
-${escapeHtml(
-student.full_name || ""
-)}
+${safeName}
 
 </td>
 
 
-
 <td>
 
-${escapeHtml(
-student.father_name || "-"
-)}
+${safeFather}
 
 </td>
 
 
-
 <td>
 
-${escapeHtml(
-student.phone || "-"
-)}
+${safePhone}
 
 </td>
 
 
-
 <td>
 
-${escapeHtml(
-student.email || "-"
-)}
+${safeEmail}
 
 </td>
 
 
-
 <td>
 
-${escapeHtml(
-student.course || "-"
-)}
+${safeCourse}
 
 </td>
 
 
-
 <td>
 
-${escapeHtml(
-teacherName
-)}
+${safeTeacher}
 
 </td>
-
 
 
 <td>
 
 <strong>
 
-${isActive
-? "Active"
-: "Inactive"
-}
+${isActive ? "Active" : "Inactive"}
 
 </strong>
 
 </td>
-
 
 
 <td>
@@ -774,6 +769,7 @@ style="
 display:flex;
 gap:6px;
 flex-wrap:wrap;
+min-width:170px;
 ">
 
 
@@ -793,7 +789,7 @@ padding:7px 10px;
 font-size:12px;
 "
 onclick="changeStudentStatus(
-'${student.id}',
+'${safeId}',
 'inactive'
 )">
 
@@ -816,7 +812,7 @@ padding:7px 10px;
 font-size:12px;
 "
 onclick="changeStudentStatus(
-'${student.id}',
+'${safeId}',
 'active'
 )">
 
@@ -828,7 +824,6 @@ Activate
 }
 
 
-
 <button
 type="button"
 class="btn"
@@ -838,8 +833,8 @@ padding:7px 10px;
 font-size:12px;
 "
 onclick="deleteStudent(
-'${student.id}',
-'${escapeHtml(student.full_name || "this student")}'
+'${safeId}',
+'${safeName}'
 )">
 
 Delete
@@ -858,12 +853,51 @@ Delete
 
 }).join("");
 
+
+}catch(error){
+
+console.error(
+"Students loading error:",
+error
+);
+
+
+rows.innerHTML = `
+
+<tr>
+
+<td colspan="9">
+
+<strong>
+Unable to load students.
+</strong>
+
+<br>
+
+<small>
+${safeHtml(error.message)}
+</small>
+
+</td>
+
+</tr>
+
+`;
+
+
+studentMessage(
+"Students could not be loaded: " +
+error.message,
+"error"
+);
+
+}
+
 }
 
 
-
 /* =====================================================
-   CHANGE STUDENT STATUS
+   CHANGE STATUS
 ===================================================== */
 
 async function changeStudentStatus(
@@ -871,52 +905,39 @@ studentId,
 newStatus
 ){
 
-
-const actionText =
+const action =
 newStatus === "active"
 ? "activate"
 : "deactivate";
 
 
-const confirmed =
-confirm(
+if(!confirm(
 "Are you sure you want to " +
-actionText +
+action +
 " this student?"
-);
-
-
-if(!confirmed){
+)){
 
 return;
 
 }
 
 
-
 try{
 
-
-showMsg(
-"msg",
-"Updating student status...",
+studentMessage(
+"Updating student...",
 "ok"
 );
 
 
-
-/* UPDATE STUDENT STATUS */
-
-const {
-error
-} = await db
+const result =
+await db
 
 .from("students")
 
 .update({
 
-status:
-newStatus
+status:newStatus
 
 })
 
@@ -926,23 +947,17 @@ studentId
 );
 
 
+if(result.error){
 
-if(error){
-
-throw error;
+throw result.error;
 
 }
 
 
+/* CLASSROOM ACCESS */
 
-/* =====================================================
-   UPDATE STUDENT CLASSROOM ACCESS
-===================================================== */
-
-const {
-error:
-classAccessError
-} = await db
+const accessResult =
+await db
 
 .from("class_access")
 
@@ -959,66 +974,44 @@ studentId
 );
 
 
-
-/*
-   If Classroom access has no matching row,
-   student status should still remain changed.
-*/
-
-if(classAccessError){
+if(accessResult.error){
 
 console.warn(
-"Classroom access status could not be updated:",
-classAccessError.message
+"Classroom access update:",
+accessResult.error.message
 );
 
 }
 
-
-
-/* RELOAD */
 
 await loadStudents();
 
 
-
-showMsg(
-"msg",
-
+studentMessage(
 "Student successfully " +
-(
-newStatus === "active"
-? "activated."
-: "deactivated."
-),
-
+action +
+"ed.",
 "ok"
 );
 
 
-}
-catch(error){
-
+}catch(error){
 
 console.error(
-"Student status error:",
+"Status error:",
 error
 );
 
 
-showMsg(
-"msg",
-
-"Could not update student status: " +
+studentMessage(
+"Could not update student: " +
 error.message,
-
 "error"
 );
 
 }
 
 }
-
 
 
 /* =====================================================
@@ -1030,10 +1023,7 @@ studentId,
 studentName
 ){
 
-
-const confirmed =
-
-confirm(
+if(!confirm(
 
 "PERMANENT DELETE\n\n" +
 
@@ -1042,47 +1032,43 @@ studentName +
 
 "\n\n" +
 
-"This will permanently remove the student's portal account, student record, assignments and classroom access.\n\n" +
+"This will permanently delete:\n" +
+
+"- Student account\n" +
+
+"- Student record\n" +
+
+"- Teacher assignment\n" +
+
+"- Classroom access\n" +
+
+"- Portal profile\n\n" +
 
 "This action cannot be undone.\n\n" +
 
-"Do you want to continue?"
+"Continue?"
 
-);
-
-
-
-if(!confirmed){
+)){
 
 return;
 
 }
 
 
-
 try{
 
-
-showMsg(
-"msg",
+studentMessage(
 "Deleting student account...",
 "ok"
 );
 
 
+const sessionResult =
+await db.auth.getSession();
 
-/* =====================================================
-   CURRENT ADMIN SESSION
-===================================================== */
 
-const {
-
-data:{
-session
-}
-
-} = await db.auth.getSession();
-
+const session =
+sessionResult.data?.session;
 
 
 if(!session){
@@ -1095,21 +1081,12 @@ return;
 }
 
 
-
-/* =====================================================
-   DELETE THROUGH EDGE FUNCTION
-===================================================== */
-
 const response =
-
 await fetch(
-
 EDGE_FUNCTION_URL,
-
 {
 
-method:
-"POST",
+method:"POST",
 
 headers:{
 
@@ -1125,27 +1102,20 @@ window.SUPABASE_CONFIG.anonKey,
 
 },
 
-body:
+body:JSON.stringify({
 
-JSON.stringify({
+action:"delete",
 
-action:
-"delete",
-
-user_id:
-studentId
+user_id:studentId
 
 })
 
 }
-
 );
-
 
 
 const result =
 await response.json();
-
 
 
 if(
@@ -1154,41 +1124,23 @@ if(
 ){
 
 throw new Error(
-
 result.error ||
-
 "Student could not be deleted."
-
 );
 
 }
 
 
-
-/* =====================================================
-   SUCCESS
-===================================================== */
-
-showMsg(
-
-"msg",
-
-"Student account permanently deleted successfully.",
-
+studentMessage(
+"Student deleted successfully.",
 "ok"
-
 );
 
-
-
-/* REFRESH */
 
 await loadStudents();
 
 
-}
-catch(error){
-
+}catch(error){
 
 console.error(
 "Delete student error:",
@@ -1196,19 +1148,15 @@ error
 );
 
 
-showMsg(
-
-"msg",
-
+studentMessage(
 "Student could not be deleted: " +
 error.message,
-
 "error"
-
 );
 
 }
 
+}
 
 
 /* =====================================================
@@ -1216,18 +1164,12 @@ error.message,
 ===================================================== */
 
 document
-
-.getElementById(
-"studentForm"
-)
-
+.getElementById("studentForm")
 .addEventListener(
 "submit",
-async function(e){
+async function(event){
 
-
-e.preventDefault();
-
+event.preventDefault();
 
 
 const button =
@@ -1236,104 +1178,67 @@ document.getElementById(
 );
 
 
-button.disabled =
-true;
-
+button.disabled = true;
 
 button.textContent =
 "Creating Student...";
 
 
-
-const name =
-
-document
-.getElementById(
-"student_name"
-)
-.value
-.trim();
-
-
-
-const email =
-
-document
-.getElementById(
-"student_email"
-)
-.value
-.trim();
-
-
-
-const password =
-
-document
-.getElementById(
-"student_password"
-)
-.value;
-
-
-
-const fatherName =
-
-document
-.getElementById(
-"father_name"
-)
-.value
-.trim();
-
-
-
-const phone =
-
-document
-.getElementById(
-"student_phone"
-)
-.value
-.trim();
-
-
-
-const course =
-
-document
-.getElementById(
-"student_course"
-)
-.value
-.trim();
-
-
-
-const teacherId =
-
-document
-.getElementById(
-"teacher_id"
-)
-.value;
-
-
-
-const status =
-
-document
-.getElementById(
-"student_status"
-)
-.value;
-
-
-
 try{
 
 
-/* VALIDATION */
+const name =
+document
+.getElementById("student_name")
+.value
+.trim();
+
+
+const email =
+document
+.getElementById("student_email")
+.value
+.trim();
+
+
+const password =
+document
+.getElementById("student_password")
+.value;
+
+
+const fatherName =
+document
+.getElementById("father_name")
+.value
+.trim();
+
+
+const phone =
+document
+.getElementById("student_phone")
+.value
+.trim();
+
+
+const course =
+document
+.getElementById("student_course")
+.value
+.trim();
+
+
+const teacherId =
+document
+.getElementById("teacher_id")
+.value;
+
+
+const status =
+document
+.getElementById("student_status")
+.value;
+
 
 if(!name){
 
@@ -1353,10 +1258,7 @@ throw new Error(
 }
 
 
-if(
-!password ||
-password.length < 6
-){
+if(!password || password.length < 6){
 
 throw new Error(
 "Password must be at least 6 characters."
@@ -1374,16 +1276,10 @@ throw new Error(
 }
 
 
-
-/* SELECTED TEACHER */
-
 const selectedTeacher =
+teachers.find(function(teacher){
 
-teachers.find(
-function(teacher){
-
-return teacher.id ===
-teacherId;
+return teacher.id === teacherId;
 
 });
 
@@ -1397,17 +1293,12 @@ throw new Error(
 }
 
 
+const sessionResult =
+await db.auth.getSession();
 
-/* ADMIN SESSION */
 
-const {
-
-data:{
-session
-}
-
-} = await db.auth.getSession();
-
+const session =
+sessionResult.data?.session;
 
 
 if(!session){
@@ -1420,21 +1311,14 @@ return;
 }
 
 
-
-/* =====================================================
-   CREATE ACCOUNT
-===================================================== */
+/* CREATE THROUGH EDGE FUNCTION */
 
 const response =
-
 await fetch(
-
 EDGE_FUNCTION_URL,
-
 {
 
-method:
-"POST",
+method:"POST",
 
 headers:{
 
@@ -1450,21 +1334,15 @@ window.SUPABASE_CONFIG.anonKey,
 
 },
 
-body:
+body:JSON.stringify({
 
-JSON.stringify({
+role:"student",
 
-role:
-"student",
+email:email,
 
-email:
-email,
+password:password,
 
-password:
-password,
-
-full_name:
-name,
+full_name:name,
 
 father_name:
 fatherName || null,
@@ -1481,14 +1359,11 @@ teacherId
 })
 
 }
-
 );
-
 
 
 const result =
 await response.json();
-
 
 
 if(
@@ -1497,49 +1372,30 @@ if(
 ){
 
 throw new Error(
-
 result.error ||
-
 "Student account could not be created."
-
 );
 
 }
 
-
-
-/* NEW STUDENT ID */
 
 const studentId =
 result.user_id;
 
 
-
 if(!studentId){
 
 throw new Error(
-
-"Student account was created but student ID was not returned."
-
+"Student was created but ID was not returned."
 );
 
 }
 
 
+/* UPDATE STATUS + TEACHER */
 
-/* =====================================================
-   SAVE TEACHER + STATUS
-===================================================== */
-
-const {
-
-data:
-studentData,
-
-error:
-studentUpdateError
-
-} = await db
+const updateResult =
+await db
 
 .from("students")
 
@@ -1556,67 +1412,27 @@ status
 .eq(
 "id",
 studentId
-)
-
-.select(
-"id,teacher_id"
-)
-
-.maybeSingle();
+);
 
 
-
-if(studentUpdateError){
+if(updateResult.error){
 
 throw new Error(
-
-"Student account created, but teacher assignment failed: " +
-
-studentUpdateError.message
-
+"Student created, but teacher/status update failed: " +
+updateResult.error.message
 );
 
 }
 
 
+/* CHECK ASSIGNMENT */
 
-if(
-!studentData ||
-studentData.teacher_id !==
-teacherId
-){
+const assignmentResult =
+await db
 
-throw new Error(
+.from("teacher_student_assignments")
 
-"Student could not be connected to the selected teacher."
-
-);
-
-}
-
-
-
-/* =====================================================
-   CHECK ASSIGNMENT
-===================================================== */
-
-const {
-
-data:
-existingAssignment,
-
-error:
-assignmentCheckError
-
-} = await db
-
-.from(
-"teacher_student_assignments"
-)
-
-.select(
-"id"
-)
+.select("id")
 
 .eq(
 "student_id",
@@ -1636,36 +1452,24 @@ true
 .maybeSingle();
 
 
-
-if(assignmentCheckError){
+if(assignmentResult.error){
 
 throw new Error(
-
 "Could not verify teacher assignment: " +
-
-assignmentCheckError.message
-
+assignmentResult.error.message
 );
 
 }
 
 
-
 /* CREATE ASSIGNMENT IF MISSING */
 
-if(!existingAssignment){
+if(!assignmentResult.data){
 
+const insertAssignment =
+await db
 
-const {
-
-error:
-assignmentError
-
-} = await db
-
-.from(
-"teacher_student_assignments"
-)
+.from("teacher_student_assignments")
 
 .insert({
 
@@ -1679,31 +1483,20 @@ assignment_type:
 "permanent",
 
 start_date:
-
 new Date()
-
 .toISOString()
+.slice(0,10),
 
-.slice(
-0,
-10
-),
-
-active:
-true
+active:true
 
 });
 
 
-
-if(assignmentError){
+if(insertAssignment.error){
 
 throw new Error(
-
-"Student created, but assignment record failed: " +
-
-assignmentError.message
-
+"Student created but assignment failed: " +
+insertAssignment.error.message
 );
 
 }
@@ -1711,21 +1504,13 @@ assignmentError.message
 }
 
 
+/* SUCCESS */
 
-/* =====================================================
-   SUCCESS
-===================================================== */
-
-showMsg(
-
-"msg",
+studentMessage(
 
 "Student account created successfully and assigned to " +
-
 selectedTeacher.name +
-
 ". Student ID: " +
-
 studentId,
 
 "ok"
@@ -1733,21 +1518,15 @@ studentId,
 );
 
 
-
 document
-.getElementById(
-"studentForm"
-)
+.getElementById("studentForm")
 .reset();
-
 
 
 await loadStudents();
 
 
-}
-catch(error){
-
+}catch(error){
 
 console.error(
 "Create student error:",
@@ -1755,66 +1534,104 @@ error
 );
 
 
-showMsg(
-
-"msg",
-
+studentMessage(
 error.message ||
 "Something went wrong.",
-
 "error"
-
 );
 
 
-}
-finally{
+}finally{
 
-
-button.disabled =
-false;
-
+button.disabled = false;
 
 button.textContent =
 "Create Student Account";
-
 
 }
 
 });
 
 
-
 /* =====================================================
-   START
+   START PAGE
 ===================================================== */
 
 async function initStudents(){
 
+try{
+
 
 if(
-!(await adminGuard())
+typeof adminGuard === "function"
 ){
 
+const allowed =
+await adminGuard();
+
+
+if(!allowed){
+
 return;
+
+}
 
 }
 
 
 await loadTeachers();
 
-
 await loadStudents();
 
+
+}catch(error){
+
+console.error(
+"Student page initialization error:",
+error
+);
+
+
+const rows =
+document.getElementById("rows");
+
+
+rows.innerHTML = `
+
+<tr>
+
+<td colspan="9">
+
+<strong>
+Page could not load.
+</strong>
+
+<br>
+
+<small>
+${safeHtml(error.message)}
+</small>
+
+</td>
+
+</tr>
+
+`;
+
+studentMessage(
+"Page error: " +
+error.message,
+"error"
+);
+
+}
 
 }
 
 
 initStudents();
 
-
 </script>
-
 
 </body>
 
