@@ -1,1 +1,563 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>My Profile | Haroon Ibn Rasheed Online Quran Academy</title><link rel="stylesheet" href="../css/portal.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../js/config.js"></script><script src="../js/portal.js" defer></script></head><body class="dashboard" data-page="student-profile"><div class="side-layout"><aside class="side"><img src="../assets/hr-logo.svg" alt="HR"><h3>Haroon Ibn Rasheed</h3><small>Student Portal</small><nav style="margin-top:16px"><a href="dashboard.html">Dashboard</a><a href="profile.html" class="active">Profile</a><a href="teacher.html">My Teacher</a><a href="course.html">My Courses</a><a href="classes.html">My Classes</a><a href="schedule.html">Schedule</a><a href="attendance.html">Attendance</a><a href="fees.html">Fees</a><a href="leaves.html">Leaves</a></nav><a href="#" onclick="portalLogout();return false">Logout</a></aside><main class="content"><section class="card"><h1>My Profile</h1><form id="profileForm" class="form-grid"><div class="field"><label>Full Name</label><input name="full_name" id="profileName" required></div><div class="field"><label>Email</label><input id="profileEmail" disabled></div><div class="field full"><button class="btn-small">Save Profile</button></div></form></section></main></div></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>My Profile | Haroon Ibn Rasheed Online Quran Academy</title>
+
+<link rel="stylesheet" href="../css/portal.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script src="../js/portal.js" defer></script>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:#f4f7f9;
+  font-family:Arial,Helvetica,sans-serif;
+  color:#26343d;
+}
+
+.side-layout{
+  min-height:100vh;
+  display:flex;
+}
+
+.side{
+  width:245px;
+  background:#454d59;
+  color:#fff;
+  padding:25px 18px;
+  position:fixed;
+  left:0;
+  top:0;
+  bottom:0;
+  overflow-y:auto;
+}
+
+.side img{
+  width:72px;
+  height:72px;
+  display:block;
+  margin:0 auto 12px;
+}
+
+.side h3{
+  text-align:center;
+  margin:5px 0;
+  font-size:18px;
+}
+
+.side small{
+  display:block;
+  text-align:center;
+  color:#d9e0e4;
+}
+
+.side nav{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.side a{
+  display:block;
+  color:#fff;
+  text-decoration:none;
+  padding:12px 14px;
+  border-radius:8px;
+  margin-top:4px;
+  font-size:14px;
+}
+
+.side nav a:hover,
+.side nav a.active{
+  background:#2f9fba;
+}
+
+.logout{
+  margin-top:20px!important;
+  background:#f18b82;
+  text-align:center;
+}
+
+.content{
+  margin-left:245px;
+  width:calc(100% - 245px);
+  padding:30px;
+}
+
+.profile-header{
+  background:linear-gradient(135deg,#2f9fba,#287f96);
+  color:#fff;
+  border-radius:18px;
+  padding:28px;
+  margin-bottom:22px;
+  box-shadow:0 8px 25px rgba(0,0,0,.08);
+}
+
+.profile-header h1{
+  margin:0 0 8px;
+  font-size:28px;
+}
+
+.profile-header p{
+  margin:0;
+  opacity:.9;
+}
+
+.profile-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+
+.card{
+  background:#fff;
+  border-radius:16px;
+  padding:24px;
+  box-shadow:0 5px 20px rgba(0,0,0,.06);
+}
+
+.card h2{
+  margin-top:0;
+  font-size:19px;
+  color:#34434d;
+  border-bottom:1px solid #e8eef1;
+  padding-bottom:13px;
+}
+
+.info{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+
+.info-box{
+  background:#f7fafb;
+  border:1px solid #e5edef;
+  border-radius:10px;
+  padding:14px;
+}
+
+.info-box span{
+  display:block;
+  color:#7a8991;
+  font-size:12px;
+  margin-bottom:6px;
+}
+
+.info-box strong{
+  font-size:15px;
+  color:#293943;
+  word-break:break-word;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
+
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+
+.field.full{
+  grid-column:1/-1;
+}
+
+label{
+  font-size:13px;
+  font-weight:bold;
+  color:#52616a;
+}
+
+input{
+  width:100%;
+  padding:12px 13px;
+  border:1px solid #d9e3e7;
+  border-radius:9px;
+  outline:none;
+  font-size:14px;
+}
+
+input:focus{
+  border-color:#2f9fba;
+  box-shadow:0 0 0 3px rgba(47,159,186,.10);
+}
+
+input[disabled]{
+  background:#eef2f4;
+  color:#68777f;
+}
+
+.btn{
+  border:0;
+  background:#2f9fba;
+  color:#fff;
+  padding:12px 22px;
+  border-radius:9px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.btn:hover{
+  background:#278da6;
+}
+
+.status{
+  display:inline-block;
+  padding:6px 11px;
+  border-radius:20px;
+  background:#e5f6ea;
+  color:#268044;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.message{
+  margin-top:12px;
+  font-size:13px;
+  display:none;
+}
+
+@media(max-width:800px){
+  .side{
+    width:210px;
+  }
+
+  .content{
+    margin-left:210px;
+    width:calc(100% - 210px);
+    padding:20px;
+  }
+
+  .profile-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:600px){
+  .side{
+    position:relative;
+    width:100%;
+    min-height:auto;
+  }
+
+  .side-layout{
+    display:block;
+  }
+
+  .content{
+    margin-left:0;
+    width:100%;
+    padding:15px;
+  }
+
+  .info,
+  .form-grid{
+    grid-template-columns:1fr;
+  }
+
+  .field.full{
+    grid-column:auto;
+  }
+
+  .profile-header h1{
+    font-size:23px;
+  }
+}
+</style>
+</head>
+
+<body class="dashboard" data-page="student-profile">
+
+<div class="side-layout">
+
+<aside class="side">
+
+<img src="../assets/hr-logo.svg" alt="HR Logo">
+
+<h3>Haroon Ibn Rasheed</h3>
+<small>Student Portal</small>
+
+<nav style="margin-top:16px">
+
+<a href="dashboard.html">Dashboard</a>
+<a href="profile.html" class="active">Profile</a>
+<a href="teacher.html">My Teacher</a>
+<a href="course.html">My Courses</a>
+<a href="classes.html">My Classes</a>
+<a href="schedule.html">Schedule</a>
+<a href="attendance.html">Attendance</a>
+<a href="fees.html">Fees</a>
+<a href="leaves.html">Leaves</a>
+
+</nav>
+
+<a href="#" class="logout" onclick="portalLogout();return false">
+Logout
+</a>
+
+</aside>
+
+
+<main class="content">
+
+<section class="profile-header">
+<h1>My Profile</h1>
+<p id="welcomeText">Your personal academy information</p>
+</section>
+
+
+<div class="profile-grid">
+
+
+<section class="card">
+
+<h2>Personal Information</h2>
+
+<div class="info">
+
+<div class="info-box">
+<span>Full Name</span>
+<strong id="viewName">Loading...</strong>
+</div>
+
+<div class="info-box">
+<span>Father Name</span>
+<strong id="viewFather">Loading...</strong>
+</div>
+
+<div class="info-box">
+<span>Phone</span>
+<strong id="viewPhone">Loading...</strong>
+</div>
+
+<div class="info-box">
+<span>Email</span>
+<strong id="viewEmail">Loading...</strong>
+</div>
+
+<div class="info-box">
+<span>Course</span>
+<strong id="viewCourse">Loading...</strong>
+</div>
+
+<div class="info-box">
+<span>Status</span>
+<strong id="viewStatus">Loading...</strong>
+</div>
+
+</div>
+
+</section>
+
+
+<section class="card">
+
+<h2>Account Information</h2>
+
+<div class="info">
+
+<div class="info-box">
+<span>Account ID</span>
+<strong id="viewId">Loading...</strong>
+</div>
+
+<div class="info-box">
+<span>Account Status</span>
+<strong id="accountStatus">Active</strong>
+</div>
+
+</div>
+
+</section>
+
+
+<section class="card" style="grid-column:1/-1">
+
+<h2>Update Profile</h2>
+
+<form id="profileForm" class="form-grid">
+
+<div class="field">
+<label>Full Name</label>
+<input name="full_name" id="profileName" required>
+</div>
+
+<div class="field">
+<label>Phone</label>
+<input name="phone" id="profilePhone">
+</div>
+
+<div class="field">
+<label>Email</label>
+<input id="profileEmail" disabled>
+</div>
+
+<div class="field">
+<label>Father Name</label>
+<input name="father_name" id="profileFather">
+</div>
+
+<div class="field full">
+
+<button type="submit" class="btn">
+Save Profile
+</button>
+
+<div id="saveMessage" class="message"></div>
+
+</div>
+
+</form>
+
+</section>
+
+</div>
+
+</main>
+
+</div>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", async () => {
+
+  try{
+
+    const result = await getCurrentStudent();
+
+    if(!result){
+      return;
+    }
+
+    const student = result.student;
+    const user = result.guard.s.user;
+
+    document.getElementById("viewName").textContent =
+      student.full_name || "Not provided";
+
+    document.getElementById("viewFather").textContent =
+      student.father_name || "Not provided";
+
+    document.getElementById("viewPhone").textContent =
+      student.phone || "Not provided";
+
+    document.getElementById("viewEmail").textContent =
+      student.email || user.email || "Not provided";
+
+    document.getElementById("viewCourse").textContent =
+      student.course || "Not assigned";
+
+    document.getElementById("viewStatus").innerHTML =
+      '<span class="status">' +
+      (student.status || "Active") +
+      '</span>';
+
+    document.getElementById("viewId").textContent =
+      student.id;
+
+    document.getElementById("profileName").value =
+      student.full_name || "";
+
+    document.getElementById("profilePhone").value =
+      student.phone || "";
+
+    document.getElementById("profileFather").value =
+      student.father_name || "";
+
+    document.getElementById("profileEmail").value =
+      student.email || user.email || "";
+
+    document.getElementById("welcomeText").textContent =
+      "Welcome, " + (student.full_name || "Student") + 
+      ". Manage your personal information here.";
+
+  }catch(error){
+
+    console.error("Profile error:",error);
+
+  }
+
+});
+
+
+document.getElementById("profileForm").addEventListener("submit", async function(e){
+
+  e.preventDefault();
+
+  const message = document.getElementById("saveMessage");
+
+  message.style.display = "block";
+  message.textContent = "Saving...";
+
+  try{
+
+    const result = await getCurrentStudent();
+
+    if(!result){
+      message.textContent = "Unable to verify student account.";
+      return;
+    }
+
+    const studentId = result.student.id;
+
+    const updateResult = await db
+      .from("students")
+      .update({
+        full_name:
+          document.getElementById("profileName").value.trim(),
+
+        phone:
+          document.getElementById("profilePhone").value.trim(),
+
+        father_name:
+          document.getElementById("profileFather").value.trim()
+      })
+      .eq("id", studentId);
+
+    if(updateResult.error){
+      console.error(updateResult.error);
+      message.textContent =
+        "Could not save profile. Please try again.";
+      return;
+    }
+
+    document.getElementById("viewName").textContent =
+      document.getElementById("profileName").value.trim() ||
+      "Not provided";
+
+    document.getElementById("viewPhone").textContent =
+      document.getElementById("profilePhone").value.trim() ||
+      "Not provided";
+
+    document.getElementById("viewFather").textContent =
+      document.getElementById("profileFather").value.trim() ||
+      "Not provided";
+
+    message.textContent = "Profile updated successfully.";
+
+  }catch(error){
+
+    console.error(error);
+    message.textContent =
+      "Something went wrong. Please try again.";
+
+  }
+
+});
+
+</script>
+
+</body>
+</html>
