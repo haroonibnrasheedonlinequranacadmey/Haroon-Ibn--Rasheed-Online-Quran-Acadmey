@@ -1,18 +1,9 @@
 <!doctype html>
+
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
-<title>My Profile | Haroon Ibn Rasheed Online Quran Academy</title>
-
-<link rel="stylesheet" href="../css/portal.css">
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="../js/config.js"></script>
-<script src="../js/portal.js" defer></script>
-
-<style>
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>My Profile | Haroon Ibn Rasheed Online Quran Academy</title><link rel="stylesheet" href="../css/portal.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../js/config.js"></script><script src="../js/portal.js" defer></script><style>
 *{box-sizing:border-box}
 
 body{
@@ -193,7 +184,7 @@ input:focus{
   box-shadow:0 0 0 3px rgba(47,159,186,.10);
 }
 
-input[disabled]{
+input[readonly]{
   background:#eef2f4;
   color:#68777f;
 }
@@ -209,7 +200,12 @@ input[disabled]{
 }
 
 .btn:hover{
-  background:#278da6;
+  background:#287f96;
+}
+
+.btn:disabled{
+  opacity:.65;
+  cursor:not-allowed;
 }
 
 .status{
@@ -226,6 +222,31 @@ input[disabled]{
   margin-top:12px;
   font-size:13px;
   display:none;
+  padding:10px 12px;
+  border-radius:8px;
+}
+
+.message.success{
+  display:block;
+  background:#e8f7ed;
+  color:#23753d;
+}
+
+.message.error{
+  display:block;
+  background:#fdecec;
+  color:#a33a3a;
+}
+
+.message.info{
+  display:block;
+  background:#eaf5f8;
+  color:#256b7b;
+}
+
+.loading{
+  color:#89979f!important;
+  font-weight:normal!important;
 }
 
 @media(max-width:800px){
@@ -274,23 +295,8 @@ input[disabled]{
     font-size:23px;
   }
 }
-</style>
-</head>
-
-<body class="dashboard" data-page="student-profile">
-
-<div class="side-layout">
-
-<aside class="side">
-
-<img src="../assets/hr-logo.svg" alt="HR Logo">
-
-<h3>Haroon Ibn Rasheed</h3>
-<small>Student Portal</small>
-
-<nav style="margin-top:16px">
-
-<a href="dashboard.html">Dashboard</a>
+</style></head><body class="dashboard" data-page="student-profile"><div class="side-layout"><aside class="side"><img src="../assets/hr-logo.svg" alt="HR Logo"><h3>Haroon Ibn Rasheed</h3>
+<small>Student Portal</small><nav style="margin-top:16px"><a href="dashboard.html">Dashboard</a>
 <a href="profile.html" class="active">Profile</a>
 <a href="teacher.html">My Teacher</a>
 <a href="course.html">My Courses</a>
@@ -300,264 +306,502 @@ input[disabled]{
 <a href="fees.html">Fees</a>
 <a href="leaves.html">Leaves</a>
 
-</nav>
-
-<a href="#" class="logout" onclick="portalLogout();return false">
+</nav><a href="#" class="logout" onclick="portalLogout();return false">
 Logout
-</a>
-
-</aside>
-
-
-<main class="content">
-
-<section class="profile-header">
+</a></aside><main class="content"><section class="profile-header">
 <h1>My Profile</h1>
-<p id="welcomeText">Your personal academy information</p>
-</section>
-
-
-<div class="profile-grid">
-
-
-<section class="card">
-
-<h2>Personal Information</h2>
-
-<div class="info">
-
-<div class="info-box">
+<p id="welcomeText">Loading your personal academy information...</p>
+</section><div class="profile-grid"><section class="card"><h2>Personal Information</h2><div class="info"><div class="info-box">
 <span>Full Name</span>
-<strong id="viewName">Loading...</strong>
-</div>
-
-<div class="info-box">
+<strong id="viewName" class="loading">Loading...</strong>
+</div><div class="info-box">
 <span>Father Name</span>
-<strong id="viewFather">Loading...</strong>
-</div>
-
-<div class="info-box">
+<strong id="viewFather" class="loading">Loading...</strong>
+</div><div class="info-box">
 <span>Phone</span>
-<strong id="viewPhone">Loading...</strong>
-</div>
-
-<div class="info-box">
+<strong id="viewPhone" class="loading">Loading...</strong>
+</div><div class="info-box">
 <span>Email</span>
-<strong id="viewEmail">Loading...</strong>
-</div>
-
-<div class="info-box">
+<strong id="viewEmail" class="loading">Loading...</strong>
+</div><div class="info-box">
 <span>Course</span>
-<strong id="viewCourse">Loading...</strong>
-</div>
-
-<div class="info-box">
+<strong id="viewCourse" class="loading">Loading...</strong>
+</div><div class="info-box">
 <span>Status</span>
-<strong id="viewStatus">Loading...</strong>
-</div>
-
-</div>
-
-</section>
-
-
-<section class="card">
-
-<h2>Account Information</h2>
-
-<div class="info">
-
-<div class="info-box">
+<strong id="viewStatus" class="loading">Loading...</strong>
+</div></div></section><section class="card"><h2>Account Information</h2><div class="info"><div class="info-box">
 <span>Account ID</span>
-<strong id="viewId">Loading...</strong>
-</div>
-
-<div class="info-box">
+<strong id="viewId" class="loading">Loading...</strong>
+</div><div class="info-box">
 <span>Account Status</span>
 <strong id="accountStatus">Active</strong>
-</div>
-
-</div>
-
-</section>
-
-
-<section class="card" style="grid-column:1/-1">
-
-<h2>Update Profile</h2>
-
-<form id="profileForm" class="form-grid">
-
-<div class="field">
+</div></div></section><section class="card" style="grid-column:1/-1"><h2>Update Profile</h2><form id="profileForm" class="form-grid"><div class="field">
 <label>Full Name</label>
-<input name="full_name" id="profileName" required>
-</div>
-
-<div class="field">
+<input type="text" name="full_name" id="profileName" required>
+</div><div class="field">
 <label>Phone</label>
-<input name="phone" id="profilePhone">
-</div>
-
-<div class="field">
+<input type="text" name="phone" id="profilePhone">
+</div><div class="field">
 <label>Email</label>
-<input id="profileEmail" disabled>
-</div>
-
-<div class="field">
+<input type="email" name="email" id="profileEmail">
+</div><div class="field">
 <label>Father Name</label>
-<input name="father_name" id="profileFather">
-</div>
-
-<div class="field full">
-
-<button type="submit" class="btn">
+<input type="text" name="father_name" id="profileFather">
+</div><div class="field full"><button type="submit" class="btn" id="saveButton">
 Save Profile
-</button>
+</button><div id="saveMessage" class="message"></div></div></form></section></div></main></div><script>
 
-<div id="saveMessage" class="message"></div>
-
-</div>
-
-</form>
-
-</section>
-
-</div>
-
-</main>
-
-</div>
+let currentStudent = null;
+let currentUser = null;
 
 
-<script>
+/* ================================
+   LOAD STUDENT PROFILE
+================================ */
 
-document.addEventListener("DOMContentLoaded", async () => {
+async function loadStudentProfile(){
+
+  const message = document.getElementById("saveMessage");
 
   try{
 
-    const result = await getCurrentStudent();
+    const authResult = await db.auth.getUser();
 
-    if(!result){
+    if(authResult.error){
+      console.error(authResult.error);
+      window.location.href = "../portal-login.html";
       return;
     }
 
-    const student = result.student;
-    const user = result.guard.s.user;
+    const user = authResult.data.user;
 
-    document.getElementById("viewName").textContent =
-      student.full_name || "Not provided";
+    if(!user){
+      window.location.href = "../portal-login.html";
+      return;
+    }
 
-    document.getElementById("viewFather").textContent =
-      student.father_name || "Not provided";
+    currentUser = user;
 
-    document.getElementById("viewPhone").textContent =
-      student.phone || "Not provided";
+    /* Get student record using Auth UID */
 
-    document.getElementById("viewEmail").textContent =
-      student.email || user.email || "Not provided";
+    const studentResult = await db
+      .from("students")
+      .select(`
+        id,
+        user_id,
+        full_name,
+        father_name,
+        phone,
+        email,
+        course,
+        status,
+        created_at
+      `)
+      .eq("user_id", user.id)
+      .maybeSingle();
 
-    document.getElementById("viewCourse").textContent =
-      student.course || "Not assigned";
+    if(studentResult.error){
 
-    document.getElementById("viewStatus").innerHTML =
-      '<span class="status">' +
-      (student.status || "Active") +
-      '</span>';
+      console.error("Student query error:",studentResult.error);
 
-    document.getElementById("viewId").textContent =
-      student.id;
+      setError(
+        "Unable to load your student information."
+      );
+
+      return;
+    }
+
+    if(!studentResult.data){
+
+      setError(
+        "No student profile is linked with this login."
+      );
+
+      return;
+    }
+
+    currentStudent = studentResult.data;
+
+    const student = currentStudent;
+
+    /* ================================
+       DISPLAY DATA
+    ================================= */
+
+    setText(
+      "viewName",
+      student.full_name || "Not provided"
+    );
+
+    setText(
+      "viewFather",
+      student.father_name || "Not provided"
+    );
+
+    setText(
+      "viewPhone",
+      student.phone || "Not provided"
+    );
+
+    /*
+      Login email comes from Supabase Auth.
+      If students.email exists, use it first.
+    */
+
+    setText(
+      "viewEmail",
+      student.email || user.email || "Not provided"
+    );
+
+    setText(
+      "viewCourse",
+      student.course || "Not assigned"
+    );
+
+    const status =
+      student.status || "Active";
+
+    document.getElementById("viewStatus").className =
+      "status";
+
+    document.getElementById("viewStatus").textContent =
+      status;
+
+    setText(
+      "viewId",
+      student.id || user.id
+    );
+
+    /*
+      Account status is based on the authenticated
+      Supabase account, not the UUID.
+    */
+
+    const accountStatus =
+      user.confirmed_at ||
+      user.email_confirmed_at
+        ? "Active"
+        : "Pending Email Verification";
+
+    document.getElementById("accountStatus").textContent =
+      accountStatus;
+
+    /* ================================
+       FORM VALUES
+    ================================= */
 
     document.getElementById("profileName").value =
       student.full_name || "";
 
-    document.getElementById("profilePhone").value =
-      student.phone || "";
-
     document.getElementById("profileFather").value =
       student.father_name || "";
+
+    document.getElementById("profilePhone").value =
+      student.phone || "";
 
     document.getElementById("profileEmail").value =
       student.email || user.email || "";
 
     document.getElementById("welcomeText").textContent =
-      "Welcome, " + (student.full_name || "Student") + 
+      "Welcome, " +
+      (student.full_name || "Student") +
       ". Manage your personal information here.";
 
   }catch(error){
 
-    console.error("Profile error:",error);
+    console.error("Profile loading error:",error);
+
+    setError(
+      "Something went wrong while loading your profile."
+    );
 
   }
 
-});
+}
 
 
-document.getElementById("profileForm").addEventListener("submit", async function(e){
+/* ================================
+   HELPER: SET TEXT
+================================ */
+
+function setText(id,value){
+
+  const element =
+    document.getElementById(id);
+
+  if(!element) return;
+
+  element.classList.remove("loading");
+
+  element.textContent = value;
+
+}
+
+
+/* ================================
+   ERROR DISPLAY
+================================ */
+
+function setError(text){
+
+  const ids = [
+    "viewName",
+    "viewFather",
+    "viewPhone",
+    "viewEmail",
+    "viewCourse",
+    "viewStatus",
+    "viewId"
+  ];
+
+  ids.forEach(id => {
+
+    const element =
+      document.getElementById(id);
+
+    if(element){
+      element.classList.remove("loading");
+      element.textContent = "Unavailable";
+    }
+
+  });
+
+  document.getElementById("welcomeText").textContent =
+    text;
+
+}
+
+
+/* ================================
+   SAVE PROFILE
+================================ */
+
+document
+.getElementById("profileForm")
+.addEventListener("submit",async function(e){
 
   e.preventDefault();
 
-  const message = document.getElementById("saveMessage");
+  const button =
+    document.getElementById("saveButton");
 
-  message.style.display = "block";
-  message.textContent = "Saving...";
+  const message =
+    document.getElementById("saveMessage");
+
+  if(!currentStudent || !currentUser){
+
+    message.className =
+      "message error";
+
+    message.textContent =
+      "Student profile is not loaded.";
+
+    return;
+  }
+
+  const fullName =
+    document.getElementById("profileName")
+      .value.trim();
+
+  const fatherName =
+    document.getElementById("profileFather")
+      .value.trim();
+
+  const phone =
+    document.getElementById("profilePhone")
+      .value.trim();
+
+  const newEmail =
+    document.getElementById("profileEmail")
+      .value.trim();
+
+  if(!fullName){
+
+    message.className =
+      "message error";
+
+    message.textContent =
+      "Please enter your full name.";
+
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Saving...";
+
+  message.className =
+    "message info";
+
+  message.textContent =
+    "Saving your profile...";
 
   try{
 
-    const result = await getCurrentStudent();
-
-    if(!result){
-      message.textContent = "Unable to verify student account.";
-      return;
-    }
-
-    const studentId = result.student.id;
+    /* ================================
+       UPDATE STUDENTS TABLE
+    ================================= */
 
     const updateResult = await db
       .from("students")
       .update({
-        full_name:
-          document.getElementById("profileName").value.trim(),
 
-        phone:
-          document.getElementById("profilePhone").value.trim(),
+        full_name: fullName,
 
         father_name:
-          document.getElementById("profileFather").value.trim()
+          fatherName || null,
+
+        phone:
+          phone || null,
+
+        email:
+          newEmail || null
+
       })
-      .eq("id", studentId);
+      .eq("id",currentStudent.id)
+      .eq("user_id",currentUser.id)
+      .select()
+      .maybeSingle();
 
     if(updateResult.error){
-      console.error(updateResult.error);
+
+      console.error(
+        "Student update error:",
+        updateResult.error
+      );
+
+      message.className =
+        "message error";
+
       message.textContent =
-        "Could not save profile. Please try again.";
+        "Profile save nahi ho saki. Supabase RLS permission check karni hogi.";
+
+      button.disabled = false;
+      button.textContent = "Save Profile";
+
       return;
     }
 
-    document.getElementById("viewName").textContent =
-      document.getElementById("profileName").value.trim() ||
-      "Not provided";
 
-    document.getElementById("viewPhone").textContent =
-      document.getElementById("profilePhone").value.trim() ||
-      "Not provided";
+    /* ================================
+       UPDATE SUPABASE AUTH EMAIL
+    ================================= */
 
-    document.getElementById("viewFather").textContent =
-      document.getElementById("profileFather").value.trim() ||
-      "Not provided";
+    let emailMessage = "";
 
-    message.textContent = "Profile updated successfully.";
+    const oldEmail =
+      currentUser.email || "";
+
+    if(
+      newEmail &&
+      newEmail !== oldEmail
+    ){
+
+      const authUpdate =
+        await db.auth.updateUser({
+          email:newEmail
+        });
+
+      if(authUpdate.error){
+
+        console.error(
+          "Auth email update:",
+          authUpdate.error
+        );
+
+        emailMessage =
+          " Profile data saved, but login email update needs confirmation.";
+      }else{
+
+        emailMessage =
+          " If Supabase email confirmation is enabled, please confirm the new email from your inbox.";
+      }
+
+    }
+
+
+    /* ================================
+       UPDATE LOCAL DATA
+    ================================= */
+
+    currentStudent.full_name =
+      fullName;
+
+    currentStudent.father_name =
+      fatherName;
+
+    currentStudent.phone =
+      phone;
+
+    currentStudent.email =
+      newEmail;
+
+
+    /* ================================
+       UPDATE SCREEN IMMEDIATELY
+    ================================= */
+
+    setText(
+      "viewName",
+      fullName || "Not provided"
+    );
+
+    setText(
+      "viewFather",
+      fatherName || "Not provided"
+    );
+
+    setText(
+      "viewPhone",
+      phone || "Not provided"
+    );
+
+    setText(
+      "viewEmail",
+      newEmail || "Not provided"
+    );
+
+    document.getElementById("welcomeText").textContent =
+      "Welcome, " +
+      (fullName || "Student") +
+      ". Manage your personal information here.";
+
+
+    message.className =
+      "message success";
+
+    message.textContent =
+      "Profile updated successfully." +
+      emailMessage;
 
   }catch(error){
 
-    console.error(error);
+    console.error(
+      "Save profile error:",
+      error
+    );
+
+    message.className =
+      "message error";
+
     message.textContent =
       "Something went wrong. Please try again.";
 
   }
 
+  button.disabled = false;
+  button.textContent = "Save Profile";
+
 });
 
-</script>
 
-</body>
+/* ================================
+   START
+================================ */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  loadStudentProfile
+);
+
+</script></body>
 </html>
