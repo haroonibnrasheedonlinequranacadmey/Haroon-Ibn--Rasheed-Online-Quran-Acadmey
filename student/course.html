@@ -26,10 +26,6 @@ body{
   color:#26343d;
 }
 
-/* ================================
-   LAYOUT
-================================ */
-
 .side-layout{
   min-height:100vh;
   display:flex;
@@ -94,19 +90,11 @@ body{
   text-align:center;
 }
 
-/* ================================
-   MAIN
-================================ */
-
 .content{
   margin-left:245px;
   width:calc(100% - 245px);
   padding:30px;
 }
-
-/* ================================
-   HEADER
-================================ */
 
 .page-header{
   background:linear-gradient(135deg,#2f9fba,#287f96);
@@ -128,10 +116,6 @@ body{
   font-size:14px;
 }
 
-/* ================================
-   MAIN CARD
-================================ */
-
 .card{
   background:#fff;
   border-radius:16px;
@@ -145,21 +129,12 @@ body{
   color:#34434d;
 }
 
-/* ================================
-   COURSES GRID
-================================ */
-
 .courses-grid{
   display:grid;
-  grid-template-columns:
-    repeat(3,minmax(0,1fr));
+  grid-template-columns:repeat(3,minmax(0,1fr));
   gap:20px;
   margin-top:22px;
 }
-
-/* ================================
-   COURSE CARD
-================================ */
 
 .course-card{
   background:#fff;
@@ -167,19 +142,13 @@ body{
   border-radius:15px;
   overflow:hidden;
   box-shadow:0 5px 16px rgba(0,0,0,.05);
-  transition:
-    transform .2s ease,
-    box-shadow .2s ease;
+  transition:transform .2s ease,box-shadow .2s ease;
 }
 
 .course-card:hover{
   transform:translateY(-4px);
   box-shadow:0 10px 25px rgba(0,0,0,.10);
 }
-
-/* ================================
-   COURSE IMAGE
-================================ */
 
 .course-image-wrap{
   position:relative;
@@ -208,10 +177,6 @@ body{
   font-weight:bold;
 }
 
-/* ================================
-   COURSE CONTENT
-================================ */
-
 .course-content{
   padding:18px;
 }
@@ -230,10 +195,6 @@ body{
   line-height:1.55;
   min-height:40px;
 }
-
-/* ================================
-   COURSE INFO
-================================ */
 
 .course-info{
   display:grid;
@@ -260,10 +221,6 @@ body{
   font-size:12px;
   color:#34434d;
 }
-
-/* ================================
-   PROGRESS
-================================ */
 
 .progress-header{
   display:flex;
@@ -298,10 +255,6 @@ body{
   transition:width .4s ease;
 }
 
-/* ================================
-   BUTTON
-================================ */
-
 .course-button{
   display:block;
   width:100%;
@@ -329,10 +282,6 @@ body{
   border-radius:9px;
   font-size:13px;
 }
-
-/* ================================
-   LOADING / ERROR / EMPTY
-================================ */
 
 .loading{
   grid-column:1/-1;
@@ -365,15 +314,10 @@ body{
   color:#9a4740;
 }
 
-/* ================================
-   RESPONSIVE
-================================ */
-
 @media(max-width:1000px){
 
   .courses-grid{
-    grid-template-columns:
-      repeat(2,minmax(0,1fr));
+    grid-template-columns:repeat(2,minmax(0,1fr));
   }
 
 }
@@ -435,8 +379,6 @@ body{
 <body class="dashboard" data-page="student-course">
 
 <div class="side-layout">
-
-<!-- SIDEBAR -->
 
 <aside class="side">
 
@@ -503,9 +445,6 @@ Logout
 
 </aside>
 
-
-<!-- MAIN -->
-
 <main class="content">
 
 <section class="page-header">
@@ -519,7 +458,6 @@ View the courses available and assigned to your academy account.
 </p>
 
 </section>
-
 
 <section class="card">
 
@@ -542,7 +480,6 @@ Loading courses...
 </main>
 
 </div>
-
 
 <script>
 
@@ -595,7 +532,7 @@ async function initCourses(){
       <div class="error-box">
 
         <strong>
-        Courses could not be loaded.
+          Courses could not be loaded.
         </strong>
 
         <br><br>
@@ -615,9 +552,7 @@ async function initCourses(){
 
 
 /* =========================================
-   LOAD COURSES
-   IMPORTANT:
-   Existing Admin-added courses are NOT removed.
+   LOAD STUDENT COURSES
 ========================================= */
 
 async function loadStudentCourses(){
@@ -628,26 +563,85 @@ async function loadStudentCourses(){
     );
 
 
-  /*
-    First get logged-in student.
-  */
+  /* =========================================
+     GET CURRENT LOGIN
+  ========================================= */
 
-  const studentResult =
-    await getCurrentStudent();
+  const {
+    data:{user},
+    error:authError
+  } =
+    await db.auth.getUser();
 
 
-  if(!studentResult){
+  if(authError){
+    throw authError;
+  }
+
+
+  if(!user){
 
     grid.innerHTML = `
 
       <div class="empty-box">
 
         <h3>
-        Student account not found
+          Login Required
         </h3>
 
         <p>
-        Please login again to view your courses.
+          Please login again to view your courses.
+        </p>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  /* =========================================
+     FIND CURRENT STUDENT
+  ========================================= */
+
+  const {
+    data:student,
+    error:studentError
+  } =
+    await db
+      .from("students")
+      .select(`
+        id,
+        user_id,
+        full_name,
+        status
+      `)
+      .eq(
+        "user_id",
+        user.id
+      )
+      .maybeSingle();
+
+
+  if(studentError){
+    throw studentError;
+  }
+
+
+  if(!student){
+
+    grid.innerHTML = `
+
+      <div class="empty-box">
+
+        <h3>
+          Student Account Not Found
+        </h3>
+
+        <p>
+          Your login is not linked with a student account.
         </p>
 
       </div>
@@ -660,44 +654,42 @@ async function loadStudentCourses(){
 
 
   const studentId =
-    studentResult.student.id;
+    student.id;
 
 
-  /*
-    Existing Admin course system.
-    We keep loading all active courses exactly
-    as before, including image, description
-    and course link.
-  */
+  /* =========================================
+     LOAD ADMIN-ADDED ACTIVE COURSES
+  ========================================= */
 
   const {
-    data: courses,
-    error: courseError
-  } = await db
-
-    .from("courses")
-
-    .select(
-      "id,title,description,image_url,course_url,status"
-    )
-
-    .eq(
-      "status",
-      "active"
-    )
-
-    .order(
-      "created_at",
-      {
-        ascending:true
-      }
-    );
+    data:courses,
+    error:courseError
+  } =
+    await db
+      .from("courses")
+      .select(`
+        id,
+        title,
+        description,
+        image_url,
+        course_url,
+        status,
+        created_at
+      `)
+      .eq(
+        "status",
+        "active"
+      )
+      .order(
+        "created_at",
+        {
+          ascending:true
+        }
+      );
 
 
   if(courseError){
-
     throw courseError;
-
   }
 
 
@@ -712,11 +704,11 @@ async function loadStudentCourses(){
       <div class="empty-box">
 
         <h3>
-        No Active Courses
+          No Active Courses
         </h3>
 
         <p>
-        There are currently no active courses available.
+          There are currently no active courses available.
         </p>
 
       </div>
@@ -728,34 +720,32 @@ async function loadStudentCourses(){
   }
 
 
-  /*
-    Get this student's enrollments.
-
-    This is only for showing:
-    - enrolled status
-    - teacher
-    - progress
-
-    It does NOT replace the existing course
-    loading system.
-  */
+  /* =========================================
+     LOAD STUDENT ENROLLMENTS
+  ========================================= */
 
   const {
-    data: enrollments,
-    error: enrollmentError
-  } = await db
+    data:enrollments,
+    error:enrollmentError
+  } =
+    await db
+      .from("student_enrollments")
+      .select(`
+        course_id,
+        teacher_id,
+        status,
+        progress
+      `)
+      .eq(
+        "student_id",
+        studentId
+      );
 
-    .from("student_enrollments")
 
-    .select(
-      "course_id,teacher_id,status,progress"
-    )
-
-    .eq(
-      "student_id",
-      studentId
-    );
-
+  /*
+    Enrollment data is optional.
+    Even if RLS blocks it, courses still show.
+  */
 
   if(enrollmentError){
 
@@ -771,26 +761,35 @@ async function loadStudentCourses(){
     enrollments || [];
 
 
-  grid.innerHTML = courseList
+  /* =========================================
+     DISPLAY COURSES
+  ========================================= */
 
-    .map(course => {
+  grid.innerHTML =
+    courseList
+      .map(
+        course => {
 
-      const enrollment =
-        enrollmentList.find(
-          item =>
-            String(item.course_id) ===
-            String(course.id)
-        );
+          const enrollment =
+            enrollmentList.find(
+              item =>
+                String(
+                  item.course_id
+                ) ===
+                String(
+                  course.id
+                )
+            );
 
 
-      return createCourseCard(
-        course,
-        enrollment
-      );
+          return createCourseCard(
+            course,
+            enrollment
+          );
 
-    })
-
-    .join("");
+        }
+      )
+      .join("");
 
 }
 
@@ -824,9 +823,7 @@ function createCourseCard(
     );
 
 
-  /*
-    Enrollment status
-  */
+  /* STATUS */
 
   let statusText =
     "Active Course";
@@ -841,13 +838,7 @@ function createCourseCard(
   }
 
 
-  /*
-    Progress
-
-    Only use real progress from database.
-    If there is no enrollment/progress,
-    don't pretend the student completed anything.
-  */
+  /* PROGRESS */
 
   let progress = 0;
 
@@ -859,7 +850,9 @@ function createCourseCard(
   ){
 
     progress =
-      Number(enrollment.progress) || 0;
+      Number(
+        enrollment.progress
+      ) || 0;
 
   }
 
@@ -874,9 +867,7 @@ function createCourseCard(
     );
 
 
-  /*
-    Course link added by Admin
-  */
+  /* COURSE LINK */
 
   let button = "";
 
@@ -934,7 +925,6 @@ function createCourseCard(
 
     <article class="course-card">
 
-
       <div class="course-image-wrap">
 
         <img
@@ -953,11 +943,9 @@ function createCourseCard(
 
       <div class="course-content">
 
-
         <h3>
           ${title}
         </h3>
-
 
         <p class="course-description">
           ${description}
@@ -1019,7 +1007,6 @@ function createCourseCard(
 
         ${button}
 
-
       </div>
 
     </article>
@@ -1035,32 +1022,34 @@ function createCourseCard(
 
 function escapeHtml(value){
 
-  return String(value)
+  return String(
+    value ?? ""
+  )
 
-    .replace(
-      /&/g,
-      "&amp;"
-    )
+  .replace(
+    /&/g,
+    "&amp;"
+  )
 
-    .replace(
-      /</g,
-      "&lt;"
-    )
+  .replace(
+    /</g,
+    "&lt;"
+  )
 
-    .replace(
-      />/g,
-      "&gt;"
-    )
+  .replace(
+    />/g,
+    "&gt;"
+  )
 
-    .replace(
-      /"/g,
-      "&quot;"
-    )
+  .replace(
+    /"/g,
+    "&quot;"
+  )
 
-    .replace(
-      /'/g,
-      "&#039;"
-    );
+  .replace(
+    /'/g,
+    "&#039;"
+  );
 
 }
 
@@ -1068,23 +1057,17 @@ function escapeHtml(value){
 function safeUrl(url){
 
   const value =
-    String(url || "")
-      .trim();
+    String(
+      url || ""
+    ).trim();
 
 
   if(
-    value.startsWith(
-      "https://"
-    ) ||
-
-    value.startsWith(
-      "http://"
-    )
+    value.startsWith("https://") ||
+    value.startsWith("http://")
   ){
 
-    return escapeHtml(
-      value
-    );
+    return escapeHtml(value);
 
   }
 
@@ -1097,27 +1080,18 @@ function safeUrl(url){
 function safeImage(url){
 
   const value =
-    String(url || "")
-      .trim();
+    String(
+      url || ""
+    ).trim();
 
 
   if(
-    value.startsWith(
-      "https://"
-    ) ||
-
-    value.startsWith(
-      "http://"
-    ) ||
-
-    value.startsWith(
-      "../"
-    )
+    value.startsWith("https://") ||
+    value.startsWith("http://") ||
+    value.startsWith("../")
   ){
 
-    return escapeHtml(
-      value
-    );
+    return escapeHtml(value);
 
   }
 
