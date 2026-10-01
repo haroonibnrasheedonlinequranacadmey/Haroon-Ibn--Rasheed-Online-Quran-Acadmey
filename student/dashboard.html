@@ -225,6 +225,10 @@ body{
   font-size:13px;
 }
 
+.view-link:hover{
+  color:#287f96;
+}
+
 /* TODAY */
 
 .today-class{
@@ -233,6 +237,7 @@ body{
   border-radius:11px;
   padding:17px;
   background:#f9fcfd;
+  margin-bottom:10px;
 }
 
 .today-label{
@@ -295,7 +300,7 @@ body{
 }
 
 .day-badge{
-  min-width:70px;
+  min-width:82px;
   text-align:center;
   background:#eef7f9;
   color:#277f96;
@@ -318,6 +323,57 @@ body{
 .upcoming-info span{
   color:#7c8990;
   font-size:12px;
+  line-height:1.6;
+}
+
+/* COURSE CARDS */
+
+.course-mini-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+}
+
+.course-mini{
+  border:1px solid #e5eaee;
+  border-radius:10px;
+  padding:12px;
+  background:#fbfcfd;
+  min-width:0;
+}
+
+.course-mini-title{
+  color:#34414a;
+  font-weight:bold;
+  font-size:13px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.course-mini-status{
+  display:inline-block;
+  margin-top:7px;
+  padding:4px 7px;
+  border-radius:15px;
+  background:#eef7f9;
+  color:#277f96;
+  font-size:10px;
+}
+
+.course-mini-progress{
+  margin-top:8px;
+  height:5px;
+  background:#e9eef1;
+  border-radius:10px;
+  overflow:hidden;
+}
+
+.course-mini-progress span{
+  display:block;
+  height:100%;
+  background:#2f9fba;
+  border-radius:10px;
 }
 
 /* TABLE */
@@ -461,6 +517,10 @@ td{
   .card{
     padding:15px;
   }
+
+  .course-mini-grid{
+    grid-template-columns:1fr;
+  }
 }
 </style>
 </head>
@@ -497,7 +557,6 @@ td{
 
 </aside>
 
-
 <main class="student-main">
 
   <div class="topbar">
@@ -513,7 +572,6 @@ td{
 
   </div>
 
-
   <section class="welcome">
 
     <h2>
@@ -526,13 +584,12 @@ td{
 
   </section>
 
-
   <section class="stats">
 
     <div class="stat-card">
       <small>Enrolled Courses</small>
       <strong id="courseCount">0</strong>
-      <div class="stat-note">Active courses</div>
+      <div class="stat-note">Academy courses</div>
     </div>
 
     <div class="stat-card">
@@ -555,7 +612,6 @@ td{
 
   </section>
 
-
   <section class="dashboard-grid">
 
     <div class="card">
@@ -572,7 +628,6 @@ td{
       </div>
 
     </div>
-
 
     <div class="card">
 
@@ -591,7 +646,6 @@ td{
 
   </section>
 
-
   <section class="dashboard-grid">
 
     <div class="card">
@@ -601,34 +655,15 @@ td{
         <a href="course.html" class="view-link">View All</a>
       </div>
 
-      <div class="table-wrap">
+      <div id="courseCards">
 
-        <table>
-
-          <thead>
-            <tr>
-              <th>Course</th>
-              <th>Status</th>
-              <th>Progress</th>
-            </tr>
-          </thead>
-
-          <tbody id="courseRows">
-
-            <tr>
-              <td colspan="3" class="empty">
-                Loading courses...
-              </td>
-            </tr>
-
-          </tbody>
-
-        </table>
+        <div class="empty">
+          Loading courses...
+        </div>
 
       </div>
 
     </div>
-
 
     <div class="card">
 
@@ -667,7 +702,6 @@ td{
 
   </section>
 
-
   <section class="card">
 
     <div class="card-header">
@@ -688,18 +722,15 @@ td{
 
 </div>
 
-
 <script>
 
 (function(){
 
 "use strict";
 
-
 function $(id){
   return document.getElementById(id);
 }
-
 
 function escapeHTML(value){
 
@@ -715,9 +746,8 @@ function escapeHTML(value){
     .replace(/'/g,"&#039;");
 }
 
-
 /* =========================
-   DAY HELPERS
+   DATE / DAY HELPERS
 ========================= */
 
 const dayNames = [
@@ -730,73 +760,41 @@ const dayNames = [
   "saturday"
 ];
 
-
 function parseDays(value){
 
   if(!value){
     return [];
   }
 
-  let text =
-    String(value)
-      .toLowerCase()
-      .trim();
+  let text = String(value)
+    .toLowerCase()
+    .trim();
 
-  text =
-    text.replace(/\band\b/g,",")
-         .replace(/[|\/]+/g,",")
-         .replace(/\s+/g," ");
+  text = text
+    .replace(/\band\b/g,",")
+    .replace(/[|\/]+/g,",")
+    .replace(/\s+/g," ");
 
-  const pieces =
-    text.split(",")
-        .map(x => x.trim())
-        .filter(Boolean);
-
-  const result = [];
-
-  pieces.forEach(piece => {
-
-    const words =
-      piece.split(/\s+/);
-
-    words.forEach(word => {
-
-      if(word){
-        result.push(word);
-
-      }
-
-    });
-
-  });
-
-  return result;
+  return text
+    .split(",")
+    .flatMap(x => x.trim().split(/\s+/))
+    .filter(Boolean);
 }
-
 
 function dayMatches(value,index){
 
-  const days =
-    parseDays(value);
+  const days = parseDays(value);
 
-  const full =
-    dayNames[index];
+  const full = dayNames[index];
+  const short = full.substring(0,3);
 
-  const short =
-    full.substring(0,3);
-
-  return days.some(day => {
-
-    return (
-      day === full ||
-      day === short ||
-      day.startsWith(full) ||
-      day.startsWith(short)
-    );
-
-  });
+  return days.some(day =>
+    day === full ||
+    day === short ||
+    day.startsWith(full) ||
+    day.startsWith(short)
+  );
 }
-
 
 function formatTime(value){
 
@@ -804,28 +802,22 @@ function formatTime(value){
     return "Time not set";
   }
 
-  const parts =
-    String(value).split(":");
+  const parts = String(value).split(":");
 
   if(parts.length < 2){
     return String(value);
   }
 
-  let hour =
-    parseInt(parts[0],10);
-
-  const minute =
-    parts[1];
+  let hour = parseInt(parts[0],10);
+  const minute = parts[1];
 
   if(Number.isNaN(hour)){
     return String(value);
   }
 
-  const suffix =
-    hour >= 12 ? "PM" : "AM";
+  const suffix = hour >= 12 ? "PM" : "AM";
 
-  hour =
-    hour % 12;
+  hour = hour % 12;
 
   if(hour === 0){
     hour = 12;
@@ -834,51 +826,54 @@ function formatTime(value){
   return hour + ":" + minute + " " + suffix;
 }
 
+function startOfDay(date){
 
-function sameDate(a,b){
+  const d = new Date(date);
 
-  return (
-    a.getFullYear() === b.getFullYear() &&
-    a.getMonth() === b.getMonth() &&
-    a.getDate() === b.getDate()
-  );
+  d.setHours(0,0,0,0);
 
+  return d;
 }
 
+function combineDateAndTime(date,time){
+
+  const result = new Date(date);
+
+  result.setHours(0,0,0,0);
+
+  if(!time){
+    return result;
+  }
+
+  const parts = String(time).split(":");
+
+  const hour = parseInt(parts[0],10) || 0;
+  const minute = parseInt(parts[1],10) || 0;
+  const second = parseInt(parts[2],10) || 0;
+
+  result.setHours(hour,minute,second,0);
+
+  return result;
+}
 
 function dateLabel(date){
 
-  const now =
-    new Date();
+  const today = startOfDay(new Date());
+  const target = startOfDay(date);
 
-  const today =
-    new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate()
-    );
+  const difference = Math.round(
+    (target - today) / 86400000
+  );
 
-  const target =
-    new Date(
-      date.getFullYear(),
-      date.getMonth(),
-      date.getDate()
-    );
-
-  const difference =
-    Math.round(
-      (target - today) / 86400000
-    );
+  if(difference === 0){
+    return "TODAY";
+  }
 
   if(difference === 1){
     return "TOMORROW";
   }
 
-  if(difference === 2){
-    return "IN 2 DAYS";
-  }
-
-  return date.toLocaleDateString(
+  return target.toLocaleDateString(
     "en-US",
     {
       weekday:"short",
@@ -888,29 +883,32 @@ function dateLabel(date){
   ).toUpperCase();
 }
 
+function fullDateLabel(date){
+
+  return date.toLocaleDateString(
+    "en-US",
+    {
+      weekday:"long",
+      month:"short",
+      day:"numeric"
+    }
+  );
+}
 
 /* =========================
-   MAIN
+   LOAD DASHBOARD
 ========================= */
 
 async function loadDashboard(){
 
-  const db =
-    window.academyDB;
+  const db = window.academyDB;
 
   if(!db){
-
-    console.error(
-      "academyDB not available"
-    );
-
+    console.error("academyDB not available");
     return;
   }
 
-
-  const now =
-    new Date();
-
+  const now = new Date();
 
   $("todayDate").textContent =
     now.toLocaleDateString(
@@ -922,7 +920,6 @@ async function loadDashboard(){
         year:"numeric"
       }
     );
-
 
   /* =========================
      AUTH
@@ -942,10 +939,7 @@ async function loadDashboard(){
     return;
   }
 
-
-  const uid =
-    session.user.id;
-
+  const uid = session.user.id;
 
   /* =========================
      STUDENT
@@ -965,7 +959,6 @@ async function loadDashboard(){
       .eq("user_id",uid)
       .maybeSingle();
 
-
   if(studentResult.error){
 
     console.error(
@@ -973,18 +966,16 @@ async function loadDashboard(){
       studentResult.error
     );
 
+    $("studentName").textContent = "Student";
+
     return;
   }
 
-
-  const student =
-    studentResult.data;
-
+  const student = studentResult.data;
 
   if(!student){
 
-    $("studentName").textContent =
-      "Student";
+    $("studentName").textContent = "Student";
 
     $("todayClass").innerHTML = `
       <div class="no-class">
@@ -995,101 +986,100 @@ async function loadDashboard(){
     return;
   }
 
-
   $("studentName").textContent =
     student.full_name || "Student";
 
-
-  const studentId =
-    student.id;
-
+  const studentId = student.id;
 
   /* =========================
      COURSES
-========================= */
+     ADMIN ADDED COURSES
+  ========================= */
 
   try{
 
-    const enrollmentResult =
+    const courseResult =
       await db
-        .from("student_enrollments")
-        .select("*")
-        .eq("student_id",studentId)
+        .from("courses")
+        .select(`
+          id,
+          title,
+          description,
+          image_url,
+          course_url,
+          status,
+          created_at
+        `)
+        .eq("status","active")
         .order("created_at",{ascending:false});
 
-
-    if(enrollmentResult.error){
+    if(courseResult.error){
 
       console.error(
         "Course error:",
-        enrollmentResult.error
+        courseResult.error
       );
 
-      $("courseRows").innerHTML = `
-        <tr>
-          <td colspan="3" class="empty">
-            Courses could not be loaded.
-          </td>
-        </tr>
+      $("courseCount").textContent = "0";
+
+      $("courseCards").innerHTML = `
+        <div class="empty">
+          Courses could not be loaded.
+        </div>
       `;
 
     }else{
 
-      const enrollments =
-        enrollmentResult.data || [];
-
+      const courses =
+        courseResult.data || [];
 
       $("courseCount").textContent =
-        enrollments.length;
+        courses.length;
 
+      if(!courses.length){
 
-      if(!enrollments.length){
-
-        $("courseRows").innerHTML = `
-          <tr>
-            <td colspan="3" class="empty">
-              No courses enrolled yet.
-            </td>
-          </tr>
+        $("courseCards").innerHTML = `
+          <div class="empty">
+            No courses available yet.
+          </div>
         `;
 
       }else{
 
-        $("courseRows").innerHTML =
-          enrollments.map(item => {
+        $("courseCards").innerHTML = `
+          <div class="course-mini-grid">
 
-            return `
-              <tr>
+            ${
+              courses.slice(0,6).map(course => {
 
-                <td>
-                  ${escapeHTML(
-                    item.course || "Course"
-                  )}
-                </td>
+                const title =
+                  course.title ||
+                  "Course";
 
-                <td>
-                  <span class="status">
-                    ${escapeHTML(
-                      item.status || "Active"
-                    )}
-                  </span>
-                </td>
+                return `
+                  <div class="course-mini">
 
-                <td>
-                  ${
-                    item.progress !== null &&
-                    item.progress !== undefined
-                    ?
-                    escapeHTML(item.progress) + "%"
-                    :
-                    "—"
-                  }
-                </td>
+                    <div class="course-mini-title"
+                         title="${escapeHTML(title)}">
 
-              </tr>
-            `;
+                      ${escapeHTML(title)}
 
-          }).join("");
+                    </div>
+
+                    <span class="course-mini-status">
+                      ${escapeHTML(
+                        course.status || "Active"
+                      )}
+                    </span>
+
+                  </div>
+                `;
+
+              }).join("")
+            }
+
+          </div>
+        `;
 
       }
 
@@ -1102,45 +1092,29 @@ async function loadDashboard(){
       error
     );
 
-  }
+    $("courseCards").innerHTML = `
+      <div class="empty">
+        Courses could not be loaded.
+      </div>
+    `;
 
+  }
 
   /* =========================
      SCHEDULE
-========================= */
+  ========================= */
 
   let schedules = [];
 
-
   try{
-
-    /*
-      IMPORTANT:
-      No profiles foreign-key join here.
-      This avoids the previous schedule query error.
-    */
 
     const scheduleResult =
       await db
         .from("class_schedules")
-        .select(`
-          id,
-          teacher_id,
-          student_id,
-          course,
-          class_days,
-          class_time,
-          duration,
-          minutes,
-          google_meet_url,
-          classroom_code,
-          active,
-          created_at
-        `)
+        .select("*")
         .eq("student_id",studentId)
         .eq("active",true)
         .order("class_time",{ascending:true});
-
 
     if(scheduleResult.error){
 
@@ -1166,8 +1140,7 @@ async function loadDashboard(){
       schedules =
         scheduleResult.data || [];
 
-
-      /* GET TEACHER NAMES */
+      /* TEACHER NAMES */
 
       const teacherIds =
         [
@@ -1178,9 +1151,7 @@ async function loadDashboard(){
           )
         ];
 
-
       let teacherMap = {};
-
 
       if(teacherIds.length){
 
@@ -1190,15 +1161,12 @@ async function loadDashboard(){
             .select("id,full_name")
             .in("id",teacherIds);
 
-
         if(!teacherResult.error){
 
           (teacherResult.data || [])
             .forEach(teacher => {
 
-              teacherMap[
-                teacher.id
-              ] =
+              teacherMap[teacher.id] =
                 teacher.full_name ||
                 "Teacher";
 
@@ -1208,36 +1176,23 @@ async function loadDashboard(){
 
       }
 
-
-      /*
-        Create occurrences for today
-        + next 6 days.
-      */
+      /* =========================
+         CREATE NEXT 7 DAYS
+      ========================= */
 
       const occurrences = [];
 
+      for(let offset = 0; offset < 7; offset++){
 
-      for(
-        let offset = 0;
-        offset < 7;
-        offset++
-      ){
+        const date = new Date(now);
 
-        const date =
-          new Date(now);
-
-        date.setHours(
-          0,0,0,0
-        );
+        date.setHours(0,0,0,0);
 
         date.setDate(
           now.getDate() + offset
         );
 
-
-        const dayIndex =
-          date.getDay();
-
+        const dayIndex = date.getDay();
 
         schedules.forEach(schedule => {
 
@@ -1248,10 +1203,20 @@ async function loadDashboard(){
             )
           ){
 
+            const classDateTime =
+              combineDateAndTime(
+                date,
+                schedule.class_time
+              );
+
             occurrences.push({
 
               schedule:schedule,
+
               date:date,
+
+              classDateTime:classDateTime,
+
               teacherName:
                 teacherMap[
                   schedule.teacher_id
@@ -1265,43 +1230,26 @@ async function loadDashboard(){
 
       }
 
+      /* SORT BY ACTUAL DATE + TIME */
 
-      /* SORT */
-
-      occurrences.sort((a,b) => {
-
-        const dateDifference =
-          a.date - b.date;
-
-        if(dateDifference !== 0){
-          return dateDifference;
-        }
-
-        return String(
-          a.schedule.class_time || ""
-        ).localeCompare(
-          String(
-            b.schedule.class_time || ""
-          )
-        );
-
-      });
-
+      occurrences.sort((a,b) =>
+        a.classDateTime - b.classDateTime
+      );
 
       /* =========================
-         TODAY ONLY
+         TODAY'S CLASS
+         
+         IMPORTANT:
+         Today section remains
+         available for the current
+         24-hour day window.
       ========================= */
 
       const todayClasses =
-        occurrences.filter(item => {
-
-          return sameDate(
-            item.date,
-            now
-          );
-
-        });
-
+        occurrences.filter(item =>
+          startOfDay(item.date).getTime() ===
+          startOfDay(now).getTime()
+        );
 
       if(!todayClasses.length){
 
@@ -1327,15 +1275,12 @@ async function loadDashboard(){
         $("todayClass").innerHTML =
           todayClasses.map(item => {
 
-            const s =
-              item.schedule;
-
+            const s = item.schedule;
 
             const duration =
               s.duration ||
               s.minutes ||
               "30";
-
 
             return `
               <div class="today-class">
@@ -1381,25 +1326,25 @@ async function loadDashboard(){
                   s.google_meet_url
                   ?
                   `
-                  <a
-                    class="join-btn"
-                    href="${escapeHTML(
-                      s.google_meet_url
-                    )}"
-                    target="_blank"
-                    rel="noopener"
-                  >
-                    Join Class
-                  </a>
+                    <a
+                      class="join-btn"
+                      href="${escapeHTML(
+                        s.google_meet_url
+                      )}"
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      Join Class
+                    </a>
                   `
                   :
                   `
-                  <span
-                    class="join-btn"
-                    style="background:#9aa6ad"
-                  >
-                    Meeting link not added
-                  </span>
+                    <span
+                      class="join-btn"
+                      style="background:#9aa6ad"
+                    >
+                      Meeting link not added
+                    </span>
                   `
                 }
 
@@ -1410,34 +1355,26 @@ async function loadDashboard(){
 
       }
 
-
       /* =========================
-         UPCOMING
-         FUTURE DAYS ONLY
+         UPCOMING CLASSES
+         FUTURE DAYS
       ========================= */
 
       const futureClasses =
         occurrences
-          .filter(item => {
-
-            return !sameDate(
-              item.date,
-              now
-            );
-
-          })
+          .filter(item =>
+            item.classDateTime > now
+          )
           .slice(0,7);
 
-
       $("classCount").textContent =
-        occurrences.length;
-
+        futureClasses.length;
 
       if(!futureClasses.length){
 
         $("upcomingClasses").innerHTML = `
           <div class="empty">
-            No upcoming classes.
+            No upcoming classes available.
           </div>
         `;
 
@@ -1446,17 +1383,28 @@ async function loadDashboard(){
         $("upcomingClasses").innerHTML =
           futureClasses.map(item => {
 
-            const s =
-              item.schedule;
-
+            const s = item.schedule;
 
             return `
               <div class="upcoming-item">
 
                 <div class="day-badge">
+
                   ${escapeHTML(
                     dateLabel(item.date)
                   )}
+
+                  <br>
+
+                  <span style="
+                    font-weight:normal;
+                    font-size:10px;
+                  ">
+                    ${escapeHTML(
+                      fullDateLabel(item.date)
+                    )}
+                  </span>
+
                 </div>
 
                 <div class="upcoming-info">
@@ -1469,15 +1417,19 @@ async function loadDashboard(){
                   </strong>
 
                   <span>
+
                     ${escapeHTML(
                       formatTime(
                         s.class_time
                       )
                     )}
+
                     ·
+
                     ${escapeHTML(
                       item.teacherName
                     )}
+
                   </span>
 
                 </div>
@@ -1512,7 +1464,6 @@ async function loadDashboard(){
 
   }
 
-
   /* =========================
      PAYMENTS
   ========================= */
@@ -1526,7 +1477,6 @@ async function loadDashboard(){
         .eq("student_id",studentId)
         .order("created_at",{ascending:false})
         .limit(5);
-
 
     if(paymentResult.error){
 
@@ -1548,7 +1498,6 @@ async function loadDashboard(){
       const payments =
         paymentResult.data || [];
 
-
       if(!payments.length){
 
         $("paymentRows").innerHTML = `
@@ -1568,7 +1517,6 @@ async function loadDashboard(){
               payment.paid_at ||
               payment.created_at;
 
-
             return `
               <tr>
 
@@ -1582,12 +1530,14 @@ async function loadDashboard(){
                 </td>
 
                 <td>
+
                   <span class="status">
                     ${escapeHTML(
                       payment.status ||
                       "Pending"
                     )}
                   </span>
+
                 </td>
 
                 <td>
@@ -1617,8 +1567,15 @@ async function loadDashboard(){
       error
     );
 
-  }
+    $("paymentRows").innerHTML = `
+      <tr>
+        <td colspan="3" class="empty">
+          Payments could not be loaded.
+        </td>
+      </tr>
+    `;
 
+  }
 
   /* =========================
      NOTIFICATIONS
@@ -1633,7 +1590,6 @@ async function loadDashboard(){
         .eq("user_id",uid)
         .order("created_at",{ascending:false})
         .limit(5);
-
 
     if(notificationResult.error){
 
@@ -1653,10 +1609,8 @@ async function loadDashboard(){
       const notifications =
         notificationResult.data || [];
 
-
       $("notificationCount").textContent =
         notifications.length;
-
 
       if(!notifications.length){
 
@@ -1703,13 +1657,21 @@ async function loadDashboard(){
       error
     );
 
+    $("notificationRows").innerHTML = `
+      <div class="empty">
+        Notifications could not be loaded.
+      </div>
+    `;
+
   }
 
+  /* =========================
+     ATTENDANCE
+  ========================= */
 
   $("attendanceRate").textContent = "—";
 
 }
-
 
 document.addEventListener(
   "DOMContentLoaded",
