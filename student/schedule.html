@@ -1,1 +1,1122 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>My Schedule | Haroon Ibn Rasheed Online Quran Academy</title><link rel="stylesheet" href="../css/portal.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../js/config.js"></script><script src="../js/portal.js" defer></script></head><body class="dashboard" data-page="student-schedule"><div class="side-layout"><aside class="side"><img src="../assets/hr-logo.svg" alt="HR"><h3>Haroon Ibn Rasheed</h3><small>Student Portal</small><nav style="margin-top:16px"><a href="dashboard.html">Dashboard</a><a href="profile.html">Profile</a><a href="teacher.html">My Teacher</a><a href="course.html">My Courses</a><a href="classes.html">My Classes</a><a href="schedule.html" class="active">Schedule</a><a href="attendance.html">Attendance</a><a href="fees.html">Fees</a><a href="leaves.html">Leaves</a></nav><a href="#" onclick="portalLogout();return false">Logout</a></aside><main class="content"><section class="card"><h1>My Schedule</h1><table class="table"><thead><tr><th>Date</th><th>Time</th><th>Course</th><th>Teacher</th><th>Join</th><th>Status</th></tr></thead><tbody id="scheduleRows"></tbody></table></section></main></div></body></html>
+<!doctype html>
+<html lang="en">
+
+<head>
+
+<meta charset="utf-8">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>
+My Schedule | Haroon Ibn Rasheed Online Quran Academy
+</title>
+
+<link rel="stylesheet"
+href="../css/portal.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="../js/config.js"></script>
+
+<script src="../js/portal.js" defer></script>
+
+
+<style>
+
+/* ===============================
+   SCHEDULE
+================================ */
+
+.schedule-page{
+  padding:20px;
+}
+
+.schedule-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:20px;
+}
+
+.schedule-header h1{
+  margin:0;
+  color:#07394a;
+}
+
+.schedule-info{
+  margin-top:5px;
+  color:#64748b;
+  font-size:14px;
+}
+
+
+/* ===============================
+   REFRESH BUTTON
+================================ */
+
+.refresh-btn{
+  border:0;
+  background:#0b9fbb;
+  color:#fff;
+  padding:9px 15px;
+  border-radius:7px;
+  cursor:pointer;
+  font-weight:700;
+}
+
+.refresh-btn:hover{
+  background:#087f97;
+}
+
+
+/* ===============================
+   DAY SECTION
+================================ */
+
+.day-section{
+  margin-top:20px;
+}
+
+.day-title{
+  background:#f18b82;
+  color:#fff;
+  padding:10px 14px;
+  border-radius:9px 9px 0 0;
+  font-weight:700;
+  font-size:15px;
+}
+
+
+/* ===============================
+   CLASS CARD
+================================ */
+
+.class-card{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-top:0;
+  padding:14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  flex-wrap:wrap;
+}
+
+.class-card:last-child{
+  border-radius:0 0 9px 9px;
+}
+
+.class-main{
+  min-width:200px;
+}
+
+.class-time{
+  color:#07394a;
+  font-size:18px;
+  font-weight:800;
+  margin-bottom:5px;
+}
+
+.class-course{
+  color:#0b9fbb;
+  font-size:15px;
+  font-weight:700;
+}
+
+.class-teacher{
+  color:#64748b;
+  font-size:13px;
+  margin-top:4px;
+}
+
+.class-duration{
+  color:#64748b;
+  font-size:12px;
+  margin-top:3px;
+}
+
+
+/* ===============================
+   ACTIONS
+================================ */
+
+.class-actions{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+}
+
+.join-btn{
+  display:inline-block;
+  background:#0b9fbb;
+  color:#fff;
+  text-decoration:none;
+  padding:8px 13px;
+  border-radius:7px;
+  font-size:12px;
+  font-weight:700;
+}
+
+.join-btn:hover{
+  background:#087f97;
+}
+
+.classroom-btn{
+  display:inline-block;
+  background:#07394a;
+  color:#fff;
+  text-decoration:none;
+  padding:8px 13px;
+  border-radius:7px;
+  font-size:12px;
+  font-weight:700;
+}
+
+
+/* ===============================
+   TODAY
+================================ */
+
+.today-badge{
+  display:inline-block;
+  background:#dcfce7;
+  color:#166534;
+  padding:3px 8px;
+  border-radius:20px;
+  font-size:10px;
+  font-weight:800;
+  margin-left:7px;
+}
+
+
+/* ===============================
+   EMPTY / LOADING / ERROR
+================================ */
+
+.loading{
+  padding:30px;
+  text-align:center;
+  color:#64748b;
+}
+
+.empty{
+  padding:35px;
+  text-align:center;
+  background:#f8fafc;
+  border-radius:10px;
+  color:#64748b;
+}
+
+.error-box{
+  padding:18px;
+  background:#fff1f2;
+  border:1px solid #fecdd3;
+  border-radius:10px;
+  color:#9f1239;
+}
+
+
+/* ===============================
+   MOBILE
+================================ */
+
+@media(max-width:600px){
+
+  .schedule-page{
+    padding:12px;
+  }
+
+  .schedule-header h1{
+    font-size:24px;
+  }
+
+  .class-card{
+    display:block;
+  }
+
+  .class-actions{
+    margin-top:12px;
+  }
+
+  .join-btn,
+  .classroom-btn{
+    display:inline-block;
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body
+class="dashboard"
+data-page="student-schedule">
+
+
+<div class="side-layout">
+
+
+<!-- ===============================
+     SIDEBAR
+================================ -->
+
+<aside class="side">
+
+<img
+src="../assets/hr-logo.svg"
+alt="HR">
+
+
+<h3>
+Haroon Ibn Rasheed
+</h3>
+
+
+<small>
+Student Portal
+</small>
+
+
+<nav style="margin-top:16px">
+
+<a href="dashboard.html">
+Dashboard
+</a>
+
+<a href="profile.html">
+Profile
+</a>
+
+<a href="teacher.html">
+My Teacher
+</a>
+
+<a href="course.html">
+My Courses
+</a>
+
+<a href="classes.html">
+My Classes
+</a>
+
+<a href="schedule.html"
+class="active">
+Schedule
+</a>
+
+<a href="attendance.html">
+Attendance
+</a>
+
+<a href="fees.html">
+Fees
+</a>
+
+<a href="leaves.html">
+Leaves
+</a>
+
+</nav>
+
+
+<a href="#"
+onclick="portalLogout();return false">
+
+Logout
+
+</a>
+
+</aside>
+
+
+<!-- ===============================
+     MAIN
+================================ -->
+
+<main class="content">
+
+<section class="card schedule-page">
+
+
+<div class="schedule-header">
+
+<div>
+
+<h1>
+My Schedule
+</h1>
+
+<div class="schedule-info">
+
+Only your assigned class schedule is shown.
+
+</div>
+
+</div>
+
+
+<button
+class="refresh-btn"
+onclick="loadStudentSchedule()">
+
+Refresh
+
+</button>
+
+</div>
+
+
+<div id="messageArea"></div>
+
+
+<div id="scheduleContainer">
+
+<div class="loading">
+
+Loading your schedule...
+
+</div>
+
+</div>
+
+
+</section>
+
+</main>
+
+</div>
+
+
+<script>
+
+/* =================================
+   SUPABASE
+================================= */
+
+const db =
+supabase.createClient(
+  window.SUPABASE_CONFIG.url,
+  window.SUPABASE_CONFIG.anonKey
+);
+
+
+/* =================================
+   DAYS
+================================= */
+
+const DAYS = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday"
+];
+
+
+/* =================================
+   DAY NORMALIZATION
+================================= */
+
+function normalizeDay(day){
+
+  const value =
+    String(day || "")
+      .trim()
+      .toLowerCase();
+
+  const map = {
+
+    mon:"Monday",
+    monday:"Monday",
+
+    tue:"Tuesday",
+    tues:"Tuesday",
+    tuesday:"Tuesday",
+
+    wed:"Wednesday",
+    wednesday:"Wednesday",
+
+    thu:"Thursday",
+    thur:"Thursday",
+    thurs:"Thursday",
+    thursday:"Thursday",
+
+    fri:"Friday",
+    friday:"Friday",
+
+    sat:"Saturday",
+    saturday:"Saturday",
+
+    sun:"Sunday",
+    sunday:"Sunday"
+
+  };
+
+  return map[value] || day;
+
+}
+
+
+/* =================================
+   HTML SAFETY
+================================= */
+
+function safeHtml(value){
+
+  return String(value ?? "")
+
+    .replace(/&/g,"&amp;")
+
+    .replace(/</g,"&lt;")
+
+    .replace(/>/g,"&gt;")
+
+    .replace(/"/g,"&quot;")
+
+    .replace(/'/g,"&#039;");
+
+}
+
+
+/* =================================
+   TIME
+================================= */
+
+function formatTime(time){
+
+  if(!time){
+    return "";
+  }
+
+  const parts =
+    String(time).split(":");
+
+  let hour =
+    parseInt(parts[0],10);
+
+  const minute =
+    parts[1] || "00";
+
+  if(isNaN(hour)){
+    return time;
+  }
+
+  const ampm =
+    hour >= 12
+      ? "PM"
+      : "AM";
+
+  hour =
+    hour % 12 || 12;
+
+  return (
+    hour +
+    ":" +
+    minute +
+    " " +
+    ampm
+  );
+
+}
+
+
+/* =================================
+   DURATION
+================================= */
+
+function formatDuration(minutes){
+
+  const m =
+    parseInt(minutes,10);
+
+  if(!m){
+    return "";
+  }
+
+  if(m < 60){
+    return m + " minutes";
+  }
+
+  const h =
+    Math.floor(m / 60);
+
+  const r =
+    m % 60;
+
+  if(r === 0){
+
+    return h +
+      (h === 1
+        ? " hour"
+        : " hours");
+
+  }
+
+  return h + "h " + r + "m";
+
+}
+
+
+/* =================================
+   LOAD STUDENT SCHEDULE
+================================= */
+
+async function loadStudentSchedule(){
+
+  const container =
+    document.getElementById(
+      "scheduleContainer"
+    );
+
+  const message =
+    document.getElementById(
+      "messageArea"
+    );
+
+
+  container.innerHTML = `
+    <div class="loading">
+      Loading your schedule...
+    </div>
+  `;
+
+  message.innerHTML = "";
+
+
+  try{
+
+    /* =============================
+       CURRENT LOGIN USER
+    ============================== */
+
+    const {
+      data:{
+        user
+      },
+      error:authError
+    } =
+      await db.auth.getUser();
+
+
+    if(authError){
+      throw authError;
+    }
+
+
+    if(!user){
+
+      throw new Error(
+        "Student login session not found. Please login again."
+      );
+
+    }
+
+
+    const studentId =
+      user.id;
+
+
+    /* =============================
+       GET STUDENT
+    ============================== */
+
+    const {
+      data:student,
+      error:studentError
+    } =
+      await db
+
+        .from("students")
+
+        .select(`
+          id,
+          full_name
+        `)
+
+        .eq(
+          "id",
+          studentId
+        )
+
+        .maybeSingle();
+
+
+    if(studentError){
+      throw studentError;
+    }
+
+
+    if(!student){
+
+      throw new Error(
+        "Your student account was not found."
+      );
+
+    }
+
+
+    /* =============================
+       GET ONLY THIS STUDENT'S
+       ACTIVE SCHEDULE
+    ============================== */
+
+    const {
+      data,
+      error
+    } =
+      await db
+
+        .from("class_schedules")
+
+        .select(`
+          id,
+          student_id,
+          teacher_id,
+          course,
+          class_days,
+          class_time,
+          duration_minutes,
+          google_meet_url,
+          classroom_code,
+          active
+        `)
+
+        .eq(
+          "student_id",
+          student.id
+        )
+
+        .eq(
+          "active",
+          true
+        )
+
+        .order(
+          "class_time",
+          {
+            ascending:true
+          }
+        );
+
+
+    if(error){
+      throw error;
+    }
+
+
+    let schedules =
+      data || [];
+
+
+    /* =============================
+       NO SCHEDULE
+    ============================== */
+
+    if(!schedules.length){
+
+      container.innerHTML = `
+
+        <div class="empty">
+
+          <strong>
+            No schedule available
+          </strong>
+
+          <br><br>
+
+          Your teacher has not been assigned
+          any active weekly class yet.
+
+        </div>
+
+      `;
+
+      return;
+
+    }
+
+
+    /* =============================
+       GET TEACHER NAMES
+    ============================== */
+
+    const teacherIds = [
+      ...new Set(
+        schedules
+          .map(x => x.teacher_id)
+          .filter(Boolean)
+      )
+    ];
+
+
+    let teacherMap = {};
+
+
+    if(teacherIds.length){
+
+      const {
+        data:teachers,
+        error:teacherError
+      } =
+      await db
+
+        .from("teachers")
+
+        .select(`
+          id,
+          name
+        `)
+
+        .in(
+          "id",
+          teacherIds
+        );
+
+
+      if(!teacherError){
+
+        (teachers || []).forEach(
+          teacher => {
+
+            teacherMap[
+              teacher.id
+            ] =
+              teacher.name;
+
+          }
+        );
+
+      }
+
+    }
+
+
+    /* =============================
+       GROUP BY DAY
+    ============================== */
+
+    const dayGroups = {};
+
+    DAYS.forEach(day => {
+
+      dayGroups[day] = [];
+
+    });
+
+
+    schedules.forEach(schedule => {
+
+      let days =
+        schedule.class_days;
+
+
+      if(!Array.isArray(days)){
+
+        days = [days];
+
+      }
+
+
+      days.forEach(rawDay => {
+
+        const day =
+          normalizeDay(rawDay);
+
+
+        if(
+          DAYS.includes(day)
+        ){
+
+          dayGroups[day].push(
+            schedule
+          );
+
+        }
+
+      });
+
+    });
+
+
+    /* =============================
+       TODAY
+    ============================== */
+
+    const todayIndex =
+      new Date().getDay();
+
+    const todayName =
+      DAYS[
+        todayIndex === 0
+          ? 6
+          : todayIndex - 1
+      ];
+
+
+    /* =============================
+       BUILD ONLY REAL CLASSES
+       NO 24-HOUR GRID
+    ============================== */
+
+    let html = "";
+
+
+    DAYS.forEach(day => {
+
+      const classes =
+        dayGroups[day];
+
+
+      if(!classes.length){
+        return;
+      }
+
+
+      classes.sort(
+        (a,b) =>
+          String(a.class_time)
+            .localeCompare(
+              String(b.class_time)
+            )
+      );
+
+
+      html += `
+
+        <div class="day-section">
+
+          <div class="day-title">
+
+            ${safeHtml(day)}
+
+            ${
+              day === todayName
+                ? `<span class="today-badge">
+                     TODAY
+                   </span>`
+                : ""
+            }
+
+          </div>
+
+      `;
+
+
+      classes.forEach(schedule => {
+
+        const teacherName =
+          teacherMap[
+            schedule.teacher_id
+          ] ||
+          "Assigned Teacher";
+
+
+        let actions = "";
+
+
+        /* Google Meet */
+
+        if(schedule.google_meet_url){
+
+          actions += `
+
+            <a
+              class="join-btn"
+              href="${safeHtml(
+                schedule.google_meet_url
+              )}"
+              target="_blank"
+              rel="noopener noreferrer">
+
+              Join Class
+
+            </a>
+
+          `;
+
+        }
+
+
+        /* Classroom */
+
+        if(schedule.classroom_code){
+
+          const classroomUrl =
+            "https://haroonibnrasheedonlinequranacadmey.github.io/haroon-quran-classroom/?code="
+            +
+            encodeURIComponent(
+              schedule.classroom_code
+            );
+
+
+          actions += `
+
+            <a
+              class="classroom-btn"
+              href="${classroomUrl}"
+              target="_blank"
+              rel="noopener noreferrer">
+
+              Classroom
+
+            </a>
+
+          `;
+
+        }
+
+
+        html += `
+
+          <div class="class-card">
+
+            <div class="class-main">
+
+              <div class="class-time">
+
+                ${safeHtml(
+                  formatTime(
+                    schedule.class_time
+                  )
+                )}
+
+              </div>
+
+
+              <div class="class-course">
+
+                ${safeHtml(
+                  schedule.course ||
+                  "Quran Class"
+                )}
+
+              </div>
+
+
+              <div class="class-teacher">
+
+                Teacher:
+                ${safeHtml(
+                  teacherName
+                )}
+
+              </div>
+
+
+              ${
+                schedule.duration_minutes
+                  ? `
+                    <div class="class-duration">
+
+                      Duration:
+                      ${safeHtml(
+                        formatDuration(
+                          schedule.duration_minutes
+                        )
+                      )}
+
+                    </div>
+                  `
+                  : ""
+              }
+
+            </div>
+
+
+            ${
+              actions
+                ? `
+                  <div class="class-actions">
+
+                    ${actions}
+
+                  </div>
+                `
+                : ""
+            }
+
+          </div>
+
+        `;
+
+      });
+
+
+      html += `</div>`;
+
+    });
+
+
+    container.innerHTML =
+      html ||
+      `
+
+        <div class="empty">
+
+          No active classes found.
+
+        </div>
+
+      `;
+
+
+  }catch(error){
+
+    console.error(
+      "Student schedule error:",
+      error
+    );
+
+
+    container.innerHTML = "";
+
+    message.innerHTML = `
+
+      <div class="error-box">
+
+        <strong>
+          Could not load your schedule.
+        </strong>
+
+        <br><br>
+
+        ${safeHtml(
+          error?.message ||
+          "Unknown error"
+        )}
+
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+/* =================================
+   START
+================================= */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  function(){
+
+    loadStudentSchedule();
+
+  }
+);
+
+</script>
+
+</body>
+
+</html>
