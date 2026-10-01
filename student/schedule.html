@@ -342,6 +342,10 @@ supabase.createClient(
 );
 
 
+/* =====================================================
+   DAYS
+===================================================== */
+
 const DAYS = [
   "Monday",
   "Tuesday",
@@ -352,6 +356,10 @@ const DAYS = [
   "Sunday"
 ];
 
+
+/* =====================================================
+   NORMALIZE DAY
+===================================================== */
 
 function normalizeDay(day){
 
@@ -393,6 +401,10 @@ function normalizeDay(day){
 }
 
 
+/* =====================================================
+   SAFE HTML
+===================================================== */
+
 function safeHtml(value){
 
   return String(value ?? "")
@@ -404,6 +416,10 @@ function safeHtml(value){
 
 }
 
+
+/* =====================================================
+   FORMAT TIME
+===================================================== */
 
 function formatTime(time){
 
@@ -435,6 +451,10 @@ function formatTime(time){
 }
 
 
+/* =====================================================
+   FORMAT DURATION
+===================================================== */
+
 function formatDuration(minutes){
 
   const m =
@@ -445,7 +465,9 @@ function formatDuration(minutes){
   }
 
   if(m < 60){
+
     return m + " minutes";
+
   }
 
   const h =
@@ -466,28 +488,43 @@ function formatDuration(minutes){
 }
 
 
+/* =====================================================
+   LOAD STUDENT SCHEDULE
+===================================================== */
+
 async function loadStudentSchedule(){
 
   const container =
-    document.getElementById("scheduleContainer");
+    document.getElementById(
+      "scheduleContainer"
+    );
 
   const message =
-    document.getElementById("messageArea");
+    document.getElementById(
+      "messageArea"
+    );
+
 
   container.innerHTML = `
+
     <div class="loading">
+
       Loading your schedule...
+
     </div>
+
   `;
+
 
   message.innerHTML = "";
 
 
   try{
 
-    /* ==========================
-       GET CURRENT USER
-    ========================== */
+
+    /* =================================================
+       GET CURRENT AUTH USER
+    ================================================= */
 
     const {
       data:{
@@ -499,7 +536,9 @@ async function loadStudentSchedule(){
 
 
     if(authError){
+
       throw authError;
+
     }
 
 
@@ -516,104 +555,38 @@ async function loadStudentSchedule(){
       user.id;
 
 
-    /* ==========================
-       FIND STUDENT ACCOUNT
-    ========================== */
+    /* =================================================
+       FIND STUDENT USING user_id
 
-    let student = null;
+       IMPORTANT:
+       students.id is NOT assumed to be auth UUID.
+       We now use students.user_id.
+    ================================================= */
 
-
-    /*
-       First try:
-       students.id = Auth User ID
-    */
-
-    const firstResult =
+    const {
+      data:student,
+      error:studentError
+    } =
       await db
         .from("students")
         .select(`
           id,
+          user_id,
+          account_id,
           full_name,
           teacher_id,
           status
         `)
-        .eq("id",authUserId)
+        .eq(
+          "user_id",
+          authUserId
+        )
         .maybeSingle();
 
 
-    if(firstResult.error){
+    if(studentError){
 
-      throw firstResult.error;
-
-    }
-
-
-    student =
-      firstResult.data;
-
-
-    /*
-       If student was not found,
-       check profiles.
-    */
-
-    if(!student){
-
-      const profileResult =
-        await db
-          .from("profiles")
-          .select(`
-            id,
-            role
-          `)
-          .eq("id",authUserId)
-          .maybeSingle();
-
-
-      if(profileResult.error){
-
-        throw profileResult.error;
-
-      }
-
-
-      /*
-         If profile exists as student,
-         try matching students.id
-      */
-
-      if(
-        profileResult.data &&
-        profileResult.data.role === "student"
-      ){
-
-        const secondResult =
-          await db
-            .from("students")
-            .select(`
-              id,
-              full_name,
-              teacher_id,
-              status
-            `)
-            .eq(
-              "id",
-              profileResult.data.id
-            )
-            .maybeSingle();
-
-
-        if(secondResult.error){
-
-          throw secondResult.error;
-
-        }
-
-
-        student =
-          secondResult.data;
-
-      }
+      throw studentError;
 
     }
 
@@ -621,16 +594,33 @@ async function loadStudentSchedule(){
     if(!student){
 
       throw new Error(
-        "Your student account is not linked with this login yet."
+        "Your student account is not linked with this login."
       );
 
     }
 
 
-    /* ==========================
-       LOAD ONLY THIS STUDENT'S
-       ACTIVE WEEKLY SCHEDULE
-    ========================== */
+    /* =================================================
+       CHECK STUDENT STATUS
+    ================================================= */
+
+    if(
+      student.status &&
+      String(student.status)
+        .toLowerCase()
+        !== "active"
+    ){
+
+      throw new Error(
+        "Your student account is currently inactive. Please contact the academy admin."
+      );
+
+    }
+
+
+    /* =================================================
+       LOAD ONLY THIS STUDENT'S ACTIVE SCHEDULE
+    ================================================= */
 
     const {
       data:schedules,
@@ -673,7 +663,14 @@ async function loadStudentSchedule(){
     }
 
 
-    if(!schedules || !schedules.length){
+    /* =================================================
+       NO SCHEDULE
+    ================================================= */
+
+    if(
+      !schedules ||
+      !schedules.length
+    ){
 
       container.innerHTML = `
 
@@ -697,15 +694,17 @@ async function loadStudentSchedule(){
     }
 
 
-    /* ==========================
+    /* =================================================
        LOAD TEACHER NAMES
-    ========================== */
+    ================================================= */
 
     const teacherIds =
       [
         ...new Set(
           schedules
-            .map(x => x.teacher_id)
+            .map(
+              x => x.teacher_id
+            )
             .filter(Boolean)
         )
       ];
@@ -734,25 +733,26 @@ async function loadStudentSchedule(){
 
       if(!teacherError){
 
-        (teachers || []).forEach(
-          teacher => {
+        (teachers || [])
+          .forEach(
+            teacher => {
 
-            teacherMap[
-              teacher.id
-            ] =
-              teacher.name;
+              teacherMap[
+                teacher.id
+              ] =
+                teacher.name;
 
-          }
-        );
+            }
+          );
 
       }
 
     }
 
 
-    /* ==========================
+    /* =================================================
        GROUP CLASSES BY DAY
-    ========================== */
+    ================================================= */
 
     const dayGroups = {};
 
@@ -784,16 +784,17 @@ async function loadStudentSchedule(){
           rawDay => {
 
             const day =
-              normalizeDay(rawDay);
+              normalizeDay(
+                rawDay
+              );
 
 
             if(
               DAYS.includes(day)
             ){
 
-              dayGroups[day].push(
-                schedule
-              );
+              dayGroups[day]
+                .push(schedule);
 
             }
 
@@ -804,12 +805,13 @@ async function loadStudentSchedule(){
     );
 
 
-    /* ==========================
+    /* =================================================
        TODAY
-    ========================== */
+    ================================================= */
 
     const todayIndex =
       new Date().getDay();
+
 
     const todayName =
       DAYS[
@@ -819,9 +821,9 @@ async function loadStudentSchedule(){
       ];
 
 
-    /* ==========================
+    /* =================================================
        BUILD SCHEDULE
-    ========================== */
+    ================================================= */
 
     let html = "";
 
@@ -834,16 +836,24 @@ async function loadStudentSchedule(){
 
 
         if(!classes.length){
+
           return;
+
         }
 
 
         classes.sort(
           (a,b) =>
-            String(a.class_time)
-              .localeCompare(
-                String(b.class_time)
+
+            String(
+              a.class_time
+            )
+            .localeCompare(
+              String(
+                b.class_time
               )
+            )
+
         );
 
 
@@ -857,12 +867,21 @@ async function loadStudentSchedule(){
 
               ${
                 day === todayName
-                  ? `
-                    <span class="today-badge">
+
+                  ?
+
+                  `
+                    <span
+                      class="today-badge">
+
                       TODAY
+
                     </span>
                   `
-                  : ""
+
+                  :
+
+                  ""
               }
 
             </div>
@@ -872,6 +891,7 @@ async function loadStudentSchedule(){
 
         classes.forEach(
           schedule => {
+
 
             const teacherName =
               teacherMap[
@@ -883,7 +903,13 @@ async function loadStudentSchedule(){
             let actions = "";
 
 
-            if(schedule.google_meet_url){
+            /* =========================================
+               GOOGLE MEET
+            ========================================= */
+
+            if(
+              schedule.google_meet_url
+            ){
 
               actions += `
 
@@ -904,11 +930,20 @@ async function loadStudentSchedule(){
             }
 
 
-            if(schedule.classroom_code){
+            /* =========================================
+               CLASSROOM
+            ========================================= */
+
+            if(
+              schedule.classroom_code
+            ){
 
               const classroomUrl =
+
                 "https://haroonibnrasheedonlinequranacadmey.github.io/haroon-quran-classroom/?code="
+
                 +
+
                 encodeURIComponent(
                   schedule.classroom_code
                 );
@@ -931,11 +966,17 @@ async function loadStudentSchedule(){
             }
 
 
+            /* =========================================
+               CLASS CARD
+            ========================================= */
+
             html += `
 
               <div class="class-card">
 
+
                 <div class="class-main">
+
 
                   <div class="class-time">
 
@@ -961,6 +1002,7 @@ async function loadStudentSchedule(){
                   <div class="class-teacher">
 
                     Teacher:
+
                     ${safeHtml(
                       teacherName
                     )}
@@ -970,10 +1012,15 @@ async function loadStudentSchedule(){
 
                   ${
                     schedule.duration_minutes
-                      ? `
-                        <div class="class-duration">
+
+                      ?
+
+                      `
+                        <div
+                          class="class-duration">
 
                           Duration:
+
                           ${safeHtml(
                             formatDuration(
                               schedule.duration_minutes
@@ -982,23 +1029,35 @@ async function loadStudentSchedule(){
 
                         </div>
                       `
-                      : ""
+
+                      :
+
+                      ""
                   }
+
 
                 </div>
 
 
                 ${
                   actions
-                    ? `
-                      <div class="class-actions">
+
+                    ?
+
+                    `
+                      <div
+                        class="class-actions">
 
                         ${actions}
 
                       </div>
                     `
-                    : ""
+
+                    :
+
+                    ""
                 }
+
 
               </div>
 
@@ -1008,22 +1067,33 @@ async function loadStudentSchedule(){
         );
 
 
-        html += `</div>`;
+        html += `
+
+          </div>
+
+        `;
 
       }
     );
 
 
     container.innerHTML =
+
       html ||
+
       `
+
         <div class="empty">
+
           No active classes found.
+
         </div>
+
       `;
 
 
   }catch(error){
+
 
     console.error(
       "Student schedule error:",
@@ -1039,7 +1109,9 @@ async function loadStudentSchedule(){
       <div class="error-box">
 
         <strong>
+
           Could not load your schedule.
+
         </strong>
 
         <br><br>
@@ -1057,6 +1129,10 @@ async function loadStudentSchedule(){
 
 }
 
+
+/* =====================================================
+   START
+===================================================== */
 
 document.addEventListener(
   "DOMContentLoaded",
