@@ -1,1 +1,937 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>My Course | Haroon Ibn Rasheed Online Quran Academy</title><link rel="stylesheet" href="../css/portal.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../js/config.js"></script><script src="../js/portal.js" defer></script></head><body class="dashboard" data-page="student-course"><div class="side-layout"><aside class="side"><img src="../assets/hr-logo.svg" alt="HR"><h3>Haroon Ibn Rasheed</h3><small>Student Portal</small><nav style="margin-top:16px"><a href="dashboard.html">Dashboard</a><a href="profile.html">Profile</a><a href="teacher.html">My Teacher</a><a href="course.html" class="active">My Courses</a><a href="classes.html">My Classes</a><a href="schedule.html">Schedule</a><a href="attendance.html">Attendance</a><a href="fees.html">Fees</a><a href="leaves.html">Leaves</a></nav><a href="#" onclick="portalLogout();return false">Logout</a></aside><main class="content"><section class="card"><h1>My Courses</h1><table class="table"><thead><tr><th>Course</th><th>Status</th><th>Progress</th></tr></thead><tbody id="courseRows"></tbody></table></section></main></div></body></html>
+<!doctype html>
+<html lang="en">
+
+<head>
+
+<meta charset="utf-8">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>
+My Courses | Haroon Ibn Rasheed Online Quran Academy
+</title>
+
+<link rel="stylesheet"
+href="../css/portal.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="../js/config.js"></script>
+
+<script src="../js/portal.js" defer></script>
+
+
+<style>
+
+/* =====================================
+   COURSES GRID
+===================================== */
+
+.courses-grid{
+
+display:grid;
+
+grid-template-columns:
+repeat(3,minmax(0,1fr));
+
+gap:16px;
+
+margin-top:20px;
+
+}
+
+
+/* =====================================
+   COURSE CARD
+===================================== */
+
+.course-card{
+
+background:#fff;
+
+border:1px solid #e5e7eb;
+
+border-radius:12px;
+
+overflow:hidden;
+
+box-shadow:0 4px 14px rgba(0,0,0,.06);
+
+transition:
+transform .2s ease,
+box-shadow .2s ease;
+
+}
+
+.course-card:hover{
+
+transform:translateY(-3px);
+
+box-shadow:0 8px 20px rgba(0,0,0,.10);
+
+}
+
+
+/* =====================================
+   COURSE IMAGE
+===================================== */
+
+.course-image{
+
+width:100%;
+
+height:120px;
+
+object-fit:cover;
+
+display:block;
+
+background:#eef9fb;
+
+}
+
+
+/* =====================================
+   COURSE CONTENT
+===================================== */
+
+.course-content{
+
+padding:12px;
+
+}
+
+.course-content h3{
+
+margin:0 0 6px;
+
+color:#07394a;
+
+font-size:16px;
+
+line-height:1.3;
+
+}
+
+.course-content p{
+
+margin:0 0 10px;
+
+color:#64748b;
+
+font-size:12px;
+
+line-height:1.4;
+
+}
+
+
+/* =====================================
+   STATUS
+===================================== */
+
+.course-status{
+
+display:inline-block;
+
+background:#dcfce7;
+
+color:#166534;
+
+padding:4px 8px;
+
+border-radius:20px;
+
+font-size:11px;
+
+font-weight:700;
+
+margin-bottom:10px;
+
+}
+
+
+/* =====================================
+   PROGRESS
+===================================== */
+
+.progress-label{
+
+font-size:11px;
+
+font-weight:600;
+
+color:#64748b;
+
+margin-bottom:4px;
+
+}
+
+.progress-box{
+
+height:7px;
+
+background:#e2e8f0;
+
+border-radius:20px;
+
+overflow:hidden;
+
+margin-bottom:12px;
+
+}
+
+.progress-bar{
+
+height:100%;
+
+width:0%;
+
+background:#0b9fbb;
+
+border-radius:20px;
+
+}
+
+
+/* =====================================
+   COURSE BUTTON
+===================================== */
+
+.course-button{
+
+display:inline-block;
+
+background:#0b9fbb;
+
+color:#fff;
+
+text-decoration:none;
+
+padding:7px 11px;
+
+border-radius:7px;
+
+font-weight:600;
+
+font-size:12px;
+
+}
+
+.course-button:hover{
+
+background:#087f97;
+
+}
+
+
+/* =====================================
+   NO LINK
+===================================== */
+
+.no-link{
+
+display:inline-block;
+
+background:#94a3b8;
+
+color:#fff;
+
+padding:7px 11px;
+
+border-radius:7px;
+
+font-size:12px;
+
+}
+
+
+/* =====================================
+   LOADING
+===================================== */
+
+.loading{
+
+padding:25px;
+
+text-align:center;
+
+color:#64748b;
+
+}
+
+
+/* =====================================
+   ERROR
+===================================== */
+
+.error-box{
+
+padding:20px;
+
+background:#fff1f2;
+
+border:1px solid #fecdd3;
+
+border-radius:12px;
+
+color:#9f1239;
+
+}
+
+
+/* =====================================
+   EMPTY
+===================================== */
+
+.empty-box{
+
+padding:30px;
+
+text-align:center;
+
+background:#f8fafc;
+
+border-radius:12px;
+
+color:#64748b;
+
+}
+
+
+/* =====================================
+   TABLET
+===================================== */
+
+@media(max-width:900px){
+
+.courses-grid{
+
+grid-template-columns:
+repeat(2,minmax(0,1fr));
+
+}
+
+}
+
+
+/* =====================================
+   MOBILE
+===================================== */
+
+@media(max-width:600px){
+
+.courses-grid{
+
+grid-template-columns:1fr;
+
+}
+
+.course-image{
+
+height:160px;
+
+}
+
+.course-content{
+
+padding:15px;
+
+}
+
+.course-content h3{
+
+font-size:17px;
+
+}
+
+.course-content p{
+
+font-size:13px;
+
+}
+
+}
+
+</style>
+
+</head>
+
+
+<body
+class="dashboard"
+data-page="student-course">
+
+
+<div class="side-layout">
+
+
+<!-- =====================================
+     SIDEBAR
+===================================== -->
+
+<aside class="side">
+
+
+<img
+src="../assets/hr-logo.svg"
+alt="HR">
+
+
+<h3>
+Haroon Ibn Rasheed
+</h3>
+
+
+<small>
+Student Portal
+</small>
+
+
+<nav style="margin-top:16px">
+
+
+<a href="dashboard.html">
+Dashboard
+</a>
+
+
+<a href="profile.html">
+Profile
+</a>
+
+
+<a href="teacher.html">
+My Teacher
+</a>
+
+
+<a href="course.html"
+class="active">
+My Courses
+</a>
+
+
+<a href="classes.html">
+My Classes
+</a>
+
+
+<a href="schedule.html">
+Schedule
+</a>
+
+
+<a href="attendance.html">
+Attendance
+</a>
+
+
+<a href="fees.html">
+Fees
+</a>
+
+
+<a href="leaves.html">
+Leaves
+</a>
+
+
+</nav>
+
+
+<a
+href="#"
+onclick="portalLogout();return false">
+
+Logout
+
+</a>
+
+
+</aside>
+
+
+<!-- =====================================
+     MAIN
+===================================== -->
+
+<main class="content">
+
+
+<section class="card">
+
+
+<h1>
+My Courses
+</h1>
+
+
+<p
+style="
+color:#64748b;
+margin-top:5px;
+">
+
+Available academy courses
+
+</p>
+
+
+<div
+id="coursesGrid"
+class="courses-grid">
+
+
+<div class="loading">
+
+Loading courses...
+
+</div>
+
+
+</div>
+
+
+</section>
+
+
+</main>
+
+
+</div>
+
+
+<script>
+
+/* =====================================
+   SUPABASE
+===================================== */
+
+let db;
+
+
+/* =====================================
+   INITIALIZE
+===================================== */
+
+(async function(){
+
+try{
+
+
+if(!window.db){
+
+window.db =
+supabase.createClient(
+window.SUPABASE_CONFIG.url,
+window.SUPABASE_CONFIG.anonKey
+);
+
+}
+
+
+db = window.db;
+
+
+/* LOAD COURSES */
+
+await loadStudentCourses();
+
+
+}catch(error){
+
+console.error(
+"Student courses error:",
+error
+);
+
+
+document.getElementById(
+"coursesGrid"
+).innerHTML = `
+
+<div class="error-box">
+
+Courses could not be loaded.
+
+<br><br>
+
+${escapeHtml(
+error.message ||
+"Unknown error"
+)}
+
+</div>
+
+`;
+
+}
+
+})();
+
+
+/* =====================================
+   LOAD ACTIVE COURSES
+===================================== */
+
+async function loadStudentCourses(){
+
+const grid =
+document.getElementById(
+"coursesGrid"
+);
+
+
+const {data,error} =
+await db
+
+.from("courses")
+
+.select(
+"id,title,description,image_url,course_url,status"
+)
+
+.eq(
+"status",
+"active"
+)
+
+.order(
+"created_at",
+{
+ascending:true
+}
+);
+
+
+if(error){
+
+throw error;
+
+}
+
+
+const courses =
+data || [];
+
+
+if(courses.length === 0){
+
+grid.innerHTML = `
+
+<div class="empty-box">
+
+No active courses are currently available.
+
+</div>
+
+`;
+
+return;
+
+}
+
+
+grid.innerHTML =
+
+courses
+
+.map(
+course =>
+createCourseCard(course)
+)
+
+.join("");
+
+}
+
+
+/* =====================================
+   COURSE CARD
+===================================== */
+
+function createCourseCard(course){
+
+
+const title =
+
+escapeHtml(
+course.title ||
+"Untitled Course"
+);
+
+
+const description =
+
+escapeHtml(
+course.description ||
+"No description available."
+);
+
+
+const image =
+
+safeImage(
+course.image_url
+);
+
+
+let button = "";
+
+
+if(course.course_url){
+
+
+const url =
+
+safeUrl(
+course.course_url
+);
+
+
+if(url !== "#"){
+
+
+button = `
+
+<a
+
+class="course-button"
+
+href="${url}"
+
+target="_blank"
+
+rel="noopener noreferrer">
+
+Open Course
+
+</a>
+
+`;
+
+
+}else{
+
+
+button = `
+
+<span class="no-link">
+
+No Course Link
+
+</span>
+
+`;
+
+}
+
+
+}else{
+
+
+button = `
+
+<span class="no-link">
+
+No Course Link
+
+</span>
+
+`;
+
+}
+
+
+return `
+
+<div class="course-card">
+
+
+<img
+
+class="course-image"
+
+src="${image}"
+
+alt="${title}"
+
+onerror="this.src='../assets/hr-logo.svg'"
+
+>
+
+
+<div class="course-content">
+
+
+<h3>
+
+${title}
+
+</h3>
+
+
+<p>
+
+${description}
+
+</p>
+
+
+<span
+class="course-status">
+
+Active Course
+
+</span>
+
+
+<div
+class="progress-label">
+
+Progress
+
+</div>
+
+
+<div
+class="progress-box">
+
+<div
+class="progress-bar">
+
+</div>
+
+</div>
+
+
+${button}
+
+
+</div>
+
+
+</div>
+
+`;
+
+}
+
+
+/* =====================================
+   SECURITY HELPERS
+===================================== */
+
+function escapeHtml(value){
+
+return String(value)
+
+.replace(
+/&/g,
+"&amp;"
+)
+
+.replace(
+/</g,
+"&lt;"
+)
+
+.replace(
+/>/g,
+"&gt;"
+)
+
+.replace(
+/"/g,
+"&quot;"
+)
+
+.replace(
+/'/g,
+"&#039;"
+);
+
+}
+
+
+function safeUrl(url){
+
+const value =
+
+String(url || "")
+.trim();
+
+
+if(
+
+value.startsWith(
+"https://"
+)
+
+||
+
+value.startsWith(
+"http://"
+)
+
+){
+
+return escapeHtml(
+value
+);
+
+}
+
+
+return "#";
+
+}
+
+
+function safeImage(url){
+
+const value =
+
+String(url || "")
+.trim();
+
+
+if(
+
+value.startsWith(
+"https://"
+)
+
+||
+
+value.startsWith(
+"http://"
+)
+
+||
+
+value.startsWith(
+"../"
+)
+
+){
+
+return escapeHtml(
+value
+);
+
+}
+
+
+return "../assets/hr-logo.svg";
+
+}
+
+</script>
+
+
+</body>
+
+</html>
