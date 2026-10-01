@@ -5,15 +5,13 @@
 
 <meta charset="utf-8">
 
-<meta name="viewport"
-content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
 <title>
 My Attendance | Haroon Ibn Rasheed Online Quran Academy
 </title>
 
-<link rel="stylesheet"
-href="../css/portal.css">
+<link rel="stylesheet" href="../css/portal.css">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -21,22 +19,12 @@ href="../css/portal.css">
 
 <script src="../js/portal.js" defer></script>
 
-
 <style>
-
-/* =====================================================
-   ATTENDANCE PAGE
-===================================================== */
 
 .attendance-page{
   padding:20px;
   background:#F4F7F9;
 }
-
-
-/* =====================================================
-   HEADER
-===================================================== */
 
 .attendance-header{
   display:flex;
@@ -73,16 +61,9 @@ href="../css/portal.css">
   background:#287F96;
 }
 
-
-/* =====================================================
-   STAT CARDS
-===================================================== */
-
 .attendance-stats{
   display:grid;
-  grid-template-columns:
-    repeat(4,minmax(0,1fr));
-
+  grid-template-columns:repeat(4,minmax(0,1fr));
   gap:14px;
   margin-bottom:20px;
 }
@@ -116,18 +97,8 @@ href="../css/portal.css">
   font-size:11px;
 }
 
-
-/* =====================================================
-   PERCENTAGE CARD
-===================================================== */
-
 .percentage-card{
-  background:linear-gradient(
-    135deg,
-    #2F9FBA,
-    #287F96
-  );
-
+  background:linear-gradient(135deg,#2F9FBA,#287F96);
   color:#fff;
   border-radius:12px;
   padding:18px;
@@ -168,11 +139,6 @@ href="../css/portal.css">
   transition:width .4s ease;
 }
 
-
-/* =====================================================
-   ATTENDANCE HISTORY
-===================================================== */
-
 .history-card{
   background:#fff;
   border-radius:12px;
@@ -196,11 +162,6 @@ href="../css/portal.css">
   color:#64748b;
   font-size:12px;
 }
-
-
-/* =====================================================
-   TABLE
-===================================================== */
 
 .table-wrap{
   width:100%;
@@ -238,11 +199,6 @@ href="../css/portal.css">
   background:#F4F7F9;
 }
 
-
-/* =====================================================
-   STATUS BADGES
-===================================================== */
-
 .status-badge{
   display:inline-block;
   padding:5px 10px;
@@ -271,21 +227,11 @@ href="../css/portal.css">
   color:#475569;
 }
 
-
-/* =====================================================
-   LOADING
-===================================================== */
-
 .loading{
   padding:35px;
   text-align:center;
   color:#64748b;
 }
-
-
-/* =====================================================
-   EMPTY
-===================================================== */
 
 .empty{
   padding:40px 20px;
@@ -301,11 +247,6 @@ href="../css/portal.css">
   margin-bottom:7px;
 }
 
-
-/* =====================================================
-   ERROR
-===================================================== */
-
 .error-box{
   padding:18px;
   background:#fff1f2;
@@ -314,16 +255,10 @@ href="../css/portal.css">
   color:#9f1239;
 }
 
-
-/* =====================================================
-   MOBILE
-===================================================== */
-
 @media(max-width:800px){
 
   .attendance-stats{
-    grid-template-columns:
-      repeat(2,minmax(0,1fr));
+    grid-template-columns:repeat(2,minmax(0,1fr));
   }
 
 }
@@ -364,18 +299,11 @@ href="../css/portal.css">
 
 </head>
 
-
 <body
 class="dashboard"
 data-page="student-attendance">
 
-
 <div class="side-layout">
-
-
-<!-- ===================================================
-     SIDEBAR
-=================================================== -->
 
 <aside class="side">
 
@@ -391,48 +319,27 @@ Haroon Ibn Rasheed
 Student Portal
 </small>
 
-
 <nav style="margin-top:16px">
 
-<a href="dashboard.html">
-Dashboard
-</a>
+<a href="dashboard.html">Dashboard</a>
 
-<a href="profile.html">
-Profile
-</a>
+<a href="profile.html">Profile</a>
 
-<a href="teacher.html">
-My Teacher
-</a>
+<a href="teacher.html">My Teacher</a>
 
-<a href="course.html">
-My Courses
-</a>
+<a href="course.html">My Courses</a>
 
-<a href="classes.html">
-My Classes
-</a>
+<a href="classes.html">My Classes</a>
 
-<a href="schedule.html">
-Schedule
-</a>
+<a href="schedule.html">Schedule</a>
 
-<a href="attendance.html"
-class="active">
-Attendance
-</a>
+<a href="attendance.html" class="active">Attendance</a>
 
-<a href="fees.html">
-Fees
-</a>
+<a href="fees.html">Fees</a>
 
-<a href="leaves.html">
-Leaves
-</a>
+<a href="leaves.html">Leaves</a>
 
 </nav>
-
 
 <a href="#"
 onclick="portalLogout();return false">
@@ -443,17 +350,9 @@ Logout
 
 </aside>
 
-
-<!-- ===================================================
-     MAIN
-=================================================== -->
-
 <main class="content">
 
 <section class="card attendance-page">
-
-
-<!-- HEADER -->
 
 <div class="attendance-header">
 
@@ -469,7 +368,6 @@ Your complete class attendance record.
 
 </div>
 
-
 <button
 class="refresh-btn"
 onclick="loadAttendance()">
@@ -480,13 +378,7 @@ Refresh
 
 </div>
 
-
-<!-- =================================================
-     STATISTICS
-================================================= -->
-
 <div class="attendance-stats">
-
 
 <div class="attendance-stat">
 
@@ -494,12 +386,8 @@ Refresh
 Total Classes
 </div>
 
-<div
-class="stat-value"
-id="totalClasses">
-
+<div class="stat-value" id="totalClasses">
 —
-
 </div>
 
 <div class="stat-sub">
@@ -508,19 +396,14 @@ Recorded attendance
 
 </div>
 
-
 <div class="attendance-stat">
 
 <div class="stat-label">
 Present
 </div>
 
-<div
-class="stat-value"
-id="presentClasses">
-
+<div class="stat-value" id="presentClasses">
 —
-
 </div>
 
 <div class="stat-sub">
@@ -529,19 +412,14 @@ Classes attended
 
 </div>
 
-
 <div class="attendance-stat">
 
 <div class="stat-label">
 Absent
 </div>
 
-<div
-class="stat-value"
-id="absentClasses">
-
+<div class="stat-value" id="absentClasses">
 —
-
 </div>
 
 <div class="stat-sub">
@@ -550,19 +428,14 @@ Classes missed
 
 </div>
 
-
 <div class="attendance-stat">
 
 <div class="stat-label">
 Late
 </div>
 
-<div
-class="stat-value"
-id="lateClasses">
-
+<div class="stat-value" id="lateClasses">
 —
-
 </div>
 
 <div class="stat-sub">
@@ -571,13 +444,7 @@ Late attendance
 
 </div>
 
-
 </div>
-
-
-<!-- =================================================
-     PERCENTAGE
-===================================================== -->
 
 <div class="percentage-card">
 
@@ -587,43 +454,27 @@ Late attendance
 Attendance Percentage
 </div>
 
-<div
-class="percentage-value"
+<div class="percentage-value"
 id="attendancePercentage">
-
 0%
-
 </div>
 
 </div>
-
 
 <div class="progress-track">
 
 <div
 class="progress-bar"
 id="attendanceProgress">
-
 </div>
 
 </div>
 
 </div>
-
-
-<!-- =================================================
-     MESSAGE
-===================================================== -->
 
 <div id="messageArea"></div>
 
-
-<!-- =================================================
-     HISTORY
-===================================================== -->
-
 <div class="history-card">
-
 
 <div class="history-header">
 
@@ -637,7 +488,6 @@ Your attendance records are listed below.
 
 </div>
 
-
 <div class="table-wrap">
 
 <table class="attendance-table">
@@ -646,30 +496,15 @@ Your attendance records are listed below.
 
 <tr>
 
-<th>
-Date
-</th>
-
-<th>
-Course
-</th>
-
-<th>
-Teacher
-</th>
-
-<th>
-Status
-</th>
-
-<th>
-Notes
-</th>
+<th>Date</th>
+<th>Course</th>
+<th>Teacher</th>
+<th>Status</th>
+<th>Notes</th>
 
 </tr>
 
 </thead>
-
 
 <tbody id="attendanceRows">
 
@@ -691,9 +526,7 @@ Loading attendance...
 
 </div>
 
-
 </div>
-
 
 </section>
 
@@ -701,12 +534,7 @@ Loading attendance...
 
 </div>
 
-
 <script>
-
-/* =====================================================
-   SUPABASE
-===================================================== */
 
 const db =
 supabase.createClient(
@@ -714,10 +542,6 @@ supabase.createClient(
   window.SUPABASE_CONFIG.anonKey
 );
 
-
-/* =====================================================
-   SAFE HTML
-===================================================== */
 
 function safeAttendanceHtml(value){
 
@@ -731,23 +555,18 @@ function safeAttendanceHtml(value){
 }
 
 
-/* =====================================================
-   FORMAT DATE
-===================================================== */
+/* Date now comes from created_at */
 
-function formatAttendanceDate(date){
+function formatAttendanceDate(dateTime){
 
-  if(!date){
+  if(!dateTime){
     return "—";
   }
 
-  const d =
-    new Date(
-      String(date) + "T00:00:00"
-    );
+  const d = new Date(dateTime);
 
   if(isNaN(d.getTime())){
-    return safeAttendanceHtml(date);
+    return "—";
   }
 
   return d.toLocaleDateString(
@@ -762,17 +581,12 @@ function formatAttendanceDate(date){
 }
 
 
-/* =====================================================
-   STATUS
-===================================================== */
-
 function attendanceStatus(status){
 
   const value =
     String(status || "")
       .trim()
       .toLowerCase();
-
 
   if(value === "present"){
 
@@ -784,7 +598,6 @@ function attendanceStatus(status){
 
   }
 
-
   if(value === "absent"){
 
     return `
@@ -794,7 +607,6 @@ function attendanceStatus(status){
     `;
 
   }
-
 
   if(value === "late"){
 
@@ -806,7 +618,6 @@ function attendanceStatus(status){
 
   }
 
-
   return `
     <span class="status-badge status-other">
       ${safeAttendanceHtml(status || "Unknown")}
@@ -816,102 +627,61 @@ function attendanceStatus(status){
 }
 
 
-/* =====================================================
-   LOAD ATTENDANCE
-===================================================== */
-
 async function loadAttendance(){
 
   const rows =
-    document.getElementById(
-      "attendanceRows"
-    );
-
-  const message =
-    document.getElementById(
-      "messageArea"
-    );
-
+    document.getElementById("attendanceRows");
 
   const totalEl =
-    document.getElementById(
-      "totalClasses"
-    );
+    document.getElementById("totalClasses");
 
   const presentEl =
-    document.getElementById(
-      "presentClasses"
-    );
+    document.getElementById("presentClasses");
 
   const absentEl =
-    document.getElementById(
-      "absentClasses"
-    );
+    document.getElementById("absentClasses");
 
   const lateEl =
-    document.getElementById(
-      "lateClasses"
-    );
+    document.getElementById("lateClasses");
 
   const percentageEl =
-    document.getElementById(
-      "attendancePercentage"
-    );
+    document.getElementById("attendancePercentage");
 
   const progressEl =
-    document.getElementById(
-      "attendanceProgress"
-    );
+    document.getElementById("attendanceProgress");
 
 
   rows.innerHTML = `
-
     <tr>
-
       <td colspan="5">
-
         <div class="loading">
           Loading attendance...
         </div>
-
       </td>
-
     </tr>
-
   `;
-
-
-  message.innerHTML = "";
 
 
   totalEl.textContent = "—";
   presentEl.textContent = "—";
   absentEl.textContent = "—";
   lateEl.textContent = "—";
+
   percentageEl.textContent = "0%";
   progressEl.style.width = "0%";
 
 
   try{
 
-
-    /* ================================================
-       CURRENT AUTH USER
-    ================================================= */
-
     const {
-      data:{
-        user
-      },
+      data:{user},
       error:authError
     } =
       await db.auth.getUser();
 
 
     if(authError){
-
       throw authError;
-
     }
 
 
@@ -923,10 +693,6 @@ async function loadAttendance(){
 
     }
 
-
-    /* ================================================
-       FIND STUDENT
-    ================================================= */
 
     const {
       data:student,
@@ -940,17 +706,12 @@ async function loadAttendance(){
           full_name,
           status
         `)
-        .eq(
-          "user_id",
-          user.id
-        )
+        .eq("user_id",user.id)
         .maybeSingle();
 
 
     if(studentError){
-
       throw studentError;
-
     }
 
 
@@ -963,9 +724,11 @@ async function loadAttendance(){
     }
 
 
-    /* ================================================
-       LOAD STUDENT ATTENDANCE
-    ================================================= */
+    /*
+      IMPORTANT:
+      attendance table does NOT have attendance_date.
+      We use created_at for the date.
+    */
 
     const {
       data:attendance,
@@ -978,18 +741,13 @@ async function loadAttendance(){
           schedule_id,
           student_id,
           teacher_id,
-          student,
           status,
-          attendance_date,
           notes,
           created_at
         `)
-        .eq(
-          "student_id",
-          student.id
-        )
+        .eq("student_id",student.id)
         .order(
-          "attendance_date",
+          "created_at",
           {
             ascending:false
           }
@@ -997,25 +755,17 @@ async function loadAttendance(){
 
 
     if(attendanceError){
-
       throw attendanceError;
-
     }
 
 
-    /* ================================================
-       NO RECORDS
-    ================================================= */
-
-    if(
-      !attendance ||
-      !attendance.length
-    ){
+    if(!attendance || !attendance.length){
 
       totalEl.textContent = "0";
       presentEl.textContent = "0";
       absentEl.textContent = "0";
       lateEl.textContent = "0";
+
       percentageEl.textContent = "0%";
       progressEl.style.width = "0%";
 
@@ -1048,54 +798,38 @@ async function loadAttendance(){
     }
 
 
-    /* ================================================
-       STATISTICS
-    ================================================= */
-
     let present = 0;
     let absent = 0;
     let late = 0;
 
 
-    attendance.forEach(
-      record => {
+    attendance.forEach(record => {
 
-        const status =
-          String(
-            record.status || ""
-          )
+      const status =
+        String(record.status || "")
           .trim()
           .toLowerCase();
 
-
-        if(status === "present"){
-          present++;
-        }
-
-        else if(status === "absent"){
-          absent++;
-        }
-
-        else if(status === "late"){
-          late++;
-        }
-
+      if(status === "present"){
+        present++;
       }
-    );
+
+      else if(status === "absent"){
+        absent++;
+      }
+
+      else if(status === "late"){
+        late++;
+      }
+
+    });
 
 
     const total =
       attendance.length;
 
-
-    /*
-       Late is counted as attended
-       for percentage calculation.
-    */
-
     const attended =
       present + late;
-
 
     const percentage =
       total
@@ -1105,39 +839,25 @@ async function loadAttendance(){
         : 0;
 
 
-    totalEl.textContent =
-      total;
-
-    presentEl.textContent =
-      present;
-
-    absentEl.textContent =
-      absent;
-
-    lateEl.textContent =
-      late;
+    totalEl.textContent = total;
+    presentEl.textContent = present;
+    absentEl.textContent = absent;
+    lateEl.textContent = late;
 
     percentageEl.textContent =
       percentage + "%";
 
     progressEl.style.width =
-      Math.min(
-        percentage,
-        100
-      ) + "%";
+      Math.min(percentage,100) + "%";
 
 
-    /* ================================================
-       LOAD SCHEDULE INFORMATION
-    ================================================= */
+    /* Load schedule information */
 
     const scheduleIds =
       [
         ...new Set(
           attendance
-            .map(
-              x => x.schedule_id
-            )
+            .map(x => x.schedule_id)
             .filter(Boolean)
         )
       ];
@@ -1149,8 +869,7 @@ async function loadAttendance(){
     if(scheduleIds.length){
 
       const {
-        data:schedules,
-        error:scheduleError
+        data:schedules
       } =
         await db
           .from("class_schedules")
@@ -1159,51 +878,31 @@ async function loadAttendance(){
             course,
             teacher_id
           `)
-          .in(
-            "id",
-            scheduleIds
-          );
+          .in("id",scheduleIds);
 
 
-      if(!scheduleError){
+      (schedules || []).forEach(schedule => {
 
-        (schedules || [])
-          .forEach(
-            schedule => {
+        scheduleMap[schedule.id] =
+          schedule;
 
-              scheduleMap[
-                schedule.id
-              ] =
-                schedule;
-
-            }
-          );
-
-      }
+      });
 
     }
 
 
-    /* ================================================
-       LOAD TEACHERS
-    ================================================= */
+    /* Load teacher information */
 
     const teacherIds =
       [
         ...new Set(
           attendance
-            .map(
-              x => x.teacher_id
-            )
+            .map(x => x.teacher_id)
             .filter(Boolean)
             .concat(
-              Object.values(
-                scheduleMap
-              )
-              .map(
-                x => x.teacher_id
-              )
-              .filter(Boolean)
+              Object.values(scheduleMap)
+                .map(x => x.teacher_id)
+                .filter(Boolean)
             )
         )
       ];
@@ -1215,8 +914,7 @@ async function loadAttendance(){
     if(teacherIds.length){
 
       const {
-        data:teachers,
-        error:teacherError
+        data:teachers
       } =
         await db
           .from("teachers")
@@ -1224,140 +922,88 @@ async function loadAttendance(){
             id,
             name
           `)
-          .in(
-            "id",
-            teacherIds
-          );
+          .in("id",teacherIds);
 
 
-      if(!teacherError){
+      (teachers || []).forEach(teacher => {
 
-        (teachers || [])
-          .forEach(
-            teacher => {
+        teacherMap[teacher.id] =
+          teacher.name;
 
-              teacherMap[
-                teacher.id
-              ] =
-                teacher.name;
-
-            }
-          );
-
-      }
+      });
 
     }
 
 
-    /* ================================================
-       BUILD HISTORY
-    ================================================= */
+    /* Build history */
 
     let html = "";
 
 
-    attendance.forEach(
-      record => {
+    attendance.forEach(record => {
+
+      const schedule =
+        scheduleMap[record.schedule_id] || {};
 
 
-        const schedule =
-          scheduleMap[
-            record.schedule_id
-          ] ||
-          {};
+      const teacherId =
+        record.teacher_id ||
+        schedule.teacher_id;
 
 
-        const teacherId =
-          record.teacher_id ||
-          schedule.teacher_id;
+      const teacherName =
+        teacherMap[teacherId] ||
+        "Assigned Teacher";
 
 
-        const teacherName =
-          teacherMap[
-            teacherId
-          ] ||
-          "Assigned Teacher";
+      const course =
+        schedule.course ||
+        "Quran Class";
 
 
-        const course =
-          schedule.course ||
-          "Quran Class";
+      html += `
+
+        <tr>
+
+          <td>
+            ${safeAttendanceHtml(
+              formatAttendanceDate(
+                record.created_at
+              )
+            )}
+          </td>
+
+          <td>
+            ${safeAttendanceHtml(course)}
+          </td>
+
+          <td>
+            ${safeAttendanceHtml(teacherName)}
+          </td>
+
+          <td>
+            ${attendanceStatus(record.status)}
+          </td>
+
+          <td>
+            ${
+              record.notes
+                ? safeAttendanceHtml(record.notes)
+                : "—"
+            }
+          </td>
+
+        </tr>
+
+      `;
+
+    });
 
 
-        html += `
-
-          <tr>
-
-            <td>
-
-              ${safeAttendanceHtml(
-                formatAttendanceDate(
-                  record.attendance_date
-                )
-              )}
-
-            </td>
-
-
-            <td>
-
-              ${safeAttendanceHtml(
-                course
-              )}
-
-            </td>
-
-
-            <td>
-
-              ${safeAttendanceHtml(
-                teacherName
-              )}
-
-            </td>
-
-
-            <td>
-
-              ${attendanceStatus(
-                record.status
-              )}
-
-            </td>
-
-
-            <td>
-
-              ${
-                record.notes
-
-                  ?
-
-                  safeAttendanceHtml(
-                    record.notes
-                  )
-
-                  :
-
-                  "—"
-              }
-
-            </td>
-
-          </tr>
-
-        `;
-
-      }
-    );
-
-
-    rows.innerHTML =
-      html;
+    rows.innerHTML = html;
 
 
   }catch(error){
-
 
     console.error(
       "Student attendance error:",
@@ -1396,10 +1042,6 @@ async function loadAttendance(){
 
 }
 
-
-/* =====================================================
-   START
-===================================================== */
 
 document.addEventListener(
   "DOMContentLoaded",
