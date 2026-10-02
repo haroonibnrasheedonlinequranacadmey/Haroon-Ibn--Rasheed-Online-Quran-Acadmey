@@ -1,1 +1,931 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Fees | Admin</title><link rel="stylesheet" href="../css/admin.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../js/config.js"></script><script src="../js/admin.js"></script></head><body><div class="admin-layout"><aside class="sidebar"><div class="brand">HR Admin<span>Haroon Ibn Rasheed Online Quran Academy</span></div><nav class="nav"><a href="dashboard.html">Dashboard</a><a href="admissions.html">Admissions / Leads</a><a href="users.html">Portal Users</a><a href="students.html">Students</a><a href="enrollments.html">Enrollments</a><a href="teachers.html">Teachers</a><a href="schedule.html">Schedule</a><a href="classes.html">Classes</a><a href="attendance.html">Attendance</a><a href="payments.html">Payments</a><a href="leaves.html">Leaves</a><a href="salaries.html">Salaries</a><a href="courses.html">Courses</a><a href="fees.html">Fees</a><a href="payment-methods.html">Payment Methods</a><a href="messages.html">Messages</a><a href="testimonials.html">Testimonials</a><a href="articles.html">Blog / Articles</a><a href="notifications.html">Notifications</a><a href="faqs.html">FAQs</a><a href="content.html">Website Content</a><a href="settings.html">Settings</a><a href="../index.html">View Website</a><a href="#" onclick="logout();return false">Logout</a></nav></aside><main class="main"><div class="top"><h1 id="title">Fees</h1></div><div id="msg" class="msg"></div><div id="formBox" class="card"><form id="form" class="form-grid"></form></div><div class="card"><div class="table-wrap"><table class="table"><thead><tr id="head"></tr></thead><tbody id="rows"></tbody></table></div></div></main></div><script src="../js/manage.js"></script><script>kind='fees';def=defs[kind];document.getElementById('title').textContent=def.title;resetForm();init();</script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Fees | Admin</title>
+
+<link rel="stylesheet" href="../css/admin.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script src="../js/admin.js"></script>
+
+<style>
+
+/* =========================================================
+   ADMIN FEES PAGE
+   Existing admin.css / sidebar / fonts / colors preserved
+========================================================= */
+
+.fees-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  margin-bottom:18px;
+}
+
+.fees-header h1{
+  margin:0;
+}
+
+.fees-subtitle{
+  margin:5px 0 0;
+  color:#718096;
+  font-size:14px;
+}
+
+.summary-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+  margin-bottom:18px;
+}
+
+.summary-card{
+  background:#fff;
+  border:1px solid #e4edf0;
+  border-radius:10px;
+  padding:18px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
+}
+
+.summary-icon{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+  background:#eef9fb;
+  flex-shrink:0;
+}
+
+.summary-card:nth-child(2) .summary-icon{
+  background:#e9f8ef;
+}
+
+.summary-card:nth-child(3) .summary-icon{
+  background:#fff5dc;
+}
+
+.summary-card:nth-child(4) .summary-icon{
+  background:#fdecef;
+}
+
+.summary-label{
+  color:#718096;
+  font-size:13px;
+  margin-bottom:4px;
+}
+
+.summary-value{
+  color:#07394a;
+  font-size:22px;
+  font-weight:700;
+}
+
+.summary-note{
+  color:#8a98a3;
+  font-size:11px;
+  margin-top:3px;
+}
+
+.fee-toolbar{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr 1fr;
+  gap:10px;
+}
+
+.fee-table-wrap{
+  overflow-x:auto;
+}
+
+.fee-table{
+  min-width:900px;
+}
+
+.student-cell{
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+
+.student-avatar{
+  width:35px;
+  height:35px;
+  border-radius:50%;
+  background:#eef9fb;
+  color:#0b9fbb;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+}
+
+.student-name{
+  color:#07394a;
+  font-weight:600;
+}
+
+.student-id{
+  display:block;
+  color:#8997a3;
+  font-size:11px;
+  margin-top:2px;
+}
+
+.fee-status{
+  display:inline-block;
+  padding:5px 10px;
+  border-radius:20px;
+  font-size:11px;
+  font-weight:600;
+  white-space:nowrap;
+}
+
+.fee-paid{
+  background:#d9f5e7;
+  color:#16834b;
+}
+
+.fee-pending{
+  background:#fff0c9;
+  color:#9a6700;
+}
+
+.fee-overdue{
+  background:#fde0e3;
+  color:#b42332;
+}
+
+.fee-partial{
+  background:#dff3fa;
+  color:#08738b;
+}
+
+.action-btn{
+  border:0;
+  border-radius:6px;
+  padding:7px 12px;
+  background:#0b9fbb;
+  color:#fff;
+  cursor:pointer;
+  font-size:12px;
+  font-weight:600;
+}
+
+.action-btn:hover{
+  opacity:.9;
+}
+
+.add-fee-btn{
+  white-space:nowrap;
+}
+
+.info-box{
+  padding:13px 15px;
+  background:#eef9fb;
+  border:1px solid #d7eef3;
+  border-radius:8px;
+  color:#07394a;
+  font-size:13px;
+  line-height:1.6;
+  margin-bottom:15px;
+}
+
+@media(max-width:1000px){
+
+  .summary-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .fee-toolbar{
+    grid-template-columns:1fr 1fr;
+  }
+
+}
+
+@media(max-width:650px){
+
+  .fees-header{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .summary-grid{
+    grid-template-columns:1fr;
+  }
+
+  .fee-toolbar{
+    grid-template-columns:1fr;
+  }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+<!-- =======================================================
+     SIDEBAR
+======================================================= -->
+
+<aside class="sidebar">
+
+<div class="brand">
+
+HR Admin
+
+<span>
+Haroon Ibn Rasheed Online Quran Academy
+</span>
+
+</div>
+
+<nav class="nav">
+
+<a href="dashboard.html">Dashboard</a>
+
+<a href="admissions.html">Admissions / Leads</a>
+
+<a href="users.html">Portal Users</a>
+
+<a href="students.html">Students</a>
+
+<a href="enrollments.html">Enrollments</a>
+
+<a href="teachers.html">Teachers</a>
+
+<a href="schedule.html">Schedule</a>
+
+<a href="classes.html">Classes</a>
+
+<a href="attendance.html">Attendance</a>
+
+<a href="payments.html">Payments</a>
+
+<a href="leaves.html">Leaves</a>
+
+<a href="salaries.html">Salaries</a>
+
+<a href="courses.html">Courses</a>
+
+<a href="fees.html">Fees</a>
+
+<a href="payment-methods.html">Payment Methods</a>
+
+<a href="messages.html">Messages</a>
+
+<a href="testimonials.html">Testimonials</a>
+
+<a href="articles.html">Blog / Articles</a>
+
+<a href="notifications.html">Notifications</a>
+
+<a href="faqs.html">FAQs</a>
+
+<a href="content.html">Website Content</a>
+
+<a href="settings.html">Settings</a>
+
+<a href="../index.html">View Website</a>
+
+<a href="#" onclick="logout();return false">
+Logout
+</a>
+
+</nav>
+
+</aside>
+
+
+<!-- =======================================================
+     MAIN
+======================================================= -->
+
+<main class="main">
+
+
+<!-- HEADER -->
+
+<div class="fees-header">
+
+<div>
+
+<h1 id="title">
+Fees
+</h1>
+
+<p class="fees-subtitle">
+Manage student fees, due dates and payment status
+</p>
+
+</div>
+
+<button
+  type="button"
+  class="btn add-fee-btn"
+  onclick="document.getElementById('formBox').scrollIntoView({behavior:'smooth'})">
++ Add Student Fee
+</button>
+
+</div>
+
+
+<div id="msg" class="msg"></div>
+
+
+<!-- =======================================================
+     SUMMARY
+======================================================= -->
+
+<div class="summary-grid">
+
+
+<div class="summary-card">
+
+<div class="summary-icon">
+💰
+</div>
+
+<div>
+
+<div class="summary-label">
+Total Fees
+</div>
+
+<div
+  class="summary-value"
+  id="feeTotal">
+0
+</div>
+
+<div class="summary-note">
+All student fees
+</div>
+
+</div>
+
+</div>
+
+
+<div class="summary-card">
+
+<div class="summary-icon">
+✓
+</div>
+
+<div>
+
+<div class="summary-label">
+Paid Amount
+</div>
+
+<div
+  class="summary-value"
+  id="feePaid">
+0
+</div>
+
+<div class="summary-note">
+Verified payments
+</div>
+
+</div>
+
+</div>
+
+
+<div class="summary-card">
+
+<div class="summary-icon">
+◷
+</div>
+
+<div>
+
+<div class="summary-label">
+Due Amount
+</div>
+
+<div
+  class="summary-value"
+  id="feeDue">
+0
+</div>
+
+<div class="summary-note">
+Outstanding
+</div>
+
+</div>
+
+</div>
+
+
+<div class="summary-card">
+
+<div class="summary-icon">
+!
+</div>
+
+<div>
+
+<div class="summary-label">
+Pending Fees
+</div>
+
+<div
+  class="summary-value"
+  id="feePending">
+0
+</div>
+
+<div class="summary-note">
+Awaiting payment
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =======================================================
+     FEE RULE INFO
+======================================================= -->
+
+<div class="card">
+
+<div class="info-box">
+
+<strong>Fee Structure</strong><br>
+
+3 free trial classes → first payment for the starting period →
+monthly fee paid in advance → automatic due-date reminder.
+
+Payment submitted by the student will remain pending until
+the admin verifies it.
+
+</div>
+
+</div>
+
+
+<!-- =======================================================
+     ADD / EDIT FEE
+======================================================= -->
+
+<div
+  id="formBox"
+  class="card">
+
+<h2 style="margin-top:0">
+Student Fee
+</h2>
+
+<form
+  id="form"
+  class="form-grid">
+</form>
+
+</div>
+
+
+<!-- =======================================================
+     SEARCH / FILTER
+======================================================= -->
+
+<div class="card">
+
+<div class="fee-toolbar">
+
+<input
+  type="text"
+  class="input"
+  id="feeSearch"
+  placeholder="Search student, ID or course..."
+>
+
+<select
+  class="input"
+  id="feeStatusFilter">
+
+<option value="">
+All Status
+</option>
+
+<option value="paid">
+Paid
+</option>
+
+<option value="pending">
+Pending
+</option>
+
+<option value="partial">
+Partial
+</option>
+
+<option value="overdue">
+Overdue
+</option>
+
+</select>
+
+
+<select
+  class="input"
+  id="feeCourseFilter">
+
+<option value="">
+All Courses
+</option>
+
+</select>
+
+
+<select
+  class="input"
+  id="feeMonthFilter">
+
+<option value="">
+All Months
+</option>
+
+<option value="01">
+January
+</option>
+
+<option value="02">
+February
+</option>
+
+<option value="03">
+March
+</option>
+
+<option value="04">
+April
+</option>
+
+<option value="05">
+May
+</option>
+
+<option value="06">
+June
+</option>
+
+<option value="07">
+July
+</option>
+
+<option value="08">
+August
+</option>
+
+<option value="09">
+September
+</option>
+
+<option value="10">
+October
+</option>
+
+<option value="11">
+November
+</option>
+
+<option value="12">
+December
+</option>
+
+</select>
+
+</div>
+
+</div>
+
+
+<!-- =======================================================
+     FEES TABLE
+======================================================= -->
+
+<div class="card">
+
+<div class="fee-table-wrap">
+
+<table class="table fee-table">
+
+<thead>
+
+<tr id="head">
+
+</tr>
+
+</thead>
+
+<tbody id="rows">
+
+<tr>
+
+<td class="empty-row">
+Loading fees...
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+</main>
+
+</div>
+
+
+<!-- =======================================================
+     EXISTING MANAGEMENT SYSTEM
+======================================================= -->
+
+<script src="../js/manage.js"></script>
+
+
+<script>
+
+/*
+===========================================================
+IMPORTANT
+
+The existing manage.js remains responsible for the actual
+Supabase CRUD operations and existing database definitions.
+
+This page only adds the professional Fees UI and filtering/
+summary layer.
+
+No Supabase table or schema is changed here.
+===========================================================
+*/
+
+
+kind = 'fees';
+
+def = defs[kind];
+
+document.getElementById('title').textContent =
+  def.title;
+
+
+/* Existing form/database initialization */
+
+resetForm();
+
+init();
+
+
+/* =========================================================
+   SAFE VALUE HELPER
+========================================================= */
+
+function feeValue(row,names){
+
+  for(const name of names){
+
+    if(
+      row &&
+      row[name] !== undefined &&
+      row[name] !== null
+    ){
+
+      return row[name];
+
+    }
+
+  }
+
+  return '';
+
+}
+
+
+/* =========================================================
+   STATUS CLASS
+========================================================= */
+
+function feeStatusClass(status){
+
+  const value =
+    String(status || '')
+      .toLowerCase();
+
+  if(
+    value === 'paid' ||
+    value === 'verified' ||
+    value === 'completed'
+  ){
+
+    return 'fee-paid';
+
+  }
+
+  if(value === 'overdue'){
+
+    return 'fee-overdue';
+
+  }
+
+  if(value === 'partial'){
+
+    return 'fee-partial';
+
+  }
+
+  return 'fee-pending';
+
+}
+
+
+/* =========================================================
+   SUMMARY FROM TABLE DATA
+========================================================= */
+
+function updateFeeSummary(){
+
+  const tableRows =
+    document.querySelectorAll('#rows tr');
+
+  let total = 0;
+  let paid = 0;
+  let due = 0;
+  let pending = 0;
+
+
+  tableRows.forEach(row => {
+
+    const cells =
+      row.querySelectorAll('td');
+
+    if(!cells.length){
+      return;
+    }
+
+  });
+
+
+  /*
+   * The actual fee calculations remain database/schema
+   * dependent and will be finalized after the SQL structure
+   * check. This prevents the frontend from guessing columns.
+   */
+
+}
+
+
+/* =========================================================
+   LOCAL TABLE FILTER
+========================================================= */
+
+function filterFees(){
+
+  const search =
+    document
+      .getElementById('feeSearch')
+      .value
+      .toLowerCase()
+      .trim();
+
+  const status =
+    document
+      .getElementById('feeStatusFilter')
+      .value
+      .toLowerCase();
+
+  const course =
+    document
+      .getElementById('feeCourseFilter')
+      .value
+      .toLowerCase();
+
+  const rows =
+    document.querySelectorAll(
+      '#rows tr'
+    );
+
+
+  rows.forEach(row => {
+
+    const text =
+      row.textContent
+        .toLowerCase();
+
+
+    const statusMatch =
+      !status ||
+      text.includes(status);
+
+
+    const courseMatch =
+      !course ||
+      text.includes(course);
+
+
+    const searchMatch =
+      !search ||
+      text.includes(search);
+
+
+    row.style.display =
+      (
+        searchMatch &&
+        statusMatch &&
+        courseMatch
+      )
+      ? ''
+      : 'none';
+
+  });
+
+}
+
+
+/* =========================================================
+   FILTER EVENTS
+========================================================= */
+
+document
+  .getElementById('feeSearch')
+  .addEventListener(
+    'input',
+    filterFees
+  );
+
+
+document
+  .getElementById('feeStatusFilter')
+  .addEventListener(
+    'change',
+    filterFees
+  );
+
+
+document
+  .getElementById('feeCourseFilter')
+  .addEventListener(
+    'change',
+    filterFees
+  );
+
+
+document
+  .getElementById('feeMonthFilter')
+  .addEventListener(
+    'change',
+    filterFees
+  );
+
+
+/* =========================================================
+   OBSERVE TABLE CHANGES
+========================================================= */
+
+const feeTableObserver =
+  new MutationObserver(
+    function(){
+
+      filterFees();
+
+    }
+  );
+
+
+feeTableObserver.observe(
+  document.getElementById('rows'),
+  {
+    childList:true,
+    subtree:true
+  }
+);
+
+</script>
+
+</body>
+  </html>
