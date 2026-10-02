@@ -1,90 +1,35 @@
 <!doctype html>
-<html lang="en">
 
-<head>
-
-<meta charset="utf-8">
-
-<meta name="viewport"
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport"
 content="width=device-width,initial-scale=1">
 
-<title>Students | Admin</title>
-
-<link rel="stylesheet"
-href="../css/admin.css">
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script src="../js/config.js"></script>
-
-<script src="../js/admin.js"></script>
-
-</head>
-
-<body>
-
-<div class="admin-layout">
-
-<!-- SIDEBAR -->
-
-<aside class="sidebar">
-
-<div class="brand">
-
-HR Admin
+<title>Students | Admin</title><link rel="stylesheet"
+href="../css/admin.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../js/config.js"></script><script src="../js/admin.js"></script></head><body><div class="admin-layout"><aside class="sidebar"><div class="brand">HR Admin
 
 <span>
 Haroon Ibn Rasheed Online Quran Academy
-</span>
-
-</div>
-
-<nav class="nav">
-
-<a href="dashboard.html">Dashboard</a>
-
+</span></div><nav class="nav"><a href="dashboard.html">Dashboard</a>
 <a href="admissions.html">Admissions / Leads</a>
-
 <a href="users.html">Portal Users</a>
-
 <a class="active" href="students.html">Students</a>
-
 <a href="enrollments.html">Enrollments</a>
-
 <a href="teachers.html">Teachers</a>
-
 <a href="schedule.html">Schedule</a>
-
 <a href="classes.html">Classes</a>
-
 <a href="attendance.html">Attendance</a>
-
 <a href="payments.html">Payments</a>
-
 <a href="leaves.html">Leaves</a>
-
 <a href="salaries.html">Salaries</a>
-
 <a href="courses.html">Courses</a>
-
 <a href="fees.html">Fees</a>
-
 <a href="payment-methods.html">Payment Methods</a>
-
 <a href="messages.html">Messages</a>
-
 <a href="testimonials.html">Testimonials</a>
-
 <a href="articles.html">Blog / Articles</a>
-
 <a href="notifications.html">Notifications</a>
-
 <a href="faqs.html">FAQs</a>
-
 <a href="content.html">Website Content</a>
-
 <a href="settings.html">Settings</a>
-
 <a href="../index.html">View Website</a>
 
 <a href="#"
@@ -92,37 +37,7 @@ onclick="logout();return false">
 Logout
 </a>
 
-</nav>
-
-</aside>
-
-
-<!-- MAIN -->
-
-<main class="main">
-
-<div class="top">
-
-<h1>Students</h1>
-
-</div>
-
-
-<div id="msg" class="msg"></div>
-
-
-<!-- CREATE STUDENT -->
-
-<div class="card">
-
-<h2>Create Student Account</h2>
-
-<form id="studentForm" class="form-grid">
-
-
-<div class="field">
-
-<label>Student Name</label>
+</nav></aside><main class="main"><div class="top"><h1>Students</h1></div><div id="msg" class="msg"></div><div class="card"><h2>Create Student Account</h2><form id="studentForm" class="form-grid"><div class="field"><label>Student Name</label>
 
 <input
 id="student_name"
@@ -131,12 +46,7 @@ type="text"
 placeholder="Enter student name"
 required>
 
-</div>
-
-
-<div class="field">
-
-<label>Email</label>
+</div><div class="field"><label>Email</label>
 
 <input
 id="student_email"
@@ -145,12 +55,7 @@ type="email"
 placeholder="student@example.com"
 required>
 
-</div>
-
-
-<div class="field">
-
-<label>Password</label>
+</div><div class="field"><label>Password</label>
 
 <input
 id="student_password"
@@ -160,12 +65,7 @@ placeholder="Create password"
 required
 minlength="6">
 
-</div>
-
-
-<div class="field">
-
-<label>Father Name</label>
+</div><div class="field"><label>Father Name</label>
 
 <input
 id="father_name"
@@ -173,12 +73,7 @@ class="input"
 type="text"
 placeholder="Enter father name">
 
-</div>
-
-
-<div class="field">
-
-<label>Phone</label>
+</div><div class="field"><label>Phone</label>
 
 <input
 id="student_phone"
@@ -186,12 +81,7 @@ class="input"
 type="text"
 placeholder="Enter phone number">
 
-</div>
-
-
-<div class="field">
-
-<label>Course</label>
+</div><div class="field"><label>Course</label>
 
 <input
 id="student_course"
@@ -199,12 +89,7 @@ class="input"
 type="text"
 placeholder="Example: Quran with Tajweed">
 
-</div>
-
-
-<div class="field">
-
-<label>Teacher</label>
+</div><div class="field"><label>Teacher</label>
 
 <select
 id="teacher_id"
@@ -213,18 +98,7 @@ required>
 
 <option value="">
 Loading teachers...
-</option>
-
-</select>
-
-</div>
-
-
-<!-- TIMEZONE ADDED -->
-
-<div class="field">
-
-<label>Student Time Zone</label>
+</option></select></div><div class="field"><label>Student Time Zone</label>
 
 <select
 id="student_timezone"
@@ -233,11 +107,7 @@ required>
 
 <option value="Asia/Karachi">
 Asia/Karachi — Pakistan
-</option>
-
-</select>
-
-<small
+</option></select><small
 style="
 display:block;
 margin-top:6px;
@@ -248,14 +118,7 @@ line-height:1.4;
 Select the student's local IANA time zone.
 All supported time zones are available.
 
-</small>
-
-</div>
-
-
-<div class="field">
-
-<label>Status</label>
+</small></div><div class="field"><label>Status</label>
 
 <select
 id="student_status"
@@ -263,106 +126,30 @@ class="input">
 
 <option value="active">
 Active
-</option>
-
-<option value="inactive">
+</option><option value="inactive">
 Inactive
-</option>
-
-</select>
-
-</div>
-
-
-<div class="field full">
-
-<button
+</option></select></div><div class="field full"><button
 id="createStudentBtn"
 class="btn"
 type="submit">
 
 Create Student Account
 
-</button>
-
-</div>
-
-</form>
-
-</div>
-
-
-<!-- STUDENT LIST -->
-
-<div class="card">
-
-<h2>Students</h2>
-
-<div class="table-wrap">
-
-<table class="table">
-
-<thead>
-
-<tr>
-
-<th>Student ID</th>
-
+</button></div></form></div><div class="card"><h2>Students</h2><div class="table-wrap"><table class="table"><thead><tr><th>Student ID</th>
 <th>Name</th>
-
 <th>Father Name</th>
-
 <th>Phone</th>
-
 <th>Email</th>
-
 <th>Course</th>
-
 <th>Teacher</th>
-
 <th>Time Zone</th>
-
 <th>Status</th>
-
-<th>Actions</th>
-
-</tr>
-
-</thead>
-
-
-<tbody id="rows">
-
-<tr>
-
-<td colspan="10">
+<th>Actions</th></tr></thead><tbody id="rows"><tr><td colspan="10">
 Loading...
-</td>
-
-</tr>
-
-</tbody>
-
-</table>
-
-</div>
-
-</div>
-
-</main>
-
-</div>
-
-
-<script>
-
-/* =====================================================
-   SETTINGS
-===================================================== */
+</td></tr></tbody></table></div></div></main></div><script>
 
 const EDGE_FUNCTION_URL =
 "https://olxytsmwqkrrnutsegtr.supabase.co/functions/v1/create-portal-user";
-
 
 let teachers = [];
 
@@ -382,13 +169,9 @@ return "";
 return String(value)
 
 .replace(/&/g,"&amp;")
-
 .replace(/</g,"&lt;")
-
 .replace(/>/g,"&gt;")
-
 .replace(/"/g,"&quot;")
-
 .replace(/'/g,"&#039;");
 
 }
@@ -426,30 +209,24 @@ return;
 
 }
 
-box.textContent =
-message;
+box.textContent = message;
 
-box.style.display =
-"block";
+box.style.display = "block";
 
 if(type === "error"){
 
 box.style.color = "#b91c1c";
-
 box.style.background = "#fee2e2";
 
 }else{
 
 box.style.color = "#166534";
-
 box.style.background = "#dcfce7";
 
 }
 
 box.style.padding = "10px";
-
 box.style.marginBottom = "15px";
-
 box.style.borderRadius = "8px";
 
 }
@@ -457,14 +234,11 @@ box.style.borderRadius = "8px";
 
 /* =====================================================
    TIMEZONE SYSTEM
-   Uses browser-supported IANA time zones.
-   No limited country list.
 ===================================================== */
 
 function getSupportedTimeZones(){
 
 let zones = [];
-
 
 try{
 
@@ -487,17 +261,11 @@ error
 
 }
 
-
-/* Make sure UTC is available */
-
 if(!zones.includes("UTC")){
 
 zones.unshift("UTC");
 
 }
-
-
-/* Make sure Pakistan is available */
 
 if(!zones.includes("Asia/Karachi")){
 
@@ -505,13 +273,9 @@ zones.push("Asia/Karachi");
 
 }
 
-
-/* Remove duplicates and sort */
-
 zones =
 [...new Set(zones)]
 .sort();
-
 
 return zones;
 
@@ -519,7 +283,7 @@ return zones;
 
 
 /* =====================================================
-   POPULATE TIMEZONE SELECT
+   LOAD TIMEZONES
 ===================================================== */
 
 function loadTimeZones(){
@@ -535,59 +299,36 @@ return;
 
 }
 
-
 const browserZone =
 Intl.DateTimeFormat()
 .resolvedOptions()
 .timeZone ||
 "Asia/Karachi";
 
-
 const zones =
 getSupportedTimeZones();
 
-
 select.innerHTML = "";
-
 
 zones.forEach(function(zone){
 
 const option =
 document.createElement("option");
 
-option.value =
-zone;
-
-
-/*
-   Keep the IANA name visible.
-   This works for every supported country/region
-   without maintaining a limited country list.
-*/
-
-option.textContent =
-zone;
-
+option.value = zone;
+option.textContent = zone;
 
 select.appendChild(option);
 
 });
 
-
-/*
-   If browser timezone is supported,
-   use it as initial suggestion.
-*/
-
 if(zones.includes(browserZone)){
 
-select.value =
-browserZone;
+select.value = browserZone;
 
 }else{
 
-select.value =
-"Asia/Karachi";
+select.value = "Asia/Karachi";
 
 }
 
@@ -612,25 +353,20 @@ const result = await db
 
 .order("name",{ascending:true});
 
-
 if(result.error){
 
 throw result.error;
 
 }
 
-
 teachers =
 result.data || [];
-
 
 const select =
 document.getElementById("teacher_id");
 
-
 select.innerHTML =
 '<option value="">Select Teacher</option>';
-
 
 teachers.forEach(function(teacher){
 
@@ -646,7 +382,6 @@ teacher.name || "Unnamed Teacher";
 select.appendChild(option);
 
 });
-
 
 }catch(error){
 
@@ -680,7 +415,6 @@ async function loadStudents(){
 const rows =
 document.getElementById("rows");
 
-
 rows.innerHTML = `
 
 <tr>
@@ -695,11 +429,7 @@ Loading students...
 
 `;
 
-
 try{
-
-
-/* LOAD STUDENTS ONLY */
 
 const studentResult =
 await db
@@ -708,6 +438,7 @@ await db
 
 .select(`
 id,
+user_id,
 full_name,
 father_name,
 phone,
@@ -726,19 +457,14 @@ ascending:false
 }
 );
 
-
 if(studentResult.error){
 
 throw studentResult.error;
 
 }
 
-
 const students =
 studentResult.data || [];
-
-
-/* NO STUDENTS */
 
 if(students.length === 0){
 
@@ -761,10 +487,6 @@ return;
 }
 
 
-/* =====================================================
-   CREATE TEACHER LOOKUP
-===================================================== */
-
 const teacherMap = {};
 
 teachers.forEach(function(teacher){
@@ -774,11 +496,6 @@ teacher.name;
 
 });
 
-
-/* =====================================================
-   LOAD ANY TEACHERS USED BY STUDENTS
-   INCLUDING INACTIVE TEACHERS
-===================================================== */
 
 const teacherIds =
 students
@@ -810,7 +527,6 @@ await db
 uniqueTeacherIds
 );
 
-
 if(!teacherResult.error){
 
 (teacherResult.data || [])
@@ -826,13 +542,8 @@ teacher.name;
 }
 
 
-/* =====================================================
-   RENDER STUDENTS
-===================================================== */
-
 rows.innerHTML =
 students.map(function(student){
-
 
 const teacherName =
 student.teacher_id &&
@@ -856,35 +567,27 @@ String(student.status || "")
 const safeId =
 safeHtml(student.id);
 
-
 const safeName =
 safeHtml(student.full_name || "");
-
 
 const safeFather =
 safeHtml(student.father_name || "-");
 
-
 const safePhone =
 safeHtml(student.phone || "-");
-
 
 const safeEmail =
 safeHtml(student.email || "-");
 
-
 const safeCourse =
 safeHtml(student.course || "-");
-
 
 const safeTeacher =
 safeHtml(teacherName);
 
-
 const studentTimezone =
 student.timezone ||
 "Asia/Karachi";
-
 
 const safeTimezone =
 safeHtml(studentTimezone);
@@ -893,7 +596,6 @@ safeHtml(studentTimezone);
 return `
 
 <tr>
-
 
 <td>
 
@@ -909,13 +611,11 @@ ${safeId}
 
 </td>
 
-
 <td>
 
 ${safeName}
 
 </td>
-
 
 <td>
 
@@ -923,13 +623,11 @@ ${safeFather}
 
 </td>
 
-
 <td>
 
 ${safePhone}
 
 </td>
-
 
 <td>
 
@@ -937,20 +635,17 @@ ${safeEmail}
 
 </td>
 
-
 <td>
 
 ${safeCourse}
 
 </td>
 
-
 <td>
 
 ${safeTeacher}
 
 </td>
-
 
 <td>
 
@@ -966,7 +661,6 @@ ${safeTimezone}
 
 </td>
 
-
 <td>
 
 <strong>
@@ -977,7 +671,6 @@ ${isActive ? "Active" : "Inactive"}
 
 </td>
 
-
 <td>
 
 <div
@@ -987,7 +680,6 @@ gap:6px;
 flex-wrap:wrap;
 min-width:170px;
 ">
-
 
 ${
 isActive
@@ -1057,11 +749,9 @@ Delete
 
 </button>
 
-
 </div>
 
 </td>
-
 
 </tr>
 
@@ -1076,7 +766,6 @@ console.error(
 "Students loading error:",
 error
 );
-
 
 rows.innerHTML = `
 
@@ -1099,7 +788,6 @@ ${safeHtml(error.message)}
 </tr>
 
 `;
-
 
 studentMessage(
 "Students could not be loaded: " +
@@ -1126,7 +814,6 @@ newStatus === "active"
 ? "activate"
 : "deactivate";
 
-
 if(!confirm(
 "Are you sure you want to " +
 action +
@@ -1137,14 +824,12 @@ return;
 
 }
 
-
 try{
 
 studentMessage(
 "Updating student...",
 "ok"
 );
-
 
 const result =
 await db
@@ -1162,15 +847,12 @@ status:newStatus
 studentId
 );
 
-
 if(result.error){
 
 throw result.error;
 
 }
 
-
-/* CLASSROOM ACCESS */
 
 const accessResult =
 await db
@@ -1189,7 +871,6 @@ newStatus === "active"
 studentId
 );
 
-
 if(accessResult.error){
 
 console.warn(
@@ -1199,9 +880,7 @@ accessResult.error.message
 
 }
 
-
 await loadStudents();
-
 
 studentMessage(
 "Student successfully " +
@@ -1210,14 +889,12 @@ action +
 "ok"
 );
 
-
 }catch(error){
 
 console.error(
 "Status error:",
 error
 );
-
 
 studentMessage(
 "Could not update student: " +
@@ -1251,13 +928,9 @@ studentName +
 "This will permanently delete:\n" +
 
 "- Student account\n" +
-
 "- Student record\n" +
-
 "- Teacher assignment\n" +
-
 "- Classroom access\n" +
-
 "- Portal profile\n\n" +
 
 "This action cannot be undone.\n\n" +
@@ -1270,7 +943,6 @@ return;
 
 }
 
-
 try{
 
 studentMessage(
@@ -1278,14 +950,11 @@ studentMessage(
 "ok"
 );
 
-
 const sessionResult =
 await db.auth.getSession();
 
-
 const session =
 sessionResult.data?.session;
-
 
 if(!session){
 
@@ -1295,7 +964,6 @@ location.href =
 return;
 
 }
-
 
 const response =
 await fetch(
@@ -1329,10 +997,8 @@ user_id:studentId
 }
 );
 
-
 const result =
 await response.json();
-
 
 if(
 !response.ok ||
@@ -1346,15 +1012,12 @@ result.error ||
 
 }
 
-
 studentMessage(
 "Student deleted successfully.",
 "ok"
 );
 
-
 await loadStudents();
-
 
 }catch(error){
 
@@ -1362,7 +1025,6 @@ console.error(
 "Delete student error:",
 error
 );
-
 
 studentMessage(
 "Student could not be deleted: " +
@@ -1387,21 +1049,17 @@ async function(event){
 
 event.preventDefault();
 
-
 const button =
 document.getElementById(
 "createStudentBtn"
 );
-
 
 button.disabled = true;
 
 button.textContent =
 "Creating Student...";
 
-
 try{
-
 
 const name =
 document
@@ -1409,19 +1067,16 @@ document
 .value
 .trim();
 
-
 const email =
 document
 .getElementById("student_email")
 .value
 .trim();
 
-
 const password =
 document
 .getElementById("student_password")
 .value;
-
 
 const fatherName =
 document
@@ -1429,13 +1084,11 @@ document
 .value
 .trim();
 
-
 const phone =
 document
 .getElementById("student_phone")
 .value
 .trim();
-
 
 const course =
 document
@@ -1443,19 +1096,16 @@ document
 .value
 .trim();
 
-
 const teacherId =
 document
 .getElementById("teacher_id")
 .value;
-
 
 const timezone =
 document
 .getElementById("student_timezone")
 .value
 .trim();
-
 
 const status =
 document
@@ -1471,7 +1121,6 @@ throw new Error(
 
 }
 
-
 if(!email){
 
 throw new Error(
@@ -1479,7 +1128,6 @@ throw new Error(
 );
 
 }
-
 
 if(!password || password.length < 6){
 
@@ -1489,7 +1137,6 @@ throw new Error(
 
 }
 
-
 if(!teacherId){
 
 throw new Error(
@@ -1497,7 +1144,6 @@ throw new Error(
 );
 
 }
-
 
 if(!timezone){
 
@@ -1528,7 +1174,6 @@ throw new Error(
 const sessionResult =
 await db.auth.getSession();
 
-
 const session =
 sessionResult.data?.session;
 
@@ -1543,7 +1188,11 @@ return;
 }
 
 
-/* CREATE THROUGH EDGE FUNCTION */
+/* =====================================================
+   CREATE ACCOUNT
+   IMPORTANT:
+   TIMEZONE IS NOW SENT TO EDGE FUNCTION.
+===================================================== */
 
 const response =
 await fetch(
@@ -1586,7 +1235,15 @@ course:
 course || null,
 
 teacher_id:
-teacherId
+teacherId,
+
+/*
+   NEW:
+   Send timezone directly during account creation.
+*/
+
+timezone:
+timezone
 
 })
 
@@ -1624,7 +1281,10 @@ throw new Error(
 }
 
 
-/* UPDATE STATUS + TEACHER + TIMEZONE */
+/* =====================================================
+   UPDATE STUDENT
+   KEEP AUTH USER LINKED TO STUDENT.
+===================================================== */
 
 const updateResult =
 await db
@@ -1633,6 +1293,9 @@ await db
 
 .update({
 
+user_id:
+studentId,
+
 teacher_id:
 teacherId,
 
@@ -1640,7 +1303,22 @@ status:
 status,
 
 timezone:
-timezone
+timezone,
+
+full_name:
+name,
+
+father_name:
+fatherName || null,
+
+phone:
+phone || null,
+
+email:
+email,
+
+course:
+course || null
 
 })
 
@@ -1653,14 +1331,16 @@ studentId
 if(updateResult.error){
 
 throw new Error(
-"Student created, but teacher/status/timezone update failed: " +
+"Student created, but student profile linking failed: " +
 updateResult.error.message
 );
 
 }
 
 
-/* CHECK ASSIGNMENT */
+/* =====================================================
+   CHECK TEACHER ASSIGNMENT
+===================================================== */
 
 const assignmentResult =
 await db
@@ -1697,7 +1377,9 @@ assignmentResult.error.message
 }
 
 
-/* CREATE ASSIGNMENT IF MISSING */
+/* =====================================================
+   CREATE ASSIGNMENT IF MISSING
+===================================================== */
 
 if(!assignmentResult.data){
 
@@ -1739,7 +1421,9 @@ insertAssignment.error.message
 }
 
 
-/* SUCCESS */
+/* =====================================================
+   SUCCESS
+===================================================== */
 
 studentMessage(
 
@@ -1760,10 +1444,6 @@ document
 .reset();
 
 
-/*
-   After reset, keep Pakistan as the safe default.
-*/
-
 document
 .getElementById("student_timezone")
 .value =
@@ -1780,13 +1460,11 @@ console.error(
 error
 );
 
-
 studentMessage(
 error.message ||
 "Something went wrong.",
 "error"
 );
-
 
 }finally{
 
@@ -1808,14 +1486,12 @@ async function initStudents(){
 
 try{
 
-
 if(
 typeof adminGuard === "function"
 ){
 
 const allowed =
 await adminGuard();
-
 
 if(!allowed){
 
@@ -1825,16 +1501,11 @@ return;
 
 }
 
-
-/* Load timezone list first */
-
 loadTimeZones();
-
 
 await loadTeachers();
 
 await loadStudents();
-
 
 }catch(error){
 
@@ -1843,10 +1514,8 @@ console.error(
 error
 );
 
-
 const rows =
 document.getElementById("rows");
-
 
 rows.innerHTML = `
 
@@ -1880,11 +1549,6 @@ error.message,
 
 }
 
-
 initStudents();
 
-</script>
-
-</body>
-
-</html>
+</script></body></html>
