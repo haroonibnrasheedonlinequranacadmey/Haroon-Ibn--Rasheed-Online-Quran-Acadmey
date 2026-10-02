@@ -140,7 +140,7 @@ body{
   color:#fff;
   border-radius:16px;
   padding:25px;
-  margin-bottom:22px;
+  margin-bottom:18px;
   box-shadow:0 8px 25px rgba(47,159,186,.16);
 }
 
@@ -152,6 +152,85 @@ body{
 .welcome p{
   margin:0;
   opacity:.9;
+}
+
+/* =========================
+   FEE PAYMENT NOTIFICATION
+========================= */
+
+.fee-notification{
+  display:none;
+  margin-bottom:22px;
+  border-radius:14px;
+  padding:17px 19px;
+  background:#fff;
+  border:1px solid #e8e0d0;
+  box-shadow:0 5px 18px rgba(30,50,60,.05);
+}
+
+.fee-notification.show{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+}
+
+.fee-notification.due{
+  border-left:5px solid #f18b82;
+  background:#fffafa;
+}
+
+.fee-notification.submitted{
+  border-left:5px solid #2f9fba;
+  background:#f7fcfd;
+}
+
+.fee-notification.rejected{
+  border-left:5px solid #f18b82;
+  background:#fffafa;
+}
+
+.fee-notification-content{
+  flex:1;
+}
+
+.fee-notification-title{
+  color:#303c45;
+  font-weight:bold;
+  font-size:15px;
+  margin-bottom:5px;
+}
+
+.fee-notification-message{
+  color:#71808b;
+  font-size:12px;
+  line-height:1.6;
+}
+
+.fee-notification-btn{
+  display:inline-block;
+  background:#2f9fba;
+  color:#fff;
+  text-decoration:none;
+  border:0;
+  padding:9px 16px;
+  border-radius:8px;
+  font-size:12px;
+  white-space:nowrap;
+}
+
+.fee-notification-btn:hover{
+  background:#287f96;
+}
+
+.fee-notification.rejected .fee-notification-btn,
+.fee-notification.due .fee-notification-btn{
+  background:#f18b82;
+}
+
+.fee-notification.rejected .fee-notification-btn:hover,
+.fee-notification.due .fee-notification-btn:hover{
+  background:#df7770;
 }
 
 /* STATS */
@@ -270,12 +349,21 @@ body{
   padding:9px 15px;
   border-radius:8px;
   margin-top:12px;
+  margin-right:7px;
   font-size:13px;
   cursor:pointer;
 }
 
 .join-btn:hover{
   background:#287f96;
+}
+
+.classroom-btn{
+  background:#454d59;
+}
+
+.classroom-btn:hover{
+  background:#343b45;
 }
 
 .no-class{
@@ -521,6 +609,18 @@ td{
   .course-mini-grid{
     grid-template-columns:1fr;
   }
+
+  .fee-notification.show{
+    display:block;
+  }
+
+  .fee-notification-btn{
+    margin-top:12px;
+  }
+
+  .join-btn{
+    margin-top:10px;
+  }
 }
 </style>
 </head>
@@ -584,6 +684,43 @@ td{
 
   </section>
 
+  <!-- =========================
+       FEE PAYMENT NOTIFICATION
+  ========================== -->
+
+  <section
+    id="feeNotification"
+    class="fee-notification"
+  >
+
+    <div class="fee-notification-content">
+
+      <div
+        id="feeNotificationTitle"
+        class="fee-notification-title"
+      >
+        🔔 Fee Payment Reminder
+      </div>
+
+      <div
+        id="feeNotificationMessage"
+        class="fee-notification-message"
+      >
+        Your monthly fee payment is due.
+      </div>
+
+    </div>
+
+    <a
+      id="feeNotificationButton"
+      class="fee-notification-btn"
+      href="fees.html"
+    >
+      Submit Payment
+    </a>
+
+  </section>
+
   <section class="stats">
 
     <div class="stat-card">
@@ -622,9 +759,11 @@ td{
       </div>
 
       <div id="todayClass">
+
         <div class="no-class">
           Loading today's class...
         </div>
+
       </div>
 
     </div>
@@ -637,9 +776,11 @@ td{
       </div>
 
       <div id="upcomingClasses">
+
         <div class="empty">
           Loading upcoming classes...
         </div>
+
       </div>
 
     </div>
@@ -728,6 +869,10 @@ td{
 
 "use strict";
 
+/* =========================
+   BASIC HELPERS
+========================= */
+
 function $(id){
   return document.getElementById(id);
 }
@@ -745,6 +890,13 @@ function escapeHTML(value){
     .replace(/"/g,"&quot;")
     .replace(/'/g,"&#039;");
 }
+
+/* =========================
+   EXISTING ACADEMY CLASSROOM
+========================= */
+
+const ACADEMY_CLASSROOM_URL =
+  "https://haroonibnrasheedonlinequranacadmey.github.io/haroon-quran-classroom/";
 
 /* =========================
    DATE / DAY HELPERS
@@ -847,23 +999,37 @@ function combineDateAndTime(date,time){
 
   const parts = String(time).split(":");
 
-  const hour = parseInt(parts[0],10) || 0;
-  const minute = parseInt(parts[1],10) || 0;
-  const second = parseInt(parts[2],10) || 0;
+  const hour =
+    parseInt(parts[0],10) || 0;
 
-  result.setHours(hour,minute,second,0);
+  const minute =
+    parseInt(parts[1],10) || 0;
+
+  const second =
+    parseInt(parts[2],10) || 0;
+
+  result.setHours(
+    hour,
+    minute,
+    second,
+    0
+  );
 
   return result;
 }
 
 function dateLabel(date){
 
-  const today = startOfDay(new Date());
-  const target = startOfDay(date);
+  const today =
+    startOfDay(new Date());
 
-  const difference = Math.round(
-    (target - today) / 86400000
-  );
+  const target =
+    startOfDay(date);
+
+  const difference =
+    Math.round(
+      (target - today) / 86400000
+    );
 
   if(difference === 0){
     return "TODAY";
@@ -896,19 +1062,277 @@ function fullDateLabel(date){
 }
 
 /* =========================
+   PAYMENT STATUS HELPERS
+========================= */
+
+function normalizePaymentStatus(value){
+
+  return String(value || "")
+    .toLowerCase()
+    .trim()
+    .replace(/[\s-]+/g,"_");
+}
+
+function isVerifiedStatus(status){
+
+  return [
+    "verified",
+    "paid",
+    "completed",
+    "complete",
+    "approved",
+    "success",
+    "successful"
+  ].includes(status);
+
+}
+
+function isSubmittedStatus(status){
+
+  return [
+    "submitted",
+    "payment_submitted",
+    "pending",
+    "waiting",
+    "under_review",
+    "processing"
+  ].includes(status);
+
+}
+
+function isRejectedStatus(status){
+
+  return [
+    "rejected",
+    "declined",
+    "failed",
+    "cancelled",
+    "canceled"
+  ].includes(status);
+
+}
+
+/* =========================
+   FEE NOTIFICATION
+========================= */
+
+function hideFeeNotification(){
+
+  const box =
+    $("feeNotification");
+
+  box.className =
+    "fee-notification";
+
+  box.style.display =
+    "none";
+
+}
+
+function showFeeNotification(
+  type,
+  title,
+  message,
+  buttonText
+){
+
+  const box =
+    $("feeNotification");
+
+  const titleBox =
+    $("feeNotificationTitle");
+
+  const messageBox =
+    $("feeNotificationMessage");
+
+  const button =
+    $("feeNotificationButton");
+
+  box.className =
+    "fee-notification show " +
+    type;
+
+  box.style.display =
+    "";
+
+  titleBox.textContent =
+    title;
+
+  messageBox.textContent =
+    message;
+
+  button.textContent =
+    buttonText || "Submit Payment";
+
+  button.href =
+    "fees.html";
+
+}
+
+/* =========================
+   PAYMENT NOTIFICATION LOGIC
+========================= */
+
+async function loadFeeNotification(
+  db,
+  studentId
+){
+
+  try{
+
+    const result =
+      await db
+        .from("student_payments")
+        .select("*")
+        .eq("student_id",studentId)
+        .order("created_at",{ascending:false})
+        .limit(20);
+
+    if(result.error){
+
+      console.error(
+        "Fee notification payment error:",
+        result.error
+      );
+
+      /*
+        If payment table cannot be read,
+        do not show a false notification.
+      */
+
+      hideFeeNotification();
+
+      return false;
+    }
+
+    const payments =
+      result.data || [];
+
+    /*
+      No payment record:
+      Show fee due reminder.
+    */
+
+    if(!payments.length){
+
+      showFeeNotification(
+        "due",
+        "🔔 Fee Payment Reminder",
+        "Your monthly fee payment is due. Please submit your payment to continue your classes.",
+        "Submit Payment"
+      );
+
+      return true;
+    }
+
+    /*
+      Find the latest relevant payment.
+    */
+
+    const latest =
+      payments[0];
+
+    const status =
+      normalizePaymentStatus(
+        latest.status
+      );
+
+    /*
+      ADMIN VERIFIED / PAID
+      → Hide notification.
+    */
+
+    if(isVerifiedStatus(status)){
+
+      hideFeeNotification();
+
+      return false;
+    }
+
+    /*
+      PAYMENT SUBMITTED / PENDING
+      → Keep notification but change message.
+    */
+
+    if(isSubmittedStatus(status)){
+
+      showFeeNotification(
+        "submitted",
+        "⏳ Payment Submitted",
+        "Your payment has been submitted successfully and is waiting for admin verification.",
+        "View Payment"
+      );
+
+      return true;
+    }
+
+    /*
+      PAYMENT REJECTED
+      → Reminder stays visible.
+    */
+
+    if(isRejectedStatus(status)){
+
+      showFeeNotification(
+        "rejected",
+        "❌ Payment Rejected",
+        "Your previous payment was rejected. Please submit your fee payment again.",
+        "Submit Again"
+      );
+
+      return true;
+    }
+
+    /*
+      Unknown status:
+      Treat it as a payment still requiring
+      attention, rather than automatically
+      hiding the reminder.
+    */
+
+    showFeeNotification(
+      "due",
+      "🔔 Fee Payment Reminder",
+      "Your fee payment requires attention. Please open Fees to check your payment status.",
+      "Open Fees"
+    );
+
+    return true;
+
+  }catch(error){
+
+    console.error(
+      "Fee notification exception:",
+      error
+    );
+
+    hideFeeNotification();
+
+    return false;
+  }
+
+}
+
+/* =========================
    LOAD DASHBOARD
 ========================= */
 
 async function loadDashboard(){
 
-  const db = window.academyDB;
+  const db =
+    window.academyDB;
 
   if(!db){
-    console.error("academyDB not available");
+
+    console.error(
+      "academyDB not available"
+    );
+
     return;
   }
 
-  const now = new Date();
+  const now =
+    new Date();
 
   $("todayDate").textContent =
     now.toLocaleDateString(
@@ -939,7 +1363,8 @@ async function loadDashboard(){
     return;
   }
 
-  const uid = session.user.id;
+  const uid =
+    session.user.id;
 
   /* =========================
      STUDENT
@@ -966,16 +1391,19 @@ async function loadDashboard(){
       studentResult.error
     );
 
-    $("studentName").textContent = "Student";
+    $("studentName").textContent =
+      "Student";
 
     return;
   }
 
-  const student = studentResult.data;
+  const student =
+    studentResult.data;
 
   if(!student){
 
-    $("studentName").textContent = "Student";
+    $("studentName").textContent =
+      "Student";
 
     $("todayClass").innerHTML = `
       <div class="no-class">
@@ -983,17 +1411,30 @@ async function loadDashboard(){
       </div>
     `;
 
+    hideFeeNotification();
+
     return;
   }
 
   $("studentName").textContent =
-    student.full_name || "Student";
+    student.full_name ||
+    "Student";
 
-  const studentId = student.id;
+  const studentId =
+    student.id;
+
+  /* =========================
+     FEE PAYMENT NOTIFICATION
+  ========================= */
+
+  const feeNotificationVisible =
+    await loadFeeNotification(
+      db,
+      studentId
+    );
 
   /* =========================
      COURSES
-     ADMIN ADDED COURSES
   ========================= */
 
   try{
@@ -1011,7 +1452,10 @@ async function loadDashboard(){
           created_at
         `)
         .eq("status","active")
-        .order("created_at",{ascending:false});
+        .order(
+          "created_at",
+          {ascending:false}
+        );
 
     if(courseResult.error){
 
@@ -1020,7 +1464,8 @@ async function loadDashboard(){
         courseResult.error
       );
 
-      $("courseCount").textContent = "0";
+      $("courseCount").textContent =
+        "0";
 
       $("courseCards").innerHTML = `
         <div class="empty">
@@ -1050,32 +1495,35 @@ async function loadDashboard(){
           <div class="course-mini-grid">
 
             ${
-              courses.slice(0,6).map(course => {
+              courses.slice(0,6)
+                .map(course => {
 
-                const title =
-                  course.title ||
-                  "Course";
+                  const title =
+                    course.title ||
+                    "Course";
 
-                return `
-                  <div class="course-mini">
+                  return `
+                    <div class="course-mini">
 
-                    <div class="course-mini-title"
-                         title="${escapeHTML(title)}">
+                      <div
+                        class="course-mini-title"
+                        title="${escapeHTML(title)}"
+                      >
+                        ${escapeHTML(title)}
+                      </div>
 
-                      ${escapeHTML(title)}
+                      <span class="course-mini-status">
+                        ${escapeHTML(
+                          course.status ||
+                          "Active"
+                        )}
+                      </span>
 
                     </div>
+                  `;
 
-                    <span class="course-mini-status">
-                      ${escapeHTML(
-                        course.status || "Active"
-                      )}
-                    </span>
-
-                  </div>
-                `;
-
-              }).join("")
+                })
+                .join("")
             }
 
           </div>
@@ -1114,7 +1562,10 @@ async function loadDashboard(){
         .select("*")
         .eq("student_id",studentId)
         .eq("active",true)
-        .order("class_time",{ascending:true});
+        .order(
+          "class_time",
+          {ascending:true}
+        );
 
     if(scheduleResult.error){
 
@@ -1158,8 +1609,13 @@ async function loadDashboard(){
         const teacherResult =
           await db
             .from("profiles")
-            .select("id,full_name")
-            .in("id",teacherIds);
+            .select(
+              "id,full_name"
+            )
+            .in(
+              "id",
+              teacherIds
+            );
 
         if(!teacherResult.error){
 
@@ -1177,22 +1633,30 @@ async function loadDashboard(){
       }
 
       /* =========================
-         CREATE NEXT 7 DAYS
+         NEXT 7 DAYS
       ========================= */
 
       const occurrences = [];
 
-      for(let offset = 0; offset < 7; offset++){
+      for(
+        let offset = 0;
+        offset < 7;
+        offset++
+      ){
 
-        const date = new Date(now);
+        const date =
+          new Date(now);
 
-        date.setHours(0,0,0,0);
+        date.setHours(
+          0,0,0,0
+        );
 
         date.setDate(
           now.getDate() + offset
         );
 
-        const dayIndex = date.getDay();
+        const dayIndex =
+          date.getDay();
 
         schedules.forEach(schedule => {
 
@@ -1211,16 +1675,20 @@ async function loadDashboard(){
 
             occurrences.push({
 
-              schedule:schedule,
+              schedule:
+                schedule,
 
-              date:date,
+              date:
+                date,
 
-              classDateTime:classDateTime,
+              classDateTime:
+                classDateTime,
 
               teacherName:
                 teacherMap[
                   schedule.teacher_id
-                ] || "Teacher"
+                ] ||
+                "Teacher"
 
             });
 
@@ -1230,25 +1698,24 @@ async function loadDashboard(){
 
       }
 
-      /* SORT BY ACTUAL DATE + TIME */
-
-      occurrences.sort((a,b) =>
-        a.classDateTime - b.classDateTime
+      occurrences.sort(
+        (a,b) =>
+          a.classDateTime -
+          b.classDateTime
       );
 
       /* =========================
          TODAY'S CLASS
-         
-         IMPORTANT:
-         Today section remains
-         available for the current
-         24-hour day window.
       ========================= */
 
       const todayClasses =
         occurrences.filter(item =>
-          startOfDay(item.date).getTime() ===
-          startOfDay(now).getTime()
+          startOfDay(
+            item.date
+          ).getTime() ===
+          startOfDay(
+            now
+          ).getTime()
         );
 
       if(!todayClasses.length){
@@ -1273,91 +1740,113 @@ async function loadDashboard(){
       }else{
 
         $("todayClass").innerHTML =
-          todayClasses.map(item => {
+          todayClasses
+            .map(item => {
 
-            const s = item.schedule;
+              const s =
+                item.schedule;
 
-            const duration =
-              s.duration ||
-              s.minutes ||
-              "30";
+              const duration =
+                s.duration_minutes ||
+                s.duration ||
+                s.minutes ||
+                "30";
 
-            return `
-              <div class="today-class">
+              /*
+                Existing academy classroom link.
+                If a future schedule-specific
+                classroom URL exists, use that.
+              */
 
-                <div class="today-label">
-                  Today's Class
-                </div>
+              const classroomUrl =
+                s.classroom_url ||
+                s.classroom_link ||
+                ACADEMY_CLASSROOM_URL;
 
-                <div class="today-course">
-                  ${escapeHTML(
-                    s.course ||
-                    "Quran Class"
-                  )}
-                </div>
+              return `
+                <div class="today-class">
 
-                <div class="today-meta">
+                  <div class="today-label">
+                    Today's Class
+                  </div>
 
-                  <strong>Time:</strong>
-                  ${escapeHTML(
-                    formatTime(
-                      s.class_time
-                    )
-                  )}
+                  <div class="today-course">
+                    ${escapeHTML(
+                      s.course ||
+                      "Quran Class"
+                    )}
+                  </div>
 
-                  <br>
+                  <div class="today-meta">
 
-                  <strong>Teacher:</strong>
-                  ${escapeHTML(
-                    item.teacherName
-                  )}
+                    <strong>Time:</strong>
+                    ${escapeHTML(
+                      formatTime(
+                        s.class_time
+                      )
+                    )}
 
-                  <br>
+                    <br>
 
-                  <strong>Duration:</strong>
-                  ${escapeHTML(
-                    duration
-                  )}
-                  minutes
+                    <strong>Teacher:</strong>
+                    ${escapeHTML(
+                      item.teacherName
+                    )}
 
-                </div>
+                    <br>
 
-                ${
-                  s.google_meet_url
-                  ?
-                  `
+                    <strong>Duration:</strong>
+                    ${escapeHTML(
+                      duration
+                    )}
+                    minutes
+
+                  </div>
+
+                  <div>
+
                     <a
-                      class="join-btn"
+                      class="join-btn classroom-btn"
                       href="${escapeHTML(
-                        s.google_meet_url
+                        classroomUrl
                       )}"
                       target="_blank"
                       rel="noopener"
                     >
-                      Join Class
+                      🏫 Join My Classroom
                     </a>
-                  `
-                  :
-                  `
-                    <span
-                      class="join-btn"
-                      style="background:#9aa6ad"
-                    >
-                      Meeting link not added
-                    </span>
-                  `
-                }
 
-              </div>
-            `;
+                    ${
+                      s.google_meet_url
+                      ?
+                      `
+                        <a
+                          class="join-btn"
+                          href="${escapeHTML(
+                            s.google_meet_url
+                          )}"
+                          target="_blank"
+                          rel="noopener"
+                        >
+                          🎥 Join Google Meet
+                        </a>
+                      `
+                      :
+                      ""
+                    }
 
-          }).join("");
+                  </div>
+
+                </div>
+              `;
+
+            })
+            .join("");
 
       }
 
       /* =========================
          UPCOMING CLASSES
-         FUTURE DAYS
       ========================= */
 
       const futureClasses =
@@ -1381,63 +1870,70 @@ async function loadDashboard(){
       }else{
 
         $("upcomingClasses").innerHTML =
-          futureClasses.map(item => {
+          futureClasses
+            .map(item => {
 
-            const s = item.schedule;
+              const s =
+                item.schedule;
 
-            return `
-              <div class="upcoming-item">
+              return `
+                <div class="upcoming-item">
 
-                <div class="day-badge">
-
-                  ${escapeHTML(
-                    dateLabel(item.date)
-                  )}
-
-                  <br>
-
-                  <span style="
-                    font-weight:normal;
-                    font-size:10px;
-                  ">
-                    ${escapeHTML(
-                      fullDateLabel(item.date)
-                    )}
-                  </span>
-
-                </div>
-
-                <div class="upcoming-info">
-
-                  <strong>
-                    ${escapeHTML(
-                      s.course ||
-                      "Quran Class"
-                    )}
-                  </strong>
-
-                  <span>
+                  <div class="day-badge">
 
                     ${escapeHTML(
-                      formatTime(
-                        s.class_time
+                      dateLabel(
+                        item.date
                       )
                     )}
 
-                    ·
+                    <br>
 
-                    ${escapeHTML(
-                      item.teacherName
-                    )}
+                    <span style="
+                      font-weight:normal;
+                      font-size:10px;
+                    ">
+                      ${escapeHTML(
+                        fullDateLabel(
+                          item.date
+                        )
+                      )}
+                    </span>
 
-                  </span>
+                  </div>
+
+                  <div class="upcoming-info">
+
+                    <strong>
+                      ${escapeHTML(
+                        s.course ||
+                        "Quran Class"
+                      )}
+                    </strong>
+
+                    <span>
+
+                      ${escapeHTML(
+                        formatTime(
+                          s.class_time
+                        )
+                      )}
+
+                      ·
+
+                      ${escapeHTML(
+                        item.teacherName
+                      )}
+
+                    </span>
+
+                  </div>
 
                 </div>
+              `;
 
-              </div>
-            `;
-
-          }).join("");
+            })
+            .join("");
 
       }
 
@@ -1475,7 +1971,10 @@ async function loadDashboard(){
         .from("student_payments")
         .select("*")
         .eq("student_id",studentId)
-        .order("created_at",{ascending:false})
+        .order(
+          "created_at",
+          {ascending:false}
+        )
         .limit(5);
 
     if(paymentResult.error){
@@ -1487,7 +1986,10 @@ async function loadDashboard(){
 
       $("paymentRows").innerHTML = `
         <tr>
-          <td colspan="3" class="empty">
+          <td
+            colspan="3"
+            class="empty"
+          >
             Payments could not be loaded.
           </td>
         </tr>
@@ -1502,7 +2004,10 @@ async function loadDashboard(){
 
         $("paymentRows").innerHTML = `
           <tr>
-            <td colspan="3" class="empty">
+            <td
+              colspan="3"
+              class="empty"
+            >
               No payment records yet.
             </td>
           </tr>
@@ -1511,50 +2016,54 @@ async function loadDashboard(){
       }else{
 
         $("paymentRows").innerHTML =
-          payments.map(payment => {
+          payments
+            .map(payment => {
 
-            const date =
-              payment.paid_at ||
-              payment.created_at;
+              const date =
+                payment.paid_at ||
+                payment.created_at;
 
-            return `
-              <tr>
+              return `
+                <tr>
 
-                <td>
-                  ${escapeHTML(
-                    payment.amount ?? "—"
-                  )}
-                  ${escapeHTML(
-                    payment.currency || ""
-                  )}
-                </td>
-
-                <td>
-
-                  <span class="status">
+                  <td>
                     ${escapeHTML(
-                      payment.status ||
-                      "Pending"
+                      payment.amount ??
+                      "—"
                     )}
-                  </span>
+                    ${escapeHTML(
+                      payment.currency ||
+                      ""
+                    )}
+                  </td>
 
-                </td>
+                  <td>
 
-                <td>
-                  ${
-                    date
-                    ?
-                    new Date(date)
-                      .toLocaleDateString()
-                    :
-                    "—"
-                  }
-                </td>
+                    <span class="status">
+                      ${escapeHTML(
+                        payment.status ||
+                        "Pending"
+                      )}
+                    </span>
 
-              </tr>
-            `;
+                  </td>
 
-          }).join("");
+                  <td>
+                    ${
+                      date
+                      ?
+                      new Date(date)
+                        .toLocaleDateString()
+                      :
+                      "—"
+                    }
+                  </td>
+
+                </tr>
+              `;
+
+            })
+            .join("");
 
       }
 
@@ -1569,7 +2078,10 @@ async function loadDashboard(){
 
     $("paymentRows").innerHTML = `
       <tr>
-        <td colspan="3" class="empty">
+        <td
+          colspan="3"
+          class="empty"
+        >
           Payments could not be loaded.
         </td>
       </tr>
@@ -1578,8 +2090,10 @@ async function loadDashboard(){
   }
 
   /* =========================
-     NOTIFICATIONS
+     GENERAL NOTIFICATIONS
   ========================= */
+
+  let generalNotificationCount = 0;
 
   try{
 
@@ -1588,7 +2102,10 @@ async function loadDashboard(){
         .from("notifications")
         .select("*")
         .eq("user_id",uid)
-        .order("created_at",{ascending:false})
+        .order(
+          "created_at",
+          {ascending:false}
+        )
         .limit(5);
 
     if(notificationResult.error){
@@ -1600,7 +2117,7 @@ async function loadDashboard(){
 
       $("notificationRows").innerHTML = `
         <div class="empty">
-          Notifications could not be loaded.
+          No general notifications yet.
         </div>
       `;
 
@@ -1609,7 +2126,7 @@ async function loadDashboard(){
       const notifications =
         notificationResult.data || [];
 
-      $("notificationCount").textContent =
+      generalNotificationCount =
         notifications.length;
 
       if(!notifications.length){
@@ -1623,28 +2140,31 @@ async function loadDashboard(){
       }else{
 
         $("notificationRows").innerHTML =
-          notifications.map(item => {
+          notifications
+            .map(item => {
 
-            return `
-              <div class="notification">
+              return `
+                <div class="notification">
 
-                <strong>
-                  ${escapeHTML(
-                    item.title ||
-                    "Notification"
-                  )}
-                </strong>
+                  <strong>
+                    ${escapeHTML(
+                      item.title ||
+                      "Notification"
+                    )}
+                  </strong>
 
-                <p>
-                  ${escapeHTML(
-                    item.body || ""
-                  )}
-                </p>
+                  <p>
+                    ${escapeHTML(
+                      item.body ||
+                      ""
+                    )}
+                  </p>
 
-              </div>
-            `;
+                </div>
+              `;
 
-          }).join("");
+            })
+            .join("");
 
       }
 
@@ -1659,19 +2179,32 @@ async function loadDashboard(){
 
     $("notificationRows").innerHTML = `
       <div class="empty">
-        Notifications could not be loaded.
+        No general notifications yet.
       </div>
     `;
 
   }
 
   /* =========================
+     NOTIFICATION COUNT
+  ========================= */
+
+  $("notificationCount").textContent =
+    generalNotificationCount +
+    (feeNotificationVisible ? 1 : 0);
+
+  /* =========================
      ATTENDANCE
   ========================= */
 
-  $("attendanceRate").textContent = "—";
+  $("attendanceRate").textContent =
+    "—";
 
 }
+
+/* =========================
+   START
+========================= */
 
 document.addEventListener(
   "DOMContentLoaded",
