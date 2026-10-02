@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="../css/portal.css">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
 <script src="../js/config.js"></script>
 <script src="../js/portal.js" defer></script>
 
@@ -171,6 +172,13 @@
   opacity:.9;
 }
 
+.timezone-info{
+  margin-top:5px;
+  font-size:13px;
+  color:#2f9fba;
+  font-weight:600;
+}
+
 @media(max-width:700px){
   .schedule-page{
     padding:10px;
@@ -230,11 +238,18 @@
       <div class="schedule-header">
 
         <div>
+
           <h1>My Schedule</h1>
 
           <div class="schedule-info">
             This schedule is managed by the Academy Admin.
           </div>
+
+          <div
+            id="timezoneInfo"
+            class="timezone-info">
+          </div>
+
         </div>
 
         <button
@@ -293,11 +308,19 @@
 
 <script>
 
+/* =========================================================
+   DATABASE
+========================================================= */
+
 const db = supabase.createClient(
   window.SUPABASE_CONFIG.url,
   window.SUPABASE_CONFIG.anonKey
 );
 
+
+/* =========================================================
+   DAYS
+========================================================= */
 
 const DAYS = [
   "Monday",
@@ -321,13 +344,25 @@ const DAY_SHORT = {
 };
 
 
+/* =========================================================
+   VARIABLES
+========================================================= */
+
 let teacherId = null;
+let teacherTimezone = "Asia/Karachi";
 let schedules = [];
 
 
-/* ================================
+/*
+  Admin Schedule page stores the original
+  schedule time in Pakistan timezone.
+*/
+const ADMIN_TIMEZONE = "Asia/Karachi";
+
+
+/* =========================================================
    HTML SAFETY
-================================ */
+========================================================= */
 
 function safeHtml(value){
 
@@ -341,41 +376,64 @@ function safeHtml(value){
 }
 
 
-/* ================================
+/* =========================================================
    TIME HELPERS
-================================ */
+========================================================= */
 
 function timeToMinutes(time){
 
-  if(!time) return null;
-
-  const parts = String(time).split(":");
-
-  const hour = parseInt(parts[0],10);
-  const minute = parseInt(parts[1] || "0",10);
-
-  if(isNaN(hour) || isNaN(minute)){
+  if(!time){
     return null;
   }
 
-  return hour * 60 + minute;
+  const parts =
+    String(time).split(":");
+
+  const hour =
+    parseInt(parts[0],10);
+
+  const minute =
+    parseInt(parts[1] || "0",10);
+
+  if(
+    isNaN(hour) ||
+    isNaN(minute)
+  ){
+
+    return null;
+
+  }
+
+  return (
+    hour * 60 +
+    minute
+  );
+
 }
 
 
 function formatTime(time){
 
-  const total = timeToMinutes(time);
+  const total =
+    timeToMinutes(time);
 
   if(total === null){
     return "";
   }
 
-  let hour = Math.floor(total / 60);
-  const minute = total % 60;
+  let hour =
+    Math.floor(total / 60);
 
-  const ampm = hour >= 12 ? "PM" : "AM";
+  const minute =
+    total % 60;
 
-  hour = hour % 12;
+  const ampm =
+    hour >= 12
+      ? "PM"
+      : "AM";
+
+  hour =
+    hour % 12;
 
   if(hour === 0){
     hour = 12;
@@ -394,35 +452,62 @@ function formatTime(time){
 
 function formatDuration(minutes){
 
-  const m = parseInt(minutes,10);
+  const m =
+    parseInt(minutes,10);
 
-  if(!m || m <= 0){
+  if(
+    !m ||
+    m <= 0
+  ){
+
     return "";
+
   }
 
   if(m < 60){
+
     return m + " min";
+
   }
 
-  const h = Math.floor(m / 60);
-  const r = m % 60;
+  const h =
+    Math.floor(m / 60);
+
+  const r =
+    m % 60;
 
   if(r === 0){
-    return h + (h === 1 ? " hour" : " hours");
+
+    return (
+      h +
+      (
+        h === 1
+          ? " hour"
+          : " hours"
+      )
+    );
+
   }
 
-  return h + "h " + r + "m";
+  return (
+    h +
+    "h " +
+    r +
+    "m"
+  );
 
 }
 
 
-/* ================================
+/* =========================================================
    DAY NORMALIZATION
-================================ */
+========================================================= */
 
 function normalizeDay(day){
 
-  if(!day) return "";
+  if(!day){
+    return "";
+  }
 
   const value =
     String(day)
@@ -462,26 +547,181 @@ function normalizeDay(day){
 }
 
 
-/* ================================
-   CREATE GRID
-================================ */
+/* =========================================================
+   DAY INDEX
+========================================================= */
 
-function createGrid(gridId,startHour,endHour){
+function dayIndex(day){
+
+  return DAYS.indexOf(
+    normalizeDay(day)
+  );
+
+}
+
+
+/* =========================================================
+   GET REFERENCE MONDAY
+========================================================= */
+
+function getReferenceMonday(){
+
+  /*
+    Use the current date in the ADMIN timezone.
+    Then find that week's Monday.
+  */
+
+  const now =
+    luxon.DateTime.now()
+      .setZone(ADMIN_TIMEZONE);
+
+  const isoWeekday =
+    now.weekday;
+
+  return now
+    .startOf("day")
+    .minus({
+      days: isoWeekday - 1
+    });
+
+}
+
+
+/* =========================================================
+   CONVERT ONE WEEKLY OCCURRENCE
+========================================================= */
+
+function convertOccurrence(
+  scheduleDay,
+  scheduleTime
+){
+
+  if(
+    !scheduleDay ||
+    !scheduleTime
+  ){
+
+    return null;
+
+  }
+
+
+  const normalizedDay =
+    normalizeDay(scheduleDay);
+
+  const index =
+    dayIndex(normalizedDay);
+
+  if(index < 0){
+
+    return null;
+
+  }
+
+
+  const monday =
+    getReferenceMonday();
+
+
+  /*
+    Build the occurrence in the ADMIN
+    timezone first.
+  */
+
+  const adminDate =
+    monday.plus({
+      days:index
+    });
+
+
+  const parts =
+    String(scheduleTime)
+      .split(":");
+
+
+  const hour =
+    parseInt(parts[0],10) || 0;
+
+  const minute =
+    parseInt(parts[1],10) || 0;
+
+
+  const adminDateTime =
+    adminDate
+      .set({
+        hour:hour,
+        minute:minute,
+        second:0,
+        millisecond:0
+      })
+      .setZone(
+        ADMIN_TIMEZONE
+      );
+
+
+  /*
+    Convert to the teacher's saved timezone.
+  */
+
+  const teacherDateTime =
+    adminDateTime
+      .setZone(
+        teacherTimezone
+      );
+
+
+  return {
+    day:
+      teacherDateTime
+        .toFormat("cccc"),
+
+    time:
+      teacherDateTime
+        .toFormat("HH:mm"),
+
+    displayTime:
+      teacherDateTime
+        .toFormat("h:mm a"),
+
+    date:
+      teacherDateTime
+        .toISODate(),
+
+    dateTime:
+      teacherDateTime
+
+  };
+
+}
+
+
+/* =========================================================
+   CREATE GRID
+========================================================= */
+
+function createGrid(
+  gridId,
+  startHour,
+  endHour
+){
 
   const grid =
-    document.getElementById(gridId);
+    document.getElementById(
+      gridId
+    );
 
   grid.innerHTML = "";
 
-  /* Header */
 
   let html = "";
+
 
   html += `
     <div class="grid-head time-head">
       Time
     </div>
   `;
+
 
   DAYS.forEach(day => {
 
@@ -494,11 +734,17 @@ function createGrid(gridId,startHour,endHour){
   });
 
 
-  /* 30 minute slots */
+  /*
+    30 minute slots
+  */
 
   for(
-    let minutes = startHour * 60;
-    minutes <= endHour * 60 + 30;
+    let minutes =
+      startHour * 60;
+
+    minutes <=
+      endHour * 60 + 30;
+
     minutes += 30
   ){
 
@@ -514,7 +760,7 @@ function createGrid(gridId,startHour,endHour){
       html += `
         <div
           class="day-cell"
-          data-day="${day}"
+          data-day="${safeHtml(day)}"
           data-time="${minutes}">
         </div>
       `;
@@ -524,27 +770,33 @@ function createGrid(gridId,startHour,endHour){
   }
 
 
-  grid.innerHTML = html;
+  grid.innerHTML =
+    html;
 
 }
 
 
-/* ================================
+/* =========================================================
    FORMAT GRID TIME
-================================ */
+========================================================= */
 
 function formatMinutes(total){
 
   let hour =
-    Math.floor(total / 60);
+    Math.floor(
+      total / 60
+    );
 
   const minute =
     total % 60;
 
   const ampm =
-    hour >= 12 ? "PM" : "AM";
+    hour >= 12
+      ? "PM"
+      : "AM";
 
-  hour = hour % 12;
+  hour =
+    hour % 12;
 
   if(hour === 0){
     hour = 12;
@@ -561,178 +813,269 @@ function formatMinutes(total){
 }
 
 
-/* ================================
+/* =========================================================
    RENDER SCHEDULE
-================================ */
+========================================================= */
 
 function renderSchedules(){
 
-  createGrid("amGrid",0,11);
+  createGrid(
+    "amGrid",
+    0,
+    11
+  );
 
-  createGrid("pmGrid",12,23);
+  createGrid(
+    "pmGrid",
+    12,
+    23
+  );
 
 
   if(!schedules.length){
 
-    document.getElementById("amGrid").innerHTML =
-      `<div class="empty" style="grid-column:1/-1">
-        No classes scheduled.
-      </div>`;
+    document.getElementById(
+      "amGrid"
+    ).innerHTML =
+      `
+      <div
+        class="empty"
+        style="grid-column:1/-1">
 
-    document.getElementById("pmGrid").innerHTML =
-      `<div class="empty" style="grid-column:1/-1">
         No classes scheduled.
-      </div>`;
+
+      </div>
+      `;
+
+
+    document.getElementById(
+      "pmGrid"
+    ).innerHTML =
+      `
+      <div
+        class="empty"
+        style="grid-column:1/-1">
+
+        No classes scheduled.
+
+      </div>
+      `;
 
     return;
 
   }
 
 
-  schedules.forEach(schedule => {
+  schedules.forEach(
+    schedule => {
 
-    let days = schedule.class_days;
-
-    if(!Array.isArray(days)){
-      days = [days];
-    }
+      let days =
+        schedule.class_days;
 
 
-    days.forEach(rawDay => {
+      if(
+        !Array.isArray(days)
+      ){
 
-      const day =
-        normalizeDay(rawDay);
-
-      if(!DAYS.includes(day)){
-        return;
-      }
-
-
-      const total =
-        timeToMinutes(schedule.class_time);
-
-      if(total === null){
-        return;
-      }
-
-
-      const targetGrid =
-        total < 720
-          ? document.getElementById("amGrid")
-          : document.getElementById("pmGrid");
-
-
-      const cell =
-        targetGrid.querySelector(
-          `.day-cell[data-day="${day}"][data-time="${total}"]`
-        );
-
-
-      if(!cell){
-        return;
-      }
-
-
-      const student =
-        schedule.student_name ||
-        "Student";
-
-
-      const course =
-        schedule.course ||
-        "Quran";
-
-
-      const duration =
-        formatDuration(
-          schedule.duration_minutes
-        );
-
-
-      let actions = "";
-
-
-      if(schedule.google_meet_url){
-
-        actions += `
-          <a
-            href="${safeHtml(schedule.google_meet_url)}"
-            target="_blank"
-            rel="noopener">
-            Meet
-          </a>
-        `;
+        days = [days];
 
       }
 
 
-      if(schedule.classroom_code){
+      days.forEach(
+        rawDay => {
 
-        const classroomUrl =
-          "https://haroonibnrasheedonlinequranacadmey.github.io/haroon-quran-classroom/?code="
-          +
-          encodeURIComponent(
-            schedule.classroom_code
-          );
+          /*
+            Convert the original
+            Pakistan schedule into
+            teacher local time.
+          */
 
-
-        actions += `
-          <a
-            href="${classroomUrl}"
-            target="_blank"
-            rel="noopener">
-            Classroom
-          </a>
-        `;
-
-      }
+          const occurrence =
+            convertOccurrence(
+              rawDay,
+              schedule.class_time
+            );
 
 
-      cell.innerHTML += `
+          if(!occurrence){
 
-        <div class="class-box">
+            return;
 
-          <strong>
-            ${safeHtml(student)}
-          </strong>
-
-          <div class="course">
-            ${safeHtml(course)}
-          </div>
-
-          <div>
-            ${formatTime(schedule.class_time)}
-          </div>
-
-          <div class="duration">
-            ${safeHtml(duration)}
-          </div>
-
-          ${
-            actions
-              ? `<div class="class-actions">${actions}</div>`
-              : ""
           }
 
-        </div>
 
-      `;
+          const day =
+            occurrence.day;
 
-    });
+          const total =
+            timeToMinutes(
+              occurrence.time
+            );
 
-  });
+
+          if(
+            !DAYS.includes(day) ||
+            total === null
+          ){
+
+            return;
+
+          }
+
+
+          const targetGrid =
+            total < 720
+              ? document.getElementById(
+                  "amGrid"
+                )
+              : document.getElementById(
+                  "pmGrid"
+                );
+
+
+          const cell =
+            targetGrid.querySelector(
+              `.day-cell[data-day="${day}"][data-time="${total}"]`
+            );
+
+
+          if(!cell){
+
+            return;
+
+          }
+
+
+          const student =
+            schedule.student_name ||
+            "Student";
+
+
+          const course =
+            schedule.course ||
+            "Quran";
+
+
+          const duration =
+            formatDuration(
+              schedule.duration_minutes
+            );
+
+
+          let actions = "";
+
+
+          /*
+            Google Meet
+          */
+
+          if(
+            schedule.google_meet_url
+          ){
+
+            actions += `
+              <a
+                href="${safeHtml(schedule.google_meet_url)}"
+                target="_blank"
+                rel="noopener">
+
+                Meet
+
+              </a>
+            `;
+
+          }
+
+
+          /*
+            Existing Classroom
+          */
+
+          if(
+            schedule.classroom_code
+          ){
+
+            const classroomUrl =
+              "https://haroonibnrasheedonlinequranacadmey.github.io/haroon-quran-classroom/?code="
+              +
+              encodeURIComponent(
+                schedule.classroom_code
+              );
+
+
+            actions += `
+              <a
+                href="${classroomUrl}"
+                target="_blank"
+                rel="noopener">
+
+                Classroom
+
+              </a>
+            `;
+
+          }
+
+
+          cell.innerHTML += `
+
+            <div class="class-box">
+
+              <strong>
+                ${safeHtml(student)}
+              </strong>
+
+              <div class="course">
+                ${safeHtml(course)}
+              </div>
+
+              <div>
+                ${safeHtml(
+                  occurrence.displayTime
+                )}
+              </div>
+
+              <div class="duration">
+                ${safeHtml(duration)}
+              </div>
+
+              ${
+                actions
+                  ?
+                  `
+                  <div class="class-actions">
+                    ${actions}
+                  </div>
+                  `
+                  :
+                  ""
+              }
+
+            </div>
+
+          `;
+
+        }
+      );
+
+    }
+  );
 
 }
 
 
-/* ================================
+/* =========================================================
    LOAD TEACHER SCHEDULE
-================================ */
+========================================================= */
 
 async function loadTeacherSchedule(){
 
   const message =
-    document.getElementById("messageArea");
+    document.getElementById(
+      "messageArea"
+    );
+
 
   message.innerHTML = `
     <div class="loading">
@@ -742,6 +1085,10 @@ async function loadTeacherSchedule(){
 
 
   try{
+
+    /* -----------------------------------------
+       AUTH
+    ----------------------------------------- */
 
     const {
       data:{
@@ -753,7 +1100,9 @@ async function loadTeacherSchedule(){
 
 
     if(authError){
+
       throw authError;
+
     }
 
 
@@ -766,14 +1115,61 @@ async function loadTeacherSchedule(){
     }
 
 
-    teacherId = user.id;
+    teacherId =
+      user.id;
+
+
+    /* -----------------------------------------
+       TEACHER TIMEZONE
+    ----------------------------------------- */
+
+    const teacherResult =
+      await db
+        .from("teachers")
+        .select(
+          "id,name,timezone"
+        )
+        .eq(
+          "id",
+          teacherId
+        )
+        .maybeSingle();
+
+
+    if(
+      teacherResult.error
+    ){
+
+      throw teacherResult.error;
+
+    }
 
 
     /*
-      IMPORTANT:
-      Teacher can only request schedules
-      where teacher_id = current auth user.
+      Use saved teacher timezone.
+      Fallback remains Pakistan.
     */
+
+    teacherTimezone =
+      teacherResult.data?.timezone
+      ||
+      "Asia/Karachi";
+
+
+    /*
+      Show timezone to teacher.
+    */
+
+    document.getElementById(
+      "timezoneInfo"
+    ).textContent =
+      "Your Time Zone: " +
+      teacherTimezone;
+
+
+    /* -----------------------------------------
+       SCHEDULES
+    ----------------------------------------- */
 
     const {
       data,
@@ -791,11 +1187,23 @@ async function loadTeacherSchedule(){
           duration_minutes,
           google_meet_url,
           classroom_code,
-          active
+          active,
+          schedule_timezone
         `)
-        .eq("teacher_id",teacherId)
-        .eq("active",true)
-        .order("class_time",{ascending:true});
+        .eq(
+          "teacher_id",
+          teacherId
+        )
+        .eq(
+          "active",
+          true
+        )
+        .order(
+          "class_time",
+          {
+            ascending:true
+          }
+        );
 
 
     if(error){
@@ -805,26 +1213,31 @@ async function loadTeacherSchedule(){
     }
 
 
-    schedules = data || [];
+    schedules =
+      data || [];
 
 
     /*
       Get student names separately.
-      This avoids depending on a nested
-      Supabase relationship.
+      This keeps the existing RLS
+      and relationship safe.
     */
 
     const studentIds =
       [
         ...new Set(
           schedules
-            .map(x => x.student_id)
+            .map(
+              x => x.student_id
+            )
             .filter(Boolean)
         )
       ];
 
 
-    if(studentIds.length){
+    if(
+      studentIds.length
+    ){
 
       const {
         data:students,
@@ -836,7 +1249,10 @@ async function loadTeacherSchedule(){
             id,
             full_name
           `)
-          .in("id",studentIds);
+          .in(
+            "id",
+            studentIds
+          );
 
 
       if(studentError){
@@ -850,29 +1266,45 @@ async function loadTeacherSchedule(){
 
         const studentMap = {};
 
-        (students || []).forEach(student => {
 
-          studentMap[student.id] =
-            student.full_name;
+        (
+          students || []
+        ).forEach(
+          student => {
 
-        });
+            studentMap[
+              student.id
+            ] =
+              student.full_name;
+
+          }
+        );
 
 
         schedules =
-          schedules.map(schedule => ({
+          schedules.map(
+            schedule => ({
 
-            ...schedule,
+              ...schedule,
 
-            student_name:
-              studentMap[schedule.student_id]
-              || "Student"
+              student_name:
+                studentMap[
+                  schedule.student_id
+                ]
+                ||
+                "Student"
 
-          }));
+            })
+          );
 
       }
 
     }
 
+
+    /* -----------------------------------------
+       DONE
+    ----------------------------------------- */
 
     message.innerHTML = "";
 
@@ -880,7 +1312,9 @@ async function loadTeacherSchedule(){
     renderSchedules();
 
 
-    if(!schedules.length){
+    if(
+      !schedules.length
+    ){
 
       message.innerHTML = `
         <div class="empty">
@@ -919,18 +1353,23 @@ async function loadTeacherSchedule(){
     `;
 
 
-    document.getElementById("amGrid").innerHTML = "";
+    document.getElementById(
+      "amGrid"
+    ).innerHTML = "";
 
-    document.getElementById("pmGrid").innerHTML = "";
+
+    document.getElementById(
+      "pmGrid"
+    ).innerHTML = "";
 
   }
 
 }
 
 
-/* ================================
+/* =========================================================
    START
-================================ */
+========================================================= */
 
 document.addEventListener(
   "DOMContentLoaded",
