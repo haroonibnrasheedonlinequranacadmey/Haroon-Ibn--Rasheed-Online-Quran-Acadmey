@@ -220,6 +220,39 @@ Loading teachers...
 </div>
 
 
+<!-- TIMEZONE ADDED -->
+
+<div class="field">
+
+<label>Student Time Zone</label>
+
+<select
+id="student_timezone"
+class="input"
+required>
+
+<option value="Asia/Karachi">
+Asia/Karachi — Pakistan
+</option>
+
+</select>
+
+<small
+style="
+display:block;
+margin-top:6px;
+opacity:.7;
+line-height:1.4;
+">
+
+Select the student's local IANA time zone.
+All supported time zones are available.
+
+</small>
+
+</div>
+
+
 <div class="field">
 
 <label>Status</label>
@@ -287,6 +320,8 @@ Create Student Account
 
 <th>Teacher</th>
 
+<th>Time Zone</th>
+
 <th>Status</th>
 
 <th>Actions</th>
@@ -300,7 +335,7 @@ Create Student Account
 
 <tr>
 
-<td colspan="9">
+<td colspan="10">
 Loading...
 </td>
 
@@ -360,6 +395,23 @@ return String(value)
 
 
 /* =====================================================
+   SAFE JS STRING
+===================================================== */
+
+function safeJs(value){
+
+return String(value || "")
+
+.replace(/\\/g,"\\\\")
+.replace(/'/g,"\\'")
+.replace(/"/g,'\\"')
+.replace(/\n/g," ")
+.replace(/\r/g," ");
+
+}
+
+
+/* =====================================================
    MESSAGE
 ===================================================== */
 
@@ -399,6 +451,145 @@ box.style.padding = "10px";
 box.style.marginBottom = "15px";
 
 box.style.borderRadius = "8px";
+
+}
+
+
+/* =====================================================
+   TIMEZONE SYSTEM
+   Uses browser-supported IANA time zones.
+   No limited country list.
+===================================================== */
+
+function getSupportedTimeZones(){
+
+let zones = [];
+
+
+try{
+
+if(
+typeof Intl !== "undefined" &&
+typeof Intl.supportedValuesOf === "function"
+){
+
+zones =
+Intl.supportedValuesOf("timeZone");
+
+}
+
+}catch(error){
+
+console.warn(
+"Could not read browser timezone list:",
+error
+);
+
+}
+
+
+/* Make sure UTC is available */
+
+if(!zones.includes("UTC")){
+
+zones.unshift("UTC");
+
+}
+
+
+/* Make sure Pakistan is available */
+
+if(!zones.includes("Asia/Karachi")){
+
+zones.push("Asia/Karachi");
+
+}
+
+
+/* Remove duplicates and sort */
+
+zones =
+[...new Set(zones)]
+.sort();
+
+
+return zones;
+
+}
+
+
+/* =====================================================
+   POPULATE TIMEZONE SELECT
+===================================================== */
+
+function loadTimeZones(){
+
+const select =
+document.getElementById(
+"student_timezone"
+);
+
+if(!select){
+
+return;
+
+}
+
+
+const browserZone =
+Intl.DateTimeFormat()
+.resolvedOptions()
+.timeZone ||
+"Asia/Karachi";
+
+
+const zones =
+getSupportedTimeZones();
+
+
+select.innerHTML = "";
+
+
+zones.forEach(function(zone){
+
+const option =
+document.createElement("option");
+
+option.value =
+zone;
+
+
+/*
+   Keep the IANA name visible.
+   This works for every supported country/region
+   without maintaining a limited country list.
+*/
+
+option.textContent =
+zone;
+
+
+select.appendChild(option);
+
+});
+
+
+/*
+   If browser timezone is supported,
+   use it as initial suggestion.
+*/
+
+if(zones.includes(browserZone)){
+
+select.value =
+browserZone;
+
+}else{
+
+select.value =
+"Asia/Karachi";
+
+}
 
 }
 
@@ -494,7 +685,7 @@ rows.innerHTML = `
 
 <tr>
 
-<td colspan="9">
+<td colspan="10">
 
 Loading students...
 
@@ -524,6 +715,7 @@ email,
 course,
 status,
 teacher_id,
+timezone,
 created_at
 `)
 
@@ -554,7 +746,7 @@ rows.innerHTML = `
 
 <tr>
 
-<td colspan="9">
+<td colspan="10">
 
 No students found.
 
@@ -689,6 +881,15 @@ const safeTeacher =
 safeHtml(teacherName);
 
 
+const studentTimezone =
+student.timezone ||
+"Asia/Karachi";
+
+
+const safeTimezone =
+safeHtml(studentTimezone);
+
+
 return `
 
 <tr>
@@ -747,6 +948,21 @@ ${safeCourse}
 <td>
 
 ${safeTeacher}
+
+</td>
+
+
+<td>
+
+<small
+style="
+font-size:12px;
+word-break:break-word;
+">
+
+${safeTimezone}
+
+</small>
 
 </td>
 
@@ -834,7 +1050,7 @@ font-size:12px;
 "
 onclick="deleteStudent(
 '${safeId}',
-'${safeName}'
+'${safeJs(student.full_name || "")}'
 )">
 
 Delete
@@ -866,7 +1082,7 @@ rows.innerHTML = `
 
 <tr>
 
-<td colspan="9">
+<td colspan="10">
 
 <strong>
 Unable to load students.
@@ -1234,6 +1450,13 @@ document
 .value;
 
 
+const timezone =
+document
+.getElementById("student_timezone")
+.value
+.trim();
+
+
 const status =
 document
 .getElementById("student_status")
@@ -1271,6 +1494,15 @@ if(!teacherId){
 
 throw new Error(
 "Please select a teacher."
+);
+
+}
+
+
+if(!timezone){
+
+throw new Error(
+"Please select student time zone."
 );
 
 }
@@ -1392,7 +1624,7 @@ throw new Error(
 }
 
 
-/* UPDATE STATUS + TEACHER */
+/* UPDATE STATUS + TEACHER + TIMEZONE */
 
 const updateResult =
 await db
@@ -1405,7 +1637,10 @@ teacher_id:
 teacherId,
 
 status:
-status
+status,
+
+timezone:
+timezone
 
 })
 
@@ -1418,7 +1653,7 @@ studentId
 if(updateResult.error){
 
 throw new Error(
-"Student created, but teacher/status update failed: " +
+"Student created, but teacher/status/timezone update failed: " +
 updateResult.error.message
 );
 
@@ -1510,6 +1745,8 @@ studentMessage(
 
 "Student account created successfully and assigned to " +
 selectedTeacher.name +
+". Student Time Zone: " +
+timezone +
 ". Student ID: " +
 studentId,
 
@@ -1521,6 +1758,16 @@ studentId,
 document
 .getElementById("studentForm")
 .reset();
+
+
+/*
+   After reset, keep Pakistan as the safe default.
+*/
+
+document
+.getElementById("student_timezone")
+.value =
+"Asia/Karachi";
 
 
 await loadStudents();
@@ -1579,6 +1826,11 @@ return;
 }
 
 
+/* Load timezone list first */
+
+loadTimeZones();
+
+
 await loadTeachers();
 
 await loadStudents();
@@ -1600,7 +1852,7 @@ rows.innerHTML = `
 
 <tr>
 
-<td colspan="9">
+<td colspan="10">
 
 <strong>
 Page could not load.
