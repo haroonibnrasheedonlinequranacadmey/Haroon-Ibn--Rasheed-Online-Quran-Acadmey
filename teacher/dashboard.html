@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="../css/portal.css">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
 <script src="../js/config.js"></script>
 <script src="../js/portal.js" defer></script>
 
@@ -357,6 +358,265 @@ Loading...
 </main>
 
 </div>
+
+
+<script>
+
+/*
+  Teacher Dashboard Timezone Display
+
+  Admin schedule timezone:
+  Asia/Karachi
+
+  Teacher timezone:
+  Read automatically from teachers.timezone
+
+  Luxon handles:
+  - timezone conversion
+  - DST
+  - date rollover
+  - different countries
+*/
+
+(function(){
+
+  const BASE_TIMEZONE = "Asia/Karachi";
+
+  function getTeacherTimezone(){
+
+    const value =
+      window.currentTeacherTimezone ||
+      window.teacherTimezone ||
+      localStorage.getItem("teacher_timezone");
+
+    return value || "Asia/Karachi";
+  }
+
+
+  function getTeacherNow(){
+
+    return luxon.DateTime.now()
+      .setZone(getTeacherTimezone());
+
+  }
+
+
+  function formatTeacherDate(){
+
+    const dt = getTeacherNow();
+
+    return dt.toFormat("EEEE, dd LLLL yyyy");
+  }
+
+
+  function updateDashboardDate(){
+
+    const el =
+      document.getElementById("dashboardDate");
+
+    if(!el) return;
+
+    el.textContent = formatTeacherDate();
+  }
+
+
+  /*
+    Convert a Pakistan/admin schedule occurrence
+    into the teacher's own timezone.
+
+    IMPORTANT:
+    We use the actual DATE + TIME + BASE TIMEZONE.
+    We do NOT simply convert the time string.
+
+    This is what allows midnight/date rollover
+    and DST to work correctly.
+  */
+
+  window.convertScheduleForTeacher = function(
+    classDate,
+    classTime,
+    scheduleTimezone
+  ){
+
+    try{
+
+      const baseZone =
+        scheduleTimezone || BASE_TIMEZONE;
+
+      const teacherZone =
+        getTeacherTimezone();
+
+      const source =
+        luxon.DateTime.fromISO(
+          classDate + "T" + classTime,
+          {
+            zone: baseZone
+          }
+        );
+
+      if(!source.isValid){
+
+        return null;
+
+      }
+
+      return source.setZone(teacherZone);
+
+    }catch(error){
+
+      console.error(
+        "Teacher timezone conversion error:",
+        error
+      );
+
+      return null;
+
+    }
+
+  };
+
+
+  /*
+    Format converted class time.
+  */
+
+  window.formatTeacherClassTime = function(
+    classDate,
+    classTime,
+    scheduleTimezone
+  ){
+
+    const converted =
+      window.convertScheduleForTeacher(
+        classDate,
+        classTime,
+        scheduleTimezone
+      );
+
+    if(!converted){
+
+      return classTime || "—";
+
+    }
+
+    return converted.toFormat("h:mm a");
+
+  };
+
+
+  /*
+    Format converted class date.
+  */
+
+  window.formatTeacherClassDate = function(
+    classDate,
+    classTime,
+    scheduleTimezone
+  ){
+
+    const converted =
+      window.convertScheduleForTeacher(
+        classDate,
+        classTime,
+        scheduleTimezone
+      );
+
+    if(!converted){
+
+      return classDate || "—";
+
+    }
+
+    return converted.toFormat("EEE, dd LLL yyyy");
+
+  };
+
+
+  /*
+    Returns the teacher's current date
+    in the teacher's own timezone.
+  */
+
+  window.teacherTodayISO = function(){
+
+    return getTeacherNow()
+      .toFormat("yyyy-MM-dd");
+
+  };
+
+
+  /*
+    Returns the teacher's current weekday.
+  */
+
+  window.teacherTodayName = function(){
+
+    return getTeacherNow()
+      .toFormat("cccc");
+
+  };
+
+
+  /*
+    Get the teacher timezone.
+
+    This function first checks the teacher record
+    loaded by portal.js if available.
+
+    If it is not available yet, it uses Asia/Karachi.
+  */
+
+  window.setTeacherTimezone = function(timezone){
+
+    if(!timezone) return;
+
+    window.currentTeacherTimezone =
+      timezone;
+
+    localStorage.setItem(
+      "teacher_timezone",
+      timezone
+    );
+
+    updateDashboardDate();
+
+  };
+
+
+  /*
+    Initial display.
+  */
+
+  updateDashboardDate();
+
+
+  /*
+    If portal.js loads teacher data and exposes
+    timezone later, refresh the date display.
+  */
+
+  document.addEventListener(
+    "teacherTimezoneReady",
+    function(event){
+
+      if(
+        event &&
+        event.detail &&
+        event.detail.timezone
+      ){
+
+        window.setTeacherTimezone(
+          event.detail.timezone
+        );
+
+      }
+
+    }
+  );
+
+})();
+
+</script>
 
 </body>
 </html>
