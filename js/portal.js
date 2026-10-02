@@ -1,10 +1,46 @@
 (()=>{
 "use strict";
 
+
+/* =====================================================
+   SUPABASE
+===================================================== */
+
 const cfg = window.SUPABASE_CONFIG || {};
 const db = window.supabase?.createClient(cfg.url,cfg.anonKey);
 
 window.academyDB = db;
+
+
+/* =====================================================
+   GLOBAL TIMEZONE
+===================================================== */
+
+/*
+  Admin schedules are created in Pakistan time.
+
+  Teacher/student timezones come automatically
+  from their database records.
+
+  IANA timezone names are used so DST and
+  all supported countries are handled correctly.
+*/
+
+const DEFAULT_TIMEZONE = "Asia/Karachi";
+
+const LUXON =
+  window.luxon?.DateTime
+    ? window.luxon
+    : null;
+
+
+window.ACADEMY_DEFAULT_TIMEZONE =
+  DEFAULT_TIMEZONE;
+
+
+/* =====================================================
+   ESCAPE
+===================================================== */
 
 const esc = v =>
   String(v ?? '').replace(/[&<>"']/g,c=>({
@@ -15,16 +51,19 @@ const esc = v =>
     "'":'&#39;'
   }[c]));
 
-const page = document.body.dataset.page;
+
+const page =
+  document.body?.dataset?.page;
 
 
-/* =========================
+/* =====================================================
    SESSION
-========================= */
+===================================================== */
 
 async function session(){
 
-  const r = await db.auth.getSession();
+  const r =
+    await db.auth.getSession();
 
   if(!r.data.session){
 
@@ -41,37 +80,41 @@ async function session(){
 }
 
 
-/* =========================
+/* =====================================================
    PROFILE
-========================= */
+===================================================== */
 
 async function profile(uid){
 
-  const r = await db
-    .from('profiles')
-    .select('*')
-    .eq('id',uid)
-    .single();
+  const r =
+    await db
+      .from('profiles')
+      .select('*')
+      .eq('id',uid)
+      .single();
 
   return r.data;
 }
 
 
-/* =========================
+/* =====================================================
    GUARD
-========================= */
+===================================================== */
 
 async function guard(role){
 
-  const s = await session();
+  const s =
+    await session();
 
   if(!s) return;
 
-  const p = await profile(s.user.id);
+  const p =
+    await profile(s.user.id);
 
   if(!p || p.role !== role){
 
-    location.href = '../portal-login.html';
+    location.href =
+      '../portal-login.html';
 
     return;
   }
@@ -86,15 +129,19 @@ async function guard(role){
 
     });
 
-  return {s,p};
+  return {
+    s,
+    p
+  };
 }
 
 
-/* =========================
+/* =====================================================
    LOGOUT
-========================= */
+===================================================== */
 
-window.portalLogout = async()=>{
+window.portalLogout =
+async()=>{
 
   await db.auth.signOut();
 
@@ -105,9 +152,9 @@ window.portalLogout = async()=>{
 };
 
 
-/* =========================
+/* =====================================================
    HELPERS
-========================= */
+===================================================== */
 
 const set = (id,v)=>{
 
@@ -134,9 +181,9 @@ function rowEmpty(
 }
 
 
-/* =========================
+/* =====================================================
    DATE / TIME
-========================= */
+===================================================== */
 
 const DAYS = [
   'Sunday',
@@ -151,7 +198,8 @@ const DAYS = [
 
 function todayISO(){
 
-  const d = new Date();
+  const d =
+    new Date();
 
   const y =
     d.getFullYear();
@@ -178,15 +226,16 @@ function todayName(){
 
 function prettyDate(){
 
-  return new Date().toLocaleDateString(
-    'en-US',
-    {
-      weekday:'long',
-      year:'numeric',
-      month:'long',
-      day:'numeric'
-    }
-  );
+  return new Date()
+    .toLocaleDateString(
+      'en-US',
+      {
+        weekday:'long',
+        year:'numeric',
+        month:'long',
+        day:'numeric'
+      }
+    );
 }
 
 
@@ -211,13 +260,16 @@ function formatTime12(t){
   const p =
     String(t).split(':');
 
-  let h = +p[0];
+  let h =
+    +p[0];
 
   const m =
     p[1] || '00';
 
   const a =
-    h >= 12 ? 'PM' : 'AM';
+    h >= 12
+    ? 'PM'
+    : 'AM';
 
   h =
     h % 12 || 12;
@@ -273,6 +325,384 @@ function normalizeDays(value){
 }
 
 
+/* =====================================================
+   TIMEZONE HELPERS
+===================================================== */
+
+function safeTimezone(zone){
+
+  if(!zone)
+    return DEFAULT_TIMEZONE;
+
+  if(!LUXON)
+    return DEFAULT_TIMEZONE;
+
+  try{
+
+    const test =
+      LUXON.DateTime.now()
+        .setZone(zone);
+
+    if(test.isValid)
+      return zone;
+
+  }catch(e){}
+
+  return DEFAULT_TIMEZONE;
+}
+
+
+function getNowInZone(zone){
+
+  if(!LUXON)
+    return new Date();
+
+  return LUXON.DateTime
+    .now()
+    .setZone(
+      safeTimezone(zone)
+    );
+}
+
+
+function isoDateInZone(zone){
+
+  if(!LUXON)
+    return todayISO();
+
+  return getNowInZone(zone)
+    .toFormat('yyyy-MM-dd');
+}
+
+
+function weekdayInZone(zone){
+
+  if(!LUXON)
+    return todayName();
+
+  return getNowInZone(zone)
+    .toFormat('cccc');
+}
+
+
+function scheduleDateTime(
+  date,
+  time,
+  scheduleTimezone
+){
+
+  if(!LUXON)
+    return null;
+
+  const zone =
+    safeTimezone(
+      scheduleTimezone ||
+      DEFAULT_TIMEZONE
+    );
+
+  const dt =
+    LUXON.DateTime.fromISO(
+      `${date}T${time}`,
+      {
+        zone
+      }
+    );
+
+  return dt.isValid
+    ? dt
+    : null;
+}
+
+
+/*
+  Convert one scheduled occurrence from
+  the admin/base timezone into the viewer timezone.
+*/
+
+function convertScheduleOccurrence(
+  date,
+  time,
+  scheduleTimezone,
+  viewerTimezone
+){
+
+  const source =
+    scheduleDateTime(
+      date,
+      time,
+      scheduleTimezone
+    );
+
+  if(!source)
+    return null;
+
+  const targetZone =
+    safeTimezone(
+      viewerTimezone ||
+      DEFAULT_TIMEZONE
+    );
+
+  return source.setZone(
+    targetZone
+  );
+}
+
+
+window.convertScheduleOccurrence =
+  convertScheduleOccurrence;
+
+
+/*
+  Find the base/schedule date which produces
+  the requested viewer date.
+
+  We check nearby dates because a class can
+  move to the previous/next day after timezone
+  conversion.
+*/
+
+function findOccurrenceForViewerDate(
+  schedule,
+  viewerDate,
+  viewerTimezone
+){
+
+  const days =
+    normalizeDays(
+      schedule.class_days
+    ).map(x=>x.toLowerCase());
+
+  if(!days.length)
+    return null;
+
+
+  const baseZone =
+    schedule.schedule_timezone ||
+    DEFAULT_TIMEZONE;
+
+
+  const target =
+    LUXON
+      ? LUXON.DateTime.fromISO(
+          viewerDate,
+          {
+            zone:safeTimezone(
+              viewerTimezone ||
+              DEFAULT_TIMEZONE
+            )
+          }
+        )
+      : null;
+
+
+  if(!target)
+    return null;
+
+
+  /*
+    Check 3 days before through 3 days after.
+    This safely handles date rollover.
+  */
+
+  for(let offset=-3; offset<=3; offset++){
+
+    const baseDate =
+      target
+        .setZone(
+          safeTimezone(baseZone)
+        )
+        .plus({
+          days:offset
+        })
+        .toFormat(
+          'yyyy-MM-dd'
+        );
+
+
+    const baseDt =
+      LUXON.DateTime.fromISO(
+        `${baseDate}T${schedule.class_time}`,
+        {
+          zone:safeTimezone(baseZone)
+        }
+      );
+
+
+    if(!baseDt.isValid)
+      continue;
+
+
+    const baseDay =
+      baseDt.toFormat('cccc')
+        .toLowerCase();
+
+
+    if(!days.includes(baseDay))
+      continue;
+
+
+    const converted =
+      baseDt.setZone(
+        safeTimezone(
+          viewerTimezone ||
+          DEFAULT_TIMEZONE
+        )
+      );
+
+
+    if(
+      converted.toFormat(
+        'yyyy-MM-dd'
+      ) === viewerDate
+    ){
+
+      return {
+        baseDate,
+        baseDateTime:baseDt,
+        viewerDateTime:converted
+      };
+    }
+  }
+
+
+  return null;
+}
+
+
+window.findOccurrenceForViewerDate =
+  findOccurrenceForViewerDate;
+
+
+/*
+  Get today's occurrence for a viewer.
+*/
+
+function getTodayOccurrence(
+  schedule,
+  viewerTimezone
+){
+
+  const date =
+    isoDateInZone(
+      viewerTimezone
+    );
+
+  return findOccurrenceForViewerDate(
+    schedule,
+    date,
+    viewerTimezone
+  );
+}
+
+
+window.getTodayOccurrence =
+  getTodayOccurrence;
+
+
+/*
+  Format a scheduled occurrence for
+  the viewer's timezone.
+*/
+
+function formatOccurrenceTime(
+  occurrence
+){
+
+  if(!occurrence)
+    return '';
+
+  return occurrence
+    .viewerDateTime
+    .toFormat('h:mm a');
+}
+
+
+function formatOccurrenceDate(
+  occurrence
+){
+
+  if(!occurrence)
+    return '';
+
+  return occurrence
+    .viewerDateTime
+    .toFormat(
+      'EEE, dd LLL yyyy'
+    );
+}
+
+
+/*
+  Get viewer's current date/time.
+*/
+
+function viewerNow(timezone){
+
+  return getNowInZone(
+    timezone ||
+    DEFAULT_TIMEZONE
+  );
+}
+
+
+/* =====================================================
+   TEACHER TIMEZONE
+===================================================== */
+
+async function getTeacherTimezone(
+  teacherId
+){
+
+  const r =
+    await db
+      .from('teachers')
+      .select('timezone')
+      .eq('id',teacherId)
+      .maybeSingle();
+
+  if(
+    r.data?.timezone
+  )
+    return safeTimezone(
+      r.data.timezone
+    );
+
+
+  return DEFAULT_TIMEZONE;
+}
+
+
+/* =====================================================
+   STUDENT TIMEZONE
+===================================================== */
+
+async function getStudentTimezone(
+  studentId
+){
+
+  const r =
+    await db
+      .from('students')
+      .select('timezone')
+      .eq('id',studentId)
+      .maybeSingle();
+
+  if(
+    r.data?.timezone
+  )
+    return safeTimezone(
+      r.data.timezone
+    );
+
+
+  return DEFAULT_TIMEZONE;
+}
+
+
+/* =====================================================
+   IS TODAY
+===================================================== */
+
 function isToday(schedule){
 
   const today =
@@ -287,9 +717,27 @@ function isToday(schedule){
 }
 
 
-/* =========================
+/*
+  Timezone-aware today check.
+
+  This is used by teacher/student portals.
+*/
+
+function isViewerToday(
+  schedule,
+  viewerTimezone
+){
+
+  return !!getTodayOccurrence(
+    schedule,
+    viewerTimezone
+  );
+}
+
+
+/* =====================================================
    STATUS
-========================= */
+===================================================== */
 
 function statusClass(status){
 
@@ -316,13 +764,20 @@ function statusText(status){
 
   };
 
-  return map[status] || 'Upcoming';
+  return map[
+    status
+  ] || 'Upcoming';
 }
 
 
+/* =====================================================
+   TEACHER CURRENT TIME
+===================================================== */
+
 function nowMinutes(){
 
-  const d = new Date();
+  const d =
+    new Date();
 
   return (
     d.getHours()*60 +
@@ -331,98 +786,306 @@ function nowMinutes(){
 }
 
 
-/* =========================
-   TEACHER ACTIVATION
-========================= */
+/*
+  Timezone-aware current minutes.
+*/
 
-function canTeacherActivate(schedule){
+function nowMinutesInZone(
+  timezone
+){
 
-  const start =
-    timeToMinutes(
-      schedule.class_time
-    );
-
-  const end =
-    start +
-    (+schedule.duration_minutes || 30);
-
-  const now =
-    nowMinutes();
+  const dt =
+    viewerNow(timezone);
 
   return (
-    now >= start - 5 &&
+    dt.hour * 60 +
+    dt.minute
+  );
+}
+
+
+/* =====================================================
+   TEACHER ACTIVATION
+===================================================== */
+
+function canTeacherActivate(
+  schedule,
+  teacherTimezone
+){
+
+  const timezone =
+    safeTimezone(
+      teacherTimezone ||
+      schedule.teacher_timezone ||
+      DEFAULT_TIMEZONE
+    );
+
+
+  /*
+    Find today's occurrence in the teacher's
+    timezone.
+  */
+
+  const occurrence =
+    getTodayOccurrence(
+      schedule,
+      timezone
+    );
+
+
+  if(!occurrence)
+    return false;
+
+
+  const now =
+    viewerNow(timezone);
+
+
+  const start =
+    occurrence.viewerDateTime;
+
+
+  const duration =
+    +schedule.duration_minutes ||
+    30;
+
+
+  const end =
+    start.plus({
+      minutes:duration
+    });
+
+
+  return (
+    now >= start.minus({
+      minutes:5
+    }) &&
     now < end
   );
 }
 
 
+/* =====================================================
+   AUTOMATIC STATUS
+===================================================== */
+
 function getAutomaticStatus(
   schedule,
-  savedStatus
+  savedStatus,
+  viewerTimezone
 ){
 
   if(savedStatus)
     return savedStatus;
 
-  const start =
-    timeToMinutes(
-      schedule.class_time
+
+  const timezone =
+    safeTimezone(
+      viewerTimezone ||
+      schedule.teacher_timezone ||
+      DEFAULT_TIMEZONE
     );
 
-  const end =
-    start +
-    (+schedule.duration_minutes || 30);
+
+  const occurrence =
+    getTodayOccurrence(
+      schedule,
+      timezone
+    );
+
+
+  if(!occurrence)
+    return 'upcoming';
+
 
   const now =
-    nowMinutes();
+    viewerNow(timezone);
 
-  if(now < start - 5)
+
+  const start =
+    occurrence.viewerDateTime;
+
+
+  const end =
+    start.plus({
+      minutes:
+        +schedule.duration_minutes ||
+        30
+    });
+
+
+  if(
+    now <
+    start.minus({
+      minutes:5
+    })
+  )
     return 'upcoming';
+
 
   if(now < end)
     return 'upcoming';
+
 
   return 'late';
 }
 
 
-/* =========================
+/* =====================================================
    TEACHER SESSION
-========================= */
+===================================================== */
 
 async function getTodaySessions(
-  teacherId
+  teacherId,
+  teacherTimezone
 ){
 
   const date =
-    todayISO();
+    isoDateInZone(
+      teacherTimezone
+    );
 
-  const r =
+
+  /*
+    Sessions store class_date in the
+    admin/base schedule timezone.
+
+    We therefore find today's viewer
+    occurrence first, then query using
+    its base date.
+  */
+
+  const scheduleResult =
     await db
-      .from('teacher_class_sessions')
-      .select('*')
-      .eq('teacher_id',teacherId)
-      .eq('class_date',date);
+      .from('class_schedules')
+      .select(`
+        id,
+        class_days,
+        class_time,
+        schedule_timezone
+      `)
+      .eq(
+        'teacher_id',
+        teacherId
+      )
+      .eq(
+        'active',
+        true
+      );
 
-  return r.data || [];
+
+  if(scheduleResult.error)
+    return [];
+
+
+  const baseDates = {};
+
+
+  (scheduleResult.data || [])
+    .forEach(schedule=>{
+
+      const occurrence =
+        findOccurrenceForViewerDate(
+          schedule,
+          date,
+          teacherTimezone
+        );
+
+
+      if(occurrence){
+
+        baseDates[
+          occurrence.baseDate
+        ] = true;
+      }
+
+    });
+
+
+  const dates =
+    Object.keys(baseDates);
+
+
+  if(!dates.length)
+    return [];
+
+
+  const results = [];
+
+
+  for(
+    const baseDate
+    of dates
+  ){
+
+    const r =
+      await db
+        .from('teacher_class_sessions')
+        .select('*')
+        .eq(
+          'teacher_id',
+          teacherId
+        )
+        .eq(
+          'class_date',
+          baseDate
+        );
+
+
+    if(!r.error)
+      results.push(
+        ...(r.data || [])
+      );
+  }
+
+
+  return results;
 }
 
 
+/* =====================================================
+   ENSURE TODAY SESSION
+===================================================== */
+
 async function ensureTodaySession(
   schedule,
-  teacherId
+  teacherId,
+  teacherTimezone
 ){
 
-  const date =
-    todayISO();
+  const occurrence =
+    getTodayOccurrence(
+      schedule,
+      teacherTimezone
+    );
+
+
+  if(!occurrence)
+    return null;
+
+
+  const baseDate =
+    occurrence.baseDate;
+
 
   const existing =
     await db
       .from('teacher_class_sessions')
       .select('*')
-      .eq('schedule_id',schedule.id)
-      .eq('class_date',date)
+      .eq(
+        'schedule_id',
+        schedule.id
+      )
+      .eq(
+        'teacher_id',
+        teacherId
+      )
+      .eq(
+        'class_date',
+        baseDate
+      )
       .maybeSingle();
+
 
   if(existing.data)
     return existing.data;
@@ -431,8 +1094,21 @@ async function ensureTodaySession(
   const initial =
     getAutomaticStatus(
       schedule,
-      null
+      null,
+      teacherTimezone
     );
+
+
+  /*
+    scheduled_at is stored as an absolute
+    timestamp when the column exists.
+  */
+
+  const scheduledAt =
+    occurrence
+      .baseDateTime
+      .toUTC()
+      .toISO();
 
 
   const insert =
@@ -450,10 +1126,16 @@ async function ensureTodaySession(
           schedule.student_id,
 
         class_date:
-          date,
+          baseDate,
 
         status:
-          initial
+          initial,
+
+        session_timezone:
+          teacherTimezone,
+
+        scheduled_at:
+          scheduledAt
 
       })
       .select()
@@ -464,20 +1146,78 @@ async function ensureTodaySession(
 }
 
 
-/* =========================
+/* =====================================================
    TEACHER DASHBOARD
-========================= */
+===================================================== */
 
 async function loadTeacherDashboard(g){
 
   const uid =
     g.s.user.id;
 
-  set(
-    'dashboardDate',
-    prettyDate()
+
+  /* =========================
+     TEACHER TIMEZONE
+  ========================= */
+
+  const teacherTimezone =
+    await getTeacherTimezone(
+      uid
+    );
+
+
+  window.currentTeacherTimezone =
+    teacherTimezone;
+
+  window.teacherTimezone =
+    teacherTimezone;
+
+  localStorage.setItem(
+    'teacher_timezone',
+    teacherTimezone
   );
 
+
+  document.dispatchEvent(
+    new CustomEvent(
+      'teacherTimezoneReady',
+      {
+        detail:{
+          timezone:
+            teacherTimezone
+        }
+      }
+    )
+  );
+
+
+  /*
+    Teacher dashboard date is now
+    teacher-local date.
+  */
+
+  const teacherNow =
+    viewerNow(
+      teacherTimezone
+    );
+
+
+  set(
+    'dashboardDate',
+    teacherNow.toLocaleString(
+      {
+        weekday:'long',
+        year:'numeric',
+        month:'long',
+        day:'numeric'
+      }
+    )
+  );
+
+
+  /* =========================
+     SCHEDULES
+  ========================= */
 
   const scheduleResult =
     await db
@@ -492,13 +1232,23 @@ async function loadTeacherDashboard(g){
         duration_minutes,
         google_meet_url,
         classroom_code,
-        active
+        active,
+        schedule_timezone
       `)
-      .eq('teacher_id',uid)
-      .eq('active',true)
-      .order('class_time',{
-        ascending:true
-      });
+      .eq(
+        'teacher_id',
+        uid
+      )
+      .eq(
+        'active',
+        true
+      )
+      .order(
+        'class_time',
+        {
+          ascending:true
+        }
+      );
 
 
   if(scheduleResult.error){
@@ -519,14 +1269,24 @@ async function loadTeacherDashboard(g){
     scheduleResult.data || [];
 
 
+  schedules.forEach(
+    x=>{
+      x.teacher_timezone =
+        teacherTimezone;
+    }
+  );
+
+
   /* =========================
      STUDENT NAMES
-========================= */
+  ========================= */
 
   const studentIds = [
     ...new Set(
       schedules
-        .map(x=>x.student_id)
+        .map(
+          x=>x.student_id
+        )
         .filter(Boolean)
     )
   ];
@@ -541,9 +1301,12 @@ async function loadTeacherDashboard(g){
       await db
         .from('students')
         .select(
-          'id,full_name,teacher_id,status'
+          'id,full_name,teacher_id,status,timezone'
         )
-        .in('id',studentIds);
+        .in(
+          'id',
+          studentIds
+        );
 
 
     if(!sr.error)
@@ -562,10 +1325,16 @@ async function loadTeacherDashboard(g){
 
   /* =========================
      TODAY
-========================= */
+  ========================= */
 
   const todaySchedules =
-    schedules.filter(isToday);
+    schedules.filter(
+      schedule =>
+        isViewerToday(
+          schedule,
+          teacherTimezone
+        )
+    );
 
 
   const todaySessions = [];
@@ -579,8 +1348,10 @@ async function loadTeacherDashboard(g){
     const s =
       await ensureTodaySession(
         schedule,
-        uid
+        uid,
+        teacherTimezone
       );
+
 
     if(s)
       todaySessions.push(s);
@@ -591,13 +1362,15 @@ async function loadTeacherDashboard(g){
 
 
   todaySessions.forEach(s=>{
-    sessionMap[s.schedule_id] = s;
+    sessionMap[
+      s.schedule_id
+    ] = s;
   });
 
 
   /* =========================
      SUMMARY
-========================= */
+  ========================= */
 
   set(
     'totalClasses',
@@ -657,13 +1430,18 @@ async function loadTeacherDashboard(g){
 
   /* =========================
      SALARY
-========================= */
+  ========================= */
 
   const salaryResult =
     await db
       .from('teacher_salaries')
-      .select('amount,currency')
-      .eq('teacher_id',uid);
+      .select(
+        'amount,currency'
+      )
+      .eq(
+        'teacher_id',
+        uid
+      );
 
 
   const salaryRows =
@@ -677,10 +1455,16 @@ async function loadTeacherDashboard(g){
   salaryRows.forEach(x=>{
 
     totalSalary +=
-      Number(x.amount || 0);
+      Number(
+        x.amount || 0
+      );
 
-    if(!currency && x.currency)
-      currency = x.currency;
+    if(
+      !currency &&
+      x.currency
+    )
+      currency =
+        x.currency;
 
   });
 
@@ -697,19 +1481,23 @@ async function loadTeacherDashboard(g){
 
   /* =========================
      REMINDERS
-========================= */
+  ========================= */
 
   const notificationResult =
     await db
       .from('notifications')
       .select('id')
-      .eq('user_id',uid);
+      .eq(
+        'user_id',
+        uid
+      );
 
 
   const reminderCount =
     !notificationResult.error
       ? (
-          notificationResult.data || []
+          notificationResult.data ||
+          []
         ).length
       : 0;
 
@@ -730,7 +1518,7 @@ async function loadTeacherDashboard(g){
 
   /* =========================
      TODAY CLASSES
-========================= */
+  ========================= */
 
   if(!todaySchedules.length){
 
@@ -771,7 +1559,8 @@ async function loadTeacherDashboard(g){
           session?.status ||
           getAutomaticStatus(
             schedule,
-            null
+            null,
+            teacherTimezone
           );
 
 
@@ -780,15 +1569,39 @@ async function loadTeacherDashboard(g){
           'Student';
 
 
+        const occurrence =
+          getTodayOccurrence(
+            schedule,
+            teacherTimezone
+          );
+
+
+        const displayTime =
+          occurrence
+            ? formatOccurrenceTime(
+                occurrence
+              )
+            : formatTime12(
+                schedule.class_time
+              );
+
+
         let actions = '';
 
+
+        /* =========================
+           ACTIVATE
+        ========================= */
 
         if(
           (
             status === 'upcoming' ||
             status === 'late'
           ) &&
-          canTeacherActivate(schedule)
+          canTeacherActivate(
+            schedule,
+            teacherTimezone
+          )
         ){
 
           actions += `
@@ -800,7 +1613,10 @@ async function loadTeacherDashboard(g){
 
         }else if(
           status === 'upcoming' &&
-          !canTeacherActivate(schedule)
+          !canTeacherActivate(
+            schedule,
+            teacherTimezone
+          )
         ){
 
           actions += `
@@ -811,9 +1627,13 @@ async function loadTeacherDashboard(g){
         }
 
 
-        /* GOOGLE MEET */
+        /* =========================
+           GOOGLE MEET
+        ========================= */
 
-        if(schedule.google_meet_url){
+        if(
+          schedule.google_meet_url
+        ){
 
           actions += `
             <a
@@ -826,7 +1646,9 @@ async function loadTeacherDashboard(g){
         }
 
 
-        /* CLASSROOM */
+        /* =========================
+           CLASSROOM
+        ========================= */
 
         const classroomUrl =
           schedule.classroom_code
@@ -847,7 +1669,9 @@ async function loadTeacherDashboard(g){
         }
 
 
-        /* ACTIVE ACTIONS */
+        /* =========================
+           ACTIVE ACTIONS
+        ========================= */
 
         if(
           status === 'active' ||
@@ -873,7 +1697,9 @@ async function loadTeacherDashboard(g){
         }
 
 
-        if(status === 'completed'){
+        if(
+          status === 'completed'
+        ){
 
           actions += `
             <span class="action-done">
@@ -883,7 +1709,9 @@ async function loadTeacherDashboard(g){
         }
 
 
-        if(status === 'absent'){
+        if(
+          status === 'absent'
+        ){
 
           actions += `
             <span class="action-absent">
@@ -898,11 +1726,7 @@ async function loadTeacherDashboard(g){
 
           <td>
             <strong>
-              ${esc(
-                formatTime12(
-                  schedule.class_time
-                )
-              )}
+              ${esc(displayTime)}
             </strong>
           </td>
 
@@ -914,13 +1738,15 @@ async function loadTeacherDashboard(g){
 
           <td>
             ${esc(
-              schedule.course || '—'
+              schedule.course ||
+              '—'
             )}
           </td>
 
           <td>
             ${esc(
-              schedule.duration_minutes || 30
+              schedule.duration_minutes ||
+              30
             )} min
           </td>
 
@@ -947,9 +1773,9 @@ async function loadTeacherDashboard(g){
 }
 
 
-/* =========================
+/* =====================================================
    TEACHER START CLASS
-========================= */
+===================================================== */
 
 window.teacherStartClass =
 async(scheduleId)=>{
@@ -957,11 +1783,18 @@ async(scheduleId)=>{
   const g =
     await guard('teacher');
 
-  if(!g) return;
+  if(!g)
+    return;
 
 
   const uid =
     g.s.user.id;
+
+
+  const teacherTimezone =
+    await getTeacherTimezone(
+      uid
+    );
 
 
   const sr =
@@ -971,17 +1804,31 @@ async(scheduleId)=>{
         id,
         teacher_id,
         student_id,
+        class_days,
         class_time,
         duration_minutes,
+        schedule_timezone,
         active
       `)
-      .eq('id',scheduleId)
-      .eq('teacher_id',uid)
-      .eq('active',true)
+      .eq(
+        'id',
+        scheduleId
+      )
+      .eq(
+        'teacher_id',
+        uid
+      )
+      .eq(
+        'active',
+        true
+      )
       .single();
 
 
-  if(sr.error || !sr.data){
+  if(
+    sr.error ||
+    !sr.data
+  ){
 
     alert(
       'Class schedule not found.'
@@ -995,7 +1842,12 @@ async(scheduleId)=>{
     sr.data;
 
 
-  if(!canTeacherActivate(schedule)){
+  if(
+    !canTeacherActivate(
+      schedule,
+      teacherTimezone
+    )
+  ){
 
     alert(
       'Class can be activated only 5 minutes before the scheduled time.'
@@ -1005,20 +1857,56 @@ async(scheduleId)=>{
   }
 
 
-  const today =
-    todayISO();
+  const occurrence =
+    getTodayOccurrence(
+      schedule,
+      teacherTimezone
+    );
+
+
+  if(!occurrence){
+
+    alert(
+      'This class is not scheduled for today.'
+    );
+
+    return;
+  }
+
+
+  const classDate =
+    occurrence.baseDate;
+
 
   const now =
     new Date().toISOString();
 
 
+  const scheduledAt =
+    occurrence
+      .baseDateTime
+      .toUTC()
+      .toISO();
+
+
   const existing =
     await db
       .from('teacher_class_sessions')
-      .select('id,status')
-      .eq('schedule_id',scheduleId)
-      .eq('teacher_id',uid)
-      .eq('class_date',today)
+      .select(
+        'id,status'
+      )
+      .eq(
+        'schedule_id',
+        scheduleId
+      )
+      .eq(
+        'teacher_id',
+        uid
+      )
+      .eq(
+        'class_date',
+        classDate
+      )
       .maybeSingle();
 
 
@@ -1044,9 +1932,17 @@ async(scheduleId)=>{
 
           status:'active',
 
-          started_at:now,
+          started_at:
+            now,
 
-          updated_at:now
+          session_timezone:
+            teacherTimezone,
+
+          scheduled_at:
+            scheduledAt,
+
+          updated_at:
+            now
 
         })
         .eq(
@@ -1075,13 +1971,19 @@ async(scheduleId)=>{
             schedule.student_id,
 
           class_date:
-            today,
+            classDate,
 
           status:
             'active',
 
           started_at:
             now,
+
+          session_timezone:
+            teacherTimezone,
+
+          scheduled_at:
+            scheduledAt,
 
           updated_at:
             now
@@ -1104,9 +2006,9 @@ async(scheduleId)=>{
 };
 
 
-/* =========================
+/* =====================================================
    TEACHER END CLASS
-========================= */
+===================================================== */
 
 window.teacherEndClass =
 async(scheduleId)=>{
@@ -1114,7 +2016,68 @@ async(scheduleId)=>{
   const g =
     await guard('teacher');
 
-  if(!g) return;
+  if(!g)
+    return;
+
+
+  const uid =
+    g.s.user.id;
+
+
+  const teacherTimezone =
+    await getTeacherTimezone(
+      uid
+    );
+
+
+  const sr =
+    await db
+      .from('class_schedules')
+      .select(`
+        id,
+        class_days,
+        class_time,
+        schedule_timezone
+      `)
+      .eq(
+        'id',
+        scheduleId
+      )
+      .eq(
+        'teacher_id',
+        uid
+      )
+      .single();
+
+
+  if(
+    sr.error ||
+    !sr.data
+  ){
+
+    alert(
+      'Class schedule not found.'
+    );
+
+    return;
+  }
+
+
+  const occurrence =
+    getTodayOccurrence(
+      sr.data,
+      teacherTimezone
+    );
+
+
+  if(!occurrence){
+
+    alert(
+      'This class is not scheduled for today.'
+    );
+
+    return;
+  }
 
 
   const r =
@@ -1137,11 +2100,11 @@ async(scheduleId)=>{
       )
       .eq(
         'teacher_id',
-        g.s.user.id
+        uid
       )
       .eq(
         'class_date',
-        todayISO()
+        occurrence.baseDate
       );
 
 
@@ -1159,9 +2122,9 @@ async(scheduleId)=>{
 };
 
 
-/* =========================
+/* =====================================================
    TEACHER MARK ABSENT
-========================= */
+===================================================== */
 
 window.teacherMarkAbsent =
 async(scheduleId)=>{
@@ -1169,7 +2132,8 @@ async(scheduleId)=>{
   const g =
     await guard('teacher');
 
-  if(!g) return;
+  if(!g)
+    return;
 
 
   if(
@@ -1180,8 +2144,73 @@ async(scheduleId)=>{
     return;
 
 
+  const uid =
+    g.s.user.id;
+
+
+  const teacherTimezone =
+    await getTeacherTimezone(
+      uid
+    );
+
+
+  const sr =
+    await db
+      .from('class_schedules')
+      .select(`
+        id,
+        student_id,
+        class_days,
+        class_time,
+        schedule_timezone
+      `)
+      .eq(
+        'id',
+        scheduleId
+      )
+      .eq(
+        'teacher_id',
+        uid
+      )
+      .single();
+
+
+  if(
+    sr.error ||
+    !sr.data
+  ){
+
+    alert(
+      'Class schedule not found.'
+    );
+
+    return;
+  }
+
+
+  const schedule =
+    sr.data;
+
+
+  const occurrence =
+    getTodayOccurrence(
+      schedule,
+      teacherTimezone
+    );
+
+
+  if(!occurrence){
+
+    alert(
+      'This class is not scheduled for today.'
+    );
+
+    return;
+  }
+
+
   const today =
-    todayISO();
+    occurrence.baseDate;
 
 
   const existing =
@@ -1194,7 +2223,7 @@ async(scheduleId)=>{
       )
       .eq(
         'teacher_id',
-        g.s.user.id
+        uid
       )
       .eq(
         'class_date',
@@ -1235,35 +2264,10 @@ async(scheduleId)=>{
         )
         .eq(
           'teacher_id',
-          g.s.user.id
+          uid
         );
 
   }else{
-
-    const sr =
-      await db
-        .from('class_schedules')
-        .select('student_id')
-        .eq(
-          'id',
-          scheduleId
-        )
-        .eq(
-          'teacher_id',
-          g.s.user.id
-        )
-        .single();
-
-
-    if(sr.error || !sr.data){
-
-      alert(
-        'Class schedule not found.'
-      );
-
-      return;
-    }
-
 
     r =
       await db
@@ -1274,16 +2278,25 @@ async(scheduleId)=>{
             scheduleId,
 
           teacher_id:
-            g.s.user.id,
+            uid,
 
           student_id:
-            sr.data.student_id,
+            schedule.student_id,
 
           class_date:
             today,
 
           status:
             'absent',
+
+          session_timezone:
+            teacherTimezone,
+
+          scheduled_at:
+            occurrence
+              .baseDateTime
+              .toUTC()
+              .toISO(),
 
           updated_at:
             new Date().toISOString()
@@ -1306,23 +2319,26 @@ async(scheduleId)=>{
 };
 
 
-/* =========================
+/* =====================================================
    TEACHER DATA
-========================= */
+===================================================== */
 
 async function teacherData(){
 
   const g =
     await guard('teacher');
 
-  if(!g) return;
+  if(!g)
+    return;
 
 
-  /* =========================
+  /* ===================================================
      DASHBOARD
-========================= */
+  =================================================== */
 
-  if(page === 'teacher-dashboard'){
+  if(
+    page === 'teacher-dashboard'
+  ){
 
     await loadTeacherDashboard(g);
 
@@ -1332,6 +2348,7 @@ async function teacherData(){
 
         const current =
           await db.auth.getSession();
+
 
         if(
           !current.data.session
@@ -1361,11 +2378,36 @@ async function teacherData(){
     g.s.user.id;
 
 
-  /* =========================
-     TEACHER SCHEDULE
-========================= */
+  /* ===================================================
+     TEACHER TIMEZONE
+  =================================================== */
 
-  if(page === 'teacher-schedule'){
+  const teacherTimezone =
+    await getTeacherTimezone(
+      uid
+    );
+
+
+  window.currentTeacherTimezone =
+    teacherTimezone;
+
+  window.teacherTimezone =
+    teacherTimezone;
+
+
+  localStorage.setItem(
+    'teacher_timezone',
+    teacherTimezone
+  );
+
+
+  /* ===================================================
+     TEACHER SCHEDULE
+  =================================================== */
+
+  if(
+    page === 'teacher-schedule'
+  ){
 
     const r =
       await db
@@ -1378,14 +2420,37 @@ async function teacherData(){
           class_days,
           class_time,
           duration_minutes,
-          active
+          active,
+          schedule_timezone
         `)
-        .eq('teacher_id',uid)
-        .eq('active',true)
+        .eq(
+          'teacher_id',
+          uid
+        )
+        .eq(
+          'active',
+          true
+        )
         .order(
           'class_time',
-          {ascending:true}
+          {
+            ascending:true
+          }
         );
+
+
+    if(r.error){
+
+      set(
+        'scheduleRows',
+        rowEmpty(
+          6,
+          r.error.message
+        )
+      );
+
+      return;
+    }
 
 
     const data =
@@ -1420,23 +2485,79 @@ async function teacherData(){
 
       (sr.data || [])
         .forEach(s=>{
-          studentMap[s.id] = s;
+          studentMap[
+            s.id
+          ] = s;
         });
     }
 
 
+    /*
+      For the weekly schedule we show the
+      class time converted into teacher time.
+
+      We use the next occurrence of each
+      schedule to correctly handle date rollover.
+    */
+
     set(
       'scheduleRows',
 
-      data.map(x=>`
+      data.map(x=>{
+
+        let displayDays =
+          normalizeDays(
+            x.class_days
+          );
+
+
+        let displayTime =
+          formatTime12(
+            x.class_time
+          );
+
+
+        if(LUXON){
+
+          const today =
+            isoDateInZone(
+              teacherTimezone
+            );
+
+
+          const occurrence =
+            findOccurrenceForViewerDate(
+              x,
+              today,
+              teacherTimezone
+            );
+
+
+          if(occurrence){
+
+            displayDays = [
+              occurrence
+                .viewerDateTime
+                .toFormat('cccc')
+            ];
+
+
+            displayTime =
+              occurrence
+                .viewerDateTime
+                .toFormat('h:mm a');
+          }
+
+        }
+
+
+        return `
 
         <tr>
 
           <td>
             ${esc(
-              normalizeDays(
-                x.class_days
-              ).join(', ')
+              displayDays.join(', ')
             )}
           </td>
 
@@ -1451,21 +2572,21 @@ async function teacherData(){
 
           <td>
             ${esc(
-              x.course || '—'
+              x.course ||
+              '—'
             )}
           </td>
 
           <td>
             ${esc(
-              formatTime12(
-                x.class_time
-              )
+              displayTime
             )}
           </td>
 
           <td>
             ${esc(
-              x.duration_minutes || 30
+              x.duration_minutes ||
+              30
             )} min
           </td>
 
@@ -1477,7 +2598,9 @@ async function teacherData(){
 
         </tr>
 
-      `).join('') ||
+        `;
+
+      }).join('') ||
       rowEmpty(6)
     );
 
@@ -1485,11 +2608,13 @@ async function teacherData(){
   }
 
 
-  /* =========================
+  /* ===================================================
      TEACHER STUDENTS
-========================= */
+  =================================================== */
 
-  if(page === 'teacher-students'){
+  if(
+    page === 'teacher-students'
+  ){
 
     const r =
       await db
@@ -1549,12 +2674,15 @@ async function teacherData(){
           <tr>
 
             <td>
-              ${esc(x.full_name)}
+              ${esc(
+                x.full_name
+              )}
             </td>
 
             <td>
               ${esc(
-                x.status || 'Active'
+                x.status ||
+                'Active'
               )}
             </td>
 
@@ -1572,11 +2700,13 @@ async function teacherData(){
   }
 
 
-  /* =========================
+  /* ===================================================
      TEACHER COURSES
-========================= */
+  =================================================== */
 
-  if(page === 'teacher-courses'){
+  if(
+    page === 'teacher-courses'
+  ){
 
     const r =
       await db
@@ -1609,9 +2739,11 @@ async function teacherData(){
       courses.map(x=>`
 
         <tr>
+
           <td>
             ${esc(x)}
           </td>
+
         </tr>
 
       `).join('') ||
@@ -1622,11 +2754,13 @@ async function teacherData(){
   }
 
 
-  /* =========================
+  /* ===================================================
      TEACHER LEAVES
-========================= */
+  =================================================== */
 
-  if(page === 'teacher-leaves'){
+  if(
+    page === 'teacher-leaves'
+  ){
 
     const r =
       await db
@@ -1638,7 +2772,9 @@ async function teacherData(){
         )
         .order(
           'created_at',
-          {ascending:false}
+          {
+            ascending:false
+          }
         );
 
 
@@ -1651,20 +2787,28 @@ async function teacherData(){
           <tr>
 
             <td>
-              ${esc(x.start_date)}
+              ${esc(
+                x.start_date
+              )}
             </td>
 
             <td>
-              ${esc(x.end_date)}
+              ${esc(
+                x.end_date
+              )}
             </td>
 
             <td>
-              ${esc(x.reason)}
+              ${esc(
+                x.reason
+              )}
             </td>
 
             <td>
               <span class="pill">
-                ${esc(x.status)}
+                ${esc(
+                  x.status
+                )}
               </span>
             </td>
 
@@ -1733,11 +2877,13 @@ async function teacherData(){
   }
 
 
-  /* =========================
+  /* ===================================================
      TEACHER SALARY
-========================= */
+  =================================================== */
 
-  if(page === 'teacher-salary'){
+  if(
+    page === 'teacher-salary'
+  ){
 
     const r =
       await db
@@ -1749,7 +2895,9 @@ async function teacherData(){
         )
         .order(
           'salary_month',
-          {ascending:false}
+          {
+            ascending:false
+          }
         );
 
 
@@ -1762,23 +2910,32 @@ async function teacherData(){
           <tr>
 
             <td>
-              ${esc(x.salary_month)}
+              ${esc(
+                x.salary_month
+              )}
             </td>
 
             <td>
-              ${esc(x.amount)}
-              ${esc(x.currency)}
+              ${esc(
+                x.amount
+              )}
+              ${esc(
+                x.currency
+              )}
             </td>
 
             <td>
               <span class="pill">
-                ${esc(x.status)}
+                ${esc(
+                  x.status
+                )}
               </span>
             </td>
 
             <td>
               ${esc(
-                x.paid_at || ''
+                x.paid_at ||
+                ''
               )}
             </td>
 
@@ -1792,16 +2949,19 @@ async function teacherData(){
   }
 
 
-  /* =========================
+  /* ===================================================
      TEACHER PROFILE
-========================= */
+  =================================================== */
 
-  if(page === 'teacher-profile'){
+  if(
+    page === 'teacher-profile'
+  ){
 
     set(
       'profileName',
       esc(
-        g.p.full_name || ''
+        g.p.full_name ||
+        ''
       )
     );
 
@@ -1809,7 +2969,8 @@ async function teacherData(){
     set(
       'profileEmail',
       esc(
-        g.s.user.email || ''
+        g.s.user.email ||
+        ''
       )
     );
 
@@ -1874,10 +3035,6 @@ async function getCurrentStudent(){
 
 
   /*
-    IMPORTANT:
-
-    Auth user ID is NOT the same as students.id.
-
     Correct relation:
 
     auth.users.id
@@ -1897,7 +3054,8 @@ async function getCurrentStudent(){
         id,
         user_id,
         full_name,
-        status
+        status,
+        timezone
       `)
       .eq(
         'user_id',
@@ -1928,19 +3086,27 @@ async function getCurrentStudent(){
 
 
   return {
-    authUserId:uid,
-    student:r.data,
-    guard:g
+    authUserId:
+      uid,
+
+    student:
+      r.data,
+
+    guard:
+      g
   };
 }
 
 
-/* =========================
+/* =====================================================
    STUDENT JOIN CLASS
-========================= */
+===================================================== */
 
 window.studentJoinClass =
-async(scheduleId,meetUrl)=>{
+async(
+  scheduleId,
+  meetUrl
+)=>{
 
   const current =
     await getCurrentStudent();
@@ -1960,15 +3126,98 @@ async(scheduleId,meetUrl)=>{
     current.student.id;
 
 
-  const today =
-    todayISO();
+  const studentTimezone =
+    safeTimezone(
+      current.student.timezone ||
+      DEFAULT_TIMEZONE
+    );
+
+
+  /*
+    Load schedule so we can determine
+    the correct base class date.
+  */
+
+  const scheduleResult =
+    await db
+      .from('class_schedules')
+      .select(`
+        id,
+        student_id,
+        class_days,
+        class_time,
+        duration_minutes,
+        schedule_timezone,
+        active
+      `)
+      .eq(
+        'id',
+        scheduleId
+      )
+      .eq(
+        'student_id',
+        studentId
+      )
+      .eq(
+        'active',
+        true
+      )
+      .single();
+
+
+  if(
+    scheduleResult.error ||
+    !scheduleResult.data
+  ){
+
+    alert(
+      'Class schedule not found.'
+    );
+
+    return;
+  }
+
+
+  const schedule =
+    scheduleResult.data;
+
+
+  /*
+    Find today's occurrence in the
+    student's own timezone.
+  */
+
+  const occurrence =
+    getTodayOccurrence(
+      schedule,
+      studentTimezone
+    );
+
+
+  if(!occurrence){
+
+    alert(
+      'This class is not scheduled for today.'
+    );
+
+    return;
+  }
+
+
+  const classDate =
+    occurrence.baseDate;
 
 
   const now =
     new Date().toISOString();
 
 
-  /* FIND TODAY SESSION */
+  /*
+    FIND SESSION USING BASE DATE
+
+    This is important when India/US/UK etc.
+    are on a different calendar date than Pakistan.
+  */
 
   const existing =
     await db
@@ -1986,7 +3235,7 @@ async(scheduleId,meetUrl)=>{
       )
       .eq(
         'class_date',
-        today
+        classDate
       )
       .maybeSingle();
 
@@ -2011,7 +3260,9 @@ async(scheduleId,meetUrl)=>{
   }
 
 
-  /* UPDATE STUDENT JOIN */
+  /*
+    UPDATE STUDENT JOIN
+  */
 
   const r =
     await db
@@ -2021,8 +3272,11 @@ async(scheduleId,meetUrl)=>{
         status:
           'student_joined',
 
-        student_joining_at:
+        student_joined_at:
           now,
+
+        session_timezone:
+          studentTimezone,
 
         updated_at:
           now
@@ -2048,7 +3302,9 @@ async(scheduleId,meetUrl)=>{
   }
 
 
-  /* OPEN GOOGLE MEET */
+  /*
+    OPEN GOOGLE MEET
+  */
 
   if(meetUrl){
 
@@ -2090,6 +3346,26 @@ async function studentData(){
 
   const studentId =
     student.id;
+
+
+  const studentTimezone =
+    safeTimezone(
+      student.timezone ||
+      DEFAULT_TIMEZONE
+    );
+
+
+  window.currentStudentTimezone =
+    studentTimezone;
+
+  window.studentTimezone =
+    studentTimezone;
+
+
+  localStorage.setItem(
+    'student_timezone',
+    studentTimezone
+  );
 
 
   /*
@@ -2183,7 +3459,9 @@ async function studentData(){
         )
         .order(
           'created_at',
-          {ascending:false}
+          {
+            ascending:false
+          }
         ),
 
 
@@ -2198,7 +3476,9 @@ async function studentData(){
         )
         .order(
           'created_at',
-          {ascending:false}
+          {
+            ascending:false
+          }
         ),
 
 
@@ -2215,13 +3495,17 @@ async function studentData(){
         )
         .order(
           'issued_at',
-          {ascending:false}
+          {
+            ascending:false
+          }
         )
 
     ]);
 
 
-    /* ERROR LOGS */
+    /* =========================
+       ERROR LOGS
+    ========================= */
 
     if(e.error)
       console.error(
@@ -2260,7 +3544,9 @@ async function studentData(){
       );
 
 
-    /* COURSE COUNT */
+    /* =========================
+       COURSE COUNT
+    ========================= */
 
     set(
       'courseCount',
@@ -2268,7 +3554,9 @@ async function studentData(){
     );
 
 
-    /* CLASS COUNT */
+    /* =========================
+       CLASS COUNT
+    ========================= */
 
     set(
       'classCount',
@@ -2276,7 +3564,9 @@ async function studentData(){
     );
 
 
-    /* ATTENDANCE */
+    /* =========================
+       ATTENDANCE
+    ========================= */
 
     set(
       'attendanceRate',
@@ -2353,6 +3643,58 @@ async function studentData(){
             '';
 
 
+          const occurrence =
+            getTodayOccurrence(
+              x,
+              studentTimezone
+            );
+
+
+          let displayDays =
+            normalizeDays(
+              x.class_days
+            );
+
+
+          let displayTime =
+            formatTime12(
+              x.class_time
+            );
+
+
+          let displayDate =
+            '';
+
+
+          /*
+            If the current occurrence exists,
+            show the converted student time/day.
+          */
+
+          if(occurrence){
+
+            displayDays = [
+              occurrence
+                .viewerDateTime
+                .toFormat('cccc')
+            ];
+
+
+            displayTime =
+              occurrence
+                .viewerDateTime
+                .toFormat('h:mm a');
+
+
+            displayDate =
+              occurrence
+                .viewerDateTime
+                .toFormat(
+                  'dd LLL yyyy'
+                );
+          }
+
+
           const joinButton =
             meetUrl
             ? `
@@ -2374,17 +3716,18 @@ async function studentData(){
 
             <td>
               ${esc(
-                normalizeDays(
-                  x.class_days
-                ).join(', ')
+                displayDays.join(', ')
               )}
+              ${
+                displayDate
+                ? `<br><small>${esc(displayDate)}</small>`
+                : ''
+              }
             </td>
 
             <td>
               ${esc(
-                formatTime12(
-                  x.class_time
-                )
+                displayTime
               )}
             </td>
 
@@ -2435,7 +3778,8 @@ async function studentData(){
 
             <td>
               ${esc(
-                x.courses?.title || ''
+                x.courses?.title ||
+                ''
               )}
             </td>
 
@@ -2498,19 +3842,22 @@ async function studentData(){
 
             <td>
               ${esc(
-                x.courses?.title || ''
+                x.courses?.title ||
+                ''
               )}
             </td>
 
             <td>
               ${esc(
-                x.certificate_no || ''
+                x.certificate_no ||
+                ''
               )}
             </td>
 
             <td>
               ${esc(
-                x.issued_at || ''
+                x.issued_at ||
+                ''
               )}
             </td>
 
@@ -2529,7 +3876,9 @@ async function studentData(){
      STUDENT ATTENDANCE
   =================================================== */
 
-  if(page === 'student-attendance'){
+  if(
+    page === 'student-attendance'
+  ){
 
     const r =
       await db
@@ -2540,7 +3889,8 @@ async function studentData(){
             class_days,
             class_time,
             duration_minutes,
-            course
+            course,
+            schedule_timezone
           )
         `)
         .eq(
@@ -2549,7 +3899,9 @@ async function studentData(){
         )
         .order(
           'created_at',
-          {ascending:false}
+          {
+            ascending:false
+          }
         );
 
 
@@ -2598,7 +3950,8 @@ async function studentData(){
 
             <td>
               ${esc(
-                x.notes || ''
+                x.notes ||
+                ''
               )}
             </td>
 
@@ -2616,7 +3969,9 @@ async function studentData(){
      STUDENT FEES
   =================================================== */
 
-  if(page === 'student-fees'){
+  if(
+    page === 'student-fees'
+  ){
 
     const r =
       await db
@@ -2628,7 +3983,9 @@ async function studentData(){
         )
         .order(
           'created_at',
-          {ascending:false}
+          {
+            ascending:false
+          }
         );
 
 
@@ -2657,7 +4014,8 @@ async function studentData(){
             <td>
               ${esc(x.amount)}
               ${esc(
-                x.currency || ''
+                x.currency ||
+                ''
               )}
             </td>
 
@@ -2675,7 +4033,8 @@ async function studentData(){
 
             <td>
               ${esc(
-                x.reference || ''
+                x.reference ||
+                ''
               )}
             </td>
 
@@ -2699,7 +4058,9 @@ async function studentData(){
      STUDENT LEAVES
   =================================================== */
 
-  if(page === 'student-leaves'){
+  if(
+    page === 'student-leaves'
+  ){
 
     const r =
       await db
@@ -2711,7 +4072,9 @@ async function studentData(){
         )
         .order(
           'created_at',
-          {ascending:false}
+          {
+            ascending:false
+          }
         );
 
 
@@ -2808,6 +4171,7 @@ async function studentData(){
         }
       );
 
+    return;
   }
 
 
@@ -2815,7 +4179,9 @@ async function studentData(){
      STUDENT PROFILE
   =================================================== */
 
-  if(page === 'student-profile'){
+  if(
+    page === 'student-profile'
+  ){
 
     set(
       'profileName',
@@ -2830,7 +4196,8 @@ async function studentData(){
     set(
       'profileEmail',
       esc(
-        g.s.user.email || ''
+        g.s.user.email ||
+        ''
       )
     );
 
@@ -2877,18 +4244,22 @@ async function studentData(){
 }
 
 
-/* =========================
+/* =====================================================
    START APP
-========================= */
+===================================================== */
 
 if(
-  page?.startsWith('teacher-')
+  page?.startsWith(
+    'teacher-'
+  )
 )
   teacherData();
 
 
 if(
-  page?.startsWith('student-')
+  page?.startsWith(
+    'student-'
+  )
 )
   studentData();
 
