@@ -1,14 +1,35 @@
 <!doctype html>
 
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport"
-content="width=device-width,initial-scale=1">
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Students | Admin</title><link rel="stylesheet"
-href="../css/admin.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../js/config.js"></script><script src="../js/admin.js"></script></head><body><div class="admin-layout"><aside class="sidebar"><div class="brand">HR Admin
+<title>Students | Admin</title>
 
+<link rel="stylesheet" href="../css/admin.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script src="../js/admin.js"></script>
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+<aside class="sidebar">
+
+<div class="brand">
+HR Admin
 <span>
 Haroon Ibn Rasheed Online Quran Academy
-</span></div><nav class="nav"><a href="dashboard.html">Dashboard</a>
+</span>
+</div>
+
+<nav class="nav">
+
+<a href="dashboard.html">Dashboard</a>
 <a href="admissions.html">Admissions / Leads</a>
 <a href="users.html">Portal Users</a>
 <a class="active" href="students.html">Students</a>
@@ -32,12 +53,33 @@ Haroon Ibn Rasheed Online Quran Academy
 <a href="settings.html">Settings</a>
 <a href="../index.html">View Website</a>
 
-<a href="#"
-onclick="logout();return false">
+<a href="#" onclick="logout();return false">
 Logout
 </a>
 
-</nav></aside><main class="main"><div class="top"><h1>Students</h1></div><div id="msg" class="msg"></div><div class="card"><h2>Create Student Account</h2><form id="studentForm" class="form-grid"><div class="field"><label>Student Name</label>
+</nav>
+</aside>
+
+
+<main class="main">
+
+<div class="top">
+<h1>Students</h1>
+</div>
+
+<div id="msg" class="msg"></div>
+
+
+<div class="card">
+
+<h2>Create Student Account</h2>
+
+<form id="studentForm" class="form-grid">
+
+
+<div class="field">
+
+<label>Student Name</label>
 
 <input
 id="student_name"
@@ -46,7 +88,12 @@ type="text"
 placeholder="Enter student name"
 required>
 
-</div><div class="field"><label>Email</label>
+</div>
+
+
+<div class="field">
+
+<label>Email</label>
 
 <input
 id="student_email"
@@ -55,7 +102,12 @@ type="email"
 placeholder="student@example.com"
 required>
 
-</div><div class="field"><label>Password</label>
+</div>
+
+
+<div class="field">
+
+<label>Password</label>
 
 <input
 id="student_password"
@@ -65,7 +117,12 @@ placeholder="Create password"
 required
 minlength="6">
 
-</div><div class="field"><label>Father Name</label>
+</div>
+
+
+<div class="field">
+
+<label>Father Name</label>
 
 <input
 id="father_name"
@@ -73,7 +130,12 @@ class="input"
 type="text"
 placeholder="Enter father name">
 
-</div><div class="field"><label>Phone</label>
+</div>
+
+
+<div class="field">
+
+<label>Phone</label>
 
 <input
 id="student_phone"
@@ -81,7 +143,12 @@ class="input"
 type="text"
 placeholder="Enter phone number">
 
-</div><div class="field"><label>Course</label>
+</div>
+
+
+<div class="field">
+
+<label>Course</label>
 
 <input
 id="student_course"
@@ -89,7 +156,12 @@ class="input"
 type="text"
 placeholder="Example: Quran with Tajweed">
 
-</div><div class="field"><label>Teacher</label>
+</div>
+
+
+<div class="field">
+
+<label>Teacher</label>
 
 <select
 id="teacher_id"
@@ -98,16 +170,47 @@ required>
 
 <option value="">
 Loading teachers...
-</option></select></div><div class="field"><label>Student Time Zone</label>
+</option>
+
+</select>
+
+</div>
+
+
+<!-- =====================================================
+     FIXED TIMEZONE SECTION
+===================================================== -->
+
+<div class="field">
+
+<label>Student Time Zone</label>
+
+<input
+id="timezone_search"
+class="input"
+type="search"
+placeholder="Search timezone: India, Kolkata, Pakistan..."
+autocomplete="off"
+style="margin-bottom:8px;">
 
 <select
 id="student_timezone"
 class="input"
+size="8"
 required>
 
 <option value="Asia/Karachi">
 Asia/Karachi — Pakistan
-</option></select><small
+</option>
+
+<option value="Asia/Kolkata">
+Asia/Kolkata — India
+</option>
+
+</select>
+
+<small
+id="timezone_count"
 style="
 display:block;
 margin-top:6px;
@@ -115,10 +218,16 @@ opacity:.7;
 line-height:1.4;
 ">
 
-Select the student's local IANA time zone.
-All supported time zones are available.
+Loading time zones...
 
-</small></div><div class="field"><label>Status</label>
+</small>
+
+</div>
+
+
+<div class="field">
+
+<label>Status</label>
 
 <select
 id="student_status"
@@ -126,16 +235,48 @@ class="input">
 
 <option value="active">
 Active
-</option><option value="inactive">
+</option>
+
+<option value="inactive">
 Inactive
-</option></select></div><div class="field full"><button
+</option>
+
+</select>
+
+</div>
+
+
+<div class="field full">
+
+<button
 id="createStudentBtn"
 class="btn"
 type="submit">
 
 Create Student Account
 
-</button></div></form></div><div class="card"><h2>Students</h2><div class="table-wrap"><table class="table"><thead><tr><th>Student ID</th>
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+
+<div class="card">
+
+<h2>Students</h2>
+
+<div class="table-wrap">
+
+<table class="table">
+
+<thead>
+
+<tr>
+
+<th>Student ID</th>
 <th>Name</th>
 <th>Father Name</th>
 <th>Phone</th>
@@ -144,9 +285,36 @@ Create Student Account
 <th>Teacher</th>
 <th>Time Zone</th>
 <th>Status</th>
-<th>Actions</th></tr></thead><tbody id="rows"><tr><td colspan="10">
+<th>Actions</th>
+
+</tr>
+
+</thead>
+
+<tbody id="rows">
+
+<tr>
+
+<td colspan="10">
 Loading...
-</td></tr></tbody></table></div></div></main></div><script>
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</main>
+
+</div>
+
+
+<script>
 
 const EDGE_FUNCTION_URL =
 "https://olxytsmwqkrrnutsegtr.supabase.co/functions/v1/create-portal-user";
@@ -234,11 +402,139 @@ box.style.borderRadius = "8px";
 
 /* =====================================================
    TIMEZONE SYSTEM
+   ALL IANA TIMEZONES + SEARCH
+===================================================== */
+
+let ALL_TIME_ZONES = [];
+
+
+/* =====================================================
+   TIMEZONE LABELS
+===================================================== */
+
+function getTimezoneLabel(zone){
+
+const labels = {
+
+"UTC":
+"UTC — Coordinated Universal Time",
+
+"Asia/Karachi":
+"Asia/Karachi — Pakistan",
+
+"Asia/Kolkata":
+"Asia/Kolkata — India",
+
+"Asia/Calcutta":
+"Asia/Calcutta — India (Legacy Alias)",
+
+"Asia/Dubai":
+"Asia/Dubai — UAE",
+
+"Asia/Riyadh":
+"Asia/Riyadh — Saudi Arabia",
+
+"Asia/Dhaka":
+"Asia/Dhaka — Bangladesh",
+
+"Asia/Kabul":
+"Asia/Kabul — Afghanistan",
+
+"Asia/Colombo":
+"Asia/Colombo — Sri Lanka",
+
+"Asia/Dili":
+"Asia/Dili — Timor-Leste",
+
+"Asia/Tokyo":
+"Asia/Tokyo — Japan",
+
+"Asia/Shanghai":
+"Asia/Shanghai — China",
+
+"Asia/Singapore":
+"Asia/Singapore — Singapore",
+
+"Asia/Seoul":
+"Asia/Seoul — South Korea",
+
+"Asia/Bangkok":
+"Asia/Bangkok — Thailand",
+
+"Asia/Jakarta":
+"Asia/Jakarta — Indonesia",
+
+"Europe/London":
+"Europe/London — United Kingdom",
+
+"Europe/Istanbul":
+"Europe/Istanbul — Turkey",
+
+"Europe/Berlin":
+"Europe/Berlin — Germany",
+
+"Europe/Paris":
+"Europe/Paris — France",
+
+"Europe/Rome":
+"Europe/Rome — Italy",
+
+"Europe/Madrid":
+"Europe/Madrid — Spain",
+
+"Europe/Moscow":
+"Europe/Moscow — Russia",
+
+"America/New_York":
+"America/New_York — USA",
+
+"America/Chicago":
+"America/Chicago — USA",
+
+"America/Denver":
+"America/Denver — USA",
+
+"America/Los_Angeles":
+"America/Los_Angeles — USA",
+
+"America/Toronto":
+"America/Toronto — Canada",
+
+"America/Vancouver":
+"America/Vancouver — Canada",
+
+"America/Sao_Paulo":
+"America/Sao_Paulo — Brazil",
+
+"Australia/Sydney":
+"Australia/Sydney — Australia",
+
+"Australia/Melbourne":
+"Australia/Melbourne — Australia",
+
+"Pacific/Auckland":
+"Pacific/Auckland — New Zealand"
+
+};
+
+return labels[zone] || zone;
+
+}
+
+
+/* =====================================================
+   GET ALL IANA TIMEZONES
 ===================================================== */
 
 function getSupportedTimeZones(){
 
 let zones = [];
+
+
+/*
+   Use browser's complete IANA timezone database
+   when supported.
+*/
 
 try{
 
@@ -255,29 +551,103 @@ Intl.supportedValuesOf("timeZone");
 }catch(error){
 
 console.warn(
-"Could not read browser timezone list:",
+"Could not load browser timezone list:",
 error
 );
 
 }
 
-if(!zones.includes("UTC")){
 
-zones.unshift("UTC");
+/*
+   These important zones are added manually too.
+   This guarantees that India/Pakistan/etc. are
+   available even if browser support is different.
+*/
 
-}
+const importantZones = [
 
-if(!zones.includes("Asia/Karachi")){
+"UTC",
 
-zones.push("Asia/Karachi");
+"Asia/Karachi",
 
-}
+"Asia/Kolkata",
 
-zones =
-[...new Set(zones)]
-.sort();
+"Asia/Calcutta",
 
-return zones;
+"Asia/Dubai",
+
+"Asia/Riyadh",
+
+"Asia/Dhaka",
+
+"Asia/Kabul",
+
+"Asia/Colombo",
+
+"Asia/Dili",
+
+"Asia/Tokyo",
+
+"Asia/Shanghai",
+
+"Asia/Singapore",
+
+"Asia/Seoul",
+
+"Asia/Bangkok",
+
+"Asia/Jakarta",
+
+"Europe/London",
+
+"Europe/Istanbul",
+
+"Europe/Berlin",
+
+"Europe/Paris",
+
+"Europe/Rome",
+
+"Europe/Madrid",
+
+"Europe/Moscow",
+
+"America/New_York",
+
+"America/Chicago",
+
+"America/Denver",
+
+"America/Los_Angeles",
+
+"America/Toronto",
+
+"America/Vancouver",
+
+"America/Sao_Paulo",
+
+"Australia/Sydney",
+
+"Australia/Melbourne",
+
+"Pacific/Auckland"
+
+];
+
+
+zones = [
+...new Set([
+...zones,
+...importantZones
+])
+];
+
+
+/*
+   Alphabetical order.
+*/
+
+return zones.sort();
 
 }
 
@@ -293,44 +663,276 @@ document.getElementById(
 "student_timezone"
 );
 
+const search =
+document.getElementById(
+"timezone_search"
+);
+
+const count =
+document.getElementById(
+"timezone_count"
+);
+
 if(!select){
 
 return;
 
 }
 
-const browserZone =
+
+ALL_TIME_ZONES =
+getSupportedTimeZones();
+
+
+/*
+   Guarantee India.
+*/
+
+if(
+!ALL_TIME_ZONES.includes(
+"Asia/Kolkata"
+)
+){
+
+ALL_TIME_ZONES.push(
+"Asia/Kolkata"
+);
+
+}
+
+
+ALL_TIME_ZONES =
+[...new Set(ALL_TIME_ZONES)]
+.sort();
+
+
+/*
+   Detect laptop timezone.
+*/
+
+let browserZone =
+"Asia/Karachi";
+
+try{
+
+browserZone =
 Intl.DateTimeFormat()
 .resolvedOptions()
 .timeZone ||
 "Asia/Karachi";
 
-const zones =
-getSupportedTimeZones();
+}catch(error){
+
+console.warn(
+"Could not detect browser timezone:",
+error
+);
+
+}
+
+
+/*
+   If detected timezone is not in the list,
+   use Pakistan.
+*/
+
+if(
+!ALL_TIME_ZONES.includes(browserZone)
+){
+
+browserZone =
+"Asia/Karachi";
+
+}
+
+
+/* =====================================================
+   RENDER TIMEZONE OPTIONS
+===================================================== */
+
+function renderTimeZones(filter){
+
+const query =
+String(filter || "")
+.trim()
+.toLowerCase();
+
+
+const filtered =
+ALL_TIME_ZONES.filter(
+function(zone){
+
+const zoneText =
+zone.toLowerCase();
+
+const labelText =
+getTimezoneLabel(zone)
+.toLowerCase();
+
+return (
+zoneText.includes(query) ||
+labelText.includes(query)
+);
+
+});
+
+
+const currentValue =
+select.value;
+
 
 select.innerHTML = "";
 
-zones.forEach(function(zone){
+
+if(filtered.length === 0){
 
 const option =
 document.createElement("option");
 
-option.value = zone;
-option.textContent = zone;
+option.value = "";
+
+option.textContent =
+"No matching time zone found";
+
+option.disabled = true;
+
+select.appendChild(option);
+
+
+if(count){
+
+count.textContent =
+"0 time zones found.";
+
+}
+
+return;
+
+}
+
+
+/*
+   Add filtered options.
+*/
+
+filtered.forEach(
+function(zone){
+
+const option =
+document.createElement("option");
+
+option.value =
+zone;
+
+option.textContent =
+getTimezoneLabel(zone);
 
 select.appendChild(option);
 
 });
 
-if(zones.includes(browserZone)){
 
-select.value = browserZone;
+/*
+   Keep currently selected timezone
+   if it is still visible.
+*/
+
+if(
+filtered.includes(currentValue)
+){
+
+select.value =
+currentValue;
+
+}else if(
+filtered.includes(browserZone)
+){
+
+select.value =
+browserZone;
+
+}else if(
+filtered.includes("Asia/Karachi")
+){
+
+select.value =
+"Asia/Karachi";
 
 }else{
 
-select.value = "Asia/Karachi";
+select.value =
+filtered[0];
 
 }
+
+
+/*
+   Show result count.
+*/
+
+if(count){
+
+count.textContent =
+filtered.length +
+" of " +
+ALL_TIME_ZONES.length +
+" time zones shown.";
+
+}
+
+}
+
+
+/* =====================================================
+   INITIAL TIMEZONE LOAD
+===================================================== */
+
+renderTimeZones("");
+
+
+/* =====================================================
+   TIMEZONE SEARCH
+===================================================== */
+
+if(search){
+
+search.addEventListener(
+"input",
+function(){
+
+renderTimeZones(
+search.value
+);
+
+});
+
+}
+
+
+/*
+   When user selects a timezone,
+   clear search and restore full list.
+*/
+
+select.addEventListener(
+"change",
+function(){
+
+const selectedValue =
+this.value;
+
+if(search){
+
+search.value = "";
+
+}
+
+renderTimeZones("");
+
+select.value =
+selectedValue;
+
+});
 
 }
 
@@ -362,13 +964,16 @@ throw result.error;
 teachers =
 result.data || [];
 
+
 const select =
 document.getElementById("teacher_id");
 
 select.innerHTML =
 '<option value="">Select Teacher</option>';
 
-teachers.forEach(function(teacher){
+
+teachers.forEach(
+function(teacher){
 
 const option =
 document.createElement("option");
@@ -382,6 +987,7 @@ teacher.name || "Unnamed Teacher";
 select.appendChild(option);
 
 });
+
 
 }catch(error){
 
@@ -415,6 +1021,7 @@ async function loadStudents(){
 const rows =
 document.getElementById("rows");
 
+
 rows.innerHTML = `
 
 <tr>
@@ -428,6 +1035,7 @@ Loading students...
 </tr>
 
 `;
+
 
 try{
 
@@ -457,14 +1065,17 @@ ascending:false
 }
 );
 
+
 if(studentResult.error){
 
 throw studentResult.error;
 
 }
 
+
 const students =
 studentResult.data || [];
+
 
 if(students.length === 0){
 
@@ -489,7 +1100,9 @@ return;
 
 const teacherMap = {};
 
-teachers.forEach(function(teacher){
+
+teachers.forEach(
+function(teacher){
 
 teacherMap[teacher.id] =
 teacher.name;
@@ -500,7 +1113,8 @@ teacher.name;
 const teacherIds =
 students
 
-.map(function(student){
+.map(
+function(student){
 
 return student.teacher_id;
 
@@ -513,7 +1127,9 @@ const uniqueTeacherIds =
 [...new Set(teacherIds)];
 
 
-if(uniqueTeacherIds.length > 0){
+if(
+uniqueTeacherIds.length > 0
+){
 
 const teacherResult =
 await db
@@ -527,10 +1143,14 @@ await db
 uniqueTeacherIds
 );
 
+
 if(!teacherResult.error){
 
-(teacherResult.data || [])
-.forEach(function(teacher){
+(
+teacherResult.data || []
+)
+.forEach(
+function(teacher){
 
 teacherMap[teacher.id] =
 teacher.name;
@@ -543,15 +1163,21 @@ teacher.name;
 
 
 rows.innerHTML =
-students.map(function(student){
+students.map(
+function(student){
+
 
 const teacherName =
 student.teacher_id &&
-teacherMap[student.teacher_id]
+teacherMap[
+student.teacher_id
+]
 
 ?
 
-teacherMap[student.teacher_id]
+teacherMap[
+student.teacher_id
+]
 
 :
 
@@ -559,7 +1185,9 @@ teacherMap[student.teacher_id]
 
 
 const isActive =
-String(student.status || "")
+String(
+student.status || ""
+)
 .toLowerCase()
 === "active";
 
@@ -567,30 +1195,52 @@ String(student.status || "")
 const safeId =
 safeHtml(student.id);
 
+
 const safeName =
-safeHtml(student.full_name || "");
+safeHtml(
+student.full_name || ""
+);
+
 
 const safeFather =
-safeHtml(student.father_name || "-");
+safeHtml(
+student.father_name || "-"
+);
+
 
 const safePhone =
-safeHtml(student.phone || "-");
+safeHtml(
+student.phone || "-"
+);
+
 
 const safeEmail =
-safeHtml(student.email || "-");
+safeHtml(
+student.email || "-"
+);
+
 
 const safeCourse =
-safeHtml(student.course || "-");
+safeHtml(
+student.course || "-"
+);
+
 
 const safeTeacher =
-safeHtml(teacherName);
+safeHtml(
+teacherName
+);
+
 
 const studentTimezone =
 student.timezone ||
 "Asia/Karachi";
 
+
 const safeTimezone =
-safeHtml(studentTimezone);
+safeHtml(
+studentTimezone
+);
 
 
 return `
@@ -681,6 +1331,7 @@ flex-wrap:wrap;
 min-width:170px;
 ">
 
+
 ${
 isActive
 
@@ -767,6 +1418,7 @@ console.error(
 error
 );
 
+
 rows.innerHTML = `
 
 <tr>
@@ -788,6 +1440,7 @@ ${safeHtml(error.message)}
 </tr>
 
 `;
+
 
 studentMessage(
 "Students could not be loaded: " +
@@ -814,6 +1467,7 @@ newStatus === "active"
 ? "activate"
 : "deactivate";
 
+
 if(!confirm(
 "Are you sure you want to " +
 action +
@@ -824,12 +1478,14 @@ return;
 
 }
 
+
 try{
 
 studentMessage(
 "Updating student...",
 "ok"
 );
+
 
 const result =
 await db
@@ -846,6 +1502,7 @@ status:newStatus
 "id",
 studentId
 );
+
 
 if(result.error){
 
@@ -871,6 +1528,7 @@ newStatus === "active"
 studentId
 );
 
+
 if(accessResult.error){
 
 console.warn(
@@ -880,7 +1538,9 @@ accessResult.error.message
 
 }
 
+
 await loadStudents();
+
 
 studentMessage(
 "Student successfully " +
@@ -889,12 +1549,14 @@ action +
 "ok"
 );
 
+
 }catch(error){
 
 console.error(
 "Status error:",
 error
 );
+
 
 studentMessage(
 "Could not update student: " +
@@ -943,6 +1605,7 @@ return;
 
 }
 
+
 try{
 
 studentMessage(
@@ -950,11 +1613,14 @@ studentMessage(
 "ok"
 );
 
+
 const sessionResult =
 await db.auth.getSession();
 
+
 const session =
 sessionResult.data?.session;
+
 
 if(!session){
 
@@ -964,6 +1630,7 @@ location.href =
 return;
 
 }
+
 
 const response =
 await fetch(
@@ -997,8 +1664,10 @@ user_id:studentId
 }
 );
 
+
 const result =
 await response.json();
+
 
 if(
 !response.ok ||
@@ -1012,12 +1681,15 @@ result.error ||
 
 }
 
+
 studentMessage(
 "Student deleted successfully.",
 "ok"
 );
 
+
 await loadStudents();
+
 
 }catch(error){
 
@@ -1025,6 +1697,7 @@ console.error(
 "Delete student error:",
 error
 );
+
 
 studentMessage(
 "Student could not be deleted: " +
@@ -1049,15 +1722,19 @@ async function(event){
 
 event.preventDefault();
 
+
 const button =
 document.getElementById(
 "createStudentBtn"
 );
 
+
 button.disabled = true;
+
 
 button.textContent =
 "Creating Student...";
+
 
 try{
 
@@ -1067,16 +1744,19 @@ document
 .value
 .trim();
 
+
 const email =
 document
 .getElementById("student_email")
 .value
 .trim();
 
+
 const password =
 document
 .getElementById("student_password")
 .value;
+
 
 const fatherName =
 document
@@ -1084,11 +1764,13 @@ document
 .value
 .trim();
 
+
 const phone =
 document
 .getElementById("student_phone")
 .value
 .trim();
+
 
 const course =
 document
@@ -1096,16 +1778,19 @@ document
 .value
 .trim();
 
+
 const teacherId =
 document
 .getElementById("teacher_id")
 .value;
+
 
 const timezone =
 document
 .getElementById("student_timezone")
 .value
 .trim();
+
 
 const status =
 document
@@ -1121,6 +1806,7 @@ throw new Error(
 
 }
 
+
 if(!email){
 
 throw new Error(
@@ -1129,13 +1815,18 @@ throw new Error(
 
 }
 
-if(!password || password.length < 6){
+
+if(
+!password ||
+password.length < 6
+){
 
 throw new Error(
 "Password must be at least 6 characters."
 );
 
 }
+
 
 if(!teacherId){
 
@@ -1144,6 +1835,7 @@ throw new Error(
 );
 
 }
+
 
 if(!timezone){
 
@@ -1155,7 +1847,8 @@ throw new Error(
 
 
 const selectedTeacher =
-teachers.find(function(teacher){
+teachers.find(
+function(teacher){
 
 return teacher.id === teacherId;
 
@@ -1174,6 +1867,7 @@ throw new Error(
 const sessionResult =
 await db.auth.getSession();
 
+
 const session =
 sessionResult.data?.session;
 
@@ -1190,8 +1884,7 @@ return;
 
 /* =====================================================
    CREATE ACCOUNT
-   IMPORTANT:
-   TIMEZONE IS NOW SENT TO EDGE FUNCTION.
+   TIMEZONE SENT TO EDGE FUNCTION
 ===================================================== */
 
 const response =
@@ -1237,11 +1930,6 @@ course || null,
 teacher_id:
 teacherId,
 
-/*
-   NEW:
-   Send timezone directly during account creation.
-*/
-
 timezone:
 timezone
 
@@ -1283,7 +1971,7 @@ throw new Error(
 
 /* =====================================================
    UPDATE STUDENT
-   KEEP AUTH USER LINKED TO STUDENT.
+   KEEP AUTH USER LINKED
 ===================================================== */
 
 const updateResult =
@@ -1450,6 +2138,22 @@ document
 "Asia/Karachi";
 
 
+/*
+   Clear timezone search after reset.
+*/
+
+const timezoneSearch =
+document.getElementById(
+"timezone_search"
+);
+
+if(timezoneSearch){
+
+timezoneSearch.value = "";
+
+}
+
+
 await loadStudents();
 
 
@@ -1460,11 +2164,13 @@ console.error(
 error
 );
 
+
 studentMessage(
 error.message ||
 "Something went wrong.",
 "error"
 );
+
 
 }finally{
 
@@ -1493,6 +2199,7 @@ typeof adminGuard === "function"
 const allowed =
 await adminGuard();
 
+
 if(!allowed){
 
 return;
@@ -1501,11 +2208,13 @@ return;
 
 }
 
+
 loadTimeZones();
 
 await loadTeachers();
 
 await loadStudents();
+
 
 }catch(error){
 
@@ -1514,8 +2223,10 @@ console.error(
 error
 );
 
+
 const rows =
 document.getElementById("rows");
+
 
 rows.innerHTML = `
 
@@ -1539,6 +2250,7 @@ ${safeHtml(error.message)}
 
 `;
 
+
 studentMessage(
 "Page error: " +
 error.message,
@@ -1549,6 +2261,10 @@ error.message,
 
 }
 
+
 initStudents();
 
-</script></body></html>
+</script>
+
+</body>
+</html>
