@@ -1,1 +1,2089 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Student Payments</title><link rel="stylesheet" href="../css/admin.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../js/config.js"></script><script src="../js/admin-ops.js"></script></head><body><div class="admin-layout"><aside class="sidebar"><div class="brand">HR Admin<span>Haroon Ibn Rasheed Online Quran Academy</span></div><nav class="nav"><a href="dashboard.html">Dashboard</a><a href="admissions.html">Admissions</a><a href="users.html">Users</a><a href="students.html">Students</a><a href="teachers.html">Teachers</a><a href="enrollments.html">Enrollments</a><a href="courses.html">Courses</a><a href="schedule.html">Schedule</a><a href="classes.html">Classes</a><a href="attendance.html">Attendance</a><a href="fees.html">Fees</a><a href="payment-methods.html">Payment Methods</a><a href="payments.html">Payments</a><a href="leaves.html">Leaves</a><a href="salaries.html">Salaries</a><a href="messages.html">Messages</a><a href="notifications.html">Notifications</a><a href="faqs.html">FAQs</a><a href="testimonials.html">Testimonials</a><a href="articles.html">Articles</a><a href="content.html">Website Content</a><a href="settings.html">Settings</a><a href="../index.html">View Website</a><a href="#" onclick="adminLogout();return false">Logout</a></nav></aside><main class="main"><div class="top"><h1>Student Payments</h1></div><div id="msg" class="msg"></div><div class="card"><form id="f" class="form-grid"><div><label>Student Account UUID</label><input class="input" name="student_id" required></div><div><label>Amount</label><input class="input" name="amount" required></div><div><label>Currency</label><input class="input" name="currency" value="USD"></div><div><label>Method</label><input class="input" name="method"></div><div><label>Status</label><select class="input" name="status"><option>pending</option><option>paid</option><option>partial</option><option>refunded</option></select></div><div><label>Reference</label><input class="input" name="reference"></div><div class="full"><button class="btn">Add Payment</button></div></form></div><div class="card"><table class="table"><thead><tr><th>Student</th><th>Amount</th><th>Method</th><th>Status</th><th>Reference</th><th>Date</th></tr></thead><tbody id="rows"></tbody></table></div><script>async function load(){if(!await adminGuardLocal())return;const r=await adminDB.from('student_payments').select('*,profiles(full_name)').order('created_at',{ascending:false});if(r.error){msg.textContent=r.error.message;return}rows.innerHTML=(r.data||[]).map(x=>`<tr><td>${e(x.profiles?.full_name||x.student_id)}</td><td>${e(x.amount)} ${e(x.currency)}</td><td>${e(x.method)}</td><td>${e(x.status)}</td><td>${e(x.reference||'')}</td><td>${e(x.created_at?.slice(0,10))}</td></tr>`).join('')||'<tr><td colspan="6">No payments.</td></tr>'}f.addEventListener('submit',async ev=>{ev.preventDefault();const o=Object.fromEntries(new FormData(f));o.amount=Number(o.amount);const r=await adminDB.from('student_payments').insert(o);if(r.error)alert(r.error.message);else{f.reset();load()}});load();</script></main></div></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Student Payments | Haroon Ibn Rasheed Online Quran Academy</title>
+
+<link rel="stylesheet" href="../css/admin.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script src="../js/admin-ops.js"></script>
+
+<style>
+/* Payments page additions - existing admin.css/layout remains unchanged */
+
+.payments-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  margin-bottom:18px;
+}
+
+.payments-head h1{
+  margin:0;
+}
+
+.payments-subtitle{
+  margin:5px 0 0;
+  color:#718096;
+  font-size:14px;
+}
+
+.record-btn{
+  white-space:nowrap;
+}
+
+.summary-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+  margin-bottom:18px;
+}
+
+.summary-card{
+  background:#fff;
+  border:1px solid #e5edf0;
+  border-radius:10px;
+  padding:18px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
+}
+
+.summary-icon{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:21px;
+  flex-shrink:0;
+  background:#eef9fb;
+}
+
+.summary-card:nth-child(2) .summary-icon{
+  background:#eef4ff;
+}
+
+.summary-card:nth-child(3) .summary-icon{
+  background:#fff6df;
+}
+
+.summary-card:nth-child(4) .summary-icon{
+  background:#fff0f2;
+}
+
+.summary-label{
+  font-size:13px;
+  color:#718096;
+  margin-bottom:4px;
+}
+
+.summary-value{
+  font-size:23px;
+  font-weight:700;
+  color:#07394a;
+}
+
+.summary-note{
+  font-size:11px;
+  color:#8a99a6;
+  margin-top:3px;
+}
+
+.filter-card{
+  margin-bottom:18px;
+}
+
+.filter-grid{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr 1fr;
+  gap:10px;
+}
+
+.table-wrap{
+  width:100%;
+  overflow-x:auto;
+}
+
+.payment-table{
+  min-width:900px;
+}
+
+.payment-table th{
+  white-space:nowrap;
+}
+
+.student-cell{
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+
+.student-avatar{
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#eef9fb;
+  color:#0b9fbb;
+  font-weight:700;
+  flex-shrink:0;
+}
+
+.student-name{
+  font-weight:600;
+  color:#07394a;
+}
+
+.student-id{
+  display:block;
+  font-size:11px;
+  color:#8997a3;
+  margin-top:2px;
+}
+
+.status{
+  display:inline-block;
+  padding:5px 10px;
+  border-radius:20px;
+  font-size:11px;
+  font-weight:600;
+  white-space:nowrap;
+}
+
+.status-completed,
+.status-paid,
+.status-verified{
+  background:#d9f5e7;
+  color:#16834b;
+}
+
+.status-pending,
+.status-submitted{
+  background:#fff0c9;
+  color:#9a6700;
+}
+
+.status-rejected{
+  background:#fde0e3;
+  color:#b42332;
+}
+
+.status-partial{
+  background:#dff3fa;
+  color:#08738b;
+}
+
+.action-btn{
+  border:0;
+  border-radius:6px;
+  padding:7px 12px;
+  cursor:pointer;
+  background:#0b9fbb;
+  color:#fff;
+  font-size:12px;
+  font-weight:600;
+}
+
+.action-btn:hover{
+  opacity:.9;
+}
+
+.action-menu{
+  position:relative;
+  display:inline-block;
+}
+
+.more-btn{
+  border:1px solid #dce7ea;
+  background:#fff;
+  color:#07394a;
+  border-radius:6px;
+  padding:6px 9px;
+  cursor:pointer;
+  margin-left:4px;
+}
+
+.more-options{
+  display:none;
+  position:absolute;
+  right:0;
+  top:34px;
+  background:#fff;
+  border:1px solid #e1e8eb;
+  border-radius:7px;
+  min-width:130px;
+  box-shadow:0 8px 20px rgba(0,0,0,.12);
+  z-index:20;
+}
+
+.more-options button{
+  display:block;
+  width:100%;
+  border:0;
+  background:#fff;
+  padding:9px 12px;
+  text-align:left;
+  cursor:pointer;
+  font-size:12px;
+}
+
+.more-options button:hover{
+  background:#f5fafb;
+}
+
+.modal-bg{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  z-index:9999;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.modal-bg.show{
+  display:flex;
+}
+
+.modal{
+  width:100%;
+  max-width:650px;
+  max-height:90vh;
+  overflow-y:auto;
+  background:#fff;
+  border-radius:12px;
+  padding:22px;
+  box-shadow:0 15px 45px rgba(0,0,0,.2);
+}
+
+.modal-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:18px;
+}
+
+.modal-header h2{
+  margin:0;
+  color:#07394a;
+}
+
+.close-btn{
+  border:0;
+  background:transparent;
+  font-size:25px;
+  cursor:pointer;
+  color:#667781;
+}
+
+.modal-buttons{
+  display:flex;
+  gap:9px;
+  margin-top:15px;
+}
+
+.cancel-btn{
+  background:#fff;
+  color:#07394a;
+  border:1px solid #d7e4e8;
+}
+
+.verify-btn{
+  background:#198754;
+}
+
+.reject-btn{
+  background:#dc3545;
+}
+
+.detail-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.detail-box{
+  padding:12px;
+  border:1px solid #e3ecef;
+  border-radius:7px;
+  background:#f9fcfd;
+}
+
+.detail-box small{
+  display:block;
+  color:#718096;
+  margin-bottom:4px;
+}
+
+.detail-box strong{
+  color:#07394a;
+}
+
+.empty-row{
+  text-align:center;
+  padding:25px !important;
+  color:#718096;
+}
+
+@media(max-width:1000px){
+  .summary-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .filter-grid{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media(max-width:650px){
+  .payments-head{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .summary-grid{
+    grid-template-columns:1fr;
+  }
+
+  .filter-grid{
+    grid-template-columns:1fr;
+  }
+
+  .detail-grid{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+<!-- ================= SIDEBAR ================= -->
+
+<aside class="sidebar">
+
+<div class="brand">
+HR Admin
+<span>Haroon Ibn Rasheed Online Quran Academy</span>
+</div>
+
+<nav class="nav">
+
+<a href="dashboard.html">Dashboard</a>
+<a href="admissions.html">Admissions</a>
+<a href="users.html">Users</a>
+<a href="students.html">Students</a>
+<a href="teachers.html">Teachers</a>
+<a href="enrollments.html">Enrollments</a>
+<a href="courses.html">Courses</a>
+<a href="schedule.html">Schedule</a>
+<a href="classes.html">Classes</a>
+<a href="attendance.html">Attendance</a>
+<a href="fees.html">Fees</a>
+<a href="payment-methods.html">Payment Methods</a>
+<a href="payments.html">Payments</a>
+<a href="leaves.html">Leaves</a>
+<a href="salaries.html">Salaries</a>
+<a href="messages.html">Messages</a>
+<a href="notifications.html">Notifications</a>
+<a href="faqs.html">FAQs</a>
+<a href="testimonials.html">Testimonials</a>
+<a href="articles.html">Articles</a>
+<a href="content.html">Website Content</a>
+<a href="settings.html">Settings</a>
+<a href="../index.html">View Website</a>
+
+<a href="#" onclick="adminLogout();return false">
+Logout
+</a>
+
+</nav>
+</aside>
+
+
+<!-- ================= MAIN ================= -->
+
+<main class="main">
+
+<div class="payments-head">
+
+<div>
+<h1>Payments</h1>
+<p class="payments-subtitle">
+Manage and track all student payments
+</p>
+</div>
+
+<button
+  type="button"
+  class="btn record-btn"
+  onclick="openRecordModal()">
++ Record Payment
+</button>
+
+</div>
+
+
+<div id="msg" class="msg"></div>
+
+
+<!-- ================= SUMMARY ================= -->
+
+<div class="summary-grid">
+
+<div class="summary-card">
+
+<div class="summary-icon">💳</div>
+
+<div>
+<div class="summary-label">
+Total Payments
+</div>
+
+<div class="summary-value" id="totalAmount">
+$0
+</div>
+
+<div class="summary-note">
+This Month
+</div>
+</div>
+
+</div>
+
+
+<div class="summary-card">
+
+<div class="summary-icon">✓</div>
+
+<div>
+<div class="summary-label">
+Completed
+</div>
+
+<div class="summary-value" id="completedCount">
+0
+</div>
+
+<div class="summary-note">
+Payments
+</div>
+</div>
+
+</div>
+
+
+<div class="summary-card">
+
+<div class="summary-icon">◷</div>
+
+<div>
+<div class="summary-label">
+Pending
+</div>
+
+<div class="summary-value" id="pendingCount">
+0
+</div>
+
+<div class="summary-note">
+Payments
+</div>
+</div>
+
+</div>
+
+
+<div class="summary-card">
+
+<div class="summary-icon">👥</div>
+
+<div>
+<div class="summary-label">
+Total Students
+</div>
+
+<div class="summary-value" id="studentCount">
+0
+</div>
+
+<div class="summary-note">
+With Payments
+</div>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- ================= FILTERS ================= -->
+
+<div class="card filter-card">
+
+<div class="filter-grid">
+
+<input
+  type="text"
+  class="input"
+  id="searchInput"
+  placeholder="Search by student name, email or ID..."
+>
+
+<select class="input" id="courseFilter">
+<option value="">All Courses</option>
+</select>
+
+<select class="input" id="methodFilter">
+<option value="">All Payment Methods</option>
+</select>
+
+<select class="input" id="statusFilter">
+
+<option value="">All Status</option>
+<option value="paid">Paid</option>
+<option value="verified">Verified</option>
+<option value="completed">Completed</option>
+<option value="submitted">Submitted</option>
+<option value="pending">Pending</option>
+<option value="partial">Partial</option>
+<option value="rejected">Rejected</option>
+
+</select>
+
+</div>
+
+</div>
+
+
+<!-- ================= PAYMENTS TABLE ================= -->
+
+<div class="card">
+
+<div class="table-wrap">
+
+<table class="table payment-table">
+
+<thead>
+
+<tr>
+
+<th>#</th>
+<th>Student Name</th>
+<th>Course</th>
+<th>Amount</th>
+<th>Method</th>
+<th>Reference ID</th>
+<th>Date</th>
+<th>Status</th>
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody id="rows">
+
+<tr>
+<td colspan="9" class="empty-row">
+Loading payments...
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+<!-- ================= RECORD PAYMENT MODAL ================= -->
+
+<div class="modal-bg" id="recordModal">
+
+<div class="modal">
+
+<div class="modal-header">
+
+<h2>Record Payment</h2>
+
+<button
+  type="button"
+  class="close-btn"
+  onclick="closeRecordModal()">
+×
+</button>
+
+</div>
+
+
+<form id="paymentForm" class="form-grid">
+
+<div>
+
+<label>Student Account UUID</label>
+
+<input
+  class="input"
+  name="student_id"
+  required
+  placeholder="Enter student UUID"
+>
+
+</div>
+
+
+<div>
+
+<label>Amount</label>
+
+<input
+  class="input"
+  name="amount"
+  type="number"
+  min="0"
+  step="0.01"
+  required
+  placeholder="0.00"
+>
+
+</div>
+
+
+<div>
+
+<label>Currency</label>
+
+<select class="input" name="currency">
+
+<option value="USD">USD</option>
+<option value="PKR">PKR</option>
+<option value="GBP">GBP</option>
+<option value="EUR">EUR</option>
+<option value="INR">INR</option>
+
+</select>
+
+</div>
+
+
+<div>
+
+<label>Payment Method</label>
+
+<select
+  class="input"
+  name="method"
+  id="recordMethod">
+
+<option value="">
+Select Payment Method
+</option>
+
+</select>
+
+</div>
+
+
+<div>
+
+<label>Status</label>
+
+<select
+  class="input"
+  name="status">
+
+<option value="pending">Pending</option>
+<option value="submitted">Submitted</option>
+<option value="paid">Paid</option>
+<option value="verified">Verified</option>
+<option value="partial">Partial</option>
+<option value="rejected">Rejected</option>
+
+</select>
+
+</div>
+
+
+<div>
+
+<label>Reference / Transaction ID</label>
+
+<input
+  class="input"
+  name="reference"
+  placeholder="Transaction ID"
+>
+
+</div>
+
+
+<div>
+
+<label>Payment Date</label>
+
+<input
+  class="input"
+  type="date"
+  name="payment_date"
+  id="paymentDate"
+>
+
+</div>
+
+
+<div>
+
+<label>Proof URL</label>
+
+<input
+  class="input"
+  name="proof_url"
+  placeholder="Payment proof URL"
+>
+
+</div>
+
+
+<div class="full">
+
+<label>Notes</label>
+
+<textarea
+  class="input"
+  name="notes"
+  rows="3"
+  placeholder="Optional payment notes">
+</textarea>
+
+</div>
+
+
+<div class="full modal-buttons">
+
+<button
+  type="submit"
+  class="btn">
+Record Payment
+</button>
+
+<button
+  type="button"
+  class="btn cancel-btn"
+  onclick="closeRecordModal()">
+Cancel
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+
+<!-- ================= VIEW PAYMENT MODAL ================= -->
+
+<div class="modal-bg" id="viewModal">
+
+<div class="modal">
+
+<div class="modal-header">
+
+<h2>Payment Details</h2>
+
+<button
+  type="button"
+  class="close-btn"
+  onclick="closeViewModal()">
+×
+</button>
+
+</div>
+
+<div id="paymentDetails"></div>
+
+</div>
+
+</div>
+
+
+<!-- ================= VERIFY MODAL ================= -->
+
+<div class="modal-bg" id="verifyModal">
+
+<div class="modal">
+
+<div class="modal-header">
+
+<h2>Payment Verification</h2>
+
+<button
+  type="button"
+  class="close-btn"
+  onclick="closeVerifyModal()">
+×
+</button>
+
+</div>
+
+<div id="verifyDetails"></div>
+
+<div style="margin-top:15px">
+
+<label>Admin Note</label>
+
+<textarea
+  class="input"
+  id="adminNote"
+  rows="3"
+  placeholder="Optional verification note">
+</textarea>
+
+</div>
+
+<div class="modal-buttons">
+
+<button
+  type="button"
+  class="btn verify-btn"
+  onclick="verifySelectedPayment()">
+✓ Verify Payment
+</button>
+
+<button
+  type="button"
+  class="btn reject-btn"
+  onclick="rejectSelectedPayment()">
+✕ Reject Payment
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+let payments = [];
+let selectedPayment = null;
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function escapeHTML(value){
+
+  if(value === null || value === undefined){
+    return '';
+  }
+
+  return String(value)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;');
+
+}
+
+
+function getStudentName(payment){
+
+  return (
+    payment.profiles?.full_name ||
+    payment.student?.full_name ||
+    payment.student_name ||
+    payment.student_id ||
+    'Unknown Student'
+  );
+
+}
+
+
+function getCourseName(payment){
+
+  return (
+    payment.course?.name ||
+    payment.course?.title ||
+    payment.course_name ||
+    payment.course ||
+    '-'
+  );
+
+}
+
+
+function getStatusClass(status){
+
+  const s = String(status || '')
+    .toLowerCase();
+
+  if(
+    s === 'paid' ||
+    s === 'verified' ||
+    s === 'completed'
+  ){
+    return 'status-completed';
+  }
+
+  if(
+    s === 'submitted' ||
+    s === 'pending'
+  ){
+    return 'status-pending';
+  }
+
+  if(s === 'rejected'){
+    return 'status-rejected';
+  }
+
+  if(s === 'partial'){
+    return 'status-partial';
+  }
+
+  return 'status-pending';
+
+}
+
+
+function getStatusText(status){
+
+  const s = String(status || 'pending')
+    .toLowerCase();
+
+  if(s === 'paid'){
+    return 'Paid';
+  }
+
+  if(s === 'verified'){
+    return 'Verified';
+  }
+
+  if(s === 'completed'){
+    return 'Completed';
+  }
+
+  if(s === 'submitted'){
+    return 'Payment Submitted';
+  }
+
+  if(s === 'rejected'){
+    return 'Rejected';
+  }
+
+  if(s === 'partial'){
+    return 'Partial';
+  }
+
+  return 'Pending';
+
+}
+
+
+function formatDate(value){
+
+  if(!value){
+    return '-';
+  }
+
+  return String(value).slice(0,10);
+
+}
+
+
+/* =========================================================
+   LOAD PAYMENTS
+========================================================= */
+
+async function loadPayments(){
+
+  if(!await adminGuardLocal()){
+    return;
+  }
+
+  const result = await adminDB
+    .from('student_payments')
+    .select('*,profiles(full_name)')
+    .order('created_at',{
+      ascending:false
+    });
+
+  if(result.error){
+
+    document.getElementById('msg').textContent =
+      result.error.message;
+
+    document.getElementById('rows').innerHTML =
+      `<tr>
+        <td colspan="9" class="empty-row">
+          Unable to load payments.
+        </td>
+      </tr>`;
+
+    return;
+
+  }
+
+  payments = result.data || [];
+
+  loadFilters();
+
+  renderPayments();
+
+}
+
+
+/* =========================================================
+   FILTER OPTIONS
+========================================================= */
+
+function loadFilters(){
+
+  const courses = [];
+  const methods = [];
+
+  payments.forEach(payment => {
+
+    const course = getCourseName(payment);
+
+    if(
+      course &&
+      course !== '-' &&
+      !courses.includes(course)
+    ){
+      courses.push(course);
+    }
+
+    const method = payment.method;
+
+    if(
+      method &&
+      !methods.includes(method)
+    ){
+      methods.push(method);
+    }
+
+  });
+
+
+  const courseFilter =
+    document.getElementById('courseFilter');
+
+  const methodFilter =
+    document.getElementById('methodFilter');
+
+  courseFilter.innerHTML =
+    '<option value="">All Courses</option>' +
+    courses
+      .sort()
+      .map(course =>
+        `<option value="${escapeHTML(course)}">
+          ${escapeHTML(course)}
+        </option>`
+      )
+      .join('');
+
+
+  methodFilter.innerHTML =
+    '<option value="">All Payment Methods</option>' +
+    methods
+      .sort()
+      .map(method =>
+        `<option value="${escapeHTML(method)}">
+          ${escapeHTML(method)}
+        </option>`
+      )
+      .join('');
+
+
+  loadConfiguredPaymentMethods();
+
+}
+
+
+/* =========================================================
+   PAYMENT METHODS FROM SUPABASE
+========================================================= */
+
+async function loadConfiguredPaymentMethods(){
+
+  const result = await adminDB
+    .from('payment_methods')
+    .select('*')
+    .order('created_at',{
+      ascending:false
+    });
+
+  if(result.error){
+    return;
+  }
+
+  const methods = result.data || [];
+
+  const recordMethod =
+    document.getElementById('recordMethod');
+
+  if(!recordMethod){
+    return;
+  }
+
+  recordMethod.innerHTML =
+    '<option value="">Select Payment Method</option>' +
+    methods.map(method => {
+
+      const name =
+        method.name ||
+        method.method_name ||
+        method.title ||
+        method.type;
+
+      if(!name){
+        return '';
+      }
+
+      return `
+        <option value="${escapeHTML(name)}">
+          ${escapeHTML(name)}
+        </option>
+      `;
+
+    }).join('');
+
+}
+
+
+/* =========================================================
+   RENDER PAYMENTS
+========================================================= */
+
+function renderPayments(){
+
+  const search =
+    document
+      .getElementById('searchInput')
+      .value
+      .trim()
+      .toLowerCase();
+
+  const course =
+    document.getElementById('courseFilter').value;
+
+  const method =
+    document.getElementById('methodFilter').value;
+
+  const status =
+    document.getElementById('statusFilter').value;
+
+
+  const filtered = payments.filter(payment => {
+
+    const studentName =
+      getStudentName(payment)
+        .toLowerCase();
+
+    const studentId =
+      String(payment.student_id || '')
+        .toLowerCase();
+
+    const reference =
+      String(payment.reference || '')
+        .toLowerCase();
+
+    const email =
+      String(payment.profiles?.email || '')
+        .toLowerCase();
+
+    const matchesSearch =
+      !search ||
+      studentName.includes(search) ||
+      studentId.includes(search) ||
+      reference.includes(search) ||
+      email.includes(search);
+
+
+    const matchesCourse =
+      !course ||
+      getCourseName(payment) === course;
+
+
+    const matchesMethod =
+      !method ||
+      String(payment.method || '')
+        .toLowerCase() ===
+      method.toLowerCase();
+
+
+    const matchesStatus =
+      !status ||
+      String(payment.status || '')
+        .toLowerCase() ===
+      status.toLowerCase();
+
+
+    return (
+      matchesSearch &&
+      matchesCourse &&
+      matchesMethod &&
+      matchesStatus
+    );
+
+  });
+
+
+  const rows =
+    document.getElementById('rows');
+
+
+  if(!filtered.length){
+
+    rows.innerHTML =
+      `<tr>
+        <td colspan="9" class="empty-row">
+          No payments found.
+        </td>
+      </tr>`;
+
+  }else{
+
+    rows.innerHTML =
+      filtered.map((payment,index) => {
+
+        const student =
+          getStudentName(payment);
+
+        const courseName =
+          getCourseName(payment);
+
+        const amount =
+          Number(payment.amount || 0)
+            .toFixed(2);
+
+        const currency =
+          payment.currency || 'USD';
+
+        const status =
+          payment.status || 'pending';
+
+        const method =
+          payment.method || '-';
+
+        const reference =
+          payment.reference || '-';
+
+        const date =
+          formatDate(
+            payment.payment_date ||
+            payment.created_at
+          );
+
+
+        const initials =
+          student
+            .split(' ')
+            .map(x => x.charAt(0))
+            .slice(0,2)
+            .join('')
+            .toUpperCase();
+
+
+        return `
+
+          <tr>
+
+            <td>
+              ${index + 1}
+            </td>
+
+
+            <td>
+
+              <div class="student-cell">
+
+                <div class="student-avatar">
+                  ${escapeHTML(initials)}
+                </div>
+
+                <div>
+
+                  <div class="student-name">
+                    ${escapeHTML(student)}
+                  </div>
+
+                  <span class="student-id">
+                    ID: ${escapeHTML(payment.student_id || '-')}
+                  </span>
+
+                </div>
+
+              </div>
+
+            </td>
+
+
+            <td>
+              ${escapeHTML(courseName)}
+            </td>
+
+
+            <td>
+              <strong>
+                ${escapeHTML(currency)}
+                ${escapeHTML(amount)}
+              </strong>
+            </td>
+
+
+            <td>
+              ${escapeHTML(method)}
+            </td>
+
+
+            <td>
+              ${escapeHTML(reference)}
+            </td>
+
+
+            <td>
+              ${escapeHTML(date)}
+            </td>
+
+
+            <td>
+
+              <span class="status ${getStatusClass(status)}">
+                ${escapeHTML(getStatusText(status))}
+              </span>
+
+            </td>
+
+
+            <td>
+
+              <button
+                type="button"
+                class="action-btn"
+                onclick="viewPayment('${escapeHTML(payment.id)}')">
+                View
+              </button>
+
+
+              <div class="action-menu">
+
+                <button
+                  type="button"
+                  class="more-btn"
+                  onclick="toggleMenu(this)">
+                  ⋮
+                </button>
+
+                <div class="more-options">
+
+                  <button
+                    type="button"
+                    onclick="viewPayment('${escapeHTML(payment.id)}')">
+                    View Details
+                  </button>
+
+                  ${
+                    ['pending','submitted']
+                    .includes(
+                      String(status).toLowerCase()
+                    )
+                    ?
+                    `<button
+                      type="button"
+                      onclick="openVerify('${escapeHTML(payment.id)}')">
+                      Verify / Reject
+                    </button>`
+                    :
+                    ''
+                  }
+
+                </div>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+        `;
+
+      }).join('');
+
+  }
+
+
+  updateSummary();
+
+}
+
+
+/* =========================================================
+   SUMMARY
+========================================================= */
+
+function updateSummary(){
+
+  const completed =
+    payments.filter(payment =>
+      ['paid','verified','completed']
+      .includes(
+        String(payment.status || '')
+          .toLowerCase()
+      )
+    );
+
+
+  const pending =
+    payments.filter(payment =>
+      ['pending','submitted']
+      .includes(
+        String(payment.status || '')
+          .toLowerCase()
+      )
+    );
+
+
+  const totalAmount =
+    completed.reduce(
+      (sum,payment) =>
+        sum + Number(payment.amount || 0),
+      0
+    );
+
+
+  const students =
+    new Set(
+      payments
+        .map(payment => payment.student_id)
+        .filter(Boolean)
+    );
+
+
+  const currency =
+    completed[0]?.currency || 'USD';
+
+
+  document.getElementById('totalAmount')
+    .textContent =
+      currency + ' ' +
+      totalAmount.toFixed(2);
+
+
+  document.getElementById('completedCount')
+    .textContent =
+      completed.length;
+
+
+  document.getElementById('pendingCount')
+    .textContent =
+      pending.length;
+
+
+  document.getElementById('studentCount')
+    .textContent =
+      students.size;
+
+}
+
+
+/* =========================================================
+   RECORD PAYMENT
+========================================================= */
+
+function openRecordModal(){
+
+  const modal =
+    document.getElementById('recordModal');
+
+  modal.classList.add('show');
+
+
+  const date =
+    document.getElementById('paymentDate');
+
+  if(!date.value){
+
+    date.value =
+      new Date()
+        .toISOString()
+        .slice(0,10);
+
+  }
+
+}
+
+
+function closeRecordModal(){
+
+  document
+    .getElementById('recordModal')
+    .classList.remove('show');
+
+}
+
+
+/* =========================================================
+   SAVE PAYMENT
+========================================================= */
+
+document
+  .getElementById('paymentForm')
+  .addEventListener(
+    'submit',
+    async function(event){
+
+      event.preventDefault();
+
+      const formData =
+        new FormData(this);
+
+      const data =
+        Object.fromEntries(
+          formData.entries()
+        );
+
+
+      data.amount =
+        Number(data.amount);
+
+
+      if(!data.payment_date){
+        delete data.payment_date;
+      }
+
+
+      const result =
+        await adminDB
+          .from('student_payments')
+          .insert(data);
+
+
+      if(result.error){
+
+        alert(result.error.message);
+        return;
+
+      }
+
+
+      alert(
+        'Payment recorded successfully.'
+      );
+
+
+      this.reset();
+
+      closeRecordModal();
+
+      await loadPayments();
+
+    }
+  );
+
+
+/* =========================================================
+   VIEW PAYMENT
+========================================================= */
+
+function viewPayment(id){
+
+  const payment =
+    payments.find(
+      p => String(p.id) === String(id)
+    );
+
+  if(!payment){
+    return;
+  }
+
+  const student =
+    getStudentName(payment);
+
+  const course =
+    getCourseName(payment);
+
+  const status =
+    getStatusText(payment.status);
+
+  const details =
+    document.getElementById(
+      'paymentDetails'
+    );
+
+
+  details.innerHTML = `
+
+    <div class="detail-grid">
+
+      <div class="detail-box">
+        <small>Student</small>
+        <strong>
+          ${escapeHTML(student)}
+        </strong>
+      </div>
+
+      <div class="detail-box">
+        <small>Student ID</small>
+        <strong>
+          ${escapeHTML(payment.student_id || '-')}
+        </strong>
+      </div>
+
+      <div class="detail-box">
+        <small>Course</small>
+        <strong>
+          ${escapeHTML(course)}
+        </strong>
+      </div>
+
+      <div class="detail-box">
+        <small>Amount</small>
+        <strong>
+          ${escapeHTML(payment.currency || 'USD')}
+          ${escapeHTML(payment.amount || '0')}
+        </strong>
+      </div>
+
+      <div class="detail-box">
+        <small>Payment Method</small>
+        <strong>
+          ${escapeHTML(payment.method || '-')}
+        </strong>
+      </div>
+
+      <div class="detail-box">
+        <small>Reference ID</small>
+        <strong>
+          ${escapeHTML(payment.reference || '-')}
+        </strong>
+      </div>
+
+      <div class="detail-box">
+        <small>Payment Date</small>
+        <strong>
+          ${escapeHTML(
+            payment.payment_date ||
+            formatDate(payment.created_at)
+          )}
+        </strong>
+      </div>
+
+      <div class="detail-box">
+        <small>Status</small>
+        <strong>
+          ${escapeHTML(status)}
+        </strong>
+      </div>
+
+    </div>
+
+    ${
+      payment.proof_url
+      ?
+      `<div style="margin-top:15px">
+        <a
+          href="${escapeHTML(payment.proof_url)}"
+          target="_blank"
+          rel="noopener"
+          class="btn">
+          View Payment Proof
+        </a>
+      </div>`
+      :
+      ''
+    }
+
+  `;
+
+
+  document
+    .getElementById('viewModal')
+    .classList.add('show');
+
+}
+
+
+function closeViewModal(){
+
+  document
+    .getElementById('viewModal')
+    .classList.remove('show');
+
+}
+
+
+/* =========================================================
+   VERIFY / REJECT
+========================================================= */
+
+function openVerify(id){
+
+  selectedPayment =
+    payments.find(
+      p => String(p.id) === String(id)
+    );
+
+  if(!selectedPayment){
+    return;
+  }
+
+
+  const student =
+    getStudentName(selectedPayment);
+
+
+  document.getElementById(
+    'verifyDetails'
+  ).innerHTML = `
+
+    <div class="detail-grid">
+
+      <div class="detail-box">
+        <small>Student</small>
+        <strong>
+          ${escapeHTML(student)}
+        </strong>
+      </div>
+
+      <div class="detail-box">
+        <small>Amount</small>
+        <strong>
+          ${escapeHTML(
+            selectedPayment.currency || 'USD'
+          )}
+          ${escapeHTML(
+            selectedPayment.amount || '0'
+          )}
+        </strong>
+      </div>
+
+      <div class="detail-box">
+        <small>Payment Method</small>
+        <strong>
+          ${escapeHTML(
+            selectedPayment.method || '-'
+          )}
+        </strong>
+      </div>
+
+      <div class="detail-box">
+        <small>Reference ID</small>
+        <strong>
+          ${escapeHTML(
+            selectedPayment.reference || '-'
+          )}
+        </strong>
+      </div>
+
+    </div>
+
+  `;
+
+
+  document.getElementById(
+    'adminNote'
+  ).value = '';
+
+
+  document
+    .getElementById('verifyModal')
+    .classList.add('show');
+
+}
+
+
+function closeVerifyModal(){
+
+  document
+    .getElementById('verifyModal')
+    .classList.remove('show');
+
+  selectedPayment = null;
+
+}
+
+
+/* =========================================================
+   VERIFY PAYMENT
+========================================================= */
+
+async function verifySelectedPayment(){
+
+  if(!selectedPayment){
+    return;
+  }
+
+
+  const note =
+    document
+      .getElementById('adminNote')
+      .value
+      .trim();
+
+
+  const updateData = {
+    status:'verified'
+  };
+
+
+  /*
+    admin_notes will only be sent if the current
+    database structure supports it later.
+    For now status is the required operation.
+  */
+
+  if(note){
+    updateData.admin_notes = note;
+  }
+
+
+  const result =
+    await adminDB
+      .from('student_payments')
+      .update(updateData)
+      .eq('id',selectedPayment.id);
+
+
+  if(result.error){
+
+    alert(result.error.message);
+    return;
+
+  }
+
+
+  alert(
+    'Payment verified successfully.'
+  );
+
+
+  closeVerifyModal();
+
+  await loadPayments();
+
+}
+
+
+/* =========================================================
+   REJECT PAYMENT
+========================================================= */
+
+async function rejectSelectedPayment(){
+
+  if(!selectedPayment){
+    return;
+  }
+
+
+  const note =
+    document
+      .getElementById('adminNote')
+      .value
+      .trim();
+
+
+  const updateData = {
+    status:'rejected'
+  };
+
+
+  if(note){
+    updateData.admin_notes = note;
+  }
+
+
+  const result =
+    await adminDB
+      .from('student_payments')
+      .update(updateData)
+      .eq('id',selectedPayment.id);
+
+
+  if(result.error){
+
+    alert(result.error.message);
+    return;
+
+  }
+
+
+  alert(
+    'Payment rejected.'
+  );
+
+
+  closeVerifyModal();
+
+  await loadPayments();
+
+}
+
+
+/* =========================================================
+   FILTER EVENTS
+========================================================= */
+
+document
+  .getElementById('searchInput')
+  .addEventListener(
+    'input',
+    renderPayments
+  );
+
+
+document
+  .getElementById('courseFilter')
+  .addEventListener(
+    'change',
+    renderPayments
+  );
+
+
+document
+  .getElementById('methodFilter')
+  .addEventListener(
+    'change',
+    renderPayments
+  );
+
+
+document
+  .getElementById('statusFilter')
+  .addEventListener(
+    'change',
+    renderPayments
+  );
+
+
+/* =========================================================
+   MORE MENU
+========================================================= */
+
+function toggleMenu(button){
+
+  document
+    .querySelectorAll('.more-options')
+    .forEach(menu => {
+
+      if(menu !== button.nextElementSibling){
+        menu.style.display = 'none';
+      }
+
+    });
+
+
+  const menu =
+    button.nextElementSibling;
+
+
+  menu.style.display =
+    menu.style.display === 'block'
+      ? 'none'
+      : 'block';
+
+}
+
+
+document.addEventListener(
+  'click',
+  function(event){
+
+    if(
+      !event.target.closest('.action-menu')
+    ){
+
+      document
+        .querySelectorAll('.more-options')
+        .forEach(menu => {
+
+          menu.style.display = 'none';
+
+        });
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   MODAL BACKDROP
+========================================================= */
+
+document
+  .getElementById('recordModal')
+  .addEventListener(
+    'click',
+    function(event){
+
+      if(event.target === this){
+        closeRecordModal();
+      }
+
+    }
+  );
+
+
+document
+  .getElementById('viewModal')
+  .addEventListener(
+    'click',
+    function(event){
+
+      if(event.target === this){
+        closeViewModal();
+      }
+
+    }
+  );
+
+
+document
+  .getElementById('verifyModal')
+  .addEventListener(
+    'click',
+    function(event){
+
+      if(event.target === this){
+        closeVerifyModal();
+      }
+
+    }
+  );
+
+
+/* =========================================================
+   START
+========================================================= */
+
+loadPayments();
+
+</script>
+
+</main>
+</div>
+
+</body>
+</html>
