@@ -4,13 +4,168 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Teachers | Admin</title>
+<title>Schedule | Admin</title>
 
 <link rel="stylesheet" href="../css/admin.css">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../js/config.js"></script>
 <script src="../js/admin.js"></script>
+
+<style>
+.schedule-form{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px
+}
+
+.field.full{
+  grid-column:1/-1
+}
+
+.days-box{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px
+}
+
+.day-check input{
+  display:none
+}
+
+.day-check label{
+  display:block;
+  padding:9px 14px;
+  border:1px solid #ccd5dc;
+  border-radius:8px;
+  cursor:pointer;
+  background:#fff;
+  font-weight:600;
+  font-size:13px
+}
+
+.day-check input:checked+label{
+  background:#2f9fba;
+  color:#fff;
+  border-color:#2f9fba
+}
+
+.time-row{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:8px
+}
+
+.schedule-section{
+  margin-top:28px
+}
+
+.schedule-title{
+  background:#f18b82;
+  color:#fff;
+  padding:10px 14px;
+  font-weight:700;
+  font-size:15px
+}
+
+.weekly-wrap{
+  overflow:auto;
+  border:1px solid #ddd
+}
+
+.weekly-grid{
+  width:100%;
+  min-width:900px;
+  border-collapse:collapse;
+  table-layout:fixed
+}
+
+.weekly-grid th,
+.weekly-grid td{
+  border:1px solid #ddd;
+  padding:0
+}
+
+.weekly-grid th{
+  background:#f18b82;
+  color:#fff;
+  height:36px;
+  font-size:13px
+}
+
+.weekly-grid .time-col{
+  width:105px;
+  background:#f7f7f7;
+  color:#555;
+  font-size:11px;
+  text-align:center;
+  padding:5px
+}
+
+.slot{
+  height:38px;
+  font-size:11px;
+  padding:4px!important;
+  vertical-align:middle;
+  text-align:left;
+  background:#fff
+}
+
+.slot.has-class{
+  background:#aeb000;
+  color:#fff;
+  font-weight:600;
+  cursor:pointer
+}
+
+.class-name{
+  font-size:11px;
+  line-height:1.25
+}
+
+.class-course{
+  font-size:9px;
+  opacity:.9;
+  margin-top:2px
+}
+
+.class-duration{
+  font-size:9px;
+  opacity:.85
+}
+
+.status-active{
+  color:#16834b;
+  font-weight:700
+}
+
+.status-inactive{
+  color:#b33;
+  font-weight:700
+}
+
+.saved-table-wrap{
+  overflow:auto
+}
+
+.saved-table{
+  min-width:1000px
+}
+
+.saved-table td{
+  vertical-align:middle
+}
+
+@media(max-width:700px){
+  .schedule-form{
+    grid-template-columns:1fr
+  }
+
+  .field.full{
+    grid-column:auto
+  }
+}
+</style>
 </head>
 
 <body>
@@ -31,8 +186,8 @@ HR Admin
 <a href="users.html">Portal Users</a>
 <a href="students.html">Students</a>
 <a href="enrollments.html">Enrollments</a>
-<a class="active" href="teachers.html">Teachers</a>
-<a href="schedule.html">Schedule</a>
+<a href="teachers.html">Teachers</a>
+<a class="active" href="schedule.html">Schedule</a>
 <a href="classes.html">Classes</a>
 <a href="attendance.html">Attendance</a>
 <a href="payments.html">Payments</a>
@@ -52,85 +207,105 @@ HR Admin
 <a href="#" onclick="logout();return false">Logout</a>
 
 </nav>
+
 </aside>
 
 
 <main class="main">
 
 <div class="top">
-<h1>Teachers</h1>
+<h1>Weekly Class Schedule</h1>
 </div>
 
 <div id="msg" class="msg"></div>
 
 
-<!-- CREATE TEACHER -->
+<!-- ADD WEEKLY CLASS -->
 
 <div class="card">
 
-<h2>Create Teacher Account</h2>
+<h2 style="margin-top:0">
+Add Weekly Class
+</h2>
 
-<form id="teacherForm" class="form-grid">
+<form id="f" class="schedule-form">
+
+
+<!-- TEACHER -->
 
 <div class="field">
 
-<label>Teacher Name</label>
+<label>Teacher</label>
+
+<select
+id="teacher_id"
+class="input"
+required>
+
+<option value="">
+Loading teachers...
+</option>
+
+</select>
+
+</div>
+
+
+<!-- STUDENT -->
+
+<div class="field">
+
+<label>Student</label>
+
+<select
+id="student_id"
+class="input"
+required>
+
+<option value="">
+Select teacher first
+</option>
+
+</select>
+
+</div>
+
+
+<!-- COURSE -->
+
+<div class="field">
+
+<label>Course</label>
 
 <input
-id="teacher_name"
+id="course"
 class="input"
 type="text"
-placeholder="Enter teacher name"
-required>
+placeholder="e.g. Nazra Quran">
 
 </div>
 
 
-<div class="field">
-
-<label>Email</label>
-
-<input
-id="teacher_email"
-class="input"
-type="email"
-placeholder="teacher@example.com"
-required>
-
-</div>
-
+<!-- DURATION -->
 
 <div class="field">
 
-<label>Password</label>
-
-<input
-id="teacher_password"
-class="input"
-type="password"
-placeholder="Create password"
-required
-minlength="6">
-
-</div>
-
-
-<div class="field">
-
-<label>Gender</label>
+<label>Duration</label>
 
 <select
-id="teacher_gender"
+id="duration_minutes"
 class="input">
 
-<option value="">Select Gender</option>
-
-<option value="Male">
-Male
+<option value="30">
+30 Minutes
 </option>
 
-<option value="Female">
-Female
+<option value="45">
+45 Minutes
+</option>
+
+<option value="60">
+60 Minutes
 </option>
 
 </select>
@@ -138,48 +313,164 @@ Female
 </div>
 
 
-<!-- TIMEZONE -->
-
-<div class="field">
-
-<label>Teacher Time Zone</label>
-
-<select
-id="teacher_timezone"
-class="input"
-required>
-
-<option value="Asia/Karachi">
-Asia/Karachi — Pakistan
-</option>
-
-</select>
-
-<small
-style="
-display:block;
-margin-top:6px;
-opacity:.7;
-line-height:1.4;
-">
-
-Select the teacher's local IANA time zone.
-All supported time zones are available.
-
-</small>
-
-</div>
-
+<!-- DAYS -->
 
 <div class="field full">
 
-<label>Bio</label>
+<label>Class Days</label>
 
-<textarea
-id="teacher_bio"
+<div class="days-box">
+
+<div class="day-check">
+<input type="checkbox" id="mon" value="Monday">
+<label for="mon">Monday</label>
+</div>
+
+<div class="day-check">
+<input type="checkbox" id="tue" value="Tuesday">
+<label for="tue">Tuesday</label>
+</div>
+
+<div class="day-check">
+<input type="checkbox" id="wed" value="Wednesday">
+<label for="wed">Wednesday</label>
+</div>
+
+<div class="day-check">
+<input type="checkbox" id="thu" value="Thursday">
+<label for="thu">Thursday</label>
+</div>
+
+<div class="day-check">
+<input type="checkbox" id="fri" value="Friday">
+<label for="fri">Friday</label>
+</div>
+
+<div class="day-check">
+<input type="checkbox" id="sat" value="Saturday">
+<label for="sat">Saturday</label>
+</div>
+
+<div class="day-check">
+<input type="checkbox" id="sun" value="Sunday">
+<label for="sun">Sunday</label>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- TIME -->
+
+<div class="field">
+
+<label>Class Time</label>
+
+<div class="time-row">
+
+<select
+id="hour"
 class="input"
-rows="4"
-placeholder="Teacher bio"></textarea>
+required>
+
+<option value="">
+Hour
+</option>
+
+<option value="12">12</option>
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+<option value="4">4</option>
+<option value="5">5</option>
+<option value="6">6</option>
+<option value="7">7</option>
+<option value="8">8</option>
+<option value="9">9</option>
+<option value="10">10</option>
+<option value="11">11</option>
+
+</select>
+
+
+<select
+id="minute"
+class="input">
+
+<option value="00">00</option>
+<option value="30">30</option>
+
+</select>
+
+
+<select
+id="ampm"
+class="input">
+
+<option value="AM">AM</option>
+<option value="PM">PM</option>
+
+</select>
+
+</div>
+
+</div>
+
+
+<!-- MEET -->
+
+<div class="field">
+
+<label>Google Meet Link</label>
+
+<input
+id="google_meet_url"
+class="input"
+type="url"
+placeholder="https://meet.google.com/...">
+
+</div>
+
+
+<!-- CLASSROOM -->
+
+<div class="field">
+
+<label>Classroom</label>
+
+<select
+id="classroom_code"
+class="input">
+
+<option value="">
+Select teacher first
+</option>
+
+</select>
+
+</div>
+
+
+<!-- STATUS -->
+
+<div class="field">
+
+<label>Status</label>
+
+<select
+id="active"
+class="input">
+
+<option value="true">
+Active
+</option>
+
+<option value="false">
+Inactive
+</option>
+
+</select>
 
 </div>
 
@@ -187,11 +478,10 @@ placeholder="Teacher bio"></textarea>
 <div class="field full">
 
 <button
-id="createTeacherBtn"
 class="btn"
 type="submit">
 
-Create Teacher Account
+Save Weekly Class
 
 </button>
 
@@ -202,52 +492,120 @@ Create Teacher Account
 </div>
 
 
-<!-- TEACHER LIST -->
+<!-- AM GRID -->
 
-<div class="card">
+<div class="card schedule-section">
 
-<h2>All Teachers</h2>
+<div class="schedule-title">
+Night AM — 12:00 AM to 11:30 AM
+</div>
 
-<div class="table-wrap">
+<div class="weekly-wrap">
 
-<table class="table">
+<table class="weekly-grid">
 
 <thead>
 
 <tr>
 
-<th>Name</th>
+<th class="time-col">
+Night AM
+</th>
 
-<th>Gender</th>
-
-<th>Bio</th>
-
-<th>Time Zone</th>
-
-<th>Status</th>
-
-<th>Classroom</th>
-
-<th>Account ID</th>
-
-<th>Actions</th>
+<th>MONDAY</th>
+<th>TUESDAY</th>
+<th>WEDNESDAY</th>
+<th>THURSDAY</th>
+<th>FRIDAY</th>
+<th>SATURDAY</th>
+<th>SUNDAY</th>
 
 </tr>
 
 </thead>
 
+<tbody id="amGrid"></tbody>
 
-<tbody id="rows">
+</table>
+
+</div>
+
+</div>
+
+
+<!-- PM GRID -->
+
+<div class="card schedule-section">
+
+<div class="schedule-title">
+Afternoon PM — 12:00 PM to 11:30 PM
+</div>
+
+<div class="weekly-wrap">
+
+<table class="weekly-grid">
+
+<thead>
 
 <tr>
 
-<td colspan="8">
-Loading...
-</td>
+<th class="time-col">
+Afternoon PM
+</th>
+
+<th>MONDAY</th>
+<th>TUESDAY</th>
+<th>WEDNESDAY</th>
+<th>THURSDAY</th>
+<th>FRIDAY</th>
+<th>SATURDAY</th>
+<th>SUNDAY</th>
 
 </tr>
 
-</tbody>
+</thead>
+
+<tbody id="pmGrid"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+<!-- SAVED -->
+
+<div class="card schedule-section">
+
+<h2>
+Saved Weekly Classes
+</h2>
+
+<div class="saved-table-wrap">
+
+<table class="table saved-table">
+
+<thead>
+
+<tr>
+
+<th>Teacher</th>
+<th>Student</th>
+<th>Days</th>
+<th>Time</th>
+<th>Duration</th>
+<th>Course</th>
+<th>Google Meet</th>
+<th>Classroom</th>
+<th>Status</th>
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody id="rows"></tbody>
 
 </table>
 
@@ -263,141 +621,169 @@ Loading...
 <script>
 
 /* =========================================================
-   CONFIG
+   DATABASE
 ========================================================= */
 
-const EDGE_FUNCTION_URL =
-"https://olxytsmwqkrrnutsegtr.supabase.co/functions/v1/create-portal-user";
+const db = supabase.createClient(
+  window.SUPABASE_CONFIG.url,
+  window.SUPABASE_CONFIG.anonKey
+);
 
 
 /* =========================================================
-   TIMEZONE SYSTEM
-   Uses browser-supported IANA time zones.
-   No limited country list.
+   DATA
 ========================================================= */
 
-function getSupportedTimeZones(){
+let teachersMap = {};
+let studentsMap = {};
+let classroomsMap = {};
+let schedules = [];
 
-let zones = [];
+const DAYS = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday"
+];
 
-
-try{
-
-if(
-typeof Intl !== "undefined" &&
-typeof Intl.supportedValuesOf === "function"
-){
-
-zones =
-Intl.supportedValuesOf("timeZone");
-
-}
-
-}catch(error){
-
-console.warn(
-"Could not read browser timezone list:",
-error
-);
-
-}
-
-
-if(!zones.includes("UTC")){
-
-zones.unshift("UTC");
-
-}
+const dayChecks = [
+  "mon",
+  "tue",
+  "wed",
+  "thu",
+  "fri",
+  "sat",
+  "sun"
+];
 
 
-if(!zones.includes("Asia/Karachi")){
+/* =========================================================
+   SAFE HTML
+========================================================= */
 
-zones.push("Asia/Karachi");
+function safe(value){
 
-}
-
-
-return [...new Set(zones)].sort();
+  return escapeHtml(
+    String(value ?? "")
+  );
 
 }
 
 
 /* =========================================================
-   LOAD TIMEZONES
+   DAYS
 ========================================================= */
 
-function loadTimeZones(){
+function getSelectedDays(){
 
-const select =
-document.getElementById(
-"teacher_timezone"
-);
+  return dayChecks
 
-if(!select){
+    .map(id =>
+      document.getElementById(id)
+    )
 
-return;
+    .filter(x =>
+      x && x.checked
+    )
 
-}
-
-
-let browserZone =
-"Asia/Karachi";
-
-
-try{
-
-browserZone =
-Intl.DateTimeFormat()
-.resolvedOptions()
-.timeZone ||
-"Asia/Karachi";
-
-}catch(error){
-
-console.warn(
-"Browser timezone unavailable:",
-error
-);
+    .map(x =>
+      x.value
+    );
 
 }
 
 
-const zones =
-getSupportedTimeZones();
+/* =========================================================
+   TIME
+========================================================= */
 
+function formatTime12(time){
 
-select.innerHTML = "";
+  if(!time){
+    return "";
+  }
 
+  const parts =
+    String(time).split(":");
 
-zones.forEach(function(zone){
+  let hour =
+    parseInt(parts[0],10);
 
-const option =
-document.createElement("option");
+  const minute =
+    parts[1] || "00";
 
-option.value =
-zone;
+  const ampm =
+    hour >= 12
+      ? "PM"
+      : "AM";
 
-option.textContent =
-zone;
+  hour =
+    hour % 12 || 12;
 
-select.appendChild(option);
-
-});
-
-
-if(zones.includes(browserZone)){
-
-select.value =
-browserZone;
-
-}else{
-
-select.value =
-"Asia/Karachi";
+  return (
+    String(hour).padStart(2,"0")
+    +
+    ":"
+    +
+    minute
+    +
+    " "
+    +
+    ampm
+  );
 
 }
 
+
+function timeToMinutes(time){
+
+  if(!time){
+    return 0;
+  }
+
+  const parts =
+    String(time).split(":");
+
+  return (
+    (parseInt(parts[0],10) || 0) * 60
+    +
+    (parseInt(parts[1],10) || 0)
+  );
+
 }
+
+
+function minutesToTime(minutes){
+
+  minutes =
+    minutes % 1440;
+
+  return (
+    String(
+      Math.floor(minutes / 60)
+    ).padStart(2,"0")
+    +
+    ":"
+    +
+    String(
+      minutes % 60
+    ).padStart(2,"0")
+  );
+
+}
+
+
+/* =========================================================
+   TIMEZONE
+   Admin schedule time is stored in Pakistan time.
+   Teacher/student timezones are stored on their records.
+========================================================= */
+
+const ADMIN_SCHEDULE_TIMEZONE =
+  "Asia/Karachi";
 
 
 /* =========================================================
@@ -406,923 +792,1106 @@ select.value =
 
 async function loadTeachers(){
 
-const guardResult = await adminGuard();
+  const result =
+    await db
+      .from("teachers")
+      .select(
+        "id,name,active,timezone"
+      )
+      .eq("active",true)
+      .order("name");
 
-if(!guardResult) return;
+  if(result.error){
 
+    showMsg(
+      "msg",
+      result.error.message,
+      "error"
+    );
 
-const rows =
-document.getElementById("rows");
+    return;
+  }
 
+  teachersMap = {};
 
-rows.innerHTML = `
-<tr>
-<td colspan="8">
-Loading teachers...
-</td>
-</tr>
-`;
+  const select =
+    document.getElementById(
+      "teacher_id"
+    );
 
+  select.innerHTML =
+    '<option value="">Select Teacher</option>';
 
-/* Get teachers */
 
-const {
-data: teachers,
-error: teacherError
-} = await db
-.from("teachers")
-.select(
-"id,name,gender,bio,active,timezone,created_at"
-)
-.order(
-"created_at",
-{
-ascending:false
-}
-);
+  (result.data || [])
+    .forEach(teacher => {
 
+      teachersMap[
+        teacher.id
+      ] = teacher;
 
-if(teacherError){
 
-showMsg(
-"msg",
-teacherError.message,
-"error"
-);
+      select.innerHTML +=
+        `
+        <option value="${safe(teacher.id)}">
+          ${safe(teacher.name)}
+        </option>
+        `;
 
-rows.innerHTML = `
-<tr>
-<td colspan="8">
-Could not load teachers.
-</td>
-</tr>
-`;
-
-return;
-
-}
-
-
-/* Get classroom access */
-
-const {
-data: classrooms,
-error: classroomError
-} = await db
-.from("class_access")
-.select(
-"teacher_id,access_code,room,active"
-)
-.eq(
-"role",
-"teacher"
-);
-
-
-if(classroomError){
-
-console.warn(
-"Classroom data could not be loaded:",
-classroomError.message
-);
-
-}
-
-
-/* Create classroom lookup */
-
-const classroomMap = {};
-
-(classrooms || []).forEach(
-function(c){
-
-classroomMap[c.teacher_id] = c;
-
-});
-
-
-/* No teachers */
-
-if(!teachers || teachers.length === 0){
-
-rows.innerHTML = `
-<tr>
-<td colspan="8">
-No teachers found.
-</td>
-</tr>
-`;
-
-return;
-
-}
-
-
-/* Render */
-
-rows.innerHTML =
-teachers.map(
-function(t){
-
-const classroom =
-classroomMap[t.id];
-
-
-let classroomHtml = "";
-
-
-if(classroom){
-
-classroomHtml = `
-
-<div>
-<strong>
-${escapeHtml(
-classroom.access_code || ""
-)}
-</strong>
-</div>
-
-<div style="font-size:12px;opacity:.75">
-${classroom.active
-? "Classroom Active"
-: "Classroom Disabled"}
-</div>
-
-`;
-
-}else{
-
-classroomHtml = `
-<span style="opacity:.65">
-No Classroom
-</span>
-`;
-
-}
-
-
-/* Status */
-
-const statusHtml = t.active
-
-? `<span style="color:green;font-weight:600">
-Active
-</span>`
-
-: `<span style="color:#b45309;font-weight:600">
-Inactive
-</span>`;
-
-
-/* Timezone */
-
-const teacherTimezone =
-t.timezone ||
-"Asia/Karachi";
-
-
-const timezoneHtml = `
-
-<small
-style="
-font-size:12px;
-word-break:break-word;
-">
-
-${escapeHtml(teacherTimezone)}
-
-</small>
-
-`;
-
-
-/* Action */
-
-const actionHtml = t.active
-
-? `
-
-<button
-type="button"
-class="btn"
-style="margin:2px"
-onclick="deactivateTeacher('${t.id}')">
-
-Deactivate
-
-</button>
-
-<button
-type="button"
-class="btn"
-style="margin:2px;background:#b91c1c"
-onclick="deleteTeacher('${t.id}','${escapeJs(t.name || "")}')">
-
-Delete
-
-</button>
-
-`
-
-: `
-
-<button
-type="button"
-class="btn"
-style="margin:2px"
-onclick="activateTeacher('${t.id}')">
-
-Activate
-
-</button>
-
-<button
-type="button"
-class="btn"
-style="margin:2px;background:#b91c1c"
-onclick="deleteTeacher('${t.id}','${escapeJs(t.name || "")}')">
-
-Delete
-
-</button>
-
-`;
-
-
-return `
-
-<tr>
-
-<td>
-${escapeHtml(t.name || "")}
-</td>
-
-
-<td>
-${escapeHtml(t.gender || "")}
-</td>
-
-
-<td>
-${escapeHtml(t.bio || "")}
-</td>
-
-
-<td>
-${timezoneHtml}
-</td>
-
-
-<td>
-${statusHtml}
-</td>
-
-
-<td>
-${classroomHtml}
-</td>
-
-
-<td style="font-size:11px;word-break:break-all">
-${escapeHtml(t.id || "")}
-</td>
-
-
-<td>
-${actionHtml}
-</td>
-
-</tr>
-
-`;
-
-}
-).join("");
+    });
 
 }
 
 
 /* =========================================================
-   ESCAPE JS STRING
+   LOAD STUDENTS FOR SELECTED TEACHER
 ========================================================= */
 
-function escapeJs(value){
+async function loadStudents(teacherId){
 
-return String(value || "")
-.replace(/\\/g,"\\\\")
-.replace(/'/g,"\\'")
-.replace(/"/g,'\\"')
-.replace(/\n/g," ")
-.replace(/\r/g," ");
+  const studentSelect =
+    document.getElementById(
+      "student_id"
+    );
+
+  const classroomSelect =
+    document.getElementById(
+      "classroom_code"
+    );
+
+
+  studentSelect.innerHTML =
+    "<option>Loading students...</option>";
+
+  classroomSelect.innerHTML =
+    "<option>Loading classroom...</option>";
+
+
+  studentsMap = {};
+  classroomsMap = {};
+
+
+  if(!teacherId){
+
+    studentSelect.innerHTML =
+      "<option>Select teacher first</option>";
+
+    classroomSelect.innerHTML =
+      "<option>Select teacher first</option>";
+
+    return;
+  }
+
+
+  /* -----------------------------------------
+     STUDENTS
+  ----------------------------------------- */
+
+  const studentsResult =
+    await db
+      .from("students")
+      .select(
+        "id,full_name,teacher_id,status,timezone"
+      )
+      .eq("teacher_id",teacherId)
+      .order("full_name");
+
+
+  if(studentsResult.error){
+
+    showMsg(
+      "msg",
+      studentsResult.error.message,
+      "error"
+    );
+
+    return;
+  }
+
+
+  studentSelect.innerHTML =
+    '<option value="">Select Student</option>';
+
+
+  (studentsResult.data || [])
+    .forEach(student => {
+
+      studentsMap[
+        student.id
+      ] = student;
+
+
+      studentSelect.innerHTML +=
+        `
+        <option value="${safe(student.id)}">
+          ${safe(student.full_name)}
+        </option>
+        `;
+
+    });
+
+
+  if(
+    !(studentsResult.data || []).length
+  ){
+
+    studentSelect.innerHTML =
+      "<option>No students assigned</option>";
+
+  }
+
+
+  /* -----------------------------------------
+     CLASSROOM
+  ----------------------------------------- */
+
+  const classroomResult =
+    await db
+      .from("class_access")
+      .select(
+        "access_code,name,room,google_meet_url,active"
+      )
+      .eq("teacher_id",teacherId)
+      .eq("role","teacher")
+      .eq("active",true);
+
+
+  if(classroomResult.error){
+
+    classroomSelect.innerHTML =
+      "<option>No classroom found</option>";
+
+    return;
+  }
+
+
+  classroomSelect.innerHTML =
+    '<option value="">Select Classroom</option>';
+
+
+  (classroomResult.data || [])
+    .forEach(classroom => {
+
+      classroomsMap[
+        classroom.access_code
+      ] = classroom;
+
+
+      classroomSelect.innerHTML +=
+        `
+        <option value="${safe(classroom.access_code)}">
+          ${safe(classroom.access_code)}
+          —
+          ${safe(classroom.room)}
+        </option>
+        `;
+
+    });
+
+
+  if(
+    !(classroomResult.data || []).length
+  ){
+
+    classroomSelect.innerHTML =
+      "<option>No active classroom</option>";
+
+  }
 
 }
 
 
 /* =========================================================
-   CREATE TEACHER
+   TEACHER CHANGE
 ========================================================= */
 
 document
-.getElementById("teacherForm")
-.addEventListener(
-"submit",
-async function(e){
-
-e.preventDefault();
-
-
-const button =
-document.getElementById(
-"createTeacherBtn"
-);
-
-
-button.disabled = true;
-
-button.textContent =
-"Creating...";
-
-
-const name =
-document
-.getElementById("teacher_name")
-.value
-.trim();
-
-
-const email =
-document
-.getElementById("teacher_email")
-.value
-.trim();
-
-
-const password =
-document
-.getElementById("teacher_password")
-.value;
-
-
-const gender =
-document
-.getElementById("teacher_gender")
-.value;
-
-
-const bio =
-document
-.getElementById("teacher_bio")
-.value
-.trim();
-
-
-const timezone =
-document
-.getElementById("teacher_timezone")
-.value
-.trim();
-
-
-try{
-
-
-if(!timezone){
-
-throw new Error(
-"Please select teacher time zone."
-);
-
-}
-
-
-const {
-data: {
-session
-}
-} =
-await db.auth.getSession();
-
-
-if(!session){
-
-location.href =
-"login.html";
-
-return;
-
-}
-
-
-/* Call Edge Function */
-
-const response =
-await fetch(
-EDGE_FUNCTION_URL,
-{
-
-method:"POST",
-
-headers:{
-
-"Authorization":
-"Bearer " +
-session.access_token,
-
-"apikey":
-window
-.SUPABASE_CONFIG
-.anonKey,
-
-"Content-Type":
-"application/json"
-
-},
-
-body:
-JSON.stringify({
-
-role:"teacher",
-
-email:email,
-
-password:password,
-
-full_name:name,
-
-gender:
-gender || null,
-
-bio:
-bio || null
-
-})
-
-});
-
-
-const result =
-await response.json();
-
-
-if(
-!response.ok ||
-!result.success
-){
-
-throw new Error(
-result.error ||
-"Teacher account could not be created."
-);
-
-}
-
-
-/* =====================================================
-   SAVE TIMEZONE
-===================================================== */
-
-const teacherId =
-result.user_id;
-
-
-if(!teacherId){
-
-throw new Error(
-"Teacher account was created but ID was not returned."
-);
-
-}
-
-
-const timezoneResult =
-await db
-
-.from("teachers")
-
-.update({
-
-timezone:
-timezone
-
-})
-
-.eq(
-"id",
-teacherId
-);
-
-
-if(timezoneResult.error){
-
-throw new Error(
-"Teacher account created, but timezone could not be saved: " +
-timezoneResult.error.message
-);
-
-}
-
-
-/* Success */
-
-let successMessage =
-"Teacher account created successfully.";
-
-
-if(
-result.classroom &&
-result.classroom.access_code
-){
-
-successMessage +=
-" Classroom Code: " +
-result.classroom.access_code;
-
-}
-
-
-successMessage +=
-" Time Zone: " +
-timezone;
-
-
-showMsg(
-"msg",
-successMessage,
-"ok"
-);
-
-
-document
-.getElementById(
-"teacherForm"
-)
-.reset();
-
-
-/*
-   Keep safe default after reset.
-*/
-
-document
-.getElementById(
-"teacher_timezone"
-)
-.value =
-"Asia/Karachi";
-
-
-await loadTeachers();
-
-
-}
-catch(error){
-
-showMsg(
-"msg",
-error.message ||
-"Something went wrong.",
-"error"
-);
-
-}
-finally{
-
-button.disabled = false;
-
-button.textContent =
-"Create Teacher Account";
-
-}
-
-}
-);
+  .getElementById("teacher_id")
+  .addEventListener(
+    "change",
+    function(){
+
+      loadStudents(
+        this.value
+      );
+
+    }
+  );
 
 
 /* =========================================================
-   DEACTIVATE TEACHER
+   CLASSROOM CHANGE
 ========================================================= */
 
-async function deactivateTeacher(
-teacherId
-){
+document
+  .getElementById("classroom_code")
+  .addEventListener(
+    "change",
+    function(){
 
-if(
-!confirm(
-"Is teacher ko deactivate karna hai?\n\n" +
-"Teacher inactive ho jayega aur Classroom access bhi disable ho jayega."
-)
-){
+      const classroom =
+        classroomsMap[
+          this.value
+        ];
 
-return;
+      const meetInput =
+        document.getElementById(
+          "google_meet_url"
+        );
 
-}
+
+      if(
+        classroom &&
+        classroom.google_meet_url &&
+        !meetInput.value
+      ){
+
+        meetInput.value =
+          classroom.google_meet_url;
+
+      }
+
+    }
+  );
 
 
-await changeTeacherStatus(
-teacherId,
-"deactivate"
-);
+/* =========================================================
+   BUILD WEEKLY GRID
+========================================================= */
+
+function buildGrid(){
+
+  const amGrid =
+    document.getElementById(
+      "amGrid"
+    );
+
+  const pmGrid =
+    document.getElementById(
+      "pmGrid"
+    );
+
+
+  amGrid.innerHTML = "";
+
+  pmGrid.innerHTML = "";
+
+
+  for(
+    let minutes = 0;
+    minutes < 720;
+    minutes += 30
+  ){
+
+    amGrid.innerHTML +=
+      makeGridRow(minutes);
+
+  }
+
+
+  for(
+    let minutes = 720;
+    minutes < 1440;
+    minutes += 30
+  ){
+
+    pmGrid.innerHTML +=
+      makeGridRow(minutes);
+
+  }
 
 }
 
 
 /* =========================================================
-   ACTIVATE TEACHER
+   GRID ROW
 ========================================================= */
 
-async function activateTeacher(
-teacherId
-){
+function makeGridRow(minutes){
 
-if(
-!confirm(
-"Is teacher ko dobara activate karna hai?"
-)
-){
+  const start =
+    minutesToTime(minutes);
 
-return;
-
-}
+  const end =
+    minutesToTime(minutes + 30);
 
 
-await changeTeacherStatus(
-teacherId,
-"activate"
-);
+  let html =
+    `
+    <tr>
+
+      <td class="time-col">
+        ${safe(
+          formatTime12(start)
+          +
+          " - "
+          +
+          formatTime12(end)
+        )}
+      </td>
+    `;
+
+
+  DAYS.forEach(day => {
+
+    html +=
+      `
+      <td
+        class="slot"
+        data-day="${safe(day)}"
+        data-start="${safe(start)}">
+      </td>
+      `;
+
+  });
+
+
+  html +=
+    "</tr>";
+
+
+  return html;
 
 }
 
 
 /* =========================================================
-   CHANGE STATUS
+   RENDER GRID
 ========================================================= */
 
-async function changeTeacherStatus(
-teacherId,
-action
-){
+function renderGrid(){
 
-try{
+  document
+    .querySelectorAll(".slot")
+    .forEach(cell => {
 
+      cell.className =
+        "slot";
 
-const {
-data:{
-session
-}
-} =
-await db.auth.getSession();
+      cell.innerHTML =
+        "";
 
-
-if(!session){
-
-location.href =
-"login.html";
-
-return;
-
-}
+    });
 
 
-const response =
-await fetch(
-EDGE_FUNCTION_URL,
-{
+  schedules
 
-method:"POST",
+    .filter(schedule =>
+      schedule.active
+    )
 
-headers:{
+    .forEach(schedule => {
 
-"Authorization":
-"Bearer " +
-session.access_token,
-
-"apikey":
-window
-.SUPABASE_CONFIG
-.anonKey,
-
-"Content-Type":
-"application/json"
-
-},
-
-body:
-JSON.stringify({
-
-action:
-action,
-
-user_id:
-teacherId
-
-})
-
-});
+      const start =
+        timeToMinutes(
+          schedule.class_time
+        );
 
 
-const result =
-await response.json();
+      const duration =
+        parseInt(
+          schedule.duration_minutes,
+          10
+        ) || 30;
 
 
-if(
-!response.ok ||
-!result.success
-){
-
-throw new Error(
-result.error ||
-"Could not update teacher."
-);
-
-}
+      const numberOfSlots =
+        Math.ceil(
+          duration / 30
+        );
 
 
-showMsg(
-"msg",
-result.message ||
-"Teacher status updated.",
-"ok"
-);
+      const studentName =
+        studentsMap[
+          schedule.student_id
+        ]?.full_name
+        ||
+        schedule.student_id
+        ||
+        "Student";
 
 
-await loadTeachers();
+      (
+        schedule.class_days
+        || []
+      ).forEach(day => {
+
+        for(
+          let i = 0;
+          i < numberOfSlots;
+          i++
+        ){
+
+          const slotMinutes =
+            start +
+            (i * 30);
 
 
-}
-catch(error){
+          if(
+            slotMinutes >= 1440
+          ){
 
-showMsg(
-"msg",
-error.message ||
-"Something went wrong.",
-"error"
-);
+            continue;
 
-}
+          }
+
+
+          const slotTime =
+            minutesToTime(
+              slotMinutes
+            );
+
+
+          const selector =
+            `.slot[data-day="${day}"][data-start="${slotTime}"]`;
+
+
+          const cell =
+            document.querySelector(
+              selector
+            );
+
+
+          if(!cell){
+
+            continue;
+
+          }
+
+
+          cell.classList.add(
+            "has-class"
+          );
+
+
+          cell.innerHTML =
+            `
+            <div class="class-name">
+              ${safe(studentName)}
+            </div>
+
+            ${
+              schedule.course
+                ?
+                `
+                <div class="class-course">
+                  ${safe(schedule.course)}
+                </div>
+                `
+                :
+                ""
+            }
+
+            ${
+              i === 0
+                ?
+                `
+                <div class="class-duration">
+                  ${safe(duration)} min
+                </div>
+                `
+                :
+                ""
+            }
+            `;
+
+        }
+
+      });
+
+    });
 
 }
 
 
 /* =========================================================
-   DELETE TEACHER
+   LOAD SAVED SCHEDULES
 ========================================================= */
 
-async function deleteTeacher(
-teacherId,
-teacherName
-){
+async function loadSchedules(){
 
-const firstConfirm =
-confirm(
-"WARNING!\n\n" +
-"Teacher: " +
-teacherName +
-"\n\n" +
-"Ye account permanently delete hoga."
-);
-
-
-if(!firstConfirm){
-
-return;
-
-}
-
-
-const secondConfirm =
-confirm(
-"FINAL CONFIRMATION\n\n" +
-"Teacher account, Classroom access aur related assignment records delete ho jayenge.\n\n" +
-"Ye action undo nahi kiya ja sakta.\n\n" +
-"Delete permanently?"
-);
+  const result =
+    await db
+      .from("class_schedules")
+      .select(`
+        id,
+        teacher_id,
+        student_id,
+        course,
+        class_days,
+        class_time,
+        duration_minutes,
+        google_meet_url,
+        classroom_code,
+        active,
+        schedule_timezone
+      `)
+      .order(
+        "class_time",
+        {
+          ascending:true
+        }
+      );
 
 
-if(!secondConfirm){
+  if(result.error){
 
-return;
+    showMsg(
+      "msg",
+      result.error.message,
+      "error"
+    );
 
-}
+    return;
 
-
-try{
-
-
-const {
-data:{
-session
-}
-} =
-await db.auth.getSession();
+  }
 
 
-if(!session){
-
-location.href =
-"login.html";
-
-return;
-
-}
+  schedules =
+    result.data || [];
 
 
-/* Show deleting message */
+  renderGrid();
 
-showMsg(
-"msg",
-"Deleting teacher...",
-"ok"
-);
-
-
-/* Call Edge Function */
-
-const response =
-await fetch(
-EDGE_FUNCTION_URL,
-{
-
-method:"POST",
-
-headers:{
-
-"Authorization":
-"Bearer " +
-session.access_token,
-
-"apikey":
-window
-.SUPABASE_CONFIG
-.anonKey,
-
-"Content-Type":
-"application/json"
-
-},
-
-body:
-JSON.stringify({
-
-action:"delete",
-
-user_id:
-teacherId
-
-})
-
-});
-
-
-const result =
-await response.json();
-
-
-if(
-!response.ok ||
-!result.success
-){
-
-throw new Error(
-result.error ||
-"Teacher could not be deleted."
-);
-
-}
-
-
-showMsg(
-"msg",
-"Teacher permanently deleted successfully.",
-"ok"
-);
-
-
-await loadTeachers();
-
-
-}
-catch(error){
-
-showMsg(
-"msg",
-error.message ||
-"Something went wrong.",
-"error"
-);
-
-}
+  renderSaved();
 
 }
 
 
 /* =========================================================
-   INITIAL LOAD
+   SAVED TABLE
 ========================================================= */
 
-loadTimeZones();
+function renderSaved(){
 
-loadTeachers();
+  const rows =
+    document.getElementById(
+      "rows"
+    );
+
+
+  if(!schedules.length){
+
+    rows.innerHTML =
+      `
+      <tr>
+        <td colspan="10">
+          No weekly classes scheduled.
+        </td>
+      </tr>
+      `;
+
+    return;
+
+  }
+
+
+  rows.innerHTML =
+    schedules
+      .map(schedule => {
+
+        const teacherName =
+          teachersMap[
+            schedule.teacher_id
+          ]?.name
+          ||
+          schedule.teacher_id
+          ||
+          "Teacher";
+
+
+        const studentName =
+          studentsMap[
+            schedule.student_id
+          ]?.full_name
+          ||
+          schedule.student_id
+          ||
+          "Student";
+
+
+        const days =
+          (
+            schedule.class_days
+            || []
+          )
+          .map(day => safe(day))
+          .join(", ");
+
+
+        return `
+        <tr>
+
+          <td>
+            ${safe(teacherName)}
+          </td>
+
+          <td>
+            ${safe(studentName)}
+          </td>
+
+          <td>
+            ${days}
+          </td>
+
+          <td>
+            ${safe(
+              formatTime12(
+                schedule.class_time
+              )
+            )}
+          </td>
+
+          <td>
+            ${safe(
+              schedule.duration_minutes
+            )} min
+          </td>
+
+          <td>
+            ${safe(
+              schedule.course || "—"
+            )}
+          </td>
+
+          <td>
+
+            ${
+              schedule.google_meet_url
+                ?
+                `
+                <a
+                  class="btn"
+                  href="${safe(schedule.google_meet_url)}"
+                  target="_blank"
+                  rel="noopener">
+                  Meet
+                </a>
+                `
+                :
+                "—"
+            }
+
+          </td>
+
+          <td>
+            ${safe(
+              schedule.classroom_code || "—"
+            )}
+          </td>
+
+          <td>
+
+            ${
+              schedule.active
+                ?
+                `
+                <span class="status-active">
+                  Active
+                </span>
+                `
+                :
+                `
+                <span class="status-inactive">
+                  Inactive
+                </span>
+                `
+            }
+
+          </td>
+
+          <td>
+
+            <button
+              class="btn danger"
+              onclick="delSchedule('${safe(schedule.id)}')">
+
+              Delete
+
+            </button>
+
+          </td>
+
+        </tr>
+        `;
+
+      })
+      .join("");
+
+}
+
+
+/* =========================================================
+   SAVE WEEKLY CLASS
+========================================================= */
+
+document
+  .getElementById("f")
+  .addEventListener(
+    "submit",
+    async function(event){
+
+      event.preventDefault();
+
+
+      const teacherId =
+        document.getElementById(
+          "teacher_id"
+        ).value;
+
+
+      const studentId =
+        document.getElementById(
+          "student_id"
+        ).value;
+
+
+      const days =
+        getSelectedDays();
+
+
+      const courseValue =
+        document.getElementById(
+          "course"
+        ).value
+        .trim();
+
+
+      const duration =
+        parseInt(
+          document.getElementById(
+            "duration_minutes"
+          ).value,
+          10
+        ) || 30;
+
+
+      const hour =
+        parseInt(
+          document.getElementById(
+            "hour"
+          ).value,
+          10
+        );
+
+
+      const minute =
+        parseInt(
+          document.getElementById(
+            "minute"
+          ).value,
+          10
+        ) || 0;
+
+
+      const ampm =
+        document.getElementById(
+          "ampm"
+        ).value;
+
+
+      const meetUrl =
+        document.getElementById(
+          "google_meet_url"
+        ).value
+        .trim();
+
+
+      const classroomCode =
+        document.getElementById(
+          "classroom_code"
+        ).value;
+
+
+      const active =
+        document.getElementById(
+          "active"
+        ).value === "true";
+
+
+      /* ---------------------------------------
+         VALIDATION
+      --------------------------------------- */
+
+      if(!teacherId){
+
+        showMsg(
+          "msg",
+          "Please select a teacher.",
+          "error"
+        );
+
+        return;
+
+      }
+
+
+      if(!studentId){
+
+        showMsg(
+          "msg",
+          "Please select a student.",
+          "error"
+        );
+
+        return;
+
+      }
+
+
+      if(!days.length){
+
+        showMsg(
+          "msg",
+          "Please select at least one class day.",
+          "error"
+        );
+
+        return;
+
+      }
+
+
+      if(
+        isNaN(hour) ||
+        hour < 1 ||
+        hour > 12
+      ){
+
+        showMsg(
+          "msg",
+          "Please select a class hour.",
+          "error"
+        );
+
+        return;
+
+      }
+
+
+      /* ---------------------------------------
+         12 HOUR → 24 HOUR
+      --------------------------------------- */
+
+      let hour24 =
+        hour % 12;
+
+
+      if(
+        ampm === "PM"
+      ){
+
+        hour24 += 12;
+
+      }
+
+
+      const classTime =
+        String(hour24)
+          .padStart(2,"0")
+        +
+        ":"
+        +
+        String(minute)
+          .padStart(2,"0")
+        +
+        ":00";
+
+
+      /* ---------------------------------------
+         MIDNIGHT CHECK
+      --------------------------------------- */
+
+      if(
+        (
+          hour24 * 60
+          +
+          minute
+          +
+          duration
+        ) > 1440
+      ){
+
+        showMsg(
+          "msg",
+          "Class duration cannot go past 12:00 AM.",
+          "error"
+        );
+
+        return;
+
+      }
+
+
+      /* ---------------------------------------
+         SAVE
+         Timezone is automatically stored as
+         Pakistan/Admin base timezone.
+         
+         Teacher timezone comes from teachers.
+         Student timezone comes from students.
+      --------------------------------------- */
+
+      const insertData = {
+
+        teacher_id:
+          teacherId,
+
+        student_id:
+          studentId,
+
+        course:
+          courseValue || null,
+
+        class_days:
+          days,
+
+        class_time:
+          classTime,
+
+        duration_minutes:
+          duration,
+
+        google_meet_url:
+          meetUrl || null,
+
+        classroom_code:
+          classroomCode || null,
+
+        active:
+          active,
+
+        schedule_timezone:
+          ADMIN_SCHEDULE_TIMEZONE
+
+      };
+
+
+      const result =
+        await db
+          .from("class_schedules")
+          .insert(
+            insertData
+          );
+
+
+      if(result.error){
+
+        showMsg(
+          "msg",
+          result.error.message,
+          "error"
+        );
+
+        return;
+
+      }
+
+
+      showMsg(
+        "msg",
+        "Weekly class saved successfully.",
+        "ok"
+      );
+
+
+      /* ---------------------------------------
+         RESET FORM
+      --------------------------------------- */
+
+      document
+        .getElementById("f")
+        .reset();
+
+
+      document
+        .getElementById("student_id")
+        .innerHTML =
+        "<option>Select teacher first</option>";
+
+
+      document
+        .getElementById("classroom_code")
+        .innerHTML =
+        "<option>Select teacher first</option>";
+
+
+      await loadSchedules();
+
+    }
+  );
+
+
+/* =========================================================
+   DELETE
+========================================================= */
+
+async function delSchedule(id){
+
+  if(
+    !confirm(
+      "Delete this weekly class?"
+    )
+  ){
+
+    return;
+
+  }
+
+
+  const result =
+    await db
+      .from("class_schedules")
+      .delete()
+      .eq(
+        "id",
+        id
+      );
+
+
+  if(result.error){
+
+    showMsg(
+      "msg",
+      result.error.message,
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  await loadSchedules();
+
+}
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+async function init(){
+
+  if(
+    !(await adminGuard())
+  ){
+
+    return;
+
+  }
+
+
+  buildGrid();
+
+  await loadTeachers();
+
+  await loadSchedules();
+
+}
+
+
+init();
 
 </script>
 
