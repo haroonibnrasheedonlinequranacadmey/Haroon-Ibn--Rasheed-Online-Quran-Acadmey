@@ -196,7 +196,6 @@ style="margin-bottom:8px;">
 <select
 id="student_timezone"
 class="input"
-size="8"
 required>
 
 <option value="Asia/Karachi">
@@ -530,12 +529,6 @@ function getSupportedTimeZones(){
 
 let zones = [];
 
-
-/*
-   Use browser's complete IANA timezone database
-   when supported.
-*/
-
 try{
 
 if(
@@ -557,12 +550,6 @@ error
 
 }
 
-
-/*
-   These important zones are added manually too.
-   This guarantees that India/Pakistan/etc. are
-   available even if browser support is different.
-*/
 
 const importantZones = [
 
@@ -643,10 +630,6 @@ zones = [
 ];
 
 
-/*
-   Alphabetical order.
-*/
-
 return zones.sort();
 
 }
@@ -684,10 +667,6 @@ ALL_TIME_ZONES =
 getSupportedTimeZones();
 
 
-/*
-   Guarantee India.
-*/
-
 if(
 !ALL_TIME_ZONES.includes(
 "Asia/Kolkata"
@@ -705,10 +684,6 @@ ALL_TIME_ZONES =
 [...new Set(ALL_TIME_ZONES)]
 .sort();
 
-
-/*
-   Detect laptop timezone.
-*/
 
 let browserZone =
 "Asia/Karachi";
@@ -730,11 +705,6 @@ error
 
 }
 
-
-/*
-   If detected timezone is not in the list,
-   use Pakistan.
-*/
 
 if(
 !ALL_TIME_ZONES.includes(browserZone)
@@ -811,10 +781,6 @@ return;
 }
 
 
-/*
-   Add filtered options.
-*/
-
 filtered.forEach(
 function(zone){
 
@@ -831,11 +797,6 @@ select.appendChild(option);
 
 });
 
-
-/*
-   Keep currently selected timezone
-   if it is still visible.
-*/
 
 if(
 filtered.includes(currentValue)
@@ -865,10 +826,6 @@ filtered[0];
 
 }
 
-
-/*
-   Show result count.
-*/
 
 if(count){
 
@@ -909,10 +866,9 @@ search.value
 }
 
 
-/*
-   When user selects a timezone,
-   clear search and restore full list.
-*/
+/* =====================================================
+   TIMEZONE SELECT
+===================================================== */
 
 select.addEventListener(
 "change",
@@ -2137,10 +2093,6 @@ document
 .value =
 "Asia/Karachi";
 
-
-/*
-   Clear timezone search after reset.
-*/
 
 const timezoneSearch =
 document.getElementById(
