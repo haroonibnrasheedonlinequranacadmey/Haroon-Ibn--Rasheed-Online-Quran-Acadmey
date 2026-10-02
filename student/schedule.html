@@ -1,351 +1,9 @@
-<!doctype html>
-<html lang="en">
-
-<head>
-
-<meta charset="utf-8">
-
-<meta name="viewport"
-content="width=device-width,initial-scale=1">
-
-<title>
-My Schedule | Haroon Ibn Rasheed Online Quran Academy
-</title>
-
-<link rel="stylesheet"
-href="../css/portal.css">
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script src="../js/config.js"></script>
-
-<script src="../js/portal.js" defer></script>
-
-<style>
-
-.schedule-page{
-  padding:20px;
-  background:#F4F7F9;
-}
-
-.schedule-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-  flex-wrap:wrap;
-  margin-bottom:20px;
-}
-
-.schedule-header h1{
-  margin:0;
-  color:#454D59;
-}
-
-.schedule-info{
-  margin-top:5px;
-  color:#64748b;
-  font-size:14px;
-}
-
-.refresh-btn{
-  border:0;
-  background:#2F9FBA;
-  color:#fff;
-  padding:9px 15px;
-  border-radius:7px;
-  cursor:pointer;
-  font-weight:700;
-}
-
-.refresh-btn:hover{
-  background:#287F96;
-}
-
-.day-section{
-  margin-top:20px;
-}
-
-.day-title{
-  background:#F18B82;
-  color:#fff;
-  padding:10px 14px;
-  border-radius:9px 9px 0 0;
-  font-weight:700;
-  font-size:15px;
-}
-
-.class-card{
-  background:#fff;
-  border:1px solid #e5e7eb;
-  border-top:0;
-  padding:14px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:15px;
-  flex-wrap:wrap;
-}
-
-.class-card:last-child{
-  border-radius:0 0 9px 9px;
-}
-
-.class-main{
-  min-width:200px;
-}
-
-.class-time{
-  color:#454D59;
-  font-size:18px;
-  font-weight:800;
-  margin-bottom:5px;
-}
-
-.class-course{
-  color:#2F9FBA;
-  font-size:15px;
-  font-weight:700;
-}
-
-.class-teacher{
-  color:#64748b;
-  font-size:13px;
-  margin-top:4px;
-}
-
-.class-duration{
-  color:#64748b;
-  font-size:12px;
-  margin-top:3px;
-}
-
-.class-actions{
-  display:flex;
-  gap:7px;
-  flex-wrap:wrap;
-}
-
-.join-btn{
-  display:inline-block;
-  background:#2F9FBA;
-  color:#fff;
-  text-decoration:none;
-  padding:8px 13px;
-  border-radius:7px;
-  font-size:12px;
-  font-weight:700;
-}
-
-.join-btn:hover{
-  background:#287F96;
-}
-
-.classroom-btn{
-  display:inline-block;
-  background:#454D59;
-  color:#fff;
-  text-decoration:none;
-  padding:8px 13px;
-  border-radius:7px;
-  font-size:12px;
-  font-weight:700;
-}
-
-.today-badge{
-  display:inline-block;
-  background:#dcfce7;
-  color:#166534;
-  padding:3px 8px;
-  border-radius:20px;
-  font-size:10px;
-  font-weight:800;
-  margin-left:7px;
-}
-
-.loading{
-  padding:30px;
-  text-align:center;
-  color:#64748b;
-}
-
-.empty{
-  padding:35px;
-  text-align:center;
-  background:#F4F7F9;
-  border-radius:10px;
-  color:#64748b;
-}
-
-.error-box{
-  padding:18px;
-  background:#fff1f2;
-  border:1px solid #fecdd3;
-  border-radius:10px;
-  color:#9f1239;
-}
-
-@media(max-width:600px){
-
-  .schedule-page{
-    padding:12px;
-  }
-
-  .schedule-header h1{
-    font-size:24px;
-  }
-
-  .class-card{
-    display:block;
-  }
-
-  .class-actions{
-    margin-top:12px;
-  }
-
-  .join-btn,
-  .classroom-btn{
-    display:inline-block;
-  }
-
-}
-
-</style>
-
-</head>
-
-
-<body
-class="dashboard"
-data-page="student-schedule">
-
-
-<div class="side-layout">
-
-
-<aside class="side">
-
-<img
-src="../assets/hr-logo.svg"
-alt="HR">
-
-<h3>
-Haroon Ibn Rasheed
-</h3>
-
-<small>
-Student Portal
-</small>
-
-<nav style="margin-top:16px">
-
-<a href="dashboard.html">
-Dashboard
-</a>
-
-<a href="profile.html">
-Profile
-</a>
-
-<a href="teacher.html">
-My Teacher
-</a>
-
-<a href="course.html">
-My Courses
-</a>
-
-<a href="classes.html">
-My Classes
-</a>
-
-<a href="schedule.html"
-class="active">
-Schedule
-</a>
-
-<a href="attendance.html">
-Attendance
-</a>
-
-<a href="fees.html">
-Fees
-</a>
-
-<a href="leaves.html">
-Leaves
-</a>
-
-</nav>
-
-<a href="#"
-onclick="portalLogout();return false">
-Logout
-</a>
-
-</aside>
-
-
-<main class="content">
-
-<section class="card schedule-page">
-
-<div class="schedule-header">
-
-<div>
-
-<h1>
-My Schedule
-</h1>
-
-<div class="schedule-info">
-Only your assigned class schedule is shown.
-</div>
-
-</div>
-
-<button
-class="refresh-btn"
-onclick="loadStudentSchedule()">
-
-Refresh
-
-</button>
-
-</div>
-
-
-<div id="messageArea"></div>
-
-
-<div id="scheduleContainer">
-
-<div class="loading">
-Loading your schedule...
-</div>
-
-</div>
-
-
-</section>
-
-</main>
-
-</div>
-
-
 <script>
 
-const db =
-supabase.createClient(
+const db = supabase.createClient(
   window.SUPABASE_CONFIG.url,
   window.SUPABASE_CONFIG.anonKey
 );
-
-
-/* =====================================================
-   DAYS
-===================================================== */
 
 const DAYS = [
   "Monday",
@@ -357,54 +15,36 @@ const DAYS = [
   "Sunday"
 ];
 
+const BASE_TIMEZONE = "Asia/Karachi";
 
-/* =====================================================
-   NORMALIZE DAY
-===================================================== */
 
 function normalizeDay(day){
 
-  const value =
-    String(day || "")
-      .trim()
-      .toLowerCase();
+  const value = String(day || "").trim().toLowerCase();
 
   const map = {
-
     mon:"Monday",
     monday:"Monday",
-
     tue:"Tuesday",
     tues:"Tuesday",
     tuesday:"Tuesday",
-
     wed:"Wednesday",
     wednesday:"Wednesday",
-
     thu:"Thursday",
     thur:"Thursday",
     thurs:"Thursday",
     thursday:"Thursday",
-
     fri:"Friday",
     friday:"Friday",
-
     sat:"Saturday",
     saturday:"Saturday",
-
     sun:"Sunday",
     sunday:"Sunday"
-
   };
 
   return map[value] || day;
-
 }
 
-
-/* =====================================================
-   SAFE HTML
-===================================================== */
 
 function safeHtml(value){
 
@@ -418,73 +58,398 @@ function safeHtml(value){
 }
 
 
-/* =====================================================
-   FORMAT TIME
-===================================================== */
-
 function formatTime(time){
 
-  if(!time){
-    return "";
-  }
+  if(!time) return "";
 
-  const parts =
-    String(time).split(":");
+  const parts = String(time).split(":");
 
-  let hour =
-    parseInt(parts[0],10);
+  let hour = parseInt(parts[0],10);
+  const minute = String(parts[1] || "00").padStart(2,"0");
 
-  const minute =
-    parts[1] || "00";
+  if(isNaN(hour)) return String(time);
 
-  if(isNaN(hour)){
-    return time;
-  }
+  const ampm = hour >= 12 ? "PM" : "AM";
 
-  const ampm =
-    hour >= 12 ? "PM" : "AM";
-
-  hour =
-    hour % 12 || 12;
+  hour = hour % 12 || 12;
 
   return hour + ":" + minute + " " + ampm;
+}
+
+
+function formatDuration(minutes){
+
+  const m = parseInt(minutes,10);
+
+  if(!m) return "";
+
+  if(m < 60){
+    return m + " minutes";
+  }
+
+  const h = Math.floor(m / 60);
+  const r = m % 60;
+
+  if(r === 0){
+    return h + (h === 1 ? " hour" : " hours");
+  }
+
+  return h + "h " + r + "m";
+}
+
+
+/* =====================================================
+   TIMEZONE HELPERS
+===================================================== */
+
+function getStudentTimezone(){
+
+  try{
+
+    return Intl.DateTimeFormat().resolvedOptions().timeZone
+      || "Asia/Karachi";
+
+  }catch(e){
+
+    return "Asia/Karachi";
+
+  }
+
+}
+
+
+/*
+  Get timezone offset in minutes for a UTC date.
+*/
+function getTimezoneOffsetMinutes(date, timeZone){
+
+  const parts = new Intl.DateTimeFormat("en-US",{
+    timeZone,
+    year:"numeric",
+    month:"2-digit",
+    day:"2-digit",
+    hour:"2-digit",
+    minute:"2-digit",
+    second:"2-digit",
+    hourCycle:"h23"
+  }).formatToParts(date);
+
+  const values = {};
+
+  parts.forEach(part => {
+
+    if(part.type !== "literal"){
+      values[part.type] = part.value;
+    }
+
+  });
+
+  const asUTC = Date.UTC(
+    Number(values.year),
+    Number(values.month) - 1,
+    Number(values.day),
+    Number(values.hour),
+    Number(values.minute),
+    Number(values.second)
+  );
+
+  return Math.round(
+    (asUTC - date.getTime()) / 60000
+  );
+
+}
+
+
+/*
+  Convert a wall-clock time in one timezone
+  into the real UTC instant.
+*/
+function wallTimeToUTC(
+  dateISO,
+  timeString,
+  timeZone
+){
+
+  const parts = String(timeString || "00:00:00")
+    .split(":");
+
+  const hour = parseInt(parts[0],10) || 0;
+  const minute = parseInt(parts[1],10) || 0;
+  const second = parseInt(parts[2],10) || 0;
+
+  const [year,month,day] =
+    dateISO.split("-").map(Number);
+
+  let guess = new Date(
+    Date.UTC(
+      year,
+      month - 1,
+      day,
+      hour,
+      minute,
+      second
+    )
+  );
+
+  for(let i=0;i<3;i++){
+
+    const offset =
+      getTimezoneOffsetMinutes(
+        guess,
+        timeZone
+      );
+
+    guess = new Date(
+      Date.UTC(
+        year,
+        month - 1,
+        day,
+        hour,
+        minute,
+        second
+      ) -
+      offset * 60000
+    );
+
+  }
+
+  return guess;
+
+}
+
+
+/*
+  Convert a scheduled class occurrence
+  from the admin/base timezone into
+  the student's timezone.
+*/
+function convertOccurrence(
+  dateISO,
+  timeString,
+  scheduleTimezone,
+  studentTimezone,
+  duration
+){
+
+  const utcDate =
+    wallTimeToUTC(
+      dateISO,
+      timeString,
+      scheduleTimezone || BASE_TIMEZONE
+    );
+
+  const dateParts =
+    new Intl.DateTimeFormat("en-US",{
+      timeZone:studentTimezone,
+      year:"numeric",
+      month:"2-digit",
+      day:"2-digit",
+      weekday:"long"
+    }).formatToParts(utcDate);
+
+  const values = {};
+
+  dateParts.forEach(part => {
+
+    if(part.type !== "literal"){
+      values[part.type] = part.value;
+    }
+
+  });
+
+  const localDateISO =
+    values.year + "-" +
+    values.month + "-" +
+    values.day;
+
+  const timeText =
+    new Intl.DateTimeFormat("en-US",{
+      timeZone:studentTimezone,
+      hour:"numeric",
+      minute:"2-digit",
+      hour12:true
+    }).format(utcDate);
+
+  const day =
+    values.weekday;
+
+  const endUTC =
+    new Date(
+      utcDate.getTime() +
+      (parseInt(duration,10) || 30) * 60000
+    );
+
+  const endTime =
+    new Intl.DateTimeFormat("en-US",{
+      timeZone:studentTimezone,
+      hour:"numeric",
+      minute:"2-digit",
+      hour12:true
+    }).format(endUTC);
+
+  return {
+    utcDate,
+    date:localDateISO,
+    day,
+    time:timeText,
+    endTime
+  };
+
+}
+
+
+function getTodayInTimezone(timeZone){
+
+  const parts =
+    new Intl.DateTimeFormat("en-CA",{
+      timeZone,
+      year:"numeric",
+      month:"2-digit",
+      day:"2-digit"
+    }).formatToParts(new Date());
+
+  const values = {};
+
+  parts.forEach(part => {
+
+    if(part.type !== "literal"){
+      values[part.type] = part.value;
+    }
+
+  });
+
+  return (
+    values.year + "-" +
+    values.month + "-" +
+    values.day
+  );
 
 }
 
 
 /* =====================================================
-   FORMAT DURATION
+   BUILD UPCOMING BASE DATES
 ===================================================== */
 
-function formatDuration(minutes){
+function getBaseDates(days){
 
-  const m =
-    parseInt(minutes,10);
+  const result = [];
 
-  if(!m){
-    return "";
+  const start = new Date();
+
+  start.setHours(12,0,0,0);
+
+  for(let i=-2;i<days+3;i++){
+
+    const d = new Date(start);
+
+    d.setDate(
+      start.getDate() + i
+    );
+
+    const year =
+      new Intl.DateTimeFormat("en-US",{
+        timeZone:BASE_TIMEZONE,
+        year:"numeric"
+      }).format(d);
+
+    const month =
+      new Intl.DateTimeFormat("en-US",{
+        timeZone:BASE_TIMEZONE,
+        month:"2-digit"
+      }).format(d);
+
+    const day =
+      new Intl.DateTimeFormat("en-US",{
+        timeZone:BASE_TIMEZONE,
+        day:"2-digit"
+      }).format(d);
+
+    result.push(
+      year + "-" + month + "-" + day
+    );
+
   }
 
-  if(m < 60){
+  return [...new Set(result)];
 
-    return m + " minutes";
+}
 
-  }
 
-  const h =
-    Math.floor(m / 60);
+function baseDayName(dateISO){
 
-  const r =
-    m % 60;
+  const d =
+    new Date(
+      dateISO + "T12:00:00Z"
+    );
 
-  if(r === 0){
+  return new Intl.DateTimeFormat("en-US",{
+    timeZone:BASE_TIMEZONE,
+    weekday:"long"
+  }).format(d);
 
-    return h +
-      (h === 1 ? " hour" : " hours");
+}
 
-  }
 
-  return h + "h " + r + "m";
+function getOccurrences(
+  schedules,
+  studentTimezone
+){
+
+  const occurrences = [];
+
+  const baseDates =
+    getBaseDates(14);
+
+  baseDates.forEach(dateISO => {
+
+    const baseDay =
+      baseDayName(dateISO);
+
+    schedules.forEach(schedule => {
+
+      let days =
+        schedule.class_days;
+
+      if(!Array.isArray(days)){
+        days = [days];
+      }
+
+      const matches =
+        days.some(
+          x =>
+            normalizeDay(x) === baseDay
+        );
+
+      if(!matches){
+        return;
+      }
+
+      const converted =
+        convertOccurrence(
+          dateISO,
+          schedule.class_time,
+          schedule.schedule_timezone ||
+            BASE_TIMEZONE,
+          studentTimezone,
+          schedule.duration_minutes
+        );
+
+      occurrences.push({
+        schedule,
+        baseDate:dateISO,
+        converted
+      });
+
+    });
+
+  });
+
+  return occurrences.sort(
+    (a,b) =>
+      a.converted.utcDate -
+      b.converted.utcDate
+  );
 
 }
 
@@ -496,52 +461,30 @@ function formatDuration(minutes){
 async function loadStudentSchedule(){
 
   const container =
-    document.getElementById(
-      "scheduleContainer"
-    );
+    document.getElementById("scheduleContainer");
 
   const message =
-    document.getElementById(
-      "messageArea"
-    );
-
+    document.getElementById("messageArea");
 
   container.innerHTML = `
-
     <div class="loading">
-
       Loading your schedule...
-
     </div>
-
   `;
-
 
   message.innerHTML = "";
 
-
   try{
 
-
-    /* =================================================
-       GET CURRENT AUTH USER
-    ================================================= */
-
     const {
-      data:{
-        user
-      },
+      data:{user},
       error:authError
     } =
       await db.auth.getUser();
 
-
     if(authError){
-
       throw authError;
-
     }
-
 
     if(!user){
 
@@ -551,18 +494,11 @@ async function loadStudentSchedule(){
 
     }
 
-
     const authUserId =
       user.id;
 
 
-    /* =================================================
-       FIND STUDENT USING user_id
-
-       IMPORTANT:
-       students.id is NOT assumed to be auth UUID.
-       We now use students.user_id.
-    ================================================= */
+    /* STUDENT */
 
     const {
       data:student,
@@ -576,21 +512,15 @@ async function loadStudentSchedule(){
           account_id,
           full_name,
           teacher_id,
-          status
+          status,
+          timezone
         `)
-        .eq(
-          "user_id",
-          authUserId
-        )
+        .eq("user_id",authUserId)
         .maybeSingle();
 
-
     if(studentError){
-
       throw studentError;
-
     }
-
 
     if(!student){
 
@@ -600,16 +530,9 @@ async function loadStudentSchedule(){
 
     }
 
-
-    /* =================================================
-       CHECK STUDENT STATUS
-    ================================================= */
-
     if(
       student.status &&
-      String(student.status)
-        .toLowerCase()
-        !== "active"
+      String(student.status).toLowerCase() !== "active"
     ){
 
       throw new Error(
@@ -619,9 +542,15 @@ async function loadStudentSchedule(){
     }
 
 
-    /* =================================================
-       LOAD ONLY THIS STUDENT'S ACTIVE SCHEDULE
-    ================================================= */
+    /* STUDENT TIMEZONE */
+
+    const studentTimezone =
+      student.timezone ||
+      getStudentTimezone() ||
+      "Asia/Karachi";
+
+
+    /* SCHEDULES */
 
     const {
       data:schedules,
@@ -639,34 +568,16 @@ async function loadStudentSchedule(){
           duration_minutes,
           google_meet_url,
           classroom_code,
-          active
+          active,
+          schedule_timezone
         `)
-        .eq(
-          "student_id",
-          student.id
-        )
-        .eq(
-          "active",
-          true
-        )
-        .order(
-          "class_time",
-          {
-            ascending:true
-          }
-        );
-
+        .eq("student_id",student.id)
+        .eq("active",true);
 
     if(scheduleError){
-
       throw scheduleError;
-
     }
 
-
-    /* =================================================
-       NO SCHEDULE
-    ================================================= */
 
     if(
       !schedules ||
@@ -674,12 +585,9 @@ async function loadStudentSchedule(){
     ){
 
       container.innerHTML = `
-
         <div class="empty">
 
-          <strong>
-            No schedule available
-          </strong>
+          <strong>No schedule available</strong>
 
           <br><br>
 
@@ -687,7 +595,6 @@ async function loadStudentSchedule(){
           assigned to your student account yet.
 
         </div>
-
       `;
 
       return;
@@ -695,424 +602,326 @@ async function loadStudentSchedule(){
     }
 
 
-    /* =================================================
-       LOAD TEACHER NAMES
-    ================================================= */
+    /* TEACHERS */
 
     const teacherIds =
       [
         ...new Set(
           schedules
-            .map(
-              x => x.teacher_id
-            )
+            .map(x => x.teacher_id)
             .filter(Boolean)
         )
       ];
 
-
     const teacherMap = {};
-
 
     if(teacherIds.length){
 
       const {
-        data:teachers,
-        error:teacherError
+        data:teachers
       } =
         await db
           .from("teachers")
-          .select(`
-            id,
-            name
-          `)
-          .in(
-            "id",
-            teacherIds
-          );
+          .select("id,name")
+          .in("id",teacherIds);
 
+      (teachers || []).forEach(
+        teacher => {
 
-      if(!teacherError){
+          teacherMap[teacher.id] =
+            teacher.name;
 
-        (teachers || [])
-          .forEach(
-            teacher => {
-
-              teacherMap[
-                teacher.id
-              ] =
-                teacher.name;
-
-            }
-          );
-
-      }
+        }
+      );
 
     }
 
 
-    /* =================================================
-       GROUP CLASSES BY DAY
-    ================================================= */
+    /* OCCURRENCES */
+
+    const occurrences =
+      getOccurrences(
+        schedules,
+        studentTimezone
+      );
+
+
+    const today =
+      getTodayInTimezone(
+        studentTimezone
+      );
+
+
+    /* GROUP BY STUDENT LOCAL DAY */
 
     const dayGroups = {};
 
+    DAYS.forEach(day => {
+      dayGroups[day] = [];
+    });
 
-    DAYS.forEach(
-      day => {
+    occurrences.forEach(item => {
 
-        dayGroups[day] = [];
+      if(
+        item.converted.date < today
+      ){
+        return;
+      }
+
+      if(
+        item.converted.date >
+        getDateAfter(today,7)
+      ){
+        return;
+      }
+
+      if(
+        DAYS.includes(item.converted.day)
+      ){
+
+        dayGroups[item.converted.day]
+          .push(item);
 
       }
-    );
 
+    });
 
-    schedules.forEach(
-      schedule => {
-
-        let days =
-          schedule.class_days;
-
-
-        if(!Array.isArray(days)){
-
-          days = [days];
-
-        }
-
-
-        days.forEach(
-          rawDay => {
-
-            const day =
-              normalizeDay(
-                rawDay
-              );
-
-
-            if(
-              DAYS.includes(day)
-            ){
-
-              dayGroups[day]
-                .push(schedule);
-
-            }
-
-          }
-        );
-
-      }
-    );
-
-
-    /* =================================================
-       TODAY
-    ================================================= */
-
-    const todayIndex =
-      new Date().getDay();
-
-
-    const todayName =
-      DAYS[
-        todayIndex === 0
-          ? 6
-          : todayIndex - 1
-      ];
-
-
-    /* =================================================
-       BUILD SCHEDULE
-    ================================================= */
 
     let html = "";
 
 
-    DAYS.forEach(
-      day => {
+    DAYS.forEach(day => {
 
-        const classes =
-          dayGroups[day];
+      const classes =
+        dayGroups[day];
+
+      if(!classes.length){
+        return;
+      }
 
 
-        if(!classes.length){
+      classes.sort(
+        (a,b) =>
+          a.converted.utcDate -
+          b.converted.utcDate
+      );
 
-          return;
+
+      html += `
+
+        <div class="day-section">
+
+          <div class="day-title">
+
+            ${safeHtml(day)}
+
+            ${
+              classes.some(
+                x =>
+                  x.converted.date === today
+              )
+
+              ?
+
+              `
+                <span class="today-badge">
+                  TODAY
+                </span>
+              `
+
+              :
+
+              ""
+            }
+
+          </div>
+      `;
+
+
+      classes.forEach(item => {
+
+        const schedule =
+          item.schedule;
+
+        const teacherName =
+          teacherMap[
+            schedule.teacher_id
+          ] ||
+          "Assigned Teacher";
+
+
+        let actions = "";
+
+
+        if(schedule.google_meet_url){
+
+          actions += `
+
+            <a
+              class="join-btn"
+              href="${safeHtml(
+                schedule.google_meet_url
+              )}"
+              target="_blank"
+              rel="noopener noreferrer">
+
+              Join Class
+
+            </a>
+
+          `;
 
         }
 
 
-        classes.sort(
-          (a,b) =>
+        if(schedule.classroom_code){
 
-            String(
-              a.class_time
-            )
-            .localeCompare(
-              String(
-                b.class_time
-              )
-            )
+          const classroomUrl =
+            "https://haroonibnrasheedonlinequranacadmey.github.io/haroon-quran-classroom/?code="
+            +
+            encodeURIComponent(
+              schedule.classroom_code
+            );
 
-        );
+          actions += `
+
+            <a
+              class="classroom-btn"
+              href="${classroomUrl}"
+              target="_blank"
+              rel="noopener noreferrer">
+
+              Classroom
+
+            </a>
+
+          `;
+
+        }
 
 
         html += `
 
-          <div class="day-section">
+          <div class="class-card">
 
-            <div class="day-title">
+            <div class="class-main">
 
-              ${safeHtml(day)}
+              <div class="class-time">
+
+                ${safeHtml(
+                  item.converted.time
+                )}
+
+              </div>
+
+              <div class="class-course">
+
+                ${safeHtml(
+                  schedule.course ||
+                  "Quran Class"
+                )}
+
+              </div>
+
+              <div class="class-teacher">
+
+                Teacher:
+
+                ${safeHtml(
+                  teacherName
+                )}
+
+              </div>
 
               ${
-                day === todayName
+                schedule.duration_minutes
 
-                  ?
+                ?
 
-                  `
-                    <span
-                      class="today-badge">
+                `
+                  <div class="class-duration">
 
-                      TODAY
-
-                    </span>
-                  `
-
-                  :
-
-                  ""
-              }
-
-            </div>
-
-        `;
-
-
-        classes.forEach(
-          schedule => {
-
-
-            const teacherName =
-              teacherMap[
-                schedule.teacher_id
-              ] ||
-              "Assigned Teacher";
-
-
-            let actions = "";
-
-
-            /* =========================================
-               GOOGLE MEET
-            ========================================= */
-
-            if(
-              schedule.google_meet_url
-            ){
-
-              actions += `
-
-                <a
-                  class="join-btn"
-                  href="${safeHtml(
-                    schedule.google_meet_url
-                  )}"
-                  target="_blank"
-                  rel="noopener noreferrer">
-
-                  Join Class
-
-                </a>
-
-              `;
-
-            }
-
-
-            /* =========================================
-               CLASSROOM
-            ========================================= */
-
-            if(
-              schedule.classroom_code
-            ){
-
-              const classroomUrl =
-
-                "https://haroonibnrasheedonlinequranacadmey.github.io/haroon-quran-classroom/?code="
-
-                +
-
-                encodeURIComponent(
-                  schedule.classroom_code
-                );
-
-
-              actions += `
-
-                <a
-                  class="classroom-btn"
-                  href="${classroomUrl}"
-                  target="_blank"
-                  rel="noopener noreferrer">
-
-                  Classroom
-
-                </a>
-
-              `;
-
-            }
-
-
-            /* =========================================
-               CLASS CARD
-            ========================================= */
-
-            html += `
-
-              <div class="class-card">
-
-
-                <div class="class-main">
-
-
-                  <div class="class-time">
+                    Duration:
 
                     ${safeHtml(
-                      formatTime(
-                        schedule.class_time
+                      formatDuration(
+                        schedule.duration_minutes
                       )
                     )}
 
                   </div>
+                `
 
+                :
 
-                  <div class="class-course">
+                ""
+              }
 
-                    ${safeHtml(
-                      schedule.course ||
-                      "Quran Class"
-                    )}
+              <div class="class-duration">
 
-                  </div>
-
-
-                  <div class="class-teacher">
-
-                    Teacher:
-
-                    ${safeHtml(
-                      teacherName
-                    )}
-
-                  </div>
-
-
-                  ${
-                    schedule.duration_minutes
-
-                      ?
-
-                      `
-                        <div
-                          class="class-duration">
-
-                          Duration:
-
-                          ${safeHtml(
-                            formatDuration(
-                              schedule.duration_minutes
-                            )
-                          )}
-
-                        </div>
-                      `
-
-                      :
-
-                      ""
-                  }
-
-
-                </div>
-
-
-                ${
-                  actions
-
-                    ?
-
-                    `
-                      <div
-                        class="class-actions">
-
-                        ${actions}
-
-                      </div>
-                    `
-
-                    :
-
-                    ""
-                }
-
+                ${safeHtml(
+                  item.converted.date
+                )}
 
               </div>
 
-            `;
+            </div>
 
-          }
-        );
+            ${
+              actions
 
+              ?
 
-        html += `
+              `
+                <div class="class-actions">
+
+                  ${actions}
+
+                </div>
+              `
+
+              :
+
+              ""
+            }
 
           </div>
 
         `;
 
-      }
-    );
+      });
+
+
+      html += `</div>`;
+
+    });
 
 
     container.innerHTML =
-
       html ||
 
       `
-
         <div class="empty">
-
           No active classes found.
-
         </div>
-
       `;
 
 
   }catch(error){
-
 
     console.error(
       "Student schedule error:",
       error
     );
 
-
     container.innerHTML = "";
-
 
     message.innerHTML = `
 
       <div class="error-box">
 
         <strong>
-
           Could not load your schedule.
-
         </strong>
 
         <br><br>
@@ -1131,9 +940,31 @@ async function loadStudentSchedule(){
 }
 
 
-/* =====================================================
-   START
-===================================================== */
+function getDateAfter(dateISO,days){
+
+  const d =
+    new Date(
+      dateISO + "T12:00:00Z"
+    );
+
+  d.setUTCDate(
+    d.getUTCDate() + days
+  );
+
+  return (
+    d.getUTCFullYear() +
+    "-" +
+    String(
+      d.getUTCMonth()+1
+    ).padStart(2,"0") +
+    "-" +
+    String(
+      d.getUTCDate()
+    ).padStart(2,"0")
+  );
+
+}
+
 
 document.addEventListener(
   "DOMContentLoaded",
@@ -1145,7 +976,3 @@ document.addEventListener(
 );
 
 </script>
-
-</body>
-
-</html>
