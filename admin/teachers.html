@@ -138,6 +138,39 @@ Female
 </div>
 
 
+<!-- TIMEZONE -->
+
+<div class="field">
+
+<label>Teacher Time Zone</label>
+
+<select
+id="teacher_timezone"
+class="input"
+required>
+
+<option value="Asia/Karachi">
+Asia/Karachi — Pakistan
+</option>
+
+</select>
+
+<small
+style="
+display:block;
+margin-top:6px;
+opacity:.7;
+line-height:1.4;
+">
+
+Select the teacher's local IANA time zone.
+All supported time zones are available.
+
+</small>
+
+</div>
+
+
 <div class="field full">
 
 <label>Bio</label>
@@ -189,6 +222,8 @@ Create Teacher Account
 
 <th>Bio</th>
 
+<th>Time Zone</th>
+
 <th>Status</th>
 
 <th>Classroom</th>
@@ -206,7 +241,7 @@ Create Teacher Account
 
 <tr>
 
-<td colspan="7">
+<td colspan="8">
 Loading...
 </td>
 
@@ -236,6 +271,136 @@ const EDGE_FUNCTION_URL =
 
 
 /* =========================================================
+   TIMEZONE SYSTEM
+   Uses browser-supported IANA time zones.
+   No limited country list.
+========================================================= */
+
+function getSupportedTimeZones(){
+
+let zones = [];
+
+
+try{
+
+if(
+typeof Intl !== "undefined" &&
+typeof Intl.supportedValuesOf === "function"
+){
+
+zones =
+Intl.supportedValuesOf("timeZone");
+
+}
+
+}catch(error){
+
+console.warn(
+"Could not read browser timezone list:",
+error
+);
+
+}
+
+
+if(!zones.includes("UTC")){
+
+zones.unshift("UTC");
+
+}
+
+
+if(!zones.includes("Asia/Karachi")){
+
+zones.push("Asia/Karachi");
+
+}
+
+
+return [...new Set(zones)].sort();
+
+}
+
+
+/* =========================================================
+   LOAD TIMEZONES
+========================================================= */
+
+function loadTimeZones(){
+
+const select =
+document.getElementById(
+"teacher_timezone"
+);
+
+if(!select){
+
+return;
+
+}
+
+
+let browserZone =
+"Asia/Karachi";
+
+
+try{
+
+browserZone =
+Intl.DateTimeFormat()
+.resolvedOptions()
+.timeZone ||
+"Asia/Karachi";
+
+}catch(error){
+
+console.warn(
+"Browser timezone unavailable:",
+error
+);
+
+}
+
+
+const zones =
+getSupportedTimeZones();
+
+
+select.innerHTML = "";
+
+
+zones.forEach(function(zone){
+
+const option =
+document.createElement("option");
+
+option.value =
+zone;
+
+option.textContent =
+zone;
+
+select.appendChild(option);
+
+});
+
+
+if(zones.includes(browserZone)){
+
+select.value =
+browserZone;
+
+}else{
+
+select.value =
+"Asia/Karachi";
+
+}
+
+}
+
+
+/* =========================================================
    LOAD TEACHERS
 ========================================================= */
 
@@ -252,7 +417,7 @@ document.getElementById("rows");
 
 rows.innerHTML = `
 <tr>
-<td colspan="7">
+<td colspan="8">
 Loading teachers...
 </td>
 </tr>
@@ -267,7 +432,7 @@ error: teacherError
 } = await db
 .from("teachers")
 .select(
-"id,name,gender,bio,active,created_at"
+"id,name,gender,bio,active,timezone,created_at"
 )
 .order(
 "created_at",
@@ -287,7 +452,7 @@ teacherError.message,
 
 rows.innerHTML = `
 <tr>
-<td colspan="7">
+<td colspan="8">
 Could not load teachers.
 </td>
 </tr>
@@ -342,7 +507,7 @@ if(!teachers || teachers.length === 0){
 
 rows.innerHTML = `
 <tr>
-<td colspan="7">
+<td colspan="8">
 No teachers found.
 </td>
 </tr>
@@ -408,6 +573,28 @@ Active
 : `<span style="color:#b45309;font-weight:600">
 Inactive
 </span>`;
+
+
+/* Timezone */
+
+const teacherTimezone =
+t.timezone ||
+"Asia/Karachi";
+
+
+const timezoneHtml = `
+
+<small
+style="
+font-size:12px;
+word-break:break-word;
+">
+
+${escapeHtml(teacherTimezone)}
+
+</small>
+
+`;
 
 
 /* Action */
@@ -479,6 +666,11 @@ ${escapeHtml(t.gender || "")}
 
 <td>
 ${escapeHtml(t.bio || "")}
+</td>
+
+
+<td>
+${timezoneHtml}
 </td>
 
 
@@ -585,7 +777,23 @@ document
 .trim();
 
 
+const timezone =
+document
+.getElementById("teacher_timezone")
+.value
+.trim();
+
+
 try{
+
+
+if(!timezone){
+
+throw new Error(
+"Please select teacher time zone."
+);
+
+}
 
 
 const {
@@ -670,6 +878,51 @@ result.error ||
 }
 
 
+/* =====================================================
+   SAVE TIMEZONE
+===================================================== */
+
+const teacherId =
+result.user_id;
+
+
+if(!teacherId){
+
+throw new Error(
+"Teacher account was created but ID was not returned."
+);
+
+}
+
+
+const timezoneResult =
+await db
+
+.from("teachers")
+
+.update({
+
+timezone:
+timezone
+
+})
+
+.eq(
+"id",
+teacherId
+);
+
+
+if(timezoneResult.error){
+
+throw new Error(
+"Teacher account created, but timezone could not be saved: " +
+timezoneResult.error.message
+);
+
+}
+
+
 /* Success */
 
 let successMessage =
@@ -688,6 +941,11 @@ result.classroom.access_code;
 }
 
 
+successMessage +=
+" Time Zone: " +
+timezone;
+
+
 showMsg(
 "msg",
 successMessage,
@@ -700,6 +958,18 @@ document
 "teacherForm"
 )
 .reset();
+
+
+/*
+   Keep safe default after reset.
+*/
+
+document
+.getElementById(
+"teacher_timezone"
+)
+.value =
+"Asia/Karachi";
 
 
 await loadTeachers();
@@ -1049,6 +1319,8 @@ error.message ||
 /* =========================================================
    INITIAL LOAD
 ========================================================= */
+
+loadTimeZones();
 
 loadTeachers();
 
