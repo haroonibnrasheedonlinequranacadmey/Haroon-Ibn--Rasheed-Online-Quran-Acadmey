@@ -1,1 +1,1706 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Teacher Salaries</title><link rel="stylesheet" href="../css/admin.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../js/config.js"></script><script src="../js/admin-ops.js"></script></head><body><div class="admin-layout"><aside class="sidebar"><div class="brand">HR Admin<span>Haroon Ibn Rasheed Online Quran Academy</span></div><nav class="nav"><a href="dashboard.html">Dashboard</a><a href="admissions.html">Admissions</a><a href="users.html">Users</a><a href="students.html">Students</a><a href="teachers.html">Teachers</a><a href="enrollments.html">Enrollments</a><a href="courses.html">Courses</a><a href="schedule.html">Schedule</a><a href="classes.html">Classes</a><a href="attendance.html">Attendance</a><a href="fees.html">Fees</a><a href="payment-methods.html">Payment Methods</a><a href="payments.html">Payments</a><a href="leaves.html">Leaves</a><a href="salaries.html">Salaries</a><a href="messages.html">Messages</a><a href="notifications.html">Notifications</a><a href="faqs.html">FAQs</a><a href="testimonials.html">Testimonials</a><a href="articles.html">Articles</a><a href="content.html">Website Content</a><a href="settings.html">Settings</a><a href="../index.html">View Website</a><a href="#" onclick="adminLogout();return false">Logout</a></nav></aside><main class="main"><div class="top"><h1>Teacher Salaries</h1></div><div id="msg" class="msg"></div><div class="card"><form id="f" class="form-grid"><div><label>Teacher Account UUID</label><input class="input" name="teacher_id" required></div><div><label>Salary Month</label><input class="input" type="month" name="salary_month" required></div><div><label>Amount</label><input class="input" name="amount" required></div><div><label>Currency</label><input class="input" name="currency" value="USD"></div><div><label>Status</label><select class="input" name="status"><option>pending</option><option>paid</option></select></div><div><label>Paid At</label><input class="input" type="date" name="paid_at"></div><div class="full"><button class="btn">Add Salary</button></div></form></div><div class="card"><table class="table"><thead><tr><th>Teacher</th><th>Month</th><th>Amount</th><th>Status</th><th>Paid</th></tr></thead><tbody id="rows"></tbody></table></div><script>async function load(){if(!await adminGuardLocal())return;const r=await adminDB.from('teacher_salaries').select('*,profiles(full_name)').order('salary_month',{ascending:false});if(r.error){msg.textContent=r.error.message;return}rows.innerHTML=(r.data||[]).map(x=>`<tr><td>${e(x.profiles?.full_name||x.teacher_id)}</td><td>${e(x.salary_month)}</td><td>${e(x.amount)} ${e(x.currency)}</td><td>${e(x.status)}</td><td>${e(x.paid_at||'')}</td></tr>`).join('')||'<tr><td colspan="5">No salaries.</td></tr>'}f.addEventListener('submit',async ev=>{ev.preventDefault();const o=Object.fromEntries(new FormData(f));o.amount=Number(o.amount);const r=await adminDB.from('teacher_salaries').insert(o);if(r.error)alert(r.error.message);else{f.reset();load()}});load();</script></main></div></body></html>
+<!doctype html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  >
+
+  <title>Teacher Salaries</title>
+
+  <link
+    rel="stylesheet"
+    href="../css/admin.css"
+  >
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script src="../js/config.js"></script>
+
+  <script src="../js/admin-ops.js"></script>
+
+</head>
+
+
+<body>
+
+<div class="admin-layout">
+
+
+  <!-- =========================================
+       SIDEBAR
+  ========================================== -->
+
+  <aside class="sidebar">
+
+    <div class="brand">
+
+      HR Admin
+
+      <span>
+        Haroon Ibn Rasheed Online Quran Academy
+      </span>
+
+    </div>
+
+
+    <nav class="nav">
+
+      <a href="dashboard.html">Dashboard</a>
+
+      <a href="admissions.html">Admissions</a>
+
+      <a href="users.html">Users</a>
+
+      <a href="students.html">Students</a>
+
+      <a href="teachers.html">Teachers</a>
+
+      <a href="enrollments.html">Enrollments</a>
+
+      <a href="courses.html">Courses</a>
+
+      <a href="schedule.html">Schedule</a>
+
+      <a href="classes.html">Classes</a>
+
+      <a href="attendance.html">Attendance</a>
+
+      <a href="fees.html">Fees</a>
+
+      <a href="payment-methods.html">
+        Payment Methods
+      </a>
+
+      <a href="payments.html">
+        Payments
+      </a>
+
+      <a href="leaves.html">
+        Leaves
+      </a>
+
+      <a
+        href="salaries.html"
+        class="active"
+      >
+        Salaries
+      </a>
+
+      <a href="messages.html">
+        Messages
+      </a>
+
+      <a href="notifications.html">
+        Notifications
+      </a>
+
+      <a href="faqs.html">
+        FAQs
+      </a>
+
+      <a href="testimonials.html">
+        Testimonials
+      </a>
+
+      <a href="articles.html">
+        Articles
+      </a>
+
+      <a href="content.html">
+        Website Content
+      </a>
+
+      <a href="settings.html">
+        Settings
+      </a>
+
+      <a href="../index.html">
+        View Website
+      </a>
+
+      <a
+        href="#"
+        onclick="adminLogout();return false"
+      >
+        Logout
+      </a>
+
+    </nav>
+
+  </aside>
+
+
+  <!-- =========================================
+       MAIN
+  ========================================== -->
+
+  <main class="main">
+
+
+    <div class="top">
+
+      <div>
+
+        <h1>
+          Teacher Salaries
+        </h1>
+
+        <p>
+          Manage teacher salary payments and records.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <!-- =========================================
+         MESSAGE
+    ========================================== -->
+
+    <div
+      id="msg"
+      class="msg"
+    ></div>
+
+
+    <!-- =========================================
+         SUMMARY
+    ========================================== -->
+
+    <div
+      class="stats-grid"
+      style="
+        display:grid;
+        grid-template-columns:
+        repeat(auto-fit,minmax(180px,1fr));
+        gap:15px;
+        margin-bottom:20px;
+      "
+    >
+
+      <div class="card">
+
+        <small>
+          Total Salaries
+        </small>
+
+        <h2 id="totalSalaries">
+          0
+        </h2>
+
+      </div>
+
+
+      <div class="card">
+
+        <small>
+          Paid
+        </small>
+
+        <h2 id="paidSalaries">
+          0
+        </h2>
+
+      </div>
+
+
+      <div class="card">
+
+        <small>
+          Pending
+        </small>
+
+        <h2 id="pendingSalaries">
+          0
+        </h2>
+
+      </div>
+
+
+      <div class="card">
+
+        <small>
+          Teachers
+        </small>
+
+        <h2 id="teacherCount">
+          0
+        </h2>
+
+      </div>
+
+    </div>
+
+
+    <!-- =========================================
+         ADD / EDIT SALARY
+    ========================================== -->
+
+    <div class="card">
+
+      <h2 id="formTitle">
+        Add Teacher Salary
+      </h2>
+
+
+      <form
+        id="salaryForm"
+        class="form-grid"
+      >
+
+
+        <!-- Salary ID -->
+
+        <input
+          type="hidden"
+          name="id"
+          id="salaryId"
+        >
+
+
+        <!-- Teacher -->
+
+        <div>
+
+          <label>
+            Teacher
+          </label>
+
+          <select
+            class="input"
+            name="teacher_id"
+            id="teacher_id"
+            required
+          >
+
+            <option value="">
+              Select Teacher
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <!-- Month -->
+
+        <div>
+
+          <label>
+            Salary Month
+          </label>
+
+          <input
+            class="input"
+            type="month"
+            name="salary_month"
+            id="salary_month"
+            required
+          >
+
+        </div>
+
+
+        <!-- Amount -->
+
+        <div>
+
+          <label>
+            Amount
+          </label>
+
+          <input
+            class="input"
+            type="number"
+            name="amount"
+            id="amount"
+            step="0.01"
+            min="0"
+            required
+            placeholder="30"
+          >
+
+        </div>
+
+
+        <!-- Currency -->
+
+        <div>
+
+          <label>
+            Currency
+          </label>
+
+          <select
+            class="input"
+            name="currency"
+            id="currency"
+          >
+
+            <option value="USD">
+              USD
+            </option>
+
+            <option value="GBP">
+              GBP
+            </option>
+
+            <option value="EUR">
+              EUR
+            </option>
+
+            <option value="PKR">
+              PKR
+            </option>
+
+            <option value="CAD">
+              CAD
+            </option>
+
+            <option value="AED">
+              AED
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <!-- Status -->
+
+        <div>
+
+          <label>
+            Status
+          </label>
+
+          <select
+            class="input"
+            name="status"
+            id="status"
+          >
+
+            <option value="pending">
+              Pending
+            </option>
+
+            <option value="paid">
+              Paid
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <!-- Payment Date -->
+
+        <div>
+
+          <label>
+            Payment Date
+          </label>
+
+          <input
+            class="input"
+            type="date"
+            name="payment_date"
+            id="payment_date"
+          >
+
+        </div>
+
+
+        <!-- Notes -->
+
+        <div class="full">
+
+          <label>
+            Notes
+          </label>
+
+          <textarea
+            class="input"
+            name="notes"
+            id="notes"
+            rows="3"
+            placeholder="Salary/payment notes..."
+          ></textarea>
+
+        </div>
+
+
+        <!-- Buttons -->
+
+        <div
+          class="full"
+          style="
+            display:flex;
+            gap:10px;
+            flex-wrap:wrap;
+          "
+        >
+
+          <button
+            class="btn"
+            type="submit"
+            id="saveBtn"
+          >
+            Add Salary
+          </button>
+
+
+          <button
+            class="btn"
+            type="button"
+            id="cancelBtn"
+            onclick="resetForm()"
+            style="display:none;"
+          >
+            Cancel Edit
+          </button>
+
+        </div>
+
+
+      </form>
+
+    </div>
+
+
+    <!-- =========================================
+         FILTERS
+    ========================================== -->
+
+    <div class="card">
+
+      <div
+        style="
+          display:grid;
+          grid-template-columns:
+          repeat(auto-fit,minmax(180px,1fr));
+          gap:10px;
+        "
+      >
+
+        <input
+          class="input"
+          id="search"
+          placeholder="Search teacher..."
+          oninput="renderRows()"
+        >
+
+
+        <select
+          class="input"
+          id="statusFilter"
+          onchange="renderRows()"
+        >
+
+          <option value="">
+            All Status
+          </option>
+
+          <option value="pending">
+            Pending
+          </option>
+
+          <option value="paid">
+            Paid
+          </option>
+
+        </select>
+
+
+        <button
+          class="btn"
+          type="button"
+          onclick="resetFilters()"
+        >
+          Reset Filters
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- =========================================
+         SALARY TABLE
+    ========================================== -->
+
+    <div class="card">
+
+      <div
+        style="
+          overflow-x:auto;
+        "
+      >
+
+        <table class="table">
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Teacher
+              </th>
+
+              <th>
+                Month
+              </th>
+
+              <th>
+                Amount
+              </th>
+
+              <th>
+                Currency
+              </th>
+
+              <th>
+                Status
+              </th>
+
+              <th>
+                Payment Date
+              </th>
+
+              <th>
+                Notes
+              </th>
+
+              <th>
+                Actions
+              </th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody id="rows">
+
+            <tr>
+
+              <td
+                colspan="8"
+                style="text-align:center;"
+              >
+                Loading salaries...
+              </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+
+  </main>
+
+</div>
+
+
+<script>
+
+/* =========================================
+   SUPABASE
+========================================= */
+
+const cfg =
+  window.SUPABASE_CONFIG || {};
+
+const db =
+  window.supabase?.createClient
+    ? window.supabase.createClient(
+        cfg.url,
+        cfg.anonKey
+      )
+    : null;
+
+window.academyDB = db;
+
+
+/* =========================================
+   DATA
+========================================= */
+
+let teachers = [];
+
+let salaries = [];
+
+
+/* =========================================
+   ESCAPE HTML
+========================================= */
+
+function e(value) {
+
+  return String(value ?? "")
+    .replace(/[&<>"']/g, function(char) {
+
+      return {
+
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+
+      }[char];
+
+    });
+
+}
+
+
+/* =========================================
+   LOAD EVERYTHING
+========================================= */
+
+async function load() {
+
+  if (!db) {
+
+    showMessage(
+      "Supabase connection not found.",
+      true
+    );
+
+    return;
+
+  }
+
+
+  const allowed =
+    await adminGuardLocal();
+
+  if (!allowed) return;
+
+
+  await Promise.all([
+    loadTeachers(),
+    loadSalaries()
+  ]);
+
+}
+
+
+/* =========================================
+   LOAD TEACHERS
+========================================= */
+
+async function loadTeachers() {
+
+  const result =
+    await db
+
+      .from("teachers")
+
+      .select(`
+        id,
+        name,
+        active
+      `)
+
+      .order("name", {
+        ascending: true
+      });
+
+
+  if (result.error) {
+
+    console.error(
+      "Teachers error:",
+      result.error
+    );
+
+    showMessage(
+      result.error.message,
+      true
+    );
+
+    return;
+
+  }
+
+
+  teachers =
+    result.data || [];
+
+
+  const select =
+    document.getElementById(
+      "teacher_id"
+    );
+
+
+  select.innerHTML = `
+
+    <option value="">
+      Select Teacher
+    </option>
+
+  `;
+
+
+  teachers.forEach(teacher => {
+
+    const option =
+      document.createElement("option");
+
+    option.value =
+      teacher.id;
+
+    option.textContent =
+      teacher.name ||
+      "Unnamed Teacher";
+
+    select.appendChild(option);
+
+  });
+
+
+  document.getElementById(
+    "teacherCount"
+  ).textContent =
+    teachers.length;
+
+}
+
+
+/* =========================================
+   LOAD SALARIES
+========================================= */
+
+async function loadSalaries() {
+
+  const result =
+    await db
+
+      .from("teacher_salaries")
+
+      .select(`
+        id,
+        teacher_id,
+        salary_month,
+        amount,
+        status,
+        currency,
+        payment_date,
+        notes,
+        created_at,
+        updated_at
+      `)
+
+      .order(
+        "salary_month",
+        {
+          ascending: false
+        }
+      );
+
+
+  if (result.error) {
+
+    console.error(
+      "Salary error:",
+      result.error
+    );
+
+    showMessage(
+      result.error.message,
+      true
+    );
+
+    return;
+
+  }
+
+
+  salaries =
+    result.data || [];
+
+
+  renderRows();
+
+  updateSummary();
+
+}
+
+
+/* =========================================
+   TEACHER NAME
+========================================= */
+
+function teacherName(id) {
+
+  const teacher =
+    teachers.find(
+      t =>
+        String(t.id) ===
+        String(id)
+    );
+
+
+  return teacher
+    ? teacher.name
+    : id;
+
+}
+
+
+/* =========================================
+   RENDER TABLE
+========================================= */
+
+function renderRows() {
+
+  const tbody =
+    document.getElementById(
+      "rows"
+    );
+
+
+  const search =
+    String(
+      document.getElementById(
+        "search"
+      )?.value || ""
+    )
+      .trim()
+      .toLowerCase();
+
+
+  const status =
+    document.getElementById(
+      "statusFilter"
+    )?.value || "";
+
+
+  const filtered =
+    salaries.filter(salary => {
+
+      const name =
+        teacherName(
+          salary.teacher_id
+        )
+          .toLowerCase();
+
+
+      const matchesSearch =
+        !search ||
+        name.includes(search) ||
+        String(
+          salary.teacher_id
+        )
+          .toLowerCase()
+          .includes(search);
+
+
+      const matchesStatus =
+        !status ||
+        salary.status === status;
+
+
+      return (
+        matchesSearch &&
+        matchesStatus
+      );
+
+    });
+
+
+  if (!filtered.length) {
+
+    tbody.innerHTML = `
+
+      <tr>
+
+        <td
+          colspan="8"
+          style="text-align:center;"
+        >
+          No salaries found.
+        </td>
+
+      </tr>
+
+    `;
+
+    return;
+
+  }
+
+
+  tbody.innerHTML =
+    filtered
+      .map(salary => {
+
+        const statusClass =
+          salary.status === "paid"
+            ? "paid"
+            : "pending";
+
+
+        return `
+
+          <tr>
+
+            <td>
+
+              <strong>
+                ${e(
+                  teacherName(
+                    salary.teacher_id
+                  )
+                )}
+              </strong>
+
+            </td>
+
+
+            <td>
+              ${e(
+                salary.salary_month
+              )}
+            </td>
+
+
+            <td>
+              ${e(
+                salary.amount
+              )}
+            </td>
+
+
+            <td>
+              ${e(
+                salary.currency ||
+                "USD"
+              )}
+            </td>
+
+
+            <td>
+
+              <span
+                class="status-${statusClass}"
+              >
+                ${e(
+                  salary.status ||
+                  "pending"
+                )}
+              </span>
+
+            </td>
+
+
+            <td>
+              ${e(
+                salary.payment_date ||
+                "-"
+              )}
+            </td>
+
+
+            <td>
+              ${e(
+                salary.notes ||
+                "-"
+              )}
+            </td>
+
+
+            <td>
+
+              <div
+                style="
+                  display:flex;
+                  gap:5px;
+                  flex-wrap:wrap;
+                "
+              >
+
+                <button
+                  class="btn"
+                  type="button"
+                  onclick="editSalary('${salary.id}')"
+                >
+                  Edit
+                </button>
+
+
+                ${
+                  salary.status !== "paid"
+                  ? `
+
+                    <button
+                      class="btn"
+                      type="button"
+                      onclick="markPaid('${salary.id}')"
+                    >
+                      Mark Paid
+                    </button>
+
+                  `
+                  : ""
+                }
+
+
+                <button
+                  class="btn"
+                  type="button"
+                  onclick="deleteSalary('${salary.id}')"
+                >
+                  Delete
+                </button>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+        `;
+
+      })
+      .join("");
+
+}
+
+
+/* =========================================
+   SUMMARY
+========================================= */
+
+function updateSummary() {
+
+  const paid =
+    salaries.filter(
+      s => s.status === "paid"
+    );
+
+
+  const pending =
+    salaries.filter(
+      s => s.status === "pending"
+    );
+
+
+  document.getElementById(
+    "totalSalaries"
+  ).textContent =
+    salaries.length;
+
+
+  document.getElementById(
+    "paidSalaries"
+  ).textContent =
+    paid.length;
+
+
+  document.getElementById(
+    "pendingSalaries"
+  ).textContent =
+    pending.length;
+
+}
+
+
+/* =========================================
+   FORM SUBMIT
+========================================= */
+
+document
+  .getElementById("salaryForm")
+  .addEventListener(
+    "submit",
+    async function(event) {
+
+      event.preventDefault();
+
+
+      const id =
+        document.getElementById(
+          "salaryId"
+        ).value;
+
+
+      const teacherId =
+        document.getElementById(
+          "teacher_id"
+        ).value;
+
+
+      const salaryMonth =
+        document.getElementById(
+          "salary_month"
+        ).value;
+
+
+      const amount =
+        Number(
+          document.getElementById(
+            "amount"
+          ).value
+        );
+
+
+      const currency =
+        document.getElementById(
+          "currency"
+        ).value;
+
+
+      const status =
+        document.getElementById(
+          "status"
+        ).value;
+
+
+      const paymentDate =
+        document.getElementById(
+          "payment_date"
+        ).value;
+
+
+      const notes =
+        document.getElementById(
+          "notes"
+        ).value
+          .trim();
+
+
+      if (!teacherId) {
+
+        alert(
+          "Please select a teacher."
+        );
+
+        return;
+
+      }
+
+
+      if (!salaryMonth) {
+
+        alert(
+          "Please select salary month."
+        );
+
+        return;
+
+      }
+
+
+      if (!amount || amount < 0) {
+
+        alert(
+          "Please enter a valid amount."
+        );
+
+        return;
+
+      }
+
+
+      const data = {
+
+        teacher_id:
+          teacherId,
+
+        salary_month:
+          salaryMonth,
+
+        amount:
+          amount,
+
+        currency:
+          currency,
+
+        status:
+          status,
+
+        payment_date:
+          paymentDate ||
+          null,
+
+        notes:
+          notes ||
+          null
+
+      };
+
+
+      if (
+        status === "paid" &&
+        !paymentDate
+      ) {
+
+        data.payment_date =
+          new Date()
+            .toISOString()
+            .slice(0, 10);
+
+      }
+
+
+      const button =
+        document.getElementById(
+          "saveBtn"
+        );
+
+
+      button.disabled = true;
+
+      button.textContent =
+        id
+          ? "Updating..."
+          : "Saving...";
+
+
+      let result;
+
+
+      if (id) {
+
+        result =
+          await db
+
+            .from(
+              "teacher_salaries"
+            )
+
+            .update(data)
+
+            .eq(
+              "id",
+              id
+            );
+
+      } else {
+
+        result =
+          await db
+
+            .from(
+              "teacher_salaries"
+            )
+
+            .insert(data);
+
+      }
+
+
+      button.disabled = false;
+
+      button.textContent =
+        id
+          ? "Update Salary"
+          : "Add Salary";
+
+
+      if (result.error) {
+
+        alert(
+          result.error.message
+        );
+
+        return;
+
+      }
+
+
+      showMessage(
+        id
+          ? "Salary updated successfully."
+          : "Salary added successfully."
+      );
+
+
+      resetForm();
+
+      await loadSalaries();
+
+    }
+  );
+
+
+/* =========================================
+   EDIT
+========================================= */
+
+function editSalary(id) {
+
+  const salary =
+    salaries.find(
+      s =>
+        String(s.id) ===
+        String(id)
+    );
+
+
+  if (!salary) {
+
+    alert(
+      "Salary record not found."
+    );
+
+    return;
+
+  }
+
+
+  document.getElementById(
+    "salaryId"
+  ).value =
+    salary.id;
+
+
+  document.getElementById(
+    "teacher_id"
+  ).value =
+    salary.teacher_id;
+
+
+  document.getElementById(
+    "salary_month"
+  ).value =
+    salary.salary_month;
+
+
+  document.getElementById(
+    "amount"
+  ).value =
+    salary.amount;
+
+
+  document.getElementById(
+    "currency"
+  ).value =
+    salary.currency ||
+    "USD";
+
+
+  document.getElementById(
+    "status"
+  ).value =
+    salary.status ||
+    "pending";
+
+
+  document.getElementById(
+    "payment_date"
+  ).value =
+    salary.payment_date ||
+    "";
+
+
+  document.getElementById(
+    "notes"
+  ).value =
+    salary.notes ||
+    "";
+
+
+  document.getElementById(
+    "formTitle"
+  ).textContent =
+    "Edit Teacher Salary";
+
+
+  document.getElementById(
+    "saveBtn"
+  ).textContent =
+    "Update Salary";
+
+
+  document.getElementById(
+    "cancelBtn"
+  ).style.display =
+    "inline-block";
+
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+
+}
+
+
+/* =========================================
+   MARK PAID
+========================================= */
+
+async function markPaid(id) {
+
+  const salary =
+    salaries.find(
+      s =>
+        String(s.id) ===
+        String(id)
+    );
+
+
+  if (!salary) return;
+
+
+  const confirmed =
+    confirm(
+      `Mark salary for ${teacherName(
+        salary.teacher_id
+      )} as PAID?`
+    );
+
+
+  if (!confirmed) return;
+
+
+  const paymentDate =
+    new Date()
+      .toISOString()
+      .slice(0, 10);
+
+
+  const result =
+    await db
+
+      .from(
+        "teacher_salaries"
+      )
+
+      .update({
+
+        status:
+          "paid",
+
+        payment_date:
+          paymentDate
+
+      })
+
+      .eq(
+        "id",
+        id
+      );
+
+
+  if (result.error) {
+
+    alert(
+      result.error.message
+    );
+
+    return;
+
+  }
+
+
+  await loadSalaries();
+
+}
+
+
+/* =========================================
+   DELETE
+========================================= */
+
+async function deleteSalary(id) {
+
+  const salary =
+    salaries.find(
+      s =>
+        String(s.id) ===
+        String(id)
+    );
+
+
+  if (!salary) return;
+
+
+  const confirmed =
+    confirm(
+      `Delete salary record for ${teacherName(
+        salary.teacher_id
+      )}?`
+    );
+
+
+  if (!confirmed) return;
+
+
+  const result =
+    await db
+
+      .from(
+        "teacher_salaries"
+      )
+
+      .delete()
+
+      .eq(
+        "id",
+        id
+      );
+
+
+  if (result.error) {
+
+    alert(
+      result.error.message
+    );
+
+    return;
+
+  }
+
+
+  await loadSalaries();
+
+}
+
+
+/* =========================================
+   RESET FORM
+========================================= */
+
+function resetForm() {
+
+  document
+    .getElementById(
+      "salaryForm"
+    )
+    .reset();
+
+
+  document.getElementById(
+    "salaryId"
+  ).value = "";
+
+
+  document.getElementById(
+    "currency"
+  ).value =
+    "USD";
+
+
+  document.getElementById(
+    "status"
+  ).value =
+    "pending";
+
+
+  document.getElementById(
+    "formTitle"
+  ).textContent =
+    "Add Teacher Salary";
+
+
+  document.getElementById(
+    "saveBtn"
+  ).textContent =
+    "Add Salary";
+
+
+  document.getElementById(
+    "cancelBtn"
+  ).style.display =
+    "none";
+
+}
+
+
+/* =========================================
+   FILTER RESET
+========================================= */
+
+function resetFilters() {
+
+  document.getElementById(
+    "search"
+  ).value = "";
+
+
+  document.getElementById(
+    "statusFilter"
+  ).value = "";
+
+
+  renderRows();
+
+}
+
+
+/* =========================================
+   MESSAGE
+========================================= */
+
+function showMessage(
+  message,
+  error = false
+) {
+
+  const box =
+    document.getElementById(
+      "msg"
+    );
+
+
+  box.textContent =
+    message;
+
+
+  box.style.display =
+    "block";
+
+
+  if (error) {
+
+    box.style.color =
+      "#b91c1c";
+
+  } else {
+
+    box.style.color =
+      "#166534";
+
+  }
+
+
+  setTimeout(
+    () => {
+
+      box.style.display =
+        "none";
+
+    },
+    4000
+  );
+
+}
+
+
+/* =========================================
+   START
+========================================= */
+
+load();
+
+</script>
+
+</body>
+</html>
