@@ -13,24 +13,25 @@
 <script src="../js/admin.js"></script>
 
 <style>
+
 .schedule-form{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:16px
+  gap:16px;
 }
 
 .field.full{
-  grid-column:1/-1
+  grid-column:1/-1;
 }
 
 .days-box{
   display:flex;
   flex-wrap:wrap;
-  gap:8px
+  gap:8px;
 }
 
 .day-check input{
-  display:none
+  display:none;
 }
 
 .day-check label{
@@ -41,23 +42,23 @@
   cursor:pointer;
   background:#fff;
   font-weight:600;
-  font-size:13px
+  font-size:13px;
 }
 
 .day-check input:checked+label{
   background:#2f9fba;
   color:#fff;
-  border-color:#2f9fba
+  border-color:#2f9fba;
 }
 
 .time-row{
   display:grid;
   grid-template-columns:1fr 1fr 1fr;
-  gap:8px
+  gap:8px;
 }
 
 .schedule-section{
-  margin-top:28px
+  margin-top:28px;
 }
 
 .schedule-title{
@@ -65,41 +66,41 @@
   color:#fff;
   padding:10px 14px;
   font-weight:700;
-  font-size:15px
+  font-size:15px;
 }
 
 .weekly-wrap{
   overflow:auto;
-  border:1px solid #ddd
+  border:1px solid #ddd;
 }
 
 .weekly-grid{
   width:100%;
   min-width:900px;
   border-collapse:collapse;
-  table-layout:fixed
+  table-layout:fixed;
 }
 
 .weekly-grid th,
 .weekly-grid td{
   border:1px solid #ddd;
-  padding:0
+  padding:0;
 }
 
 .weekly-grid th{
   background:#f18b82;
   color:#fff;
   height:36px;
-  font-size:13px
+  font-size:13px;
 }
 
 .weekly-grid .time-col{
-  width:105px;
+  width:110px;
   background:#f7f7f7;
   color:#555;
   font-size:11px;
   text-align:center;
-  padding:5px
+  padding:5px;
 }
 
 .slot{
@@ -108,63 +109,208 @@
   padding:4px!important;
   vertical-align:middle;
   text-align:left;
-  background:#fff
+  background:#fff;
 }
 
 .slot.has-class{
   background:#aeb000;
   color:#fff;
   font-weight:600;
-  cursor:pointer
+  cursor:pointer;
+}
+
+.slot.has-class.inactive{
+  background:#999;
 }
 
 .class-name{
   font-size:11px;
-  line-height:1.25
+  line-height:1.25;
 }
 
 .class-course{
   font-size:9px;
   opacity:.9;
-  margin-top:2px
+  margin-top:2px;
 }
 
 .class-duration{
   font-size:9px;
-  opacity:.85
+  opacity:.85;
 }
 
 .status-active{
   color:#16834b;
-  font-weight:700
+  font-weight:700;
 }
 
 .status-inactive{
   color:#b33;
-  font-weight:700
+  font-weight:700;
 }
 
 .saved-table-wrap{
-  overflow:auto
+  overflow:auto;
 }
 
 .saved-table{
-  min-width:1000px
+  min-width:1100px;
 }
 
 .saved-table td{
-  vertical-align:middle
+  vertical-align:middle;
+}
+
+.small-note{
+  font-size:12px;
+  color:#777;
+  margin-top:5px;
+}
+
+.action-row{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+/* =========================================================
+   TIMEZONE
+========================================================= */
+
+.timezone-box{
+  margin-top:8px;
+  padding:12px;
+  border:1px solid #dfe5e8;
+  border-radius:8px;
+  background:#f8fafb;
+}
+
+.timezone-line{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:7px;
+}
+
+.timezone-label{
+  font-size:12px;
+  color:#666;
+}
+
+.timezone-value{
+  font-weight:700;
+  font-size:12px;
+  word-break:break-word;
+}
+
+.timezone-preview{
+  margin-top:10px;
+  padding:12px;
+  border-radius:8px;
+  background:#eef7f9;
+  border:1px solid #d4e8ec;
+}
+
+.preview-title{
+  font-weight:700;
+  margin-bottom:8px;
+  font-size:13px;
+}
+
+.preview-row{
+  display:grid;
+  grid-template-columns:160px 1fr;
+  gap:8px;
+  padding:4px 0;
+  font-size:12px;
+}
+
+.preview-row strong{
+  color:#555;
+}
+
+.tz-search-wrap{
+  position:relative;
+}
+
+.tz-search{
+  width:100%;
+  box-sizing:border-box;
+}
+
+.tz-results{
+  position:absolute;
+  left:0;
+  right:0;
+  top:100%;
+  z-index:50;
+  max-height:260px;
+  overflow:auto;
+  background:#fff;
+  border:1px solid #ccd5dc;
+  border-top:0;
+  box-shadow:0 6px 18px rgba(0,0,0,.12);
+  display:none;
+}
+
+.tz-result{
+  padding:9px 11px;
+  cursor:pointer;
+  border-bottom:1px solid #eee;
+  font-size:12px;
+}
+
+.tz-result:hover{
+  background:#f1f7f8;
+}
+
+.tz-result-main{
+  font-weight:700;
+}
+
+.tz-result-sub{
+  color:#777;
+  margin-top:2px;
+  font-size:11px;
+}
+
+.tz-selected{
+  margin-top:6px;
+  font-size:11px;
+  color:#555;
+}
+
+.timezone-preview-card{
+  grid-column:1/-1;
 }
 
 @media(max-width:700px){
+
   .schedule-form{
-    grid-template-columns:1fr
+    grid-template-columns:1fr;
   }
 
   .field.full{
-    grid-column:auto
+    grid-column:auto;
   }
+
+  .timezone-preview-card{
+    grid-column:auto;
+  }
+
+  .time-row{
+    grid-template-columns:1fr 1fr 1fr;
+  }
+
+  .preview-row{
+    grid-template-columns:1fr;
+    gap:2px;
+  }
+
 }
+
 </style>
 </head>
 
@@ -210,7 +356,6 @@ HR Admin
 
 </aside>
 
-
 <main class="main">
 
 <div class="top">
@@ -220,7 +365,9 @@ HR Admin
 <div id="msg" class="msg"></div>
 
 
-<!-- ADD WEEKLY CLASS -->
+<!-- ======================================================
+     ADD SCHEDULE
+====================================================== -->
 
 <div class="card">
 
@@ -228,7 +375,7 @@ HR Admin
 Add Weekly Class
 </h2>
 
-<form id="f" class="schedule-form">
+<form id="scheduleForm" class="schedule-form">
 
 
 <!-- TEACHER -->
@@ -237,16 +384,26 @@ Add Weekly Class
 
 <label>Teacher</label>
 
-<select
-id="teacher_id"
-class="input"
-required>
-
-<option value="">
-Loading teachers...
-</option>
-
+<select id="teacher_id" class="input" required>
+<option value="">Loading teachers...</option>
 </select>
+
+<div id="teacherTimezoneBox" class="timezone-box" style="display:none">
+
+<div class="timezone-line">
+
+<span class="timezone-label">
+Teacher Time Zone
+</span>
+
+<span id="teacherTimezone"
+class="timezone-value">
+—
+</span>
+
+</div>
+
+</div>
 
 </div>
 
@@ -257,16 +414,26 @@ Loading teachers...
 
 <label>Student</label>
 
-<select
-id="student_id"
-class="input"
-required>
-
-<option value="">
-Select teacher first
-</option>
-
+<select id="student_id" class="input" required>
+<option value="">Select teacher first</option>
 </select>
+
+<div id="studentTimezoneBox" class="timezone-box" style="display:none">
+
+<div class="timezone-line">
+
+<span class="timezone-label">
+Student Time Zone
+</span>
+
+<span id="studentTimezone"
+class="timezone-value">
+—
+</span>
+
+</div>
+
+</div>
 
 </div>
 
@@ -292,21 +459,11 @@ placeholder="e.g. Nazra Quran">
 
 <label>Duration</label>
 
-<select
-id="duration_minutes"
-class="input">
+<select id="duration_minutes" class="input">
 
-<option value="30">
-30 Minutes
-</option>
-
-<option value="45">
-45 Minutes
-</option>
-
-<option value="60">
-60 Minutes
-</option>
+<option value="30">30 Minutes</option>
+<option value="45">45 Minutes</option>
+<option value="60">60 Minutes</option>
 
 </select>
 
@@ -358,6 +515,10 @@ class="input">
 
 </div>
 
+<div class="small-note">
+Select all days on which this weekly class should run.
+</div>
+
 </div>
 
 
@@ -365,18 +526,13 @@ class="input">
 
 <div class="field">
 
-<label>Class Time</label>
+<label>Class Time — Pakistan Time</label>
 
 <div class="time-row">
 
-<select
-id="hour"
-class="input"
-required>
+<select id="hour" class="input" required>
 
-<option value="">
-Hour
-</option>
+<option value="">Hour</option>
 
 <option value="12">12</option>
 <option value="1">1</option>
@@ -393,26 +549,24 @@ Hour
 
 </select>
 
-
-<select
-id="minute"
-class="input">
+<select id="minute" class="input">
 
 <option value="00">00</option>
 <option value="30">30</option>
 
 </select>
 
-
-<select
-id="ampm"
-class="input">
+<select id="ampm" class="input">
 
 <option value="AM">AM</option>
 <option value="PM">PM</option>
 
 </select>
 
+</div>
+
+<div class="small-note">
+This is the base schedule time. It is stored as Asia/Karachi.
 </div>
 
 </div>
@@ -439,9 +593,7 @@ placeholder="https://meet.google.com/...">
 
 <label>Classroom</label>
 
-<select
-id="classroom_code"
-class="input">
+<select id="classroom_code" class="input">
 
 <option value="">
 Select teacher first
@@ -458,31 +610,106 @@ Select teacher first
 
 <label>Status</label>
 
-<select
-id="active"
-class="input">
+<select id="active" class="input">
 
-<option value="true">
-Active
-</option>
-
-<option value="false">
-Inactive
-</option>
+<option value="true">Active</option>
+<option value="false">Inactive</option>
 
 </select>
 
 </div>
 
 
+<!-- TIMEZONE PREVIEW -->
+
+<div class="field timezone-preview-card">
+
+<div class="timezone-preview">
+
+<div class="preview-title">
+Local Time Preview
+</div>
+
+<div class="preview-row">
+
+<strong>Pakistan:</strong>
+
+<span id="previewPakistan">
+Select day and time
+</span>
+
+</div>
+
+<div class="preview-row">
+
+<strong>Student:</strong>
+
+<span id="previewStudent">
+Select student and time
+</span>
+
+</div>
+
+<div class="preview-row">
+
+<strong>Teacher:</strong>
+
+<span id="previewTeacher">
+Select teacher and time
+</span>
+
+</div>
+
+<div class="small-note">
+Preview uses the selected upcoming weekly day. Actual portal times will be calculated from the student's or teacher's saved timezone, including daylight-saving changes where applicable.
+</div>
+
+</div>
+
+</div>
+
+
+<!-- TIMEZONE SEARCH -->
+
 <div class="field full">
 
-<button
-class="btn"
-type="submit">
+<label>
+Timezone Search / Preview
+</label>
 
+<div class="tz-search-wrap">
+
+<input
+id="timezoneSearch"
+class="input tz-search"
+type="text"
+autocomplete="off"
+placeholder="Search timezone e.g. India, UK, USA, London, New York, Dubai">
+
+<div id="timezoneResults"
+class="tz-results">
+</div>
+
+</div>
+
+<div id="timezoneSelected"
+class="tz-selected">
+No preview timezone selected.
+</div>
+
+<div class="small-note">
+This search is for timezone preview. Student and teacher profile timezones remain stored separately.
+</div>
+
+</div>
+
+
+<!-- SAVE -->
+
+<div class="field full">
+
+<button class="btn" type="submit">
 Save Weekly Class
-
 </button>
 
 </div>
@@ -492,7 +719,9 @@ Save Weekly Class
 </div>
 
 
-<!-- AM GRID -->
+<!-- ======================================================
+     AM GRID
+====================================================== -->
 
 <div class="card schedule-section">
 
@@ -533,7 +762,9 @@ Night AM
 </div>
 
 
-<!-- PM GRID -->
+<!-- ======================================================
+     PM GRID
+====================================================== -->
 
 <div class="card schedule-section">
 
@@ -574,13 +805,13 @@ Afternoon PM
 </div>
 
 
-<!-- SAVED -->
+<!-- ======================================================
+     SAVED
+====================================================== -->
 
 <div class="card schedule-section">
 
-<h2>
-Saved Weekly Classes
-</h2>
+<h2>Saved Weekly Classes</h2>
 
 <div class="saved-table-wrap">
 
@@ -593,7 +824,9 @@ Saved Weekly Classes
 <th>Teacher</th>
 <th>Student</th>
 <th>Days</th>
-<th>Time</th>
+<th>Pakistan Time</th>
+<th>Student Timezone</th>
+<th>Teacher Timezone</th>
 <th>Duration</th>
 <th>Course</th>
 <th>Google Meet</th>
@@ -620,14 +853,21 @@ Saved Weekly Classes
 
 <script>
 
+"use strict";
+
+
 /* =========================================================
    DATABASE
 ========================================================= */
 
-const db = supabase.createClient(
-  window.SUPABASE_CONFIG.url,
-  window.SUPABASE_CONFIG.anonKey
+const cfg = window.SUPABASE_CONFIG || {};
+
+const db = window.supabase.createClient(
+  cfg.url,
+  cfg.anonKey
 );
+
+window.academyDB = db;
 
 
 /* =========================================================
@@ -638,6 +878,9 @@ let teachersMap = {};
 let studentsMap = {};
 let classroomsMap = {};
 let schedules = [];
+
+let allTimezones = [];
+let selectedPreviewTimezone = "";
 
 const DAYS = [
   "Monday",
@@ -659,39 +902,228 @@ const dayChecks = [
   "sun"
 ];
 
+const ADMIN_SCHEDULE_TIMEZONE =
+  "Asia/Karachi";
+
 
 /* =========================================================
-   SAFE HTML
+   TIMEZONE ALIASES
+========================================================= */
+
+const TIMEZONE_ALIASES = {
+
+  "pakistan":[
+    "Asia/Karachi"
+  ],
+
+  "india":[
+    "Asia/Kolkata"
+  ],
+
+  "indian":[
+    "Asia/Kolkata"
+  ],
+
+  "uk":[
+    "Europe/London"
+  ],
+
+  "united kingdom":[
+    "Europe/London"
+  ],
+
+  "england":[
+    "Europe/London"
+  ],
+
+  "london":[
+    "Europe/London"
+  ],
+
+  "usa":[
+    "America/New_York",
+    "America/Chicago",
+    "America/Denver",
+    "America/Los_Angeles",
+    "America/Anchorage",
+    "Pacific/Honolulu"
+  ],
+
+  "us":[
+    "America/New_York",
+    "America/Chicago",
+    "America/Denver",
+    "America/Los_Angeles",
+    "America/Anchorage",
+    "Pacific/Honolulu"
+  ],
+
+  "america":[
+    "America/New_York",
+    "America/Chicago",
+    "America/Denver",
+    "America/Los_Angeles"
+  ],
+
+  "new york":[
+    "America/New_York"
+  ],
+
+  "los angeles":[
+    "America/Los_Angeles"
+  ],
+
+  "chicago":[
+    "America/Chicago"
+  ],
+
+  "dubai":[
+    "Asia/Dubai"
+  ],
+
+  "uae":[
+    "Asia/Dubai"
+  ],
+
+  "united arab emirates":[
+    "Asia/Dubai"
+  ],
+
+  "saudi":[
+    "Asia/Riyadh"
+  ],
+
+  "saudi arabia":[
+    "Asia/Riyadh"
+  ],
+
+  "bangladesh":[
+    "Asia/Dhaka"
+  ],
+
+  "dhaka":[
+    "Asia/Dhaka"
+  ],
+
+  "qatar":[
+    "Asia/Qatar"
+  ],
+
+  "doha":[
+    "Asia/Qatar"
+  ],
+
+  "canada":[
+    "America/Toronto",
+    "America/Vancouver",
+    "America/Edmonton",
+    "America/Winnipeg",
+    "America/Halifax"
+  ],
+
+  "toronto":[
+    "America/Toronto"
+  ],
+
+  "vancouver":[
+    "America/Vancouver"
+  ],
+
+  "australia":[
+    "Australia/Sydney",
+    "Australia/Melbourne",
+    "Australia/Brisbane",
+    "Australia/Perth",
+    "Australia/Adelaide"
+  ],
+
+  "sydney":[
+    "Australia/Sydney"
+  ],
+
+  "new zealand":[
+    "Pacific/Auckland"
+  ],
+
+  "germany":[
+    "Europe/Berlin"
+  ],
+
+  "france":[
+    "Europe/Paris"
+  ],
+
+  "italy":[
+    "Europe/Rome"
+  ],
+
+  "spain":[
+    "Europe/Madrid"
+  ],
+
+  "turkey":[
+    "Europe/Istanbul"
+  ],
+
+  "south africa":[
+    "Africa/Johannesburg"
+  ],
+
+  "egypt":[
+    "Africa/Cairo"
+  ],
+
+  "japan":[
+    "Asia/Tokyo"
+  ],
+
+  "tokyo":[
+    "Asia/Tokyo"
+  ],
+
+  "china":[
+    "Asia/Shanghai"
+  ],
+
+  "singapore":[
+    "Asia/Singapore"
+  ],
+
+  "malaysia":[
+    "Asia/Kuala_Lumpur"
+  ],
+
+  "indonesia":[
+    "Asia/Jakarta",
+    "Asia/Makassar",
+    "Asia/Jayapura"
+  ]
+
+};
+
+
+/* =========================================================
+   SAFE
 ========================================================= */
 
 function safe(value){
 
-  return escapeHtml(
-    String(value ?? "")
-  );
+  if(typeof escapeHtml === "function"){
+    return escapeHtml(String(value ?? ""));
+  }
 
-}
+  return String(value ?? "")
+    .replace(/[&<>"']/g,function(c){
 
+      return {
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#39;"
+      }[c];
 
-/* =========================================================
-   DAYS
-========================================================= */
-
-function getSelectedDays(){
-
-  return dayChecks
-
-    .map(id =>
-      document.getElementById(id)
-    )
-
-    .filter(x =>
-      x && x.checked
-    )
-
-    .map(x =>
-      x.value
-    );
+    });
 
 }
 
@@ -702,15 +1134,13 @@ function getSelectedDays(){
 
 function formatTime12(time){
 
-  if(!time){
-    return "";
-  }
+  if(!time) return "";
 
   const parts =
     String(time).split(":");
 
   let hour =
-    parseInt(parts[0],10);
+    parseInt(parts[0],10) || 0;
 
   const minute =
     parts[1] || "00";
@@ -723,33 +1153,24 @@ function formatTime12(time){
   hour =
     hour % 12 || 12;
 
-  return (
-    String(hour).padStart(2,"0")
-    +
-    ":"
-    +
-    minute
-    +
-    " "
-    +
-    ampm
-  );
+  return String(hour).padStart(2,"0")
+    + ":" +
+    minute +
+    " " +
+    ampm;
 
 }
 
 
 function timeToMinutes(time){
 
-  if(!time){
-    return 0;
-  }
+  if(!time) return 0;
 
   const parts =
     String(time).split(":");
 
   return (
-    (parseInt(parts[0],10) || 0) * 60
-    +
+    (parseInt(parts[0],10) || 0) * 60 +
     (parseInt(parts[1],10) || 0)
   );
 
@@ -761,29 +1182,815 @@ function minutesToTime(minutes){
   minutes =
     minutes % 1440;
 
-  return (
-    String(
-      Math.floor(minutes / 60)
-    ).padStart(2,"0")
-    +
-    ":"
-    +
-    String(
-      minutes % 60
-    ).padStart(2,"0")
+  return String(
+    Math.floor(minutes / 60)
+  ).padStart(2,"0")
+  + ":"
+  + String(
+    minutes % 60
+  ).padStart(2,"0");
+
+}
+
+
+/* =========================================================
+   DAYS
+========================================================= */
+
+function getSelectedDays(){
+
+  return dayChecks
+    .map(id =>
+      document.getElementById(id)
+    )
+    .filter(el =>
+      el && el.checked
+    )
+    .map(el =>
+      el.value
+    );
+
+}
+
+
+/* =========================================================
+   TIMEZONE LIST
+========================================================= */
+
+function buildTimezoneList(){
+
+  try{
+
+    if(
+      typeof Intl.supportedValuesOf ===
+      "function"
+    ){
+
+      allTimezones =
+        Intl.supportedValuesOf(
+          "timeZone"
+        );
+
+    }
+
+  }catch(error){
+
+    allTimezones = [];
+
+  }
+
+
+  if(!allTimezones.length){
+
+    allTimezones = [
+
+      "Pacific/Honolulu",
+      "America/Anchorage",
+      "America/Los_Angeles",
+      "America/Denver",
+      "America/Chicago",
+      "America/New_York",
+      "America/Toronto",
+      "America/Vancouver",
+
+      "America/Sao_Paulo",
+
+      "Atlantic/Azores",
+      "Europe/London",
+      "Europe/Paris",
+      "Europe/Berlin",
+      "Europe/Rome",
+      "Europe/Madrid",
+      "Europe/Istanbul",
+
+      "Africa/Cairo",
+      "Africa/Johannesburg",
+
+      "Asia/Dubai",
+      "Asia/Karachi",
+      "Asia/Kolkata",
+      "Asia/Dhaka",
+      "Asia/Riyadh",
+      "Asia/Qatar",
+      "Asia/Tehran",
+      "Asia/Tokyo",
+      "Asia/Shanghai",
+      "Asia/Singapore",
+      "Asia/Kuala_Lumpur",
+
+      "Australia/Perth",
+      "Australia/Adelaide",
+      "Australia/Brisbane",
+      "Australia/Sydney",
+
+      "Pacific/Auckland"
+
+    ];
+
+  }
+
+}
+
+
+/* =========================================================
+   TIMEZONE SEARCH
+========================================================= */
+
+function timezoneMatches(zone,query){
+
+  const q =
+    String(query || "")
+      .trim()
+      .toLowerCase();
+
+  if(!q){
+    return true;
+  }
+
+  if(
+    zone.toLowerCase()
+      .includes(q)
+  ){
+    return true;
+  }
+
+  const aliases =
+    Object.keys(TIMEZONE_ALIASES);
+
+  for(
+    const alias of aliases
+  ){
+
+    if(
+      alias.includes(q) &&
+      TIMEZONE_ALIASES[alias]
+        .includes(zone)
+    ){
+
+      return true;
+
+    }
+
+  }
+
+  return false;
+
+}
+
+
+function timezoneFriendlyName(zone){
+
+  if(!zone){
+    return "";
+  }
+
+  return zone
+    .split("/")
+    .slice(1)
+    .join(" / ")
+    .replaceAll("_"," ");
+
+}
+
+
+function renderTimezoneResults(query){
+
+  const box =
+    document.getElementById(
+      "timezoneResults"
+    );
+
+  if(!box){
+    return;
+  }
+
+  const matches =
+    allTimezones
+      .filter(zone =>
+        timezoneMatches(
+          zone,
+          query
+        )
+      )
+      .slice(0,100);
+
+  if(!matches.length){
+
+    box.innerHTML = `
+      <div class="tz-result">
+        No timezone found.
+      </div>
+    `;
+
+    box.style.display = "block";
+
+    return;
+
+  }
+
+
+  box.innerHTML =
+    matches.map(zone => {
+
+      return `
+        <div
+          class="tz-result"
+          data-timezone="${safe(zone)}">
+
+          <div class="tz-result-main">
+            ${safe(zone)}
+          </div>
+
+          <div class="tz-result-sub">
+            ${safe(timezoneFriendlyName(zone))}
+          </div>
+
+        </div>
+      `;
+
+    }).join("");
+
+  box.style.display = "block";
+
+}
+
+
+document
+  .getElementById("timezoneSearch")
+  .addEventListener(
+    "input",
+    function(){
+
+      renderTimezoneResults(
+        this.value
+      );
+
+    }
+  );
+
+
+document
+  .getElementById("timezoneSearch")
+  .addEventListener(
+    "focus",
+    function(){
+
+      renderTimezoneResults(
+        this.value
+      );
+
+    }
+  );
+
+
+document
+  .getElementById("timezoneResults")
+  .addEventListener(
+    "click",
+    function(event){
+
+      const item =
+        event.target.closest(
+          ".tz-result"
+        );
+
+      if(!item){
+        return;
+      }
+
+      const timezone =
+        item.dataset.timezone;
+
+      selectedPreviewTimezone =
+        timezone;
+
+      document
+        .getElementById(
+          "timezoneSearch"
+        )
+        .value =
+        timezone;
+
+      document
+        .getElementById(
+          "timezoneSelected"
+        )
+        .textContent =
+        "Selected timezone: " +
+        timezone;
+
+      document
+        .getElementById(
+          "timezoneResults"
+        ).style.display =
+        "none";
+
+      updateTimezonePreview();
+
+    }
+  );
+
+
+document.addEventListener(
+  "click",
+  function(event){
+
+    const wrap =
+      document.querySelector(
+        ".tz-search-wrap"
+      );
+
+    if(
+      wrap &&
+      !wrap.contains(event.target)
+    ){
+
+      document
+        .getElementById(
+          "timezoneResults"
+        ).style.display =
+        "none";
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   TIMEZONE DATE HELPERS
+========================================================= */
+
+function getNextDayDate(dayName){
+
+  const today =
+    new Date();
+
+  const target =
+    DAYS.indexOf(dayName);
+
+  if(target < 0){
+    return today;
+  }
+
+  const current =
+    today.getDay();
+
+  const jsTarget =
+    target === 6
+      ? 0
+      : target + 1;
+
+  let diff =
+    jsTarget - current;
+
+  if(diff < 0){
+    diff += 7;
+  }
+
+  const date =
+    new Date(today);
+
+  date.setDate(
+    today.getDate() + diff
+  );
+
+  return date;
+
+}
+
+
+/*
+  Convert a local date/time in an IANA timezone
+  into a UTC Date.
+*/
+
+function zonedTimeToUtc(
+  year,
+  month,
+  day,
+  hour,
+  minute,
+  timezone
+){
+
+  let guess =
+    Date.UTC(
+      year,
+      month - 1,
+      day,
+      hour,
+      minute,
+      0,
+      0
+    );
+
+  for(
+    let i=0;
+    i<4;
+    i++
+  ){
+
+    const parts =
+      getDatePartsInTimezone(
+        new Date(guess),
+        timezone
+      );
+
+    const desired =
+      Date.UTC(
+        year,
+        month - 1,
+        day,
+        hour,
+        minute,
+        0,
+        0
+      );
+
+    const actual =
+      Date.UTC(
+        parts.year,
+        parts.month - 1,
+        parts.day,
+        parts.hour,
+        parts.minute,
+        0,
+        0
+      );
+
+    const diff =
+      desired - actual;
+
+    if(!diff){
+      break;
+    }
+
+    guess += diff;
+
+  }
+
+  return new Date(guess);
+
+}
+
+
+function getDatePartsInTimezone(
+  date,
+  timezone
+){
+
+  const formatter =
+    new Intl.DateTimeFormat(
+      "en-US",
+      {
+        timeZone:timezone,
+        year:"numeric",
+        month:"2-digit",
+        day:"2-digit",
+        hour:"2-digit",
+        minute:"2-digit",
+        second:"2-digit",
+        hourCycle:"h23"
+      }
+    );
+
+  const parts =
+    formatter.formatToParts(date);
+
+  const obj = {};
+
+  parts.forEach(part => {
+
+    if(part.type !== "literal"){
+      obj[part.type] =
+        parseInt(part.value,10);
+    }
+
+  });
+
+  return obj;
+
+}
+
+
+function convertPakistanScheduleToTimezone(
+  dayName,
+  classTime,
+  targetTimezone
+){
+
+  if(
+    !dayName ||
+    !classTime ||
+    !targetTimezone
+  ){
+
+    return null;
+
+  }
+
+  const baseDate =
+    getNextDayDate(dayName);
+
+  const timeParts =
+    String(classTime)
+      .split(":");
+
+  const hour =
+    parseInt(timeParts[0],10) || 0;
+
+  const minute =
+    parseInt(timeParts[1],10) || 0;
+
+
+  const utcDate =
+    zonedTimeToUtc(
+      baseDate.getFullYear(),
+      baseDate.getMonth() + 1,
+      baseDate.getDate(),
+      hour,
+      minute,
+      ADMIN_SCHEDULE_TIMEZONE
+    );
+
+
+  const formatter =
+    new Intl.DateTimeFormat(
+      "en-US",
+      {
+        timeZone:targetTimezone,
+        weekday:"long",
+        month:"short",
+        day:"numeric",
+        year:"numeric",
+        hour:"numeric",
+        minute:"2-digit",
+        hour12:true
+      }
+    );
+
+  return formatter.format(
+    utcDate
   );
 
 }
 
 
 /* =========================================================
-   TIMEZONE
-   Admin schedule time is stored in Pakistan time.
-   Teacher/student timezones are stored on their records.
+   PREVIEW
 ========================================================= */
 
-const ADMIN_SCHEDULE_TIMEZONE =
-  "Asia/Karachi";
+function getPreviewDay(){
+
+  const selected =
+    getSelectedDays();
+
+  if(selected.length){
+    return selected[0];
+  }
+
+  return DAYS[
+    new Date().getDay() === 0
+      ? 6
+      : new Date().getDay() - 1
+  ];
+
+}
+
+
+function getSelectedClassTime(){
+
+  const hourEl =
+    document.getElementById("hour");
+
+  if(!hourEl.value){
+    return null;
+  }
+
+  let hour =
+    parseInt(
+      hourEl.value,
+      10
+    );
+
+  const minute =
+    parseInt(
+      document.getElementById(
+        "minute"
+      ).value,
+      10
+    ) || 0;
+
+  const ampm =
+    document.getElementById(
+      "ampm"
+    ).value;
+
+  hour =
+    hour % 12;
+
+  if(ampm === "PM"){
+    hour += 12;
+  }
+
+  return (
+    String(hour).padStart(2,"0")
+    + ":" +
+    String(minute).padStart(2,"0")
+  );
+
+}
+
+
+function updateTimezonePreview(){
+
+  const classTime =
+    getSelectedClassTime();
+
+  const day =
+    getPreviewDay();
+
+  const pakistan =
+    document.getElementById(
+      "previewPakistan"
+    );
+
+  const student =
+    document.getElementById(
+      "previewStudent"
+    );
+
+  const teacher =
+    document.getElementById(
+      "previewTeacher"
+    );
+
+
+  if(!classTime){
+
+    pakistan.textContent =
+      "Select class time";
+
+    student.textContent =
+      "Select class time";
+
+    teacher.textContent =
+      "Select class time";
+
+    return;
+
+  }
+
+
+  pakistan.textContent =
+    day +
+    " — " +
+    formatTime12(classTime) +
+    " (" +
+    ADMIN_SCHEDULE_TIMEZONE +
+    ")";
+
+
+  const studentId =
+    document.getElementById(
+      "student_id"
+    ).value;
+
+  const teacherId =
+    document.getElementById(
+      "teacher_id"
+    ).value;
+
+
+  const studentTimezone =
+    studentId &&
+    studentsMap[studentId]
+      ? (
+          studentsMap[studentId]
+            .timezone ||
+          ADMIN_SCHEDULE_TIMEZONE
+        )
+      : null;
+
+
+  const teacherTimezone =
+    teacherId &&
+    teachersMap[teacherId]
+      ? (
+          teachersMap[teacherId]
+            .timezone ||
+          ADMIN_SCHEDULE_TIMEZONE
+        )
+      : null;
+
+
+  if(studentTimezone){
+
+    const result =
+      convertPakistanScheduleToTimezone(
+        day,
+        classTime,
+        studentTimezone
+      );
+
+    student.textContent =
+      result +
+      " (" +
+      studentTimezone +
+      ")";
+
+  }else{
+
+    student.textContent =
+      "Select student";
+
+  }
+
+
+  if(teacherTimezone){
+
+    const result =
+      convertPakistanScheduleToTimezone(
+        day,
+        classTime,
+        teacherTimezone
+      );
+
+    teacher.textContent =
+      result +
+      " (" +
+      teacherTimezone +
+      ")";
+
+  }else{
+
+    teacher.textContent =
+      "Select teacher";
+
+  }
+
+
+  if(selectedPreviewTimezone){
+
+    const selectedResult =
+      convertPakistanScheduleToTimezone(
+        day,
+        classTime,
+        selectedPreviewTimezone
+      );
+
+    document
+      .getElementById(
+        "timezoneSelected"
+      )
+      .textContent =
+      "Preview: " +
+      selectedResult +
+      " (" +
+      selectedPreviewTimezone +
+      ")";
+
+  }
+
+}
+
+
+/* =========================================================
+   UPDATE PREVIEW EVENTS
+========================================================= */
+
+document
+  .getElementById("hour")
+  .addEventListener(
+    "change",
+    updateTimezonePreview
+  );
+
+document
+  .getElementById("minute")
+  .addEventListener(
+    "change",
+    updateTimezonePreview
+  );
+
+document
+  .getElementById("ampm")
+  .addEventListener(
+    "change",
+    updateTimezonePreview
+  );
+
+dayChecks.forEach(id => {
+
+  document
+    .getElementById(id)
+    .addEventListener(
+      "change",
+      updateTimezonePreview
+    );
+
+});
 
 
 /* =========================================================
@@ -791,6 +1998,15 @@ const ADMIN_SCHEDULE_TIMEZONE =
 ========================================================= */
 
 async function loadTeachers(){
+
+  const select =
+    document.getElementById(
+      "teacher_id"
+    );
+
+  select.innerHTML =
+    '<option value="">Loading teachers...</option>';
+
 
   const result =
     await db
@@ -801,6 +2017,7 @@ async function loadTeachers(){
       .eq("active",true)
       .order("name");
 
+
   if(result.error){
 
     showMsg(
@@ -809,15 +2026,15 @@ async function loadTeachers(){
       "error"
     );
 
+    select.innerHTML =
+      '<option value="">Unable to load teachers</option>';
+
     return;
+
   }
 
-  teachersMap = {};
 
-  const select =
-    document.getElementById(
-      "teacher_id"
-    );
+  teachersMap = {};
 
   select.innerHTML =
     '<option value="">Select Teacher</option>';
@@ -826,17 +2043,29 @@ async function loadTeachers(){
   (result.data || [])
     .forEach(teacher => {
 
-      teachersMap[
-        teacher.id
-      ] = teacher;
+      teachersMap[teacher.id] =
+        teacher;
 
+      const option =
+        document.createElement(
+          "option"
+        );
 
-      select.innerHTML +=
-        `
-        <option value="${safe(teacher.id)}">
-          ${safe(teacher.name)}
-        </option>
-        `;
+      option.value =
+        teacher.id;
+
+      option.textContent =
+        teacher.name +
+        (
+          teacher.timezone
+            ? " — " +
+              teacher.timezone
+            : ""
+        );
+
+      select.appendChild(
+        option
+      );
 
     });
 
@@ -844,10 +2073,12 @@ async function loadTeachers(){
 
 
 /* =========================================================
-   LOAD STUDENTS FOR SELECTED TEACHER
+   LOAD STUDENTS
 ========================================================= */
 
-async function loadStudents(teacherId){
+async function loadStudents(
+  teacherId
+){
 
   const studentSelect =
     document.getElementById(
@@ -859,33 +2090,63 @@ async function loadStudents(teacherId){
       "classroom_code"
     );
 
-
-  studentSelect.innerHTML =
-    "<option>Loading students...</option>";
-
-  classroomSelect.innerHTML =
-    "<option>Loading classroom...</option>";
-
-
   studentsMap = {};
   classroomsMap = {};
+
+
+  document
+    .getElementById(
+      "teacherTimezoneBox"
+    ).style.display =
+    teacherId
+      ? "block"
+      : "none";
+
+
+  if(teacherId){
+
+    const teacher =
+      teachersMap[teacherId];
+
+    document
+      .getElementById(
+        "teacherTimezone"
+      ).textContent =
+      teacher?.timezone ||
+      ADMIN_SCHEDULE_TIMEZONE;
+
+  }
 
 
   if(!teacherId){
 
     studentSelect.innerHTML =
-      "<option>Select teacher first</option>";
+      '<option value="">Select teacher first</option>';
 
     classroomSelect.innerHTML =
-      "<option>Select teacher first</option>";
+      '<option value="">Select teacher first</option>';
+
+    document
+      .getElementById(
+        "studentTimezoneBox"
+      ).style.display =
+      "none";
+
+    updateTimezonePreview();
 
     return;
+
   }
 
 
-  /* -----------------------------------------
-     STUDENTS
-  ----------------------------------------- */
+  studentSelect.innerHTML =
+    '<option value="">Loading students...</option>';
+
+  classroomSelect.innerHTML =
+    '<option value="">Loading classroom...</option>';
+
+
+  /* STUDENTS */
 
   const studentsResult =
     await db
@@ -893,7 +2154,10 @@ async function loadStudents(teacherId){
       .select(
         "id,full_name,teacher_id,status,timezone"
       )
-      .eq("teacher_id",teacherId)
+      .eq(
+        "teacher_id",
+        teacherId
+      )
       .order("full_name");
 
 
@@ -905,45 +2169,59 @@ async function loadStudents(teacherId){
       "error"
     );
 
-    return;
-  }
+    studentSelect.innerHTML =
+      '<option value="">Unable to load students</option>';
 
-
-  studentSelect.innerHTML =
-    '<option value="">Select Student</option>';
-
-
-  (studentsResult.data || [])
-    .forEach(student => {
-
-      studentsMap[
-        student.id
-      ] = student;
-
-
-      studentSelect.innerHTML +=
-        `
-        <option value="${safe(student.id)}">
-          ${safe(student.full_name)}
-        </option>
-        `;
-
-    });
-
-
-  if(
-    !(studentsResult.data || []).length
-  ){
+  }else{
 
     studentSelect.innerHTML =
-      "<option>No students assigned</option>";
+      '<option value="">Select Student</option>';
+
+
+    (studentsResult.data || [])
+      .forEach(student => {
+
+        studentsMap[student.id] =
+          student;
+
+        const option =
+          document.createElement(
+            "option"
+          );
+
+        option.value =
+          student.id;
+
+        option.textContent =
+          student.full_name +
+          (
+            student.status
+              ? " — " +
+                student.status
+              : ""
+          );
+
+        studentSelect.appendChild(
+          option
+        );
+
+      });
+
+
+    if(
+      !(studentsResult.data || [])
+        .length
+    ){
+
+      studentSelect.innerHTML =
+        '<option value="">No students assigned to this teacher</option>';
+
+    }
 
   }
 
 
-  /* -----------------------------------------
-     CLASSROOM
-  ----------------------------------------- */
+  /* CLASSROOMS */
 
   const classroomResult =
     await db
@@ -951,17 +2229,27 @@ async function loadStudents(teacherId){
       .select(
         "access_code,name,room,google_meet_url,active"
       )
-      .eq("teacher_id",teacherId)
-      .eq("role","teacher")
-      .eq("active",true);
+      .eq(
+        "teacher_id",
+        teacherId
+      )
+      .eq(
+        "role",
+        "teacher"
+      )
+      .eq(
+        "active",
+        true
+      );
 
 
   if(classroomResult.error){
 
     classroomSelect.innerHTML =
-      "<option>No classroom found</option>";
+      '<option value="">Unable to load classroom</option>';
 
     return;
+
   }
 
 
@@ -974,31 +2262,93 @@ async function loadStudents(teacherId){
 
       classroomsMap[
         classroom.access_code
-      ] = classroom;
+      ] =
+        classroom;
 
+      const option =
+        document.createElement(
+          "option"
+        );
 
-      classroomSelect.innerHTML +=
-        `
-        <option value="${safe(classroom.access_code)}">
-          ${safe(classroom.access_code)}
-          —
-          ${safe(classroom.room)}
-        </option>
-        `;
+      option.value =
+        classroom.access_code;
+
+      option.textContent =
+        classroom.access_code +
+        " — " +
+        (
+          classroom.room ||
+          classroom.name ||
+          "Classroom"
+        );
+
+      classroomSelect.appendChild(
+        option
+      );
 
     });
 
 
   if(
-    !(classroomResult.data || []).length
+    !(classroomResult.data || [])
+      .length
   ){
 
     classroomSelect.innerHTML =
-      "<option>No active classroom</option>";
+      '<option value="">No active classroom</option>';
 
   }
 
+
+  updateTimezonePreview();
+
 }
+
+
+/* =========================================================
+   STUDENT CHANGE
+========================================================= */
+
+document
+  .getElementById("student_id")
+  .addEventListener(
+    "change",
+    function(){
+
+      const student =
+        studentsMap[this.value];
+
+
+      const box =
+        document.getElementById(
+          "studentTimezoneBox"
+        );
+
+
+      if(student){
+
+        box.style.display =
+          "block";
+
+        document
+          .getElementById(
+            "studentTimezone"
+          ).textContent =
+          student.timezone ||
+          ADMIN_SCHEDULE_TIMEZONE;
+
+      }else{
+
+        box.style.display =
+          "none";
+
+      }
+
+
+      updateTimezonePreview();
+
+    }
+  );
 
 
 /* =========================================================
@@ -1030,9 +2380,7 @@ document
     function(){
 
       const classroom =
-        classroomsMap[
-          this.value
-        ];
+        classroomsMap[this.value];
 
       const meetInput =
         document.getElementById(
@@ -1042,8 +2390,7 @@ document
 
       if(
         classroom &&
-        classroom.google_meet_url &&
-        !meetInput.value
+        classroom.google_meet_url
       ){
 
         meetInput.value =
@@ -1056,7 +2403,7 @@ document
 
 
 /* =========================================================
-   BUILD WEEKLY GRID
+   BUILD GRID
 ========================================================= */
 
 function buildGrid(){
@@ -1071,32 +2418,34 @@ function buildGrid(){
       "pmGrid"
     );
 
-
   amGrid.innerHTML = "";
-
   pmGrid.innerHTML = "";
 
 
   for(
-    let minutes = 0;
-    minutes < 720;
-    minutes += 30
+    let minutes=0;
+    minutes<720;
+    minutes+=30
   ){
 
-    amGrid.innerHTML +=
-      makeGridRow(minutes);
+    amGrid.insertAdjacentHTML(
+      "beforeend",
+      makeGridRow(minutes)
+    );
 
   }
 
 
   for(
-    let minutes = 720;
-    minutes < 1440;
-    minutes += 30
+    let minutes=720;
+    minutes<1440;
+    minutes+=30
   ){
 
-    pmGrid.innerHTML +=
-      makeGridRow(minutes);
+    pmGrid.insertAdjacentHTML(
+      "beforeend",
+      makeGridRow(minutes)
+    );
 
   }
 
@@ -1113,42 +2462,38 @@ function makeGridRow(minutes){
     minutesToTime(minutes);
 
   const end =
-    minutesToTime(minutes + 30);
+    minutesToTime(
+      minutes + 30
+    );
 
 
-  let html =
-    `
+  let html = `
     <tr>
 
       <td class="time-col">
         ${safe(
           formatTime12(start)
-          +
-          " - "
-          +
-          formatTime12(end)
+          + " - "
+          + formatTime12(end)
         )}
       </td>
-    `;
+  `;
 
 
   DAYS.forEach(day => {
 
-    html +=
-      `
+    html += `
       <td
         class="slot"
         data-day="${safe(day)}"
         data-start="${safe(start)}">
       </td>
-      `;
+    `;
 
   });
 
 
-  html +=
-    "</tr>";
-
+  html += "</tr>";
 
   return html;
 
@@ -1174,19 +2519,13 @@ function renderGrid(){
     });
 
 
-  schedules
-
-    .filter(schedule =>
-      schedule.active
-    )
-
-    .forEach(schedule => {
+  schedules.forEach(
+    schedule => {
 
       const start =
         timeToMinutes(
           schedule.class_time
         );
-
 
       const duration =
         parseInt(
@@ -1204,21 +2543,31 @@ function renderGrid(){
       const studentName =
         studentsMap[
           schedule.student_id
-        ]?.full_name
-        ||
-        schedule.student_id
-        ||
+        ]?.full_name ||
+        schedule.student_id ||
         "Student";
 
 
-      (
-        schedule.class_days
-        || []
-      ).forEach(day => {
+      const teacherName =
+        teachersMap[
+          schedule.teacher_id
+        ]?.name ||
+        "Teacher";
+
+
+      const days =
+        Array.isArray(
+          schedule.class_days
+        )
+          ? schedule.class_days
+          : [];
+
+
+      days.forEach(day => {
 
         for(
-          let i = 0;
-          i < numberOfSlots;
+          let i=0;
+          i<numberOfSlots;
           i++
         ){
 
@@ -1253,9 +2602,7 @@ function renderGrid(){
 
 
           if(!cell){
-
             continue;
-
           }
 
 
@@ -1264,48 +2611,67 @@ function renderGrid(){
           );
 
 
-          cell.innerHTML =
-            `
+          if(
+            !schedule.active
+          ){
+
+            cell.classList.add(
+              "inactive"
+            );
+
+          }
+
+
+          cell.title =
+            studentName +
+            " | " +
+            teacherName +
+            " | " +
+            formatTime12(
+              schedule.class_time
+            );
+
+
+          cell.innerHTML = `
+
             <div class="class-name">
               ${safe(studentName)}
             </div>
 
             ${
               schedule.course
-                ?
+                ? `
+                  <div class="class-course">
+                    ${safe(schedule.course)}
+                  </div>
                 `
-                <div class="class-course">
-                  ${safe(schedule.course)}
-                </div>
-                `
-                :
-                ""
+                : ""
             }
 
             ${
               i === 0
-                ?
+                ? `
+                  <div class="class-duration">
+                    ${safe(duration)} min
+                  </div>
                 `
-                <div class="class-duration">
-                  ${safe(duration)} min
-                </div>
-                `
-                :
-                ""
+                : ""
             }
-            `;
+
+          `;
 
         }
 
       });
 
-    });
+    }
+  );
 
 }
 
 
 /* =========================================================
-   LOAD SAVED SCHEDULES
+   LOAD SCHEDULES
 ========================================================= */
 
 async function loadSchedules(){
@@ -1352,7 +2718,6 @@ async function loadSchedules(){
 
 
   renderGrid();
-
   renderSaved();
 
 }
@@ -1372,14 +2737,13 @@ function renderSaved(){
 
   if(!schedules.length){
 
-    rows.innerHTML =
-      `
+    rows.innerHTML = `
       <tr>
-        <td colspan="10">
+        <td colspan="12">
           No weekly classes scheduled.
         </td>
       </tr>
-      `;
+    `;
 
     return;
 
@@ -1387,146 +2751,203 @@ function renderSaved(){
 
 
   rows.innerHTML =
-    schedules
-      .map(schedule => {
+    schedules.map(
+      schedule => {
 
-        const teacherName =
+        const teacher =
           teachersMap[
             schedule.teacher_id
-          ]?.name
-          ||
-          schedule.teacher_id
-          ||
+          ];
+
+        const student =
+          studentsMap[
+            schedule.student_id
+          ];
+
+
+        const teacherName =
+          teacher?.name ||
+          schedule.teacher_id ||
           "Teacher";
 
 
         const studentName =
-          studentsMap[
-            schedule.student_id
-          ]?.full_name
-          ||
-          schedule.student_id
-          ||
+          student?.full_name ||
+          schedule.student_id ||
           "Student";
 
 
+        const studentTimezone =
+          student?.timezone ||
+          ADMIN_SCHEDULE_TIMEZONE;
+
+
+        const teacherTimezone =
+          teacher?.timezone ||
+          ADMIN_SCHEDULE_TIMEZONE;
+
+
         const days =
-          (
+          Array.isArray(
             schedule.class_days
-            || []
           )
-          .map(day => safe(day))
-          .join(", ");
+            ? schedule.class_days
+                .map(safe)
+                .join(", ")
+            : safe(
+                schedule.class_days ||
+                ""
+              );
 
 
         return `
-        <tr>
 
-          <td>
-            ${safe(teacherName)}
-          </td>
+          <tr>
 
-          <td>
-            ${safe(studentName)}
-          </td>
+            <td>
+              ${safe(teacherName)}
+            </td>
 
-          <td>
-            ${days}
-          </td>
+            <td>
+              ${safe(studentName)}
+            </td>
 
-          <td>
-            ${safe(
-              formatTime12(
-                schedule.class_time
-              )
-            )}
-          </td>
+            <td>
+              ${days}
+            </td>
 
-          <td>
-            ${safe(
-              schedule.duration_minutes
-            )} min
-          </td>
+            <td>
+              ${safe(
+                formatTime12(
+                  schedule.class_time
+                )
+              )}
+            </td>
 
-          <td>
-            ${safe(
-              schedule.course || "—"
-            )}
-          </td>
+            <td>
+              ${safe(
+                studentTimezone
+              )}
+            </td>
 
-          <td>
+            <td>
+              ${safe(
+                teacherTimezone
+              )}
+            </td>
 
-            ${
-              schedule.google_meet_url
-                ?
-                `
-                <a
-                  class="btn"
-                  href="${safe(schedule.google_meet_url)}"
-                  target="_blank"
-                  rel="noopener">
-                  Meet
-                </a>
-                `
-                :
+            <td>
+              ${safe(
+                schedule.duration_minutes
+              )} min
+            </td>
+
+            <td>
+              ${safe(
+                schedule.course ||
                 "—"
-            }
+              )}
+            </td>
 
-          </td>
+            <td>
 
-          <td>
-            ${safe(
-              schedule.classroom_code || "—"
-            )}
-          </td>
+              ${
+                schedule.google_meet_url
+                  ? `
+                    <a
+                      class="btn"
+                      href="${safe(
+                        schedule.google_meet_url
+                      )}"
+                      target="_blank"
+                      rel="noopener noreferrer">
 
-          <td>
+                      Meet
 
-            ${
-              schedule.active
-                ?
-                `
-                <span class="status-active">
-                  Active
-                </span>
-                `
-                :
-                `
-                <span class="status-inactive">
-                  Inactive
-                </span>
-                `
-            }
+                    </a>
+                  `
+                  : "—"
+              }
 
-          </td>
+            </td>
 
-          <td>
+            <td>
+              ${safe(
+                schedule.classroom_code ||
+                "—"
+              )}
+            </td>
 
-            <button
-              class="btn danger"
-              onclick="delSchedule('${safe(schedule.id)}')">
+            <td>
 
-              Delete
+              ${
+                schedule.active
+                  ? `
+                    <span class="status-active">
+                      Active
+                    </span>
+                  `
+                  : `
+                    <span class="status-inactive">
+                      Inactive
+                    </span>
+                  `
+              }
 
-            </button>
+            </td>
 
-          </td>
+            <td>
 
-        </tr>
+              <div class="action-row">
+
+                <button
+                  class="btn"
+                  onclick="toggleSchedule(
+                    '${safe(schedule.id)}',
+                    ${schedule.active
+                      ? "false"
+                      : "true"}
+                  )">
+
+                  ${
+                    schedule.active
+                      ? "Deactivate"
+                      : "Activate"
+                  }
+
+                </button>
+
+
+                <button
+                  class="btn danger"
+                  onclick="delSchedule(
+                    '${safe(schedule.id)}'
+                  )">
+
+                  Delete
+
+                </button>
+
+              </div>
+
+            </td>
+
+          </tr>
+
         `;
 
-      })
-      .join("");
+      }
+    ).join("");
 
 }
 
 
 /* =========================================================
-   SAVE WEEKLY CLASS
+   SAVE
 ========================================================= */
 
 document
-  .getElementById("f")
+  .getElementById("scheduleForm")
   .addEventListener(
     "submit",
     async function(event){
@@ -1553,8 +2974,7 @@ document
       const courseValue =
         document.getElementById(
           "course"
-        ).value
-        .trim();
+        ).value.trim();
 
 
       const duration =
@@ -1593,8 +3013,7 @@ document
       const meetUrl =
         document.getElementById(
           "google_meet_url"
-        ).value
-        .trim();
+        ).value.trim();
 
 
       const classroomCode =
@@ -1609,9 +3028,7 @@ document
         ).value === "true";
 
 
-      /* ---------------------------------------
-         VALIDATION
-      --------------------------------------- */
+      /* VALIDATION */
 
       if(!teacherId){
 
@@ -1669,9 +3086,7 @@ document
       }
 
 
-      /* ---------------------------------------
-         12 HOUR → 24 HOUR
-      --------------------------------------- */
+      /* 12 HOUR TO 24 HOUR */
 
       let hour24 =
         hour % 12;
@@ -1686,30 +3101,17 @@ document
       }
 
 
-      const classTime =
-        String(hour24)
-          .padStart(2,"0")
-        +
-        ":"
-        +
-        String(minute)
-          .padStart(2,"0")
-        +
-        ":00";
+      const startMinutes =
+        hour24 * 60 +
+        minute;
 
 
-      /* ---------------------------------------
-         MIDNIGHT CHECK
-      --------------------------------------- */
+      /* PREVENT PAST MIDNIGHT */
 
       if(
-        (
-          hour24 * 60
-          +
-          minute
-          +
-          duration
-        ) > 1440
+        startMinutes +
+        duration >
+        1440
       ){
 
         showMsg(
@@ -1723,14 +3125,72 @@ document
       }
 
 
-      /* ---------------------------------------
-         SAVE
-         Timezone is automatically stored as
-         Pakistan/Admin base timezone.
-         
-         Teacher timezone comes from teachers.
-         Student timezone comes from students.
-      --------------------------------------- */
+      const classTime =
+        String(
+          hour24
+        ).padStart(2,"0")
+        + ":"
+        + String(
+          minute
+        ).padStart(2,"0")
+        + ":00";
+
+
+      /* DUPLICATE CHECK */
+
+      const duplicate =
+        await db
+          .from("class_schedules")
+          .select("id")
+          .eq(
+            "teacher_id",
+            teacherId
+          )
+          .eq(
+            "student_id",
+            studentId
+          )
+          .eq(
+            "class_time",
+            classTime
+          )
+          .eq(
+            "active",
+            true
+          )
+          .limit(1);
+
+
+      if(duplicate.error){
+
+        showMsg(
+          "msg",
+          duplicate.error.message,
+          "error"
+        );
+
+        return;
+
+      }
+
+
+      if(
+        duplicate.data &&
+        duplicate.data.length
+      ){
+
+        showMsg(
+          "msg",
+          "An active schedule already exists for this teacher, student and time.",
+          "error"
+        );
+
+        return;
+
+      }
+
+
+      /* SAVE */
 
       const insertData = {
 
@@ -1741,7 +3201,8 @@ document
           studentId,
 
         course:
-          courseValue || null,
+          courseValue ||
+          null,
 
         class_days:
           days,
@@ -1753,10 +3214,12 @@ document
           duration,
 
         google_meet_url:
-          meetUrl || null,
+          meetUrl ||
+          null,
 
         classroom_code:
-          classroomCode || null,
+          classroomCode ||
+          null,
 
         active:
           active,
@@ -1769,7 +3232,9 @@ document
 
       const result =
         await db
-          .from("class_schedules")
+          .from(
+            "class_schedules"
+          )
           .insert(
             insertData
           );
@@ -1795,31 +3260,113 @@ document
       );
 
 
-      /* ---------------------------------------
-         RESET FORM
-      --------------------------------------- */
+      /* RESET */
 
       document
-        .getElementById("f")
+        .getElementById(
+          "scheduleForm"
+        )
         .reset();
 
 
       document
-        .getElementById("student_id")
-        .innerHTML =
-        "<option>Select teacher first</option>";
+        .getElementById(
+          "student_id"
+        ).innerHTML =
+        '<option value="">Select teacher first</option>';
 
 
       document
-        .getElementById("classroom_code")
-        .innerHTML =
-        "<option>Select teacher first</option>";
+        .getElementById(
+          "classroom_code"
+        ).innerHTML =
+        '<option value="">Select teacher first</option>';
+
+
+      document
+        .getElementById(
+          "studentTimezoneBox"
+        ).style.display =
+        "none";
+
+
+      document
+        .getElementById(
+          "teacherTimezoneBox"
+        ).style.display =
+        "none";
+
+
+      selectedPreviewTimezone =
+        "";
+
+
+      document
+        .getElementById(
+          "timezoneSearch"
+        ).value =
+        "";
+
+
+      document
+        .getElementById(
+          "timezoneSelected"
+        ).textContent =
+        "No preview timezone selected.";
 
 
       await loadSchedules();
 
     }
   );
+
+
+/* =========================================================
+   ACTIVATE / DEACTIVATE
+========================================================= */
+
+async function toggleSchedule(
+  id,
+  active
+){
+
+  const result =
+    await db
+      .from("class_schedules")
+      .update({
+        active:Boolean(active)
+      })
+      .eq(
+        "id",
+        id
+      );
+
+
+  if(result.error){
+
+    showMsg(
+      "msg",
+      result.error.message,
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  showMsg(
+    "msg",
+    active
+      ? "Class activated."
+      : "Class deactivated.",
+    "ok"
+  );
+
+
+  await loadSchedules();
+
+}
 
 
 /* =========================================================
@@ -1862,6 +3409,13 @@ async function delSchedule(id){
   }
 
 
+  showMsg(
+    "msg",
+    "Weekly class deleted.",
+    "ok"
+  );
+
+
   await loadSchedules();
 
 }
@@ -1882,11 +3436,15 @@ async function init(){
   }
 
 
+  buildTimezoneList();
+
   buildGrid();
 
   await loadTeachers();
 
   await loadSchedules();
+
+  updateTimezonePreview();
 
 }
 
