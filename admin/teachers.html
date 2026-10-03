@@ -929,7 +929,7 @@ await db
 .from("teachers")
 
 .select(
-"id,name,gender,bio,active,timezone,created_at"
+"id,account_id,name,gender,bio,active,timezone,created_at"
 )
 
 .order(
@@ -1178,6 +1178,8 @@ t.gender,
 t.bio,
 
 t.timezone,
+
+t.account_id,
 
 t.id
 
@@ -1459,7 +1461,11 @@ word-break:break-all;
 "
 >
 
-${escapeHtml(t.id || "")}
+${escapeHtml(
+t.account_id ||
+t.id ||
+""
+)}
 
 </td>
 
@@ -1646,7 +1652,10 @@ gender:
 gender || null,
 
 bio:
-bio || null
+bio || null,
+
+timezone:
+timezone
 
 })
 
