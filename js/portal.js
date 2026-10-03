@@ -1,4 +1,5 @@
 (()=>{
+
 "use strict";
 
 
@@ -52,8 +53,88 @@ const esc = v =>
   }[c]));
 
 
-const page =
-  document.body?.dataset?.page;
+/* =====================================================
+   PAGE DETECTION
+   -----------------------------------------------------
+   The URL is the source of truth for portal type.
+   This prevents a wrong/missing data-page value from
+   making a Teacher page run Student code.
+===================================================== */
+
+function detectPortalPage(){
+
+  const bodyPage =
+    String(
+      document.body?.dataset?.page || ''
+    ).trim().toLowerCase();
+
+  const path =
+    String(
+      window.location.pathname || ''
+    ).toLowerCase();
+
+  const file =
+    path
+      .split('/')
+      .pop()
+      .replace(/\.html$/,'')
+      .trim();
+
+  const inTeacher =
+    path.includes('/teacher/');
+
+  const inStudent =
+    path.includes('/student/');
+
+  if(inTeacher){
+
+    const teacherPages = {
+      dashboard:'teacher-dashboard',
+      students:'teacher-students',
+      classes:'teacher-classes',
+      schedule:'teacher-schedule',
+      attendance:'teacher-attendance',
+      courses:'teacher-courses',
+      leaves:'teacher-leaves',
+      salary:'teacher-salary',
+      profile:'teacher-profile'
+    };
+
+    return (
+      teacherPages[file] ||
+      (
+        bodyPage.startsWith('teacher-')
+          ? bodyPage
+          : 'teacher-' + file
+      );
+  }
+
+  if(inStudent){
+
+    const studentPages = {
+      dashboard:'student-dashboard',
+      students:'student-students',
+      classes:'student-classes',
+      schedule:'student-schedule',
+      attendance:'student-attendance',
+      courses:'student-courses',
+      leaves:'student-leaves',
+      profile:'student-profile'
+    };
+
+    return (
+      studentPages[file] ||
+      (
+        bodyPage.startsWith('student-')
+          ? bodyPage
+          : 'student-' + file
+      );
+  }
+
+  return bodyPage;
+}
+
+const page = detectPortalPage();
 
 
 /* =====================================================
@@ -111,7 +192,27 @@ async function guard(role){
   const p =
     await profile(s.user.id);
 
-  if(!p || p.role !== role){
+  const actualRole =
+    String(
+      p?.role || ''
+    ).trim().toLowerCase();
+
+  const requiredRole =
+    String(
+      role || ''
+    ).trim().toLowerCase();
+
+  if(!p || actualRole !== requiredRole){
+
+    console.error(
+      'Portal role mismatch:',
+      {
+        requiredRole,
+        actualRole,
+        page,
+        userId:s.user.id
+      }
+    );
 
     location.href =
       '../portal-login.html';
@@ -1355,76 +1456,295 @@ async function loadTeacherDashboard(g){
 
     if(s)
       todaySessions.push(s);
-  }
+``
+     const sessionMap = {};
 
-
-  const sessionMap = {};
-
-
-  todaySessions.forEach(s=>{
-    sessionMap[
-      s.schedule_id
-    ] = s;
-  });
-
-
-  /* =========================
-     SUMMARY
-  ========================= */
-
-  set(
-    'totalClasses',
-    schedules.length
+  todaySessions.forEach(
+    s=>{
+      sessionMap[
+        s.schedule_id
+      ] = s;
+    }
   );
 
 
-  const completed =
-    todaySessions.filter(
-      x=>x.status === 'completed'
-    ).length;
+  /* =========================
+     TODAY TABLE
+  ========================= */
+
+  const rows =
+    todaySchedules.map(
+      schedule=>{
+
+        const student =
+          studentMap[
+            schedule.student_id
+          ];
+
+        const session =
+          sessionMap[
+            schedule.id
+          ] || null;
 
 
-  const totalToday =
+        const occurrence =
+          getTodayOccurrence(
+            schedule,
+            teacherTimezone
+          );
+
+
+        const status =
+          getAutomaticStatus(
+            schedule,
+            session?.status,
+            teacherTimezone
+          );
+
+
+        const meet =
+          schedule.google_meet_url ||
+          '';
+
+
+        const classroom =
+          classroomUrl(
+            schedule
+          );
+
+
+        const studentName =
+          student?.full_name ||
+          'Student';
+
+
+        const course =
+          schedule.course ||
+          'Quran';
+
+
+        const duration =
+          Number(
+            schedule.duration_minutes ||
+            30
+          );
+
+
+        const time =
+          formatOccurrenceTime(
+            occurrence
+          );
+
+
+        return `
+          <tr
+            data-schedule-id="${esc(schedule.id)}"
+          >
+
+            <td>
+              <strong>
+                ${esc(studentName)}
+              </strong>
+            </td>
+
+            <td>
+              ${esc(course)}
+            </td>
+
+            <td>
+              ${esc(time)}
+            </td>
+
+            <td>
+              ${esc(duration)} min
+            </td>
+
+            <td>
+              <span
+                class="class-status ${statusClass(status)}"
+              >
+                ${esc(statusText(status))}
+              </span>
+            </td>
+
+            <td>
+
+              ${
+                meet
+                ? `
+                  <a
+                    href="${esc(meet)}"
+                    target="_blank"
+                    rel="noopener"
+                    class="join-class-btn"
+                  >
+                    Join Meet
+                  </a>
+                `
+                : ''
+              }
+
+              ${
+                classroom
+                ? `
+                  <a
+                    href="${esc(classroom)}"
+                    target="_blank"
+                    rel="noopener"
+                    class="join-class-btn"
+                  >
+                    Classroom
+                  </a>
+                `
+                : ''
+              }
+
+            </td>
+
+          </tr>
+        `;
+
+      }
+    ).join('');
+
+
+  set(
+    'todayClassRows',
+    rows ||
+    rowEmpty(
+      6,
+      'No classes scheduled for today.'
+    )
+  );
+
+
+  /* =========================
+     SUMMARY COUNTERS
+  ========================= */
+
+  const totalClasses =
     todaySchedules.length;
 
 
-  const rate =
-    totalToday
+  let activeClasses = 0;
+  let lateClasses = 0;
+  let completedClasses = 0;
+  let upcomingClasses = 0;
+
+
+  todaySchedules.forEach(
+    schedule=>{
+
+      const session =
+        sessionMap[
+          schedule.id
+        ];
+
+
+      const status =
+        session?.status ||
+        getAutomaticStatus(
+          schedule,
+          null,
+          teacherTimezone
+        );
+
+
+      if(status === 'active')
+        activeClasses++;
+
+
+      if(status === 'late')
+        lateClasses++;
+
+
+      if(status === 'completed')
+        completedClasses++;
+
+
+      if(status === 'upcoming')
+        upcomingClasses++;
+
+    }
+  );
+
+
+  const classRate =
+    totalClasses
       ? Math.round(
-          completed /
-          totalToday *
-          100
+          (
+            completedClasses /
+            totalClasses
+          ) * 100
         )
       : 0;
 
 
   set(
-    'classRate',
-    rate + '%'
+    'totalClasses',
+    totalClasses
   );
 
 
-  const late =
-    todaySessions.filter(
-      x=>x.status === 'late'
-    ).length;
+  set(
+    'activeClasses',
+    activeClasses
+  );
 
 
   set(
     'lateClasses',
-    late
+    lateClasses
   );
 
 
-  const left =
-    todaySessions.filter(
-      x=>x.status === 'upcoming'
-    ).length;
+  set(
+    'upcomingClasses',
+    upcomingClasses
+  );
 
 
   set(
-    'leftClasses',
-    left
+    'completedClasses',
+    completedClasses
+  );
+
+
+  set(
+    'classRate',
+    `${classRate}%`
+  );
+
+
+  set(
+    'todayClassCount',
+    totalClasses
+  );
+
+
+  set(
+    'todayClassesCount',
+    totalClasses
+  );
+
+
+  /* =========================
+     DASHBOARD MESSAGE
+  ========================= */
+
+  const message =
+    totalClasses
+      ? `${totalClasses} class${
+          totalClasses === 1
+            ? ''
+            : 'es'
+        } scheduled for today.`
+      : 'No classes scheduled for today.';
+
+
+  set(
+    'todayClassesMessage',
+    esc(message)
   );
 
 
@@ -1441,96 +1761,480 @@ async function loadTeacherDashboard(g){
       .eq(
         'teacher_id',
         uid
-      );
+      )
+      .order(
+        'created_at',
+        {
+          ascending:false
+        }
+      )
+      .limit(1)
+      .maybeSingle();
 
 
-  const salaryRows =
-    salaryResult.data || [];
+  if(
+    !salaryResult.error &&
+    salaryResult.data
+  ){
+
+    const amount =
+      salaryResult.data.amount;
+
+    const currency =
+      salaryResult.data.currency ||
+      'USD';
 
 
-  let totalSalary = 0;
-  let currency = '';
+    set(
+      'salaryAmount',
+      `${currency} ${amount}`
+    );
 
-
-  salaryRows.forEach(x=>{
-
-    totalSalary +=
-      Number(
-        x.amount || 0
-      );
-
-    if(
-      !currency &&
-      x.currency
-    )
-      currency =
-        x.currency;
-
-  });
-
-
-  set(
-    'totalSalary',
-    `${
-      currency
-        ? esc(currency)+' '
-        : ''
-    }${totalSalary}`
-  );
+  }
 
 
   /* =========================
-     REMINDERS
+     NOTIFICATIONS
   ========================= */
 
   const notificationResult =
     await db
       .from('notifications')
-      .select('id')
+      .select(
+        'id'
+      )
       .eq(
         'user_id',
         uid
+      )
+      .eq(
+        'read',
+        false
       );
 
 
-  const reminderCount =
-    !notificationResult.error
-      ? (
-          notificationResult.data ||
-          []
-        ).length
-      : 0;
+  if(!notificationResult.error){
 
+    set(
+      'notificationCount',
+      notificationResult.data?.length ||
+      0
+    );
 
-  set(
-    'reminderCount',
-    reminderCount
-  );
-
-
-  set(
-    'todaySummary',
-    todaySchedules.length
-      ? `${todaySchedules.length} class${todaySchedules.length===1?'':'es'} scheduled for today.`
-      : 'No classes scheduled for today.'
-  );
+  }
 
 
   /* =========================
-     TODAY CLASSES
+     TIMEZONE DISPLAY
   ========================= */
 
-  if(!todaySchedules.length){
+  document
+    .querySelectorAll(
+      '[data-teacher-timezone]'
+    )
+    .forEach(
+      el=>{
+        el.textContent =
+          teacherTimezone;
+      }
+    );
+
+
+  document
+    .querySelectorAll(
+      '[data-current-time]'
+    )
+    .forEach(
+      el=>{
+
+        el.textContent =
+          teacherNow.toFormat(
+            'h:mm a'
+          );
+
+      }
+    );
+
+
+  /* =========================
+     CLASS ACTIONS
+  ========================= */
+
+  document
+    .querySelectorAll(
+      '[data-start-class]'
+    )
+    .forEach(
+      button=>{
+
+        button.addEventListener(
+          'click',
+          async()=>{
+
+            const scheduleId =
+              button.dataset.startClass;
+
+
+            const schedule =
+              schedules.find(
+                x =>
+                  String(x.id) ===
+                  String(scheduleId)
+              );
+
+
+            if(!schedule)
+              return;
+
+
+            const occurrence =
+              getTodayOccurrence(
+                schedule,
+                teacherTimezone
+              );
+
+
+            if(!occurrence){
+
+              alert(
+                'This class is not scheduled for today.'
+              );
+
+              return;
+            }
+
+
+            const sessionResult =
+              await db
+                .from(
+                  'teacher_class_sessions'
+                )
+                .upsert(
+                  {
+                    schedule_id:
+                      schedule.id,
+
+                    teacher_id:
+                      uid,
+
+                    student_id:
+                      schedule.student_id,
+
+                    class_date:
+                      occurrence.baseDate,
+
+                    session_timezone:
+                      teacherTimezone,
+
+                    scheduled_at:
+                      occurrence
+                        .baseDateTime
+                        .toUTC()
+                        .toISO(),
+
+                    status:
+                      'active',
+
+                    started_at:
+                      new Date()
+                        .toISOString()
+                  },
+                  {
+                    onConflict:
+                      'schedule_id,class_date'
+                  }
+                )
+                .select()
+                .single();
+
+
+            if(sessionResult.error){
+
+              alert(
+                sessionResult.error.message
+              );
+
+              return;
+            }
+
+
+            button.disabled =
+              true;
+
+            button.textContent =
+              'Class Started';
+
+
+            await loadTeacherDashboard(
+              g
+            );
+
+          }
+        );
+
+      }
+    );
+
+
+  /* =========================
+     END CLASS
+  ========================= */
+
+  document
+    .querySelectorAll(
+      '[data-end-class]'
+    )
+    .forEach(
+      button=>{
+
+        button.addEventListener(
+          'click',
+          async()=>{
+
+            const scheduleId =
+              button.dataset.endClass;
+
+
+            const schedule =
+              schedules.find(
+                x =>
+                  String(x.id) ===
+                  String(scheduleId)
+              );
+
+
+            if(!schedule)
+              return;
+
+
+            const occurrence =
+              getTodayOccurrence(
+                schedule,
+                teacherTimezone
+              );
+
+
+            if(!occurrence)
+              return;
+
+
+            const result =
+              await db
+                .from(
+                  'teacher_class_sessions'
+                )
+                .update(
+                  {
+                    status:
+                      'completed',
+
+                    completed_at:
+                      new Date()
+                        .toISOString()
+                  }
+                )
+                .eq(
+                  'schedule_id',
+                  schedule.id
+                )
+                .eq(
+                  'class_date',
+                  occurrence.baseDate
+                )
+                .eq(
+                  'teacher_id',
+                  uid
+                );
+
+
+            if(result.error){
+
+              alert(
+                result.error.message
+              );
+
+              return;
+            }
+
+
+            await loadTeacherDashboard(
+              g
+            );
+
+          }
+        );
+
+      }
+    );
+
+
+  /* =========================
+     JOIN CLASS
+  ========================= */
+
+  document
+    .querySelectorAll(
+      '[data-join-meet]'
+    )
+    .forEach(
+      button=>{
+
+        button.addEventListener(
+          'click',
+          ()=>{
+
+            const url =
+              button.dataset.joinMeet;
+
+            if(url)
+              window.open(
+                url,
+                '_blank',
+                'noopener'
+              );
+
+          }
+        );
+
+      }
+    );
+
+
+  /* =========================
+     COPY LINK
+  ========================= */
+
+  document
+    .querySelectorAll(
+      '[data-copy-link]'
+    )
+    .forEach(
+      button=>{
+
+        button.addEventListener(
+          'click',
+          async()=>{
+
+            const value =
+              button.dataset.copyLink;
+
+            const ok =
+              await copyText(
+                value
+              );
+
+
+            if(ok){
+
+              const old =
+                button.textContent;
+
+              button.textContent =
+                'Copied';
+
+              setTimeout(
+                ()=>{
+                  button.textContent =
+                    old;
+                },
+                1200
+              );
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+}
+
+
+/* =====================================================
+   CLASSROOM URL
+===================================================== */
+
+function classroomUrl(schedule){
+
+  if(
+    !schedule ||
+    !schedule.classroom_code
+  )
+    return '';
+
+
+  return (
+    'https://haroonibnrasheedonlinequranacadmey.github.io/' +
+    'haroon-quran-classroom/?code=' +
+    encodeURIComponent(
+      schedule.classroom_code
+    )
+  );
+
+}
+
+
+/* =====================================================
+   TEACHER STUDENTS
+===================================================== */
+
+async function teacherStudents(g){
+
+  const uid =
+    g.s.user.id;
+
+
+  const result =
+    await db
+      .from('students')
+      .select(`
+        id,
+        full_name,
+        email,
+        phone,
+        status,
+        teacher_id,
+        timezone
+      `)
+      .eq(
+        'teacher_id',
+        uid
+      )
+      .order(
+        'full_name',
+        {
+          ascending:true
+        }
+      );
+
+
+  if(result.error){
 
     set(
-      'todayClassRows',
-      `
-      <tr>
-        <td colspan="6" class="today-empty">
-          No classes scheduled for today.
-        </td>
-      </tr>
-      `
+      'studentsRows',
+      rowEmpty(
+        6,
+        result.error.message
+      )
+    );
+
+    return;
+  }
+
+
+  const students =
+    result.data || [];
+
+
+  if(!students.length){
+
+    set(
+      'studentsRows',
+      rowEmpty(
+        6,
+        'No students assigned.'
+      )
     );
 
     return;
@@ -1538,35 +2242,198 @@ async function loadTeacherDashboard(g){
 
 
   set(
-    'todayClassRows',
+    'studentsRows',
+    students.map(
+      student=>`
 
-    todaySchedules.map(
+        <tr>
+
+          <td>
+            ${esc(
+              student.full_name ||
+              'Student'
+            )}
+          </td>
+
+          <td>
+            ${esc(
+              student.email || ''
+            )}
+          </td>
+
+          <td>
+            ${esc(
+              student.phone || ''
+            )}
+          </td>
+
+          <td>
+            ${esc(
+              student.timezone ||
+              DEFAULT_TIMEZONE
+            )}
+          </td>
+
+          <td>
+            <span
+              class="status-badge"
+            >
+              ${esc(
+                student.status ||
+                'active'
+              )}
+            </span>
+          </td>
+
+          <td>
+            <a
+              href="teacher-student.html?id=${encodeURIComponent(student.id)}"
+            >
+              View
+            </a>
+          </td>
+
+        </tr>
+
+      `
+    ).join('')
+  );
+
+}
+
+
+/* =====================================================
+   TEACHER MY CLASSES
+===================================================== */
+
+async function teacherClasses(g){
+
+  const uid =
+    g.s.user.id;
+
+
+  const teacherTimezone =
+    await getTeacherTimezone(
+      uid
+    );
+
+
+  const result =
+    await db
+      .from('class_schedules')
+      .select(`
+        id,
+        teacher_id,
+        student_id,
+        course,
+        class_days,
+        class_time,
+        duration_minutes,
+        google_meet_url,
+        classroom_code,
+        active,
+        schedule_timezone
+      `)
+      .eq(
+        'teacher_id',
+        uid
+      )
+      .eq(
+        'active',
+        true
+      )
+      .order(
+        'class_time',
+        {
+          ascending:true
+        }
+      );
+
+
+  if(result.error){
+
+    set(
+      'classesRows',
+      rowEmpty(
+        7,
+        result.error.message
+      )
+    );
+
+    return;
+  }
+
+
+  const schedules =
+    result.data || [];
+
+
+  const ids =
+    [
+      ...new Set(
+        schedules
+          .map(
+            x=>x.student_id
+          )
+          .filter(Boolean)
+      )
+    ];
+
+
+  let studentMap = {};
+
+
+  if(ids.length){
+
+    const sr =
+      await db
+        .from('students')
+        .select(
+          'id,full_name,timezone'
+        )
+        .in(
+          'id',
+          ids
+        );
+
+
+    if(!sr.error){
+
+      (sr.data || [])
+        .forEach(
+          s=>{
+            studentMap[s.id] =
+              s;
+          }
+        );
+
+    }
+  }
+
+
+  if(!schedules.length){
+
+    set(
+      'classesRows',
+      rowEmpty(
+        7,
+        'No classes found.'
+      )
+    );
+
+    return;
+  }
+
+
+  set(
+    'classesRows',
+    schedules.map(
       schedule=>{
 
         const student =
           studentMap[
             schedule.student_id
           ];
-
-
-        const session =
-          sessionMap[
-            schedule.id
-          ];
-
-
-        const status =
-          session?.status ||
-          getAutomaticStatus(
-            schedule,
-            null,
-            teacherTimezone
-          );
-
-
-        const studentName =
-          student?.full_name ||
-          'Student';
 
 
         const occurrence =
@@ -1576,216 +2443,321 @@ async function loadTeacherDashboard(g){
           );
 
 
-        const displayTime =
-          occurrence
-            ? formatOccurrenceTime(
-                occurrence
-              )
-            : formatTime12(
-                schedule.class_time
-              );
+        const days =
+          normalizeDays(
+            schedule.class_days
+          ).join(', ');
 
 
-        let actions = '';
+        const meet =
+          schedule.google_meet_url ||
+          '';
 
 
-        /* =========================
-           ACTIVATE
-        ========================= */
-
-        if(
-          (
-            status === 'upcoming' ||
-            status === 'late'
-          ) &&
-          canTeacherActivate(
-            schedule,
-            teacherTimezone
-          )
-        ){
-
-          actions += `
-            <button
-              onclick="teacherStartClass('${esc(schedule.id)}')">
-              Active Class
-            </button>
-          `;
-
-        }else if(
-          status === 'upcoming' &&
-          !canTeacherActivate(
-            schedule,
-            teacherTimezone
-          )
-        ){
-
-          actions += `
-            <button disabled>
-              Active at 5 min before
-            </button>
-          `;
-        }
-
-
-        /* =========================
-           GOOGLE MEET
-        ========================= */
-
-        if(
-          schedule.google_meet_url
-        ){
-
-          actions += `
-            <a
-              href="${esc(schedule.google_meet_url)}"
-              target="_blank"
-              rel="noopener">
-              Join Class
-            </a>
-          `;
-        }
-
-
-        /* =========================
-           CLASSROOM
-        ========================= */
-
-        const classroomUrl =
-          schedule.classroom_code
-          ? `https://haroonibnrasheedonlinequranacadmey.github.io/haroon-quran-classroom/?code=${encodeURIComponent(schedule.classroom_code)}`
-          : '';
-
-
-        if(classroomUrl){
-
-          actions += `
-            <a
-              href="${esc(classroomUrl)}"
-              target="_blank"
-              rel="noopener">
-              Google Classroom
-            </a>
-          `;
-        }
-
-
-        /* =========================
-           ACTIVE ACTIONS
-        ========================= */
-
-        if(
-          status === 'active' ||
-          status === 'student_joined'
-        ){
-
-          actions += `
-            <button
-              class="danger-action"
-              onclick="teacherEndClass('${esc(schedule.id)}')">
-              End Class
-            </button>
-          `;
-
-
-          actions += `
-            <button
-              class="absent-action"
-              onclick="teacherMarkAbsent('${esc(schedule.id)}')">
-              Mark Absent
-            </button>
-          `;
-        }
-
-
-        if(
-          status === 'completed'
-        ){
-
-          actions += `
-            <span class="action-done">
-              Class Completed
-            </span>
-          `;
-        }
-
-
-        if(
-          status === 'absent'
-        ){
-
-          actions += `
-            <span class="action-absent">
-              Student Absent
-            </span>
-          `;
-        }
+        const classroom =
+          classroomUrl(
+            schedule
+          );
 
 
         return `
-        <tr class="class-row ${statusClass(status)}">
 
-          <td>
-            <strong>
-              ${esc(displayTime)}
-            </strong>
-          </td>
+          <tr>
 
-          <td>
-            <strong>
-              ${esc(studentName)}
-            </strong>
-          </td>
-
-          <td>
-            ${esc(
-              schedule.course ||
-              '—'
-            )}
-          </td>
-
-          <td>
-            ${esc(
-              schedule.duration_minutes ||
-              30
-            )} min
-          </td>
-
-          <td>
-            <span class="pill ${statusClass(status)}">
+            <td>
               ${esc(
-                statusText(status)
+                student?.full_name ||
+                'Student'
               )}
-            </span>
-          </td>
+            </td>
 
-          <td>
-            <div class="action-group">
-              ${actions}
-            </div>
-          </td>
+            <td>
+              ${esc(
+                schedule.course ||
+                'Quran'
+              )}
+            </td>
 
-        </tr>
+            <td>
+              ${esc(days)}
+            </td>
+
+            <td>
+              ${esc(
+                formatTime12(
+                  schedule.class_time
+                )
+              )}
+            </td>
+
+            <td>
+              ${esc(
+                schedule.duration_minutes ||
+                30
+              )} min
+            </td>
+
+            <td>
+
+              ${
+                meet
+                ? `
+                  <a
+                    href="${esc(meet)}"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    Join
+                  </a>
+                `
+                : ''
+              }
+
+              ${
+                classroom
+                ? `
+                  <a
+                    href="${esc(classroom)}"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    Classroom
+                  </a>
+                `
+                : ''
+              }
+
+            </td>
+
+            <td>
+
+              <button
+                type="button"
+                data-start-class="${esc(schedule.id)}"
+              >
+                Start
+              </button>
+
+              <button
+                type="button"
+                data-end-class="${esc(schedule.id)}"
+              >
+                Complete
+              </button>
+
+            </td>
+
+          </tr>
+
         `;
 
       }
     ).join('')
   );
+
+
+  /*
+    Re-use dashboard actions for
+    Start / Complete buttons when
+    the page provides them.
+  */
+
+  document
+    .querySelectorAll(
+      '[data-start-class]'
+    )
+    .forEach(
+      button=>{
+
+        button.onclick =
+          async()=>{
+
+            const id =
+              button.dataset.startClass;
+
+
+            const schedule =
+              schedules.find(
+                x =>
+                  String(x.id) ===
+                  String(id)
+              );
+
+
+            if(!schedule)
+              return;
+
+
+            const occurrence =
+              getTodayOccurrence(
+                schedule,
+                teacherTimezone
+              );
+
+
+            if(!occurrence){
+
+              alert(
+                'This class is not scheduled for today.'
+              );
+
+              return;
+            }
+
+
+            const result =
+              await db
+                .from(
+                  'teacher_class_sessions'
+                )
+                .upsert(
+                  {
+                    schedule_id:
+                      schedule.id,
+
+                    teacher_id:
+                      uid,
+
+                    student_id:
+                      schedule.student_id,
+
+                    class_date:
+                      occurrence.baseDate,
+
+                    session_timezone:
+                      teacherTimezone,
+
+                    scheduled_at:
+                      occurrence
+                        .baseDateTime
+                        .toUTC()
+                        .toISO(),
+
+                    status:
+                      'active',
+
+                    started_at:
+                      new Date()
+                        .toISOString()
+                  },
+                  {
+                    onConflict:
+                      'schedule_id,class_date'
+                  }
+                );
+
+
+            if(result.error){
+
+              alert(
+                result.error.message
+              );
+
+              return;
+            }
+
+
+            button.textContent =
+              'Started';
+
+          };
+
+      }
+    );
+
+
+  document
+    .querySelectorAll(
+      '[data-end-class]'
+    )
+    .forEach(
+      button=>{
+
+        button.onclick =
+          async()=>{
+
+            const id =
+              button.dataset.endClass;
+
+
+            const schedule =
+              schedules.find(
+                x =>
+                  String(x.id) ===
+                  String(id)
+              );
+
+
+            if(!schedule)
+              return;
+
+
+            const occurrence =
+              getTodayOccurrence(
+                schedule,
+                teacherTimezone
+              );
+
+
+            if(!occurrence)
+              return;
+
+
+            const result =
+              await db
+                .from(
+                  'teacher_class_sessions'
+                )
+                .update(
+                  {
+                    status:
+                      'completed',
+
+                    completed_at:
+                      new Date()
+                        .toISOString()
+                  }
+                )
+                .eq(
+                  'schedule_id',
+                  schedule.id
+                )
+                .eq(
+                  'teacher_id',
+                  uid
+                )
+                .eq(
+                  'class_date',
+                  occurrence.baseDate
+                );
+
+
+            if(result.error){
+
+              alert(
+                result.error.message
+              );
+
+              return;
+            }
+
+
+            button.textContent =
+              'Completed';
+
+          };
+
+      }
+    );
+
 }
 
 
 /* =====================================================
-   TEACHER START CLASS
+   TEACHER SCHEDULE
 ===================================================== */
 
-window.teacherStartClass =
-async(scheduleId)=>{
-
-  const g =
-    await guard('teacher');
-
-  if(!g)
-    return;
-
+async function teacherSchedule(g){
 
   const uid =
     g.s.user.id;
@@ -1797,867 +2769,74 @@ async(scheduleId)=>{
     );
 
 
-  const sr =
+  const result =
     await db
       .from('class_schedules')
       .select(`
         id,
         teacher_id,
         student_id,
+        course,
         class_days,
         class_time,
         duration_minutes,
-        schedule_timezone,
-        active
+        google_meet_url,
+        classroom_code,
+        active,
+        schedule_timezone
       `)
       .eq(
-        'id',
-        scheduleId
-      )
-      .eq(
         'teacher_id',
         uid
       )
-      .eq(
-        'active',
-        true
-      )
-      .single();
-
-
-  if(
-    sr.error ||
-    !sr.data
-  ){
-
-    alert(
-      'Class schedule not found.'
-    );
-
-    return;
-  }
-
-
-  const schedule =
-    sr.data;
-
-
-  if(
-    !canTeacherActivate(
-      schedule,
-      teacherTimezone
-    )
-  ){
-
-    alert(
-      'Class can be activated only 5 minutes before the scheduled time.'
-    );
-
-    return;
-  }
-
-
-  const occurrence =
-    getTodayOccurrence(
-      schedule,
-      teacherTimezone
-    );
-
-
-  if(!occurrence){
-
-    alert(
-      'This class is not scheduled for today.'
-    );
-
-    return;
-  }
-
-
-  const classDate =
-    occurrence.baseDate;
-
-
-  const now =
-    new Date().toISOString();
-
-
-  const scheduledAt =
-    occurrence
-      .baseDateTime
-      .toUTC()
-      .toISO();
-
-
-  const existing =
-    await db
-      .from('teacher_class_sessions')
-      .select(
-        'id,status'
-      )
-      .eq(
-        'schedule_id',
-        scheduleId
-      )
-      .eq(
-        'teacher_id',
-        uid
-      )
-      .eq(
-        'class_date',
-        classDate
-      )
-      .maybeSingle();
-
-
-  if(existing.error){
-
-    alert(
-      existing.error.message
-    );
-
-    return;
-  }
-
-
-  let result;
-
-
-  if(existing.data){
-
-    result =
-      await db
-        .from('teacher_class_sessions')
-        .update({
-
-          status:'active',
-
-          started_at:
-            now,
-
-          session_timezone:
-            teacherTimezone,
-
-          scheduled_at:
-            scheduledAt,
-
-          updated_at:
-            now
-
-        })
-        .eq(
-          'id',
-          existing.data.id
-        )
-        .eq(
-          'teacher_id',
-          uid
-        );
-
-  }else{
-
-    result =
-      await db
-        .from('teacher_class_sessions')
-        .insert({
-
-          schedule_id:
-            scheduleId,
-
-          teacher_id:
-            uid,
-
-          student_id:
-            schedule.student_id,
-
-          class_date:
-            classDate,
-
-          status:
-            'active',
-
-          started_at:
-            now,
-
-          session_timezone:
-            teacherTimezone,
-
-          scheduled_at:
-            scheduledAt,
-
-          updated_at:
-            now
-
-        });
-  }
+      .order(
+        'class_time',
+        {
+          ascending:true
+        }
+      );
 
 
   if(result.error){
 
-    alert(
-      result.error.message
-    );
-
-    return;
-  }
-
-
-  location.reload();
-};
-
-
-/* =====================================================
-   TEACHER END CLASS
-===================================================== */
-
-window.teacherEndClass =
-async(scheduleId)=>{
-
-  const g =
-    await guard('teacher');
-
-  if(!g)
-    return;
-
-
-  const uid =
-    g.s.user.id;
-
-
-  const teacherTimezone =
-    await getTeacherTimezone(
-      uid
-    );
-
-
-  const sr =
-    await db
-      .from('class_schedules')
-      .select(`
-        id,
-        class_days,
-        class_time,
-        schedule_timezone
-      `)
-      .eq(
-        'id',
-        scheduleId
-      )
-      .eq(
-        'teacher_id',
-        uid
-      )
-      .single();
-
-
-  if(
-    sr.error ||
-    !sr.data
-  ){
-
-    alert(
-      'Class schedule not found.'
-    );
-
-    return;
-  }
-
-
-  const occurrence =
-    getTodayOccurrence(
-      sr.data,
-      teacherTimezone
-    );
-
-
-  if(!occurrence){
-
-    alert(
-      'This class is not scheduled for today.'
-    );
-
-    return;
-  }
-
-
-  const r =
-    await db
-      .from('teacher_class_sessions')
-      .update({
-
-        status:'completed',
-
-        completed_at:
-          new Date().toISOString(),
-
-        updated_at:
-          new Date().toISOString()
-
-      })
-      .eq(
-        'schedule_id',
-        scheduleId
-      )
-      .eq(
-        'teacher_id',
-        uid
-      )
-      .eq(
-        'class_date',
-        occurrence.baseDate
-      );
-
-
-  if(r.error){
-
-    alert(
-      r.error.message
-    );
-
-    return;
-  }
-
-
-  location.reload();
-};
-
-
-/* =====================================================
-   TEACHER MARK ABSENT
-===================================================== */
-
-window.teacherMarkAbsent =
-async(scheduleId)=>{
-
-  const g =
-    await guard('teacher');
-
-  if(!g)
-    return;
-
-
-  if(
-    !confirm(
-      'Mark this student absent for today’s class?'
-    )
-  )
-    return;
-
-
-  const uid =
-    g.s.user.id;
-
-
-  const teacherTimezone =
-    await getTeacherTimezone(
-      uid
-    );
-
-
-  const sr =
-    await db
-      .from('class_schedules')
-      .select(`
-        id,
-        student_id,
-        class_days,
-        class_time,
-        schedule_timezone
-      `)
-      .eq(
-        'id',
-        scheduleId
-      )
-      .eq(
-        'teacher_id',
-        uid
-      )
-      .single();
-
-
-  if(
-    sr.error ||
-    !sr.data
-  ){
-
-    alert(
-      'Class schedule not found.'
-    );
-
-    return;
-  }
-
-
-  const schedule =
-    sr.data;
-
-
-  const occurrence =
-    getTodayOccurrence(
-      schedule,
-      teacherTimezone
-    );
-
-
-  if(!occurrence){
-
-    alert(
-      'This class is not scheduled for today.'
-    );
-
-    return;
-  }
-
-
-  const today =
-    occurrence.baseDate;
-
-
-  const existing =
-    await db
-      .from('teacher_class_sessions')
-      .select('id')
-      .eq(
-        'schedule_id',
-        scheduleId
-      )
-      .eq(
-        'teacher_id',
-        uid
-      )
-      .eq(
-        'class_date',
-        today
-      )
-      .maybeSingle();
-
-
-  if(existing.error){
-
-    alert(
-      existing.error.message
-    );
-
-    return;
-  }
-
-
-  let r;
-
-
-  if(existing.data){
-
-    r =
-      await db
-        .from('teacher_class_sessions')
-        .update({
-
-          status:'absent',
-
-          updated_at:
-            new Date().toISOString()
-
-        })
-        .eq(
-          'id',
-          existing.data.id
-        )
-        .eq(
-          'teacher_id',
-          uid
-        );
-
-  }else{
-
-    r =
-      await db
-        .from('teacher_class_sessions')
-        .insert({
-
-          schedule_id:
-            scheduleId,
-
-          teacher_id:
-            uid,
-
-          student_id:
-            schedule.student_id,
-
-          class_date:
-            today,
-
-          status:
-            'absent',
-
-          session_timezone:
-            teacherTimezone,
-
-          scheduled_at:
-            occurrence
-              .baseDateTime
-              .toUTC()
-              .toISO(),
-
-          updated_at:
-            new Date().toISOString()
-
-        });
-  }
-
-
-  if(r.error){
-
-    alert(
-      r.error.message
-    );
-
-    return;
-  }
-
-
-  location.reload();
-};
-
-
-/* =====================================================
-   TEACHER DATA
-===================================================== */
-
-async function teacherData(){
-
-  const g =
-    await guard('teacher');
-
-  if(!g)
-    return;
-
-
-  /* ===================================================
-     DASHBOARD
-  =================================================== */
-
-  if(
-    page === 'teacher-dashboard'
-  ){
-
-    await loadTeacherDashboard(g);
-
-
-    setInterval(
-      async()=>{
-
-        const current =
-          await db.auth.getSession();
-
-
-        if(
-          !current.data.session
-        )
-          return;
-
-
-        await loadTeacherDashboard({
-
-          s:
-            current.data.session,
-
-          p:
-            g.p
-
-        });
-
-      },
-      15000
-    );
-
-    return;
-  }
-
-
-  const uid =
-    g.s.user.id;
-
-
-  /* ===================================================
-     TEACHER TIMEZONE
-  =================================================== */
-
-  const teacherTimezone =
-    await getTeacherTimezone(
-      uid
-    );
-
-
-  window.currentTeacherTimezone =
-    teacherTimezone;
-
-  window.teacherTimezone =
-    teacherTimezone;
-
-
-  localStorage.setItem(
-    'teacher_timezone',
-    teacherTimezone
-  );
-
-
-  /* ===================================================
-     TEACHER SCHEDULE
-  =================================================== */
-
-  if(
-    page === 'teacher-schedule'
-  ){
-
-    const r =
-      await db
-        .from('class_schedules')
-        .select(`
-          id,
-          teacher_id,
-          student_id,
-          course,
-          class_days,
-          class_time,
-          duration_minutes,
-          active,
-          schedule_timezone
-        `)
-        .eq(
-          'teacher_id',
-          uid
-        )
-        .eq(
-          'active',
-          true
-        )
-        .order(
-          'class_time',
-          {
-            ascending:true
-          }
-        );
-
-
-    if(r.error){
-
-      set(
-        'scheduleRows',
-        rowEmpty(
-          6,
-          r.error.message
-        )
-      );
-
-      return;
-    }
-
-
-    const data =
-      r.data || [];
-
-
-    const studentIds = [
-      ...new Set(
-        data.map(
-          x=>x.student_id
-        )
-      )
-    ];
-
-
-    let studentMap = {};
-
-
-    if(studentIds.length){
-
-      const sr =
-        await db
-          .from('students')
-          .select(
-            'id,full_name'
-          )
-          .in(
-            'id',
-            studentIds
-          );
-
-
-      (sr.data || [])
-        .forEach(s=>{
-          studentMap[
-            s.id
-          ] = s;
-        });
-    }
-
-
-    /*
-      For the weekly schedule we show the
-      class time converted into teacher time.
-
-      We use the next occurrence of each
-      schedule to correctly handle date rollover.
-    */
-
     set(
       'scheduleRows',
-
-      data.map(x=>{
-
-        let displayDays =
-          normalizeDays(
-            x.class_days
-          );
-
-
-        let displayTime =
-          formatTime12(
-            x.class_time
-          );
-
-
-        if(LUXON){
-
-          const today =
-            isoDateInZone(
-              teacherTimezone
-            );
-
-
-          const occurrence =
-            findOccurrenceForViewerDate(
-              x,
-              today,
-              teacherTimezone
-            );
-
-
-          if(occurrence){
-
-            displayDays = [
-              occurrence
-                .viewerDateTime
-                .toFormat('cccc')
-            ];
-
-
-            displayTime =
-              occurrence
-                .viewerDateTime
-                .toFormat('h:mm a');
-          }
-
-        }
-
-
-        return `
-
-        <tr>
-
-          <td>
-            ${esc(
-              displayDays.join(', ')
-            )}
-          </td>
-
-          <td>
-            ${esc(
-              studentMap[
-                x.student_id
-              ]?.full_name ||
-              'Student'
-            )}
-          </td>
-
-          <td>
-            ${esc(
-              x.course ||
-              '—'
-            )}
-          </td>
-
-          <td>
-            ${esc(
-              displayTime
-            )}
-          </td>
-
-          <td>
-            ${esc(
-              x.duration_minutes ||
-              30
-            )} min
-          </td>
-
-          <td>
-            <span class="pill">
-              Active
-            </span>
-          </td>
-
-        </tr>
-
-        `;
-
-      }).join('') ||
-      rowEmpty(6)
+      rowEmpty(
+        8,
+        result.error.message
+      )
     );
 
     return;
   }
 
 
-  /* ===================================================
-     TEACHER STUDENTS
-  =================================================== */
-
-  if(
-    page === 'teacher-students'
-  ){
-
-    const r =
-      await db
-        .from('class_schedules')
-        .select(
-          'student_id'
-        )
-        .eq(
-          'teacher_id',
-          uid
-        )
-        .eq(
-          'active',
-          true
-        );
+  const schedules =
+    result.data || [];
 
 
-    const ids = [
+  const ids =
+    [
       ...new Set(
-        (r.data || [])
+        schedules
           .map(
             x=>x.student_id
           )
+          .filter(Boolean)
       )
     ];
 
 
-    if(!ids.length){
+  let studentMap = {};
 
-      set(
-        'studentRows',
-        rowEmpty(3)
-      );
 
-      return;
-    }
-
+  if(ids.length){
 
     const sr =
       await db
         .from('students')
         .select(
-          'id,full_name,status'
+          'id,full_name,timezone'
         )
         .in(
           'id',
@@ -2665,698 +2844,526 @@ async function teacherData(){
         );
 
 
-    set(
-      'studentRows',
+    if(!sr.error){
 
       (sr.data || [])
-        .map(x=>`
+        .forEach(
+          s=>{
+            studentMap[s.id] =
+              s;
+          }
+        );
 
-          <tr>
+    }
+  }
 
-            <td>
-              ${esc(
-                x.full_name
-              )}
-            </td>
 
-            <td>
-              ${esc(
-                x.status ||
-                'Active'
-              )}
-            </td>
+  if(!schedules.length){
 
-            <td>
-              ${esc(x.id)}
-            </td>
-
-          </tr>
-
-        `).join('') ||
-        rowEmpty(3)
+    set(
+      'scheduleRows',
+      rowEmpty(
+        8,
+        'No schedules found.'
+      )
     );
 
     return;
   }
 
 
-  /* ===================================================
-     TEACHER COURSES
-  =================================================== */
+  set(
+    'scheduleRows',
+    schedules.map(
+      schedule=>{
 
-  if(
-    page === 'teacher-courses'
-  ){
-
-    const r =
-      await db
-        .from('class_schedules')
-        .select('course')
-        .eq(
-          'teacher_id',
-          uid
-        )
-        .eq(
-          'active',
-          true
-        );
+        const student =
+          studentMap[
+            schedule.student_id
+          ];
 
 
-    const courses = [
+        const days =
+          normalizeDays(
+            schedule.class_days
+          ).join(', ');
+
+
+        const meet =
+          schedule.google_meet_url ||
+          '';
+
+
+        const classroom =
+          classroomUrl(
+            schedule
+          );
+
+
+        return `
+
+          <tr>
+
+            <td>
+              ${esc(
+                student?.full_name ||
+                'Student'
+              )}
+            </td>
+
+            <td>
+              ${esc(
+                schedule.course ||
+                'Quran'
+              )}
+            </td>
+
+            <td>
+              ${esc(days)}
+            </td>
+
+            <td>
+              ${esc(
+                formatTime12(
+                  schedule.class_time
+                )
+              )}
+            </td>
+
+            <td>
+              ${esc(
+                schedule.duration_minutes ||
+                30
+              )} min
+            </td>
+
+            <td>
+
+              ${
+                meet
+                ? `
+                  <a
+                    href="${esc(meet)}"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    Meet
+                  </a>
+                `
+                : '-'
+              }
+
+            </td>
+
+            <td>
+
+              ${
+                classroom
+                ? `
+                  <a
+                    href="${esc(classroom)}"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    Classroom
+                  </a>
+                `
+                : '-'
+              }
+
+            </td>
+
+            <td>
+
+              <span
+                class="status-badge"
+              >
+                ${schedule.active
+                  ? 'Active'
+                  : 'Inactive'}
+              </span>
+
+            </td>
+
+          </tr>
+
+        `;
+
+      }
+    ).join('')
+  );
+
+}
+
+
+/* =====================================================
+   TEACHER ATTENDANCE
+===================================================== */
+
+async function teacherAttendance(g){
+
+  const uid =
+    g.s.user.id;
+
+
+  const result =
+    await db
+      .from(
+        'teacher_class_sessions'
+      )
+      .select(`
+        id,
+        schedule_id,
+        student_id,
+        class_date,
+        status,
+        started_at,
+        completed_at
+      `)
+      .eq(
+        'teacher_id',
+        uid
+      )
+      .order(
+        'class_date',
+        {
+          ascending:false
+        }
+      );
+
+
+  if(result.error){
+
+    set(
+      'attendanceRows',
+      rowEmpty(
+        7,
+        result.error.message
+      )
+    );
+
+    return;
+  }
+
+
+  const sessions =
+    result.data || [];
+
+
+  const studentIds =
+    [
       ...new Set(
-        (r.data || [])
+        sessions
           .map(
-            x=>x.course
+            x=>x.student_id
           )
           .filter(Boolean)
       )
     ];
 
 
-    set(
-      'courseRows',
+  let studentMap = {};
 
-      courses.map(x=>`
+
+  if(studentIds.length){
+
+    const sr =
+      await db
+        .from('students')
+        .select(
+          'id,full_name'
+        )
+        .in(
+          'id',
+          studentIds
+        );
+
+
+    if(!sr.error){
+
+      (sr.data || [])
+        .forEach(
+          s=>{
+            studentMap[s.id] =
+              s.full_name;
+          }
+        );
+
+    }
+  }
+
+
+  if(!sessions.length){
+
+    set(
+      'attendanceRows',
+      rowEmpty(
+        7,
+        'No attendance records found.'
+      )
+    );
+
+    return;
+  }
+
+
+  set(
+    'attendanceRows',
+    sessions.map(
+      s=>`
 
         <tr>
 
           <td>
-            ${esc(x)}
+            ${esc(
+              studentMap[s.student_id] ||
+              'Student'
+            )}
+          </td>
+
+          <td>
+            ${esc(
+              s.class_date || ''
+            )}
+          </td>
+
+          <td>
+            <span
+              class="class-status ${statusClass(s.status)}"
+            >
+              ${esc(
+                statusText(s.status)
+              )}
+            </span>
+          </td>
+
+          <td>
+            ${
+              s.started_at
+              ? esc(
+                  new Date(
+                    s.started_at
+                  ).toLocaleTimeString()
+                )
+              : '-'
+            }
+          </td>
+
+          <td>
+            ${
+              s.completed_at
+              ? esc(
+                  new Date(
+                    s.completed_at
+                  ).toLocaleTimeString()
+                )
+              : '-'
+            }
+          </td>
+
+          <td>
+            <select
+              data-attendance-id="${esc(s.id)}"
+            >
+
+              <option
+                value="present"
+                ${s.status === 'present'
+                  ? 'selected'
+                  : ''}
+              >
+                Present
+              </option>
+
+              <option
+                value="absent"
+                ${s.status === 'absent'
+                  ? 'selected'
+                  : ''}
+              >
+                Absent
+              </option>
+
+              <option
+                value="late"
+                ${s.status === 'late'
+                  ? 'selected'
+                  : ''}
+              >
+                Late
+              </option>
+
+              <option
+                value="completed"
+                ${s.status === 'completed'
+                  ? 'selected'
+                  : ''}
+              >
+                Completed
+              </option>
+
+            </select>
+          </td>
+
+          <td>
+
+            <button
+              type="button"
+              data-save-attendance="${esc(s.id)}"
+            >
+              Save
+            </button>
+
           </td>
 
         </tr>
 
-      `).join('') ||
-      rowEmpty(1)
-    );
-
-    return;
-  }
+      `
+    ).join('')
+  );
 
 
-  /* ===================================================
-     TEACHER LEAVES
-  =================================================== */
+  document
+    .querySelectorAll(
+      '[data-save-attendance]'
+    )
+    .forEach(
+      button=>{
 
-  if(
-    page === 'teacher-leaves'
-  ){
+        button.addEventListener(
+          'click',
+          async()=>{
 
-    const r =
-      await db
-        .from('leaves')
-        .select('*')
-        .eq(
-          'user_id',
-          uid
-        )
-        .order(
-          'created_at',
-          {
-            ascending:false
+            const id =
+              button.dataset
+                .saveAttendance;
+
+
+            const select =
+              document.querySelector(
+                `[data-attendance-id="${CSS.escape(id)}"]`
+              );
+
+
+            if(!select)
+              return;
+
+
+            const result =
+              await db
+                .from(
+                  'teacher_class_sessions'
+                )
+                .update(
+                  {
+                    status:
+                      select.value
+                  }
+                )
+                .eq(
+                  'id',
+                  id
+                )
+                .eq(
+                  'teacher_id',
+                  uid
+                );
+
+
+            if(result.error){
+
+              alert(
+                result.error.message
+              );
+
+              return;
+            }
+
+
+            button.textContent =
+              'Saved';
+
           }
         );
 
-
-    set(
-      'leaveRows',
-
-      (r.data || [])
-        .map(x=>`
-
-          <tr>
-
-            <td>
-              ${esc(
-                x.start_date
-              )}
-            </td>
-
-            <td>
-              ${esc(
-                x.end_date
-              )}
-            </td>
-
-            <td>
-              ${esc(
-                x.reason
-              )}
-            </td>
-
-            <td>
-              <span class="pill">
-                ${esc(
-                  x.status
-                )}
-              </span>
-            </td>
-
-          </tr>
-
-        `).join('') ||
-        rowEmpty(4)
+      }
     );
 
-
-    document
-      .getElementById('leaveForm')
-      ?.addEventListener(
-        'submit',
-        async e=>{
-
-          e.preventDefault();
-
-
-          const f =
-            new FormData(
-              e.target
-            );
-
-
-          const r =
-            await db
-              .from('leaves')
-              .insert({
-
-                user_id:
-                  uid,
-
-                role:
-                  'teacher',
-
-                start_date:
-                  f.get(
-                    'start_date'
-                  ),
-
-                end_date:
-                  f.get(
-                    'end_date'
-                  ),
-
-                reason:
-                  f.get(
-                    'reason'
-                  )
-
-              });
-
-
-          if(r.error)
-            alert(
-              r.error.message
-            );
-          else
-            location.reload();
-
-        }
-      );
-
-    return;
-  }
-
-
-  /* ===================================================
-     TEACHER SALARY
-  =================================================== */
-
-  if(
-    page === 'teacher-salary'
-  ){
-
-    const r =
-      await db
-        .from('teacher_salaries')
-        .select('*')
-        .eq(
-          'teacher_id',
-          uid
-        )
-        .order(
-          'salary_month',
-          {
-            ascending:false
-          }
-        );
-
-
-    set(
-      'salaryRows',
-
-      (r.data || [])
-        .map(x=>`
-
-          <tr>
-
-            <td>
-              ${esc(
-                x.salary_month
-              )}
-            </td>
-
-            <td>
-              ${esc(
-                x.amount
-              )}
-              ${esc(
-                x.currency
-              )}
-            </td>
-
-            <td>
-              <span class="pill">
-                ${esc(
-                  x.status
-                )}
-              </span>
-            </td>
-
-            <td>
-              ${esc(
-                x.paid_at ||
-                ''
-              )}
-            </td>
-
-          </tr>
-
-        `).join('') ||
-        rowEmpty(4)
-    );
-
-    return;
-  }
-
-
-  /* ===================================================
-     TEACHER PROFILE
-  =================================================== */
-
-  if(
-    page === 'teacher-profile'
-  ){
-
-    set(
-      'profileName',
-      esc(
-        g.p.full_name ||
-        ''
-      )
-    );
-
-
-    set(
-      'profileEmail',
-      esc(
-        g.s.user.email ||
-        ''
-      )
-    );
-
-
-    document
-      .getElementById('profileForm')
-      ?.addEventListener(
-        'submit',
-        async e=>{
-
-          e.preventDefault();
-
-
-          const f =
-            new FormData(
-              e.target
-            );
-
-
-          const r =
-            await db.rpc(
-              'update_my_profile',
-              {
-                p_full_name:
-                  f.get(
-                    'full_name'
-                  )
-              }
-            );
-
-
-          if(r.error)
-            alert(
-              r.error.message
-            );
-          else
-            alert(
-              'Profile updated.'
-            );
-
-        }
-      );
-  }
 }
 
 
 /* =====================================================
-   FIND CURRENT STUDENT
+   TEACHER PROFILE
 ===================================================== */
 
-async function getCurrentStudent(){
+async function teacherProfile(g){
 
-  const g =
-    await guard('student');
+  const p =
+    g.p;
 
-  if(!g)
-    return null;
 
+  set(
+    'profileName',
+    esc(
+      p?.full_name || ''
+    )
+  );
+
+
+  set(
+    'profileEmail',
+    esc(
+      g.s.user.email || ''
+    )
+  );
+
+
+  const timezone =
+    await getTeacherTimezone(
+      g.s.user.id
+    );
+
+
+  set(
+    'profileTimezone',
+    esc(timezone)
+  );
+
+
+  document
+    .querySelectorAll(
+      '[data-profile-name]'
+    )
+    .forEach(
+      el=>{
+        el.textContent =
+          p?.full_name ||
+          '';
+      }
+    );
+
+}
+
+
+/* =====================================================
+   STUDENT DASHBOARD
+===================================================== */
+
+async function loadStudentDashboard(g){
 
   const uid =
     g.s.user.id;
 
 
-  /*
-    Correct relation:
-
-    auth.users.id
-          ↓
-    students.user_id
-          ↓
-    students.id
-          ↓
-    class_schedules.student_id
-  */
-
-
-  const r =
-    await db
-      .from('students')
-      .select(`
-        id,
-        user_id,
-        full_name,
-        status,
-        timezone
-      `)
-      .eq(
-        'user_id',
-        uid
-      )
-      .maybeSingle();
-
-
-  if(r.error){
-
-    console.error(
-      'Student lookup error:',
-      r.error
-    );
-
-    return null;
-  }
-
-
-  if(!r.data){
-
-    console.error(
-      'No student record linked with this login.'
-    );
-
-    return null;
-  }
-
-
-  return {
-    authUserId:
-      uid,
-
-    student:
-      r.data,
-
-    guard:
-      g
-  };
-}
-
-
-/* =====================================================
-   STUDENT JOIN CLASS
-===================================================== */
-
-window.studentJoinClass =
-async(
-  scheduleId,
-  meetUrl
-)=>{
-
-  const current =
-    await getCurrentStudent();
-
-
-  if(!current){
-
-    alert(
-      'Your student account is not linked with this login.'
-    );
-
-    return;
-  }
-
-
-  const studentId =
-    current.student.id;
-
-
   const studentTimezone =
-    safeTimezone(
-      current.student.timezone ||
-      DEFAULT_TIMEZONE
-    );
-
-
-  /*
-    Load schedule so we can determine
-    the correct base class date.
-  */
-
-  const scheduleResult =
-    await db
-      .from('class_schedules')
-      .select(`
-        id,
-        student_id,
-        class_days,
-        class_time,
-        duration_minutes,
-        schedule_timezone,
-        active
-      `)
-      .eq(
-        'id',
-        scheduleId
-      )
-      .eq(
-        'student_id',
-        studentId
-      )
-      .eq(
-        'active',
-        true
-      )
-      .single();
-
-
-  if(
-    scheduleResult.error ||
-    !scheduleResult.data
-  ){
-
-    alert(
-      'Class schedule not found.'
-    );
-
-    return;
-  }
-
-
-  const schedule =
-    scheduleResult.data;
-
-
-  /*
-    Find today's occurrence in the
-    student's own timezone.
-  */
-
-  const occurrence =
-    getTodayOccurrence(
-      schedule,
-      studentTimezone
-    );
-
-
-  if(!occurrence){
-
-    alert(
-      'This class is not scheduled for today.'
-    );
-
-    return;
-  }
-
-
-  const classDate =
-    occurrence.baseDate;
-
-
-  const now =
-    new Date().toISOString();
-
-
-  /*
-    FIND SESSION USING BASE DATE
-
-    This is important when India/US/UK etc.
-    are on a different calendar date than Pakistan.
-  */
-
-  const existing =
-    await db
-      .from('teacher_class_sessions')
-      .select(
-        'id,status'
-      )
-      .eq(
-        'schedule_id',
-        scheduleId
-      )
-      .eq(
-        'student_id',
-        studentId
-      )
-      .eq(
-        'class_date',
-        classDate
-      )
-      .maybeSingle();
-
-
-  if(existing.error){
-
-    alert(
-      existing.error.message
-    );
-
-    return;
-  }
-
-
-  if(!existing.data){
-
-    alert(
-      'Teacher has not activated this class yet.'
-    );
-
-    return;
-  }
-
-
-  /*
-    UPDATE STUDENT JOIN
-  */
-
-  const r =
-    await db
-      .from('teacher_class_sessions')
-      .update({
-
-        status:
-          'student_joined',
-
-        student_joined_at:
-          now,
-
-        session_timezone:
-          studentTimezone,
-
-        updated_at:
-          now
-
-      })
-      .eq(
-        'id',
-        existing.data.id
-      )
-      .eq(
-        'student_id',
-        studentId
-      );
-
-
-  if(r.error){
-
-    alert(
-      r.error.message
-    );
-
-    return;
-  }
-
-
-  /*
-    OPEN GOOGLE MEET
-  */
-
-  if(meetUrl){
-
-    window.open(
-      meetUrl,
-      '_blank',
-      'noopener,noreferrer'
-    );
-  }
-
-};
-
-
-/* =====================================================
-   STUDENT DATA
-===================================================== */
-
-async function studentData(){
-
-  const current =
-    await getCurrentStudent();
-
-
-  if(!current)
-    return;
-
-
-  const g =
-    current.guard;
-
-
-  const uid =
-    current.authUserId;
-
-
-  const student =
-    current.student;
-
-
-  const studentId =
-    student.id;
-
-
-  const studentTimezone =
-    safeTimezone(
-      student.timezone ||
-      DEFAULT_TIMEZONE
+    await getStudentTimezone(
+      uid
     );
 
 
   window.currentStudentTimezone =
     studentTimezone;
+
 
   window.studentTimezone =
     studentTimezone;
@@ -3368,868 +3375,1548 @@ async function studentData(){
   );
 
 
-  /*
-    Display student name everywhere.
-  */
-
-  document
-    .querySelectorAll('[data-name]')
-    .forEach(x=>{
-
-      x.textContent =
-        student.full_name ||
-        g.p.full_name ||
-        g.s.user.email;
-
-    });
+  document.dispatchEvent(
+    new CustomEvent(
+      'studentTimezoneReady',
+      {
+        detail:{
+          timezone:
+            studentTimezone
+        }
+      }
+    )
+  );
 
 
-  /* ===================================================
-     DASHBOARD / SCHEDULE / CLASSES
-  =================================================== */
-
-  if(
-    page === 'student-dashboard' ||
-    page === 'student-schedule' ||
-    page === 'student-classes'
-  ){
-
-    const [
-      e,
-      s,
-      a,
-      p,
-      n,
-      c
-    ] = await Promise.all([
-
-      /* COURSES */
-
-      db
-        .from('student_enrollments')
-        .select(
-          '*,courses(title)'
-        )
-        .eq(
-          'student_id',
-          studentId
-        ),
-
-
-      /* SCHEDULE */
-
-      db
-        .from('class_schedules')
-        .select(`
-          *,
-          teacher:profiles!class_schedules_teacher_id_fkey(full_name)
-        `)
-        .eq(
-          'student_id',
-          studentId
-        )
-        .eq(
-          'active',
-          true
-        )
-        .order(
-          'class_time'
-        ),
-
-
-      /* ATTENDANCE */
-
-      db
-        .from('attendance')
-        .select('status')
-        .eq(
-          'student_id',
-          studentId
-        ),
-
-
-      /* PAYMENTS */
-
-      db
-        .from('student_payments')
-        .select('*')
-        .eq(
-          'student_id',
-          studentId
-        )
-        .order(
-          'created_at',
-          {
-            ascending:false
-          }
-        ),
-
-
-      /* NOTIFICATIONS */
-
-      db
-        .from('notifications')
-        .select('*')
-        .eq(
-          'user_id',
-          uid
-        )
-        .order(
-          'created_at',
-          {
-            ascending:false
-          }
-        ),
-
-
-      /* CERTIFICATES */
-
-      db
-        .from('certificates')
-        .select(
-          '*,courses(title)'
-        )
-        .eq(
-          'student_id',
-          studentId
-        )
-        .order(
-          'issued_at',
-          {
-            ascending:false
-          }
-        )
-
-    ]);
-
-
-    /* =========================
-       ERROR LOGS
-    ========================= */
-
-    if(e.error)
-      console.error(
-        'Enrollments:',
-        e.error
-      );
-
-    if(s.error)
-      console.error(
-        'Schedules:',
-        s.error
-      );
-
-    if(a.error)
-      console.error(
-        'Attendance:',
-        a.error
-      );
-
-    if(p.error)
-      console.error(
-        'Payments:',
-        p.error
-      );
-
-    if(n.error)
-      console.error(
-        'Notifications:',
-        n.error
-      );
-
-    if(c.error)
-      console.error(
-        'Certificates:',
-        c.error
+  const result =
+    await db
+      .from('class_schedules')
+      .select(`
+        id,
+        teacher_id,
+        student_id,
+        course,
+        class_days,
+        class_time,
+        duration_minutes,
+        google_meet_url,
+        classroom_code,
+        active,
+        schedule_timezone
+      `)
+      .eq(
+        'student_id',
+        uid
+      )
+      .eq(
+        'active',
+        true
+      )
+      .order(
+        'class_time',
+        {
+          ascending:true
+        }
       );
 
 
-    /* =========================
-       COURSE COUNT
-    ========================= */
+  if(result.error){
 
     set(
-      'courseCount',
-      e.data?.length || 0
+      'todayClassRows',
+      rowEmpty(
+        6,
+        result.error.message
+      )
     );
-
-
-    /* =========================
-       CLASS COUNT
-    ========================= */
-
-    set(
-      'classCount',
-      s.data?.length || 0
-    );
-
-
-    /* =========================
-       ATTENDANCE
-    ========================= */
-
-    set(
-      'attendanceRate',
-
-      a.data?.length
-      ? Math.round(
-          a.data.filter(
-            x=>x.status === 'present'
-          ).length /
-          a.data.length *
-          100
-        ) + '%'
-
-      : '—'
-    );
-
-
-    /* =========================
-       PAYMENT ROWS
-    ========================= */
-
-    set(
-      'paymentRows',
-
-      (p.data || [])
-        .map(x=>`
-
-          <tr>
-
-            <td>
-              ${esc(x.amount)}
-              ${esc(
-                x.currency || ''
-              )}
-            </td>
-
-            <td>
-              ${esc(
-                x.method
-              )}
-            </td>
-
-            <td>
-              ${esc(
-                x.status
-              )}
-            </td>
-
-            <td>
-              ${esc(
-                x.created_at?.slice(0,10)
-              )}
-            </td>
-
-          </tr>
-
-        `).join('') ||
-        rowEmpty(4)
-    );
-
-
-    /* =================================================
-       STUDENT SCHEDULE + JOIN BUTTON
-    ================================================= */
-
-    set(
-      'scheduleRows',
-
-      (s.data || [])
-        .map(x=>{
-
-          const meetUrl =
-            x.google_meet_url ||
-            '';
-
-
-          const occurrence =
-            getTodayOccurrence(
-              x,
-              studentTimezone
-            );
-
-
-          let displayDays =
-            normalizeDays(
-              x.class_days
-            );
-
-
-          let displayTime =
-            formatTime12(
-              x.class_time
-            );
-
-
-          let displayDate =
-            '';
-
-
-          /*
-            If the current occurrence exists,
-            show the converted student time/day.
-          */
-
-          if(occurrence){
-
-            displayDays = [
-              occurrence
-                .viewerDateTime
-                .toFormat('cccc')
-            ];
-
-
-            displayTime =
-              occurrence
-                .viewerDateTime
-                .toFormat('h:mm a');
-
-
-            displayDate =
-              occurrence
-                .viewerDateTime
-                .toFormat(
-                  'dd LLL yyyy'
-                );
-          }
-
-
-          const joinButton =
-            meetUrl
-            ? `
-              <a
-                class="btn-small"
-                href="#"
-                onclick="studentJoinClass(
-                  ${JSON.stringify(x.id)},
-                  ${JSON.stringify(meetUrl)}
-                );return false;">
-                Join
-              </a>
-            `
-            : '—';
-
-
-          return `
-          <tr>
-
-            <td>
-              ${esc(
-                displayDays.join(', ')
-              )}
-              ${
-                displayDate
-                ? `<br><small>${esc(displayDate)}</small>`
-                : ''
-              }
-            </td>
-
-            <td>
-              ${esc(
-                displayTime
-              )}
-            </td>
-
-            <td>
-              ${esc(
-                x.course || ''
-              )}
-            </td>
-
-            <td>
-              ${esc(
-                x.teacher?.full_name ||
-                ''
-              )}
-            </td>
-
-            <td>
-              ${joinButton}
-            </td>
-
-            <td>
-              ${
-                x.active
-                ? 'Active'
-                : 'Inactive'
-              }
-            </td>
-
-          </tr>
-          `;
-
-        }).join('') ||
-        rowEmpty(6)
-    );
-
-
-    /* =========================
-       COURSES
-    ========================= */
-
-    set(
-      'courseRows',
-
-      (e.data || [])
-        .map(x=>`
-
-          <tr>
-
-            <td>
-              ${esc(
-                x.courses?.title ||
-                ''
-              )}
-            </td>
-
-            <td>
-              ${esc(
-                x.status
-              )}
-            </td>
-
-            <td>
-              ${x.progress || 0}%
-            </td>
-
-          </tr>
-
-        `).join('') ||
-        rowEmpty(3)
-    );
-
-
-    /* =========================
-       NOTIFICATIONS
-    ========================= */
-
-    set(
-      'notificationRows',
-
-      (n.data || [])
-        .map(x=>`
-
-          <div class="card">
-
-            <b>
-              ${esc(x.title)}
-            </b>
-
-            <p>
-              ${esc(x.body)}
-            </p>
-
-          </div>
-
-        `).join('') ||
-
-      '<p class="empty">No notifications.</p>'
-    );
-
-
-    /* =========================
-       CERTIFICATES
-    ========================= */
-
-    set(
-      'certRows',
-
-      (c.data || [])
-        .map(x=>`
-
-          <tr>
-
-            <td>
-              ${esc(
-                x.courses?.title ||
-                ''
-              )}
-            </td>
-
-            <td>
-              ${esc(
-                x.certificate_no ||
-                ''
-              )}
-            </td>
-
-            <td>
-              ${esc(
-                x.issued_at ||
-                ''
-              )}
-            </td>
-
-          </tr>
-
-        `).join('') ||
-        rowEmpty(3)
-    );
-
 
     return;
   }
 
 
-  /* ===================================================
-     STUDENT ATTENDANCE
-  =================================================== */
+  const schedules =
+    result.data || [];
 
-  if(
-    page === 'student-attendance'
-  ){
 
-    const r =
-      await db
-        .from('attendance')
-        .select(`
-          *,
-          class_schedules(
-            class_days,
-            class_time,
-            duration_minutes,
-            course,
-            schedule_timezone
-          )
-        `)
-        .eq(
-          'student_id',
-          studentId
+  const today =
+    schedules.filter(
+      schedule =>
+        isViewerToday(
+          schedule,
+          studentTimezone
         )
-        .order(
-          'created_at',
-          {
-            ascending:false
-          }
-        );
+    );
 
 
-    if(r.error){
-
-      set(
-        'attendanceRows',
-        rowEmpty(
-          4,
-          r.error.message
-        )
-      );
-
-      return;
-    }
-
+  if(!today.length){
 
     set(
-      'attendanceRows',
+      'todayClassRows',
+      rowEmpty(
+        6,
+        'No classes scheduled for today.'
+      )
+    );
 
-      (r.data || [])
-        .map(x=>`
+  }else{
+
+    set(
+      'todayClassRows',
+      today.map(
+        schedule=>{
+
+          const occurrence =
+            getTodayOccurrence(
+              schedule,
+              studentTimezone
+            );
+
+
+          return `
+
+            <tr>
+
+              <td>
+                ${esc(
+                  schedule.course ||
+                  'Quran'
+                )}
+              </td>
+
+              <td>
+                ${esc(
+                  formatOccurrenceTime(
+                    occurrence
+                  )
+                )}
+              </td>
+
+              <td>
+                ${esc(
+                  schedule.duration_minutes ||
+                  30
+                )} min
+              </td>
+
+              <td>
+
+                ${
+                  schedule.google_meet_url
+                  ? `
+                    <a
+                      href="${esc(
+                        schedule.google_meet_url
+                      )}"
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      Join Meet
+                    </a>
+                  `
+                  : '-'
+                }
+
+              </td>
+
+              <td>
+
+                ${
+                  classroomUrl(schedule)
+                  ? `
+                    <a
+                      href="${esc(
+                        classroomUrl(schedule)
+                      )}"
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      Classroom
+                    </a>
+                  `
+                  : '-'
+                }
+
+              </td>
+
+              <td>
+                <span
+                  class="class-status status-upcoming"
+                >
+                  Upcoming
+                </span>
+              </td>
+
+            </tr>
+
+          `;
+
+        }
+      ).join('')
+    );
+
+  }
+
+
+  set(
+    'todayClassCount',
+    today.length
+  );
+
+
+  set(
+    'todayClassesCount',
+    today.length
+  );
+
+
+  set(
+    'studentTimezone',
+    studentTimezone
+  );
+
+
+  set(
+    'studentCurrentTime',
+    viewerNow(
+      studentTimezone
+    ).toFormat(
+      'h:mm a'
+    )
+  );
+
+}
+
+
+/* =====================================================
+   STUDENT CLASSES
+===================================================== */
+
+async function studentClasses(g){
+
+  const uid =
+    g.s.user.id;
+
+
+  const timezone =
+    await getStudentTimezone(
+      uid
+    );
+
+
+  const result =
+    await db
+      .from('class_schedules')
+      .select(`
+        id,
+        teacher_id,
+        student_id,
+        course,
+        class_days,
+        class_time,
+        duration_minutes,
+        google_meet_url,
+        classroom_code,
+        active,
+        schedule_timezone
+      `)
+      .eq(
+        'student_id',
+        uid
+      )
+      .eq(
+        'active',
+        true
+      )
+      .order(
+        'class_time',
+        {
+          ascending:true
+        }
+      );
+
+
+  if(result.error){
+
+    set(
+      'classesRows',
+      rowEmpty(
+        7,
+        result.error.message
+      )
+    );
+
+    return;
+  }
+
+
+  const schedules =
+    result.data || [];
+
+
+  if(!schedules.length){
+
+    set(
+      'classesRows',
+      rowEmpty(
+        7,
+        'No classes found.'
+      )
+    );
+
+    return;
+  }
+
+
+  set(
+    'classesRows',
+    schedules.map(
+      schedule=>{
+
+        const occurrence =
+          getTodayOccurrence(
+            schedule,
+            timezone
+          );
+
+
+        return `
 
           <tr>
 
             <td>
               ${esc(
+                schedule.course ||
+                'Quran'
+              )}
+            </td>
+
+            <td>
+              ${esc(
                 normalizeDays(
-                  x.class_schedules?.class_days
+                  schedule.class_days
                 ).join(', ')
               )}
             </td>
 
             <td>
               ${esc(
-                x.class_schedules?.course ||
-                ''
+                formatTime12(
+                  schedule.class_time
+                )
               )}
             </td>
 
             <td>
               ${esc(
-                x.status
-              )}
+                schedule.duration_minutes ||
+                30
+              )} min
             </td>
 
             <td>
               ${esc(
-                x.notes ||
-                ''
+                occurrence
+                  ? formatOccurrenceTime(
+                      occurrence
+                    )
+                  : ''
               )}
+            </td>
+
+            <td>
+
+              ${
+                schedule.google_meet_url
+                ? `
+                  <a
+                    href="${esc(
+                      schedule.google_meet_url
+                    )}"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    Join
+                  </a>
+                `
+                : '-'
+              }
+
+            </td>
+
+            <td>
+
+              ${
+                classroomUrl(schedule)
+                ? `
+                  <a
+                    href="${esc(
+                      classroomUrl(schedule)
+                    )}"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    Classroom
+                  </a>
+                `
+                : '-'
+              }
+
             </td>
 
           </tr>
 
-        `).join('') ||
-        rowEmpty(4)
-    );
+        `;
 
-    return;
-  }
+      }
+    ).join('')
+  );
 
-
-  /* ===================================================
-     STUDENT FEES
-  =================================================== */
-
-  if(
-    page === 'student-fees'
-  ){
-
-    const r =
-      await db
-        .from('student_payments')
-        .select('*')
-        .eq(
-          'student_id',
-          studentId
-        )
-        .order(
-          'created_at',
-          {
-            ascending:false
-          }
-        );
+}
 
 
-    if(r.error){
+/* =====================================================
+   STUDENT SCHEDULE
+===================================================== */
 
-      set(
-        'paymentRows',
-        rowEmpty(
-          5,
-          r.error.message
-        )
-      );
+async function studentSchedule(g){
 
-      return;
-    }
+  return studentClasses(g);
+
+}
 
 
-    set(
-      'paymentRows',
+/* =====================================================
+   STUDENT PROFILE
+===================================================== */
 
-      (r.data || [])
-        .map(x=>`
+async function studentProfile(g){
 
-          <tr>
-
-            <td>
-              ${esc(x.amount)}
-              ${esc(
-                x.currency ||
-                ''
-              )}
-            </td>
-
-            <td>
-              ${esc(
-                x.method
-              )}
-            </td>
-
-            <td>
-              ${esc(
-                x.status
-              )}
-            </td>
-
-            <td>
-              ${esc(
-                x.reference ||
-                ''
-              )}
-            </td>
-
-            <td>
-              ${esc(
-                x.created_at?.slice(0,10)
-              )}
-            </td>
-
-          </tr>
-
-        `).join('') ||
-        rowEmpty(5)
-    );
-
-    return;
-  }
+  const p =
+    g.p;
 
 
-  /* ===================================================
-     STUDENT LEAVES
-  =================================================== */
-
-  if(
-    page === 'student-leaves'
-  ){
-
-    const r =
-      await db
-        .from('leaves')
-        .select('*')
-        .eq(
-          'user_id',
-          uid
-        )
-        .order(
-          'created_at',
-          {
-            ascending:false
-          }
-        );
+  set(
+    'profileName',
+    esc(
+      p?.full_name || ''
+    )
+  );
 
 
-    set(
-      'leaveRows',
+  set(
+    'profileEmail',
+    esc(
+      g.s.user.email || ''
+    )
+  );
 
-      (r.data || [])
-        .map(x=>`
 
-          <tr>
-
-            <td>
-              ${esc(
-                x.start_date
-              )}
-            </td>
-
-            <td>
-              ${esc(
-                x.end_date
-              )}
-            </td>
-
-            <td>
-              ${esc(
-                x.reason
-              )}
-            </td>
-
-            <td>
-              ${esc(
-                x.status
-              )}
-            </td>
-
-          </tr>
-
-        `).join('') ||
-        rowEmpty(4)
+  const timezone =
+    await getStudentTimezone(
+      g.s.user.id
     );
 
 
-    document
-      .getElementById('leaveForm')
-      ?.addEventListener(
-        'submit',
-        async e=>{
+  set(
+    'profileTimezone',
+    esc(timezone)
+  );
 
-          e.preventDefault();
-
-
-          const f =
-            new FormData(
-              e.target
-            );
+}
 
 
-          const r =
-            await db
-              .from('leaves')
-              .insert({
+/* =====================================================
+   STUDENT ATTENDANCE
+===================================================== */
 
-                user_id:
-                  uid,
+async function studentAttendance(g){
 
-                role:
-                  'student',
-
-                start_date:
-                  f.get(
-                    'start_date'
-                  ),
-
-                end_date:
-                  f.get(
-                    'end_date'
-                  ),
-
-                reason:
-                  f.get(
-                    'reason'
-                  )
-
-              });
+  const uid =
+    g.s.user.id;
 
 
-          if(r.error)
-            alert(
-              r.error.message
-            );
-          else
-            location.reload();
-
+  const result =
+    await db
+      .from(
+        'teacher_class_sessions'
+      )
+      .select(`
+        id,
+        class_date,
+        status,
+        started_at,
+        completed_at
+      `)
+      .eq(
+        'student_id',
+        uid
+      )
+      .order(
+        'class_date',
+        {
+          ascending:false
         }
       );
 
+
+  if(result.error){
+
+    set(
+      'attendanceRows',
+      rowEmpty(
+        5,
+        result.error.message
+      )
+    );
+
     return;
   }
 
 
-  /* ===================================================
-     STUDENT PROFILE
-  =================================================== */
+  const sessions =
+    result.data || [];
+
+
+  if(!sessions.length){
+
+    set(
+      'attendanceRows',
+      rowEmpty(
+        5,
+        'No attendance records found.'
+      )
+    );
+
+    return;
+  }
+
+
+  set(
+    'attendanceRows',
+    sessions.map(
+      s=>`
+
+        <tr>
+
+          <td>
+            ${esc(
+              s.class_date || ''
+            )}
+          </td>
+
+          <td>
+            <span
+              class="class-status ${statusClass(s.status)}"
+            >
+              ${esc(
+                statusText(s.status)
+              )}
+            </span>
+          </td>
+
+          <td>
+            ${
+              s.started_at
+              ? esc(
+                  new Date(
+                    s.started_at
+                  ).toLocaleTimeString()
+                )
+              : '-'
+            }
+          </td>
+
+          <td>
+            ${
+              s.completed_at
+              ? esc(
+                  new Date(
+                    s.completed_at
+                  ).toLocaleTimeString()
+                )
+              : '-'
+            }
+          </td>
+
+          <td>
+            ${esc(
+              s.status || ''
+            )}
+          </td>
+
+        </tr>
+
+      `
+    ).join('')
+  );
+
+}
+
+
+/* =====================================================
+   STUDENT COURSES
+===================================================== */
+
+async function studentCourses(g){
+
+  const uid =
+    g.s.user.id;
+
+
+  const result =
+    await db
+      .from('student_courses')
+      .select('*')
+      .eq(
+        'student_id',
+        uid
+      )
+      .order(
+        'created_at',
+        {
+          ascending:false
+        }
+      );
+
+
+  if(result.error){
+
+    set(
+      'coursesRows',
+      rowEmpty(
+        5,
+        result.error.message
+      )
+    );
+
+    return;
+  }
+
+
+  const courses =
+    result.data || [];
+
+
+  if(!courses.length){
+
+    set(
+      'coursesRows',
+      rowEmpty(
+        5,
+        'No courses found.'
+      )
+    );
+
+    return;
+  }
+
+
+  set(
+    'coursesRows',
+    courses.map(
+      course=>`
+
+        <tr>
+
+          <td>
+            ${esc(
+              course.course ||
+              course.name ||
+              ''
+            )}
+          </td>
+
+          <td>
+            ${esc(
+              course.status ||
+              'active'
+            )}
+          </td>
+
+          <td>
+            ${esc(
+              course.start_date ||
+              ''
+            )}
+          </td>
+
+          <td>
+            ${esc(
+              course.end_date ||
+              ''
+            )}
+          </td>
+
+          <td>
+            ${esc(
+              course.progress ??
+              ''
+            )}
+          </td>
+
+        </tr>
+
+      `
+    ).join('')
+  );
+
+}
+
+
+/* =====================================================
+   STUDENT LEAVES
+===================================================== */
+
+async function studentLeaves(g){
+
+  const uid =
+    g.s.user.id;
+
+
+  const result =
+    await db
+      .from('leave_requests')
+      .select('*')
+      .eq(
+        'student_id',
+        uid
+      )
+      .order(
+        'created_at',
+        {
+          ascending:false
+        }
+      );
+
+
+  if(result.error){
+
+    set(
+      'leaveRows',
+      rowEmpty(
+        6,
+        result.error.message
+      )
+    );
+
+    return;
+  }
+
+
+  const leaves =
+    result.data || [];
+
+
+  if(!leaves.length){
+
+    set(
+      'leaveRows',
+      rowEmpty(
+        6,
+        'No leave requests found.'
+      )
+    );
+
+    return;
+  }
+
+
+  set(
+    'leaveRows',
+    leaves.map(
+      leave=>`
+
+        <tr>
+
+          <td>
+            ${esc(
+              leave.start_date ||
+              ''
+            )}
+          </td>
+
+          <td>
+            ${esc(
+              leave.end_date ||
+              ''
+            )}
+          </td>
+
+          <td>
+            ${esc(
+              leave.reason ||
+              ''
+            )}
+          </td>
+
+          <td>
+            ${esc(
+              leave.status ||
+              'pending'
+            )}
+          </td>
+
+          <td>
+            ${esc(
+              leave.created_at
+              ? new Date(
+                  leave.created_at
+                ).toLocaleDateString()
+              : ''
+            )}
+          </td>
+
+          <td>
+            ${esc(
+              leave.admin_note ||
+              ''
+            )}
+          </td>
+
+        </tr>
+
+      `
+    ).join('')
+  );
+
+}
+
+
+/* =====================================================
+   TEACHER LEAVES
+===================================================== */
+
+async function teacherLeaves(g){
+
+  const uid =
+    g.s.user.id;
+
+
+  const result =
+    await db
+      .from('leave_requests')
+      .select('*')
+      .eq(
+        'teacher_id',
+        uid
+      )
+      .order(
+        'created_at',
+        {
+          ascending:false
+        }
+      );
+
+
+  if(result.error){
+
+    set(
+      'leaveRows',
+      rowEmpty(
+        6,
+        result.error.message
+      )
+    );
+
+    return;
+  }
+
+
+  const leaves =
+    result.data || [];
+
+
+  if(!leaves.length){
+
+    set(
+      'leaveRows',
+      rowEmpty(
+        6,
+        'No leave requests found.'
+      )
+    );
+
+    return;
+  }
+
+
+  set(
+    'leaveRows',
+    leaves.map(
+      leave=>`
+
+        <tr>
+
+          <td>
+            ${esc(
+              leave.start_date ||
+              ''
+            )}
+          </td>
+
+          <td>
+            ${esc(
+              leave.end_date ||
+              ''
+            )}
+          </td>
+
+          <td>
+            ${esc(
+              leave.reason ||
+              ''
+            )}
+          </td>
+
+          <td>
+            ${esc(
+              leave.status ||
+              'pending'
+            )}
+          </td>
+
+          <td>
+            ${esc(
+              leave.created_at
+              ? new Date(
+                  leave.created_at
+                ).toLocaleDateString()
+              : ''
+            )}
+          </td>
+
+          <td>
+            ${esc(
+              leave.admin_note ||
+              ''
+            )}
+          </td>
+
+        </tr>
+
+      `
+    ).join('')
+  );
+
+}
+
+
+/* =====================================================
+   TEACHER SALARY
+===================================================== */
+
+async function teacherSalary(g){
+
+  const uid =
+    g.s.user.id;
+
+
+  const result =
+    await db
+      .from('teacher_salaries')
+      .select('*')
+      .eq(
+        'teacher_id',
+        uid
+      )
+      .order(
+        'created_at',
+        {
+          ascending:false
+        }
+      );
+
+
+  if(result.error){
+
+    set(
+      'salaryRows',
+      rowEmpty(
+        6,
+        result.error.message
+      )
+    );
+
+    return;
+  }
+
+
+  const salaries =
+    result.data || [];
+
+
+  if(!salaries.length){
+
+    set(
+      'salaryRows',
+      rowEmpty(
+        6,
+        'No salary records found.'
+      )
+    );
+
+    return;
+  }
+
+
+  set(
+    'salaryRows',
+    salaries.map(
+      salary=>`
+
+        <tr>
+
+          <td>
+            ${esc(
+              salary.month ||
+              salary.salary_month ||
+              ''
+            )}
+          </td>
+
+          <td>
+            ${esc(
+              salary.amount ||
+              ''
+            )}
+          </td>
+
+          <td>
+            ${esc(
+              salary.currency ||
+              'USD'
+            )}
+          </td>
+
+          <td>
+            ${esc(
+              salary.status ||
+              ''
+            )}
+          </td>
+
+          <td>
+            ${esc(
+              salary.paid_at
+              ? new Date(
+                  salary.paid_at
+                ).toLocaleDateString()
+              : ''
+            )}
+          </td>
+
+          <td>
+            ${esc(
+              salary.note ||
+              ''
+            )}
+          </td>
+
+        </tr>
+
+      `
+    ).join('')
+  );
+
+}
+
+
+/* =====================================================
+   NOTIFICATIONS
+===================================================== */
+
+async function loadNotifications(g){
+
+  const uid =
+    g.s.user.id;
+
+
+  const result =
+    await db
+      .from('notifications')
+      .select('*')
+      .eq(
+        'user_id',
+        uid
+      )
+      .order(
+        'created_at',
+        {
+          ascending:false
+        }
+      )
+      .limit(50);
+
+
+  if(result.error)
+    return;
+
+
+  const notifications =
+    result.data || [];
+
+
+  if(
+    document.getElementById(
+      'notificationsRows'
+    )
+  ){
+
+    set(
+      'notificationsRows',
+      notifications.length
+      ? notifications.map(
+          n=>`
+
+            <tr>
+
+              <td>
+                ${esc(
+                  n.title ||
+                  'Notification'
+                )}
+              </td>
+
+              <td>
+                ${esc(
+                  n.message ||
+                  ''
+                )}
+              </td>
+
+              <td>
+                ${esc(
+                  n.created_at
+                  ? new Date(
+                      n.created_at
+                    ).toLocaleString()
+                  : ''
+                )}
+              </td>
+
+              <td>
+                ${n.read
+                  ? 'Read'
+                  : 'Unread'}
+              </td>
+
+            </tr>
+
+          `
+        ).join('')
+      : rowEmpty(
+          4,
+          'No notifications.'
+        )
+    );
+
+  }
+
+
+  const unread =
+    notifications.filter(
+      n=>!n.read
+    ).length;
+
+
+  set(
+    'notificationCount',
+    unread
+  );
+
+}
+
+
+/* =====================================================
+   MARK NOTIFICATION READ
+===================================================== */
+
+async function markNotificationRead(
+  id,
+  uid
+){
+
+  return db
+    .from('notifications')
+    .update({
+      read:true
+    })
+    .eq(
+      'id',
+      id
+    )
+    .eq(
+      'user_id',
+      uid
+    );
+
+}
+
+
+/* =====================================================
+   COMMON USER DATA
+===================================================== */
+
+async function loadCommonUserData(g){
+
+  const name =
+    g.p?.full_name ||
+    g.s.user.email ||
+    '';
+
+
+  document
+    .querySelectorAll(
+      '[data-name]'
+    )
+    .forEach(
+      el=>{
+        el.textContent =
+          name;
+      }
+    );
+
+
+  document
+    .querySelectorAll(
+      '[data-email]'
+    )
+    .forEach(
+      el=>{
+        el.textContent =
+          g.s.user.email ||
+          '';
+      }
+    );
+
+
+  await loadNotifications(
+    g
+  );
+
+}
+
+
+/* =====================================================
+   TEACHER ROUTER
+===================================================== */
+
+async function runTeacherPage(g){
+
+  await loadCommonUserData(
+    g
+  );
+
+
+  if(page === 'teacher-dashboard'){
+
+    await loadTeacherDashboard(
+      g
+    );
+
+    return;
+  }
+
+
+  if(
+    page === 'teacher-students'
+  ){
+
+    await teacherStudents(
+      g
+    );
+
+    return;
+  }
+
+
+  if(
+    page === 'teacher-classes'
+  ){
+
+    await teacherClasses(
+      g
+    );
+
+    return;
+  }
+
+
+  if(
+    page === 'teacher-schedule'
+  ){
+
+    await teacherSchedule(
+      g
+    );
+
+    return;
+  }
+
+
+  if(
+    page === 'teacher-attendance'
+  ){
+
+    await teacherAttendance(
+      g
+    );
+
+    return;
+  }
+
+
+  if(
+    page === 'teacher-profile'
+  ){
+
+    await teacherProfile(
+      g
+    );
+
+    return;
+  }
+
+
+  if(
+    page === 'teacher-leaves'
+  ){
+
+    await teacherLeaves(
+      g
+    );
+
+    return;
+  }
+
+
+  if(
+    page === 'teacher-salary'
+  ){
+
+    await teacherSalary(
+      g
+    );
+
+    return;
+  }
+
+
+  /*
+    Unknown teacher page:
+    still remain inside teacher portal.
+  */
+
+  await loadTeacherDashboard(
+    g
+  );
+
+}
+
+
+/* =====================================================
+   STUDENT ROUTER
+===================================================== */
+
+async function runStudentPage(g){
+
+  await loadCommonUserData(
+    g
+  );
+
+
+  if(page === 'student-dashboard'){
+
+    await loadStudentDashboard(
+      g
+    );
+
+    return;
+  }
+
+
+  if(
+    page === 'student-classes'
+  ){
+
+    await studentClasses(
+      g
+    );
+
+    return;
+  }
+
+
+  if(
+    page === 'student-schedule'
+  ){
+
+    await studentSchedule(
+      g
+    );
+
+    return;
+  }
+
+
+  if(
+    page === 'student-attendance'
+  ){
+
+    await studentAttendance(
+      g
+    );
+
+    return;
+  }
+
 
   if(
     page === 'student-profile'
   ){
 
-    set(
-      'profileName',
-      esc(
-        student.full_name ||
-        g.p.full_name ||
-        ''
-      )
+    await studentProfile(
+      g
+    );
+
+    return;
+  }
+
+
+  if(
+    page === 'student-courses'
+  ){
+
+    await studentCourses(
+      g
+    );
+
+    return;
+  }
+
+
+  if(
+    page === 'student-leaves'
+  ){
+
+    await studentLeaves(
+      g
+    );
+
+    return;
+  }
+
+
+  await loadStudentDashboard(
+    g
+  );
+
+}
+
+
+/* =====================================================
+   INITIALIZATION
+===================================================== */
+
+async function initPortal(){
+
+  /*
+    IMPORTANT:
+    Teacher and Student startup paths are mutually
+    exclusive. This prevents both systems from
+    running on the same page.
+  */
+
+
+  if(
+    page?.startsWith(
+      'teacher-'
+    )
+  ){
+
+    const g =
+      await guard(
+        'teacher'
+      );
+
+
+    if(!g)
+      return;
+
+
+    await runTeacherPage(
+      g
     );
 
 
-    set(
-      'profileEmail',
-      esc(
-        g.s.user.email ||
-        ''
-      )
+    return;
+  }
+
+
+  if(
+    page?.startsWith(
+      'student-'
+    )
+  ){
+
+    const g =
+      await guard(
+        'student'
+      );
+
+
+    if(!g)
+      return;
+
+
+    await runStudentPage(
+      g
     );
 
 
-    document
-      .getElementById('profileForm')
-      ?.addEventListener(
-        'submit',
-        async e=>{
-
-          e.preventDefault();
+    return;
+  }
 
 
-          const f =
-            new FormData(
-              e.target
-            );
+  /*
+    Admin pages continue to use their
+    existing page-specific logic.
+  */
+
+  console.log(
+    'Portal page:',
+    page
+  );
+
+}
 
 
-          const r =
-            await db.rpc(
-              'update_my_profile',
-              {
-                p_full_name:
-                  f.get(
-                    'full_name'
-                  )
-              }
-            );
+/* =====================================================
+   DOM READY
+===================================================== */
+
+if(
+  document.readyState ===
+  'loading'
+){
+
+  document.addEventListener(
+    'DOMContentLoaded',
+    initPortal,
+    {
+      once:true
+    }
+  );
+
+}else{
+
+  initPortal();
+
+}
 
 
-          if(r.error)
+})();
+if(r.error)
             alert(
               r.error.message
             );
@@ -4248,19 +4935,24 @@ async function studentData(){
    START APP
 ===================================================== */
 
+/*
+  IMPORTANT:
+  Only ONE portal initializer may run on a page.
+  Teacher URL => teacherData()
+  Student URL => studentData()
+*/
 if(
-  page?.startsWith(
-    'teacher-'
-  )
-)
+  page?.startsWith('teacher-')
+){
+
   teacherData();
 
+}else if(
+  page?.startsWith('student-')
+){
 
-if(
-  page?.startsWith(
-    'student-'
-  )
-)
   studentData();
+
+}
 
 })();
