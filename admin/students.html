@@ -1,113 +1,323 @@
 <!doctype html>
-
 <html lang="en">
+
 <head>
+
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1"
+>
 
 <title>Students | Admin</title>
 
-<link rel="stylesheet" href="../css/admin.css">
+<link
+  rel="stylesheet"
+  href="../css/admin.css"
+>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="../js/config.js"></script>
+
 <script src="../js/admin.js"></script>
+
 </head>
+
 
 <body>
 
+
 <div class="admin-layout">
+
+
+<!-- =====================================================
+     SIDEBAR
+===================================================== -->
 
 <aside class="sidebar">
 
 <div class="brand">
+
 HR Admin
+
 <span>
 Haroon Ibn Rasheed Online Quran Academy
 </span>
+
 </div>
+
 
 <nav class="nav">
 
-<a href="dashboard.html">Dashboard</a>
-<a href="admissions.html">Admissions / Leads</a>
-<a href="users.html">Portal Users</a>
-<a class="active" href="students.html">Students</a>
-<a href="enrollments.html">Enrollments</a>
-<a href="teachers.html">Teachers</a>
-<a href="schedule.html">Schedule</a>
-<a href="classes.html">Classes</a>
-<a href="attendance.html">Attendance</a>
-<a href="payments.html">Payments</a>
-<a href="leaves.html">Leaves</a>
-<a href="salaries.html">Salaries</a>
-<a href="courses.html">Courses</a>
-<a href="fees.html">Fees</a>
-<a href="payment-methods.html">Payment Methods</a>
-<a href="messages.html">Messages</a>
-<a href="testimonials.html">Testimonials</a>
-<a href="articles.html">Blog / Articles</a>
-<a href="notifications.html">Notifications</a>
-<a href="faqs.html">FAQs</a>
-<a href="content.html">Website Content</a>
-<a href="settings.html">Settings</a>
-<a href="../index.html">View Website</a>
+<a href="dashboard.html">
+Dashboard
+</a>
 
-<a href="#" onclick="logout();return false">
+<a href="admissions.html">
+Admissions / Leads
+</a>
+
+<a href="users.html">
+Portal Users
+</a>
+
+<a
+  class="active"
+  href="students.html"
+>
+Students
+</a>
+
+<a href="enrollments.html">
+Enrollments
+</a>
+
+<a href="teachers.html">
+Teachers
+</a>
+
+<a href="schedule.html">
+Schedule
+</a>
+
+<a href="classes.html">
+Classes
+</a>
+
+<a href="attendance.html">
+Attendance
+</a>
+
+<a href="payments.html">
+Payments
+</a>
+
+<a href="leaves.html">
+Leaves
+</a>
+
+<a href="salaries.html">
+Salaries
+</a>
+
+<a href="courses.html">
+Courses
+</a>
+
+<a href="fees.html">
+Fees
+</a>
+
+<a href="payment-methods.html">
+Payment Methods
+</a>
+
+<a href="messages.html">
+Messages
+</a>
+
+<a href="testimonials.html">
+Testimonials
+</a>
+
+<a href="articles.html">
+Blog / Articles
+</a>
+
+<a href="notifications.html">
+Notifications
+</a>
+
+<a href="faqs.html">
+FAQs
+</a>
+
+<a href="content.html">
+Website Content
+</a>
+
+<a href="settings.html">
+Settings
+</a>
+
+<a href="../index.html">
+View Website
+</a>
+
+<a
+  href="#"
+  onclick="logout();return false"
+>
 Logout
 </a>
 
 </nav>
+
 </aside>
 
 
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
 <main class="main">
 
+
 <div class="top">
-<h1>Students</h1>
+
+<h1>
+Students
+</h1>
+
 </div>
 
-<div id="msg" class="msg"></div>
+
+<div
+id="msg"
+class="msg"
+></div>
+
+
+<!-- =====================================================
+     SUMMARY CARDS
+===================================================== -->
+
+<div
+style="
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+gap:15px;
+margin-bottom:20px;
+"
+>
 
 
 <div class="card">
 
-<h2>Create Student Account</h2>
+<small>
+Total Students
+</small>
 
-<form id="studentForm" class="form-grid">
+<h2 id="totalStudents">
+0
+</h2>
+
+</div>
+
+
+<div class="card">
+
+<small>
+Active Students
+</small>
+
+<h2 id="activeStudents">
+0
+</h2>
+
+</div>
+
+
+<div class="card">
+
+<small>
+Inactive Students
+</small>
+
+<h2 id="inactiveStudents">
+0
+</h2>
+
+</div>
+
+
+<div class="card">
+
+<small>
+Assigned Students
+</small>
+
+<h2 id="assignedStudents">
+0
+</h2>
+
+</div>
+
+
+<div class="card">
+
+<small>
+Scheduled Classes
+</small>
+
+<h2 id="totalSchedules">
+0
+</h2>
+
+</div>
+
+
+</div>
+
+
+<!-- =====================================================
+     CREATE STUDENT
+===================================================== -->
+
+<div class="card">
+
+<h2>
+Create Student Account
+</h2>
+
+
+<form
+id="studentForm"
+class="form-grid"
+>
 
 
 <div class="field">
 
-<label>Student Name</label>
+<label>
+Student Name
+</label>
 
 <input
 id="student_name"
 class="input"
 type="text"
 placeholder="Enter student name"
-required>
+required
+>
 
 </div>
 
 
 <div class="field">
 
-<label>Email</label>
+<label>
+Email
+</label>
 
 <input
 id="student_email"
 class="input"
 type="email"
 placeholder="student@example.com"
-required>
+required
+>
 
 </div>
 
 
 <div class="field">
 
-<label>Password</label>
+<label>
+Password
+</label>
 
 <input
 id="student_password"
@@ -115,58 +325,71 @@ class="input"
 type="password"
 placeholder="Create password"
 required
-minlength="6">
+minlength="6"
+>
 
 </div>
 
 
 <div class="field">
 
-<label>Father Name</label>
+<label>
+Father Name
+</label>
 
 <input
 id="father_name"
 class="input"
 type="text"
-placeholder="Enter father name">
+placeholder="Enter father name"
+>
 
 </div>
 
 
 <div class="field">
 
-<label>Phone</label>
+<label>
+Phone
+</label>
 
 <input
 id="student_phone"
 class="input"
 type="text"
-placeholder="Enter phone number">
+placeholder="Enter phone number"
+>
 
 </div>
 
 
 <div class="field">
 
-<label>Course</label>
+<label>
+Course
+</label>
 
 <input
 id="student_course"
 class="input"
 type="text"
-placeholder="Example: Quran with Tajweed">
+placeholder="Example: Quran with Tajweed"
+>
 
 </div>
 
 
 <div class="field">
 
-<label>Teacher</label>
+<label>
+Teacher
+</label>
 
 <select
 id="teacher_id"
 class="input"
-required>
+required
+>
 
 <option value="">
 Loading teachers...
@@ -177,36 +400,34 @@ Loading teachers...
 </div>
 
 
-<!-- =====================================================
-     FIXED TIMEZONE SECTION
-===================================================== -->
-
 <div class="field">
 
-<label>Student Time Zone</label>
+<label>
+Student Time Zone
+</label>
 
 <input
 id="timezone_search"
 class="input"
 type="search"
-placeholder="Search timezone: India, Kolkata, Pakistan..."
+placeholder="Search timezone..."
 autocomplete="off"
-style="margin-bottom:8px;">
+style="margin-bottom:8px;"
+>
+
 
 <select
 id="student_timezone"
 class="input"
-required>
+required
+>
 
 <option value="Asia/Karachi">
 Asia/Karachi — Pakistan
 </option>
 
-<option value="Asia/Kolkata">
-Asia/Kolkata — India
-</option>
-
 </select>
+
 
 <small
 id="timezone_count"
@@ -215,7 +436,8 @@ display:block;
 margin-top:6px;
 opacity:.7;
 line-height:1.4;
-">
+"
+>
 
 Loading time zones...
 
@@ -226,11 +448,14 @@ Loading time zones...
 
 <div class="field">
 
-<label>Status</label>
+<label>
+Status
+</label>
 
 <select
 id="student_status"
-class="input">
+class="input"
+>
 
 <option value="active">
 Active
@@ -250,7 +475,8 @@ Inactive
 <button
 id="createStudentBtn"
 class="btn"
-type="submit">
+type="submit"
+>
 
 Create Student Account
 
@@ -263,9 +489,54 @@ Create Student Account
 </div>
 
 
+<!-- =====================================================
+     SEARCH
+===================================================== -->
+
 <div class="card">
 
-<h2>Students</h2>
+<div
+style="
+display:grid;
+grid-template-columns:1fr auto;
+gap:10px;
+"
+>
+
+<input
+id="studentSearch"
+class="input"
+type="search"
+placeholder="Search by student name, email, phone, course or teacher..."
+oninput="renderStudents()"
+>
+
+
+<button
+type="button"
+class="btn"
+onclick="resetSearch()"
+>
+
+Reset
+
+</button>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     STUDENTS TABLE
+===================================================== -->
+
+<div class="card">
+
+<h2>
+Students
+</h2>
+
 
 <div class="table-wrap">
 
@@ -275,26 +546,64 @@ Create Student Account
 
 <tr>
 
-<th>Student ID</th>
-<th>Name</th>
-<th>Father Name</th>
-<th>Phone</th>
-<th>Email</th>
-<th>Course</th>
-<th>Teacher</th>
-<th>Time Zone</th>
-<th>Status</th>
-<th>Actions</th>
+<th>
+Student ID
+</th>
+
+<th>
+Name
+</th>
+
+<th>
+Father Name
+</th>
+
+<th>
+Phone
+</th>
+
+<th>
+Email
+</th>
+
+<th>
+Course
+</th>
+
+<th>
+Teacher
+</th>
+
+<th>
+Time Zone
+</th>
+
+<th>
+Classes
+</th>
+
+<th>
+Payments
+</th>
+
+<th>
+Status
+</th>
+
+<th>
+Actions
+</th>
 
 </tr>
 
 </thead>
 
+
 <tbody id="rows">
 
 <tr>
 
-<td colspan="10">
+<td colspan="12">
 Loading...
 </td>
 
@@ -308,6 +617,223 @@ Loading...
 
 </div>
 
+
+<!-- =====================================================
+     EDIT STUDENT MODAL
+===================================================== -->
+
+<div
+id="editModal"
+style="
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.55);
+z-index:9999;
+align-items:center;
+justify-content:center;
+padding:20px;
+"
+>
+
+
+<div
+class="card"
+style="
+width:100%;
+max-width:650px;
+max-height:90vh;
+overflow:auto;
+"
+>
+
+
+<h2>
+Edit Student
+</h2>
+
+
+<form
+id="editStudentForm"
+class="form-grid"
+>
+
+
+<input
+type="hidden"
+id="edit_student_id"
+>
+
+
+<div class="field">
+
+<label>
+Student Name
+</label>
+
+<input
+id="edit_student_name"
+class="input"
+required
+>
+
+</div>
+
+
+<div class="field">
+
+<label>
+Father Name
+</label>
+
+<input
+id="edit_father_name"
+class="input"
+>
+
+</div>
+
+
+<div class="field">
+
+<label>
+Phone
+</label>
+
+<input
+id="edit_student_phone"
+class="input"
+>
+
+</div>
+
+
+<div class="field">
+
+<label>
+Email
+</label>
+
+<input
+id="edit_student_email"
+class="input"
+type="email"
+>
+
+</div>
+
+
+<div class="field">
+
+<label>
+Course
+</label>
+
+<input
+id="edit_student_course"
+class="input"
+>
+
+</div>
+
+
+<div class="field">
+
+<label>
+Teacher
+</label>
+
+<select
+id="edit_teacher_id"
+class="input"
+required
+>
+
+</select>
+
+</div>
+
+
+<div class="field full">
+
+<label>
+Time Zone
+</label>
+
+<select
+id="edit_student_timezone"
+class="input"
+required
+>
+
+</select>
+
+</div>
+
+
+<div class="field">
+
+<label>
+Status
+</label>
+
+<select
+id="edit_student_status"
+class="input"
+>
+
+<option value="active">
+Active
+</option>
+
+<option value="inactive">
+Inactive
+</option>
+
+</select>
+
+</div>
+
+
+<div
+class="field full"
+style="
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+"
+>
+
+<button
+id="updateStudentBtn"
+class="btn"
+type="submit"
+>
+
+Save Changes
+
+</button>
+
+
+<button
+type="button"
+class="btn"
+onclick="closeEditModal()"
+>
+
+Cancel
+
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+
 </main>
 
 </div>
@@ -315,10 +841,22 @@ Loading...
 
 <script>
 
+
+/* =====================================================
+   CONFIG
+===================================================== */
+
 const EDGE_FUNCTION_URL =
 "https://olxytsmwqkrrnutsegtr.supabase.co/functions/v1/create-portal-user";
 
+
 let teachers = [];
+
+let allStudents = [];
+
+let classCountMap = {};
+
+let paymentCountMap = {};
 
 
 /* =====================================================
@@ -327,31 +865,31 @@ let teachers = [];
 
 function safeHtml(value){
 
-if(value === null || value === undefined){
+return String(value ?? "")
+.replace(/[&<>"']/g,function(char){
 
-return "";
+return {
 
-}
+"&":"&amp;",
+"<":"&lt;",
+">":"&gt;",
+'"':"&quot;",
+"'":"&#039;"
 
-return String(value)
+}[char];
 
-.replace(/&/g,"&amp;")
-.replace(/</g,"&lt;")
-.replace(/>/g,"&gt;")
-.replace(/"/g,"&quot;")
-.replace(/'/g,"&#039;");
+});
 
 }
 
 
 /* =====================================================
-   SAFE JS STRING
+   SAFE JS
 ===================================================== */
 
 function safeJs(value){
 
 return String(value || "")
-
 .replace(/\\/g,"\\\\")
 .replace(/'/g,"\\'")
 .replace(/"/g,'\\"')
@@ -365,46 +903,52 @@ return String(value || "")
    MESSAGE
 ===================================================== */
 
-function studentMessage(message,type){
+function studentMessage(
+message,
+type
+){
 
 const box =
 document.getElementById("msg");
 
-if(!box){
+if(!box) return;
 
-return;
 
-}
+box.textContent =
+message;
 
-box.textContent = message;
+box.style.display =
+"block";
 
-box.style.display = "block";
+box.style.padding =
+"10px";
+
+box.style.marginBottom =
+"15px";
+
+box.style.borderRadius =
+"8px";
+
 
 if(type === "error"){
 
-box.style.color = "#b91c1c";
-box.style.background = "#fee2e2";
+box.style.color =
+"#b91c1c";
+
+box.style.background =
+"#fee2e2";
 
 }else{
 
-box.style.color = "#166534";
-box.style.background = "#dcfce7";
+box.style.color =
+"#166534";
+
+box.style.background =
+"#dcfce7";
 
 }
 
-box.style.padding = "10px";
-box.style.marginBottom = "15px";
-box.style.borderRadius = "8px";
-
 }
-
-
-/* =====================================================
-   TIMEZONE SYSTEM
-   ALL IANA TIMEZONES + SEARCH
-===================================================== */
-
-let ALL_TIME_ZONES = [];
 
 
 /* =====================================================
@@ -424,9 +968,6 @@ const labels = {
 "Asia/Kolkata":
 "Asia/Kolkata — India",
 
-"Asia/Calcutta":
-"Asia/Calcutta — India (Legacy Alias)",
-
 "Asia/Dubai":
 "Asia/Dubai — UAE",
 
@@ -442,9 +983,6 @@ const labels = {
 "Asia/Colombo":
 "Asia/Colombo — Sri Lanka",
 
-"Asia/Dili":
-"Asia/Dili — Timor-Leste",
-
 "Asia/Tokyo":
 "Asia/Tokyo — Japan",
 
@@ -457,17 +995,8 @@ const labels = {
 "Asia/Seoul":
 "Asia/Seoul — South Korea",
 
-"Asia/Bangkok":
-"Asia/Bangkok — Thailand",
-
-"Asia/Jakarta":
-"Asia/Jakarta — Indonesia",
-
 "Europe/London":
 "Europe/London — United Kingdom",
-
-"Europe/Istanbul":
-"Europe/Istanbul — Turkey",
 
 "Europe/Berlin":
 "Europe/Berlin — Germany",
@@ -522,12 +1051,13 @@ return labels[zone] || zone;
 
 
 /* =====================================================
-   GET ALL IANA TIMEZONES
+   ALL TIME ZONES
 ===================================================== */
 
 function getSupportedTimeZones(){
 
 let zones = [];
+
 
 try{
 
@@ -537,14 +1067,16 @@ typeof Intl.supportedValuesOf === "function"
 ){
 
 zones =
-Intl.supportedValuesOf("timeZone");
+Intl.supportedValuesOf(
+"timeZone"
+);
 
 }
 
 }catch(error){
 
 console.warn(
-"Could not load browser timezone list:",
+"Timezone list error:",
 error
 );
 
@@ -559,8 +1091,6 @@ const importantZones = [
 
 "Asia/Kolkata",
 
-"Asia/Calcutta",
-
 "Asia/Dubai",
 
 "Asia/Riyadh",
@@ -571,8 +1101,6 @@ const importantZones = [
 
 "Asia/Colombo",
 
-"Asia/Dili",
-
 "Asia/Tokyo",
 
 "Asia/Shanghai",
@@ -581,13 +1109,7 @@ const importantZones = [
 
 "Asia/Seoul",
 
-"Asia/Bangkok",
-
-"Asia/Jakarta",
-
 "Europe/London",
-
-"Europe/Istanbul",
 
 "Europe/Berlin",
 
@@ -622,17 +1144,17 @@ const importantZones = [
 ];
 
 
-zones = [
+return [
 ...new Set([
 ...zones,
 ...importantZones
 ])
-];
-
-
-return zones.sort();
+].sort();
 
 }
+
+
+let ALL_TIME_ZONES = [];
 
 
 /* =====================================================
@@ -641,52 +1163,37 @@ return zones.sort();
 
 function loadTimeZones(){
 
+ALL_TIME_ZONES =
+getSupportedTimeZones();
+
+
 const select =
 document.getElementById(
 "student_timezone"
 );
+
+
+const editSelect =
+document.getElementById(
+"edit_student_timezone"
+);
+
 
 const search =
 document.getElementById(
 "timezone_search"
 );
 
+
 const count =
 document.getElementById(
 "timezone_count"
 );
 
-if(!select){
-
-return;
-
-}
-
-
-ALL_TIME_ZONES =
-getSupportedTimeZones();
-
-
-if(
-!ALL_TIME_ZONES.includes(
-"Asia/Kolkata"
-)
-){
-
-ALL_TIME_ZONES.push(
-"Asia/Kolkata"
-);
-
-}
-
-
-ALL_TIME_ZONES =
-[...new Set(ALL_TIME_ZONES)]
-.sort();
-
 
 let browserZone =
 "Asia/Karachi";
+
 
 try{
 
@@ -696,96 +1203,58 @@ Intl.DateTimeFormat()
 .timeZone ||
 "Asia/Karachi";
 
-}catch(error){
-
-console.warn(
-"Could not detect browser timezone:",
-error
-);
-
-}
+}catch(error){}
 
 
-if(
-!ALL_TIME_ZONES.includes(browserZone)
-){
+function render(selectElement){
 
-browserZone =
-"Asia/Karachi";
+if(!selectElement)
+return;
 
-}
-
-
-/* =====================================================
-   RENDER TIMEZONE OPTIONS
-===================================================== */
-
-function renderTimeZones(filter){
 
 const query =
-String(filter || "")
-.trim()
-.toLowerCase();
+String(
+search?.value || ""
+)
+.toLowerCase()
+.trim();
 
 
 const filtered =
 ALL_TIME_ZONES.filter(
 function(zone){
 
-const zoneText =
-zone.toLowerCase();
-
-const labelText =
-getTimezoneLabel(zone)
-.toLowerCase();
-
 return (
-zoneText.includes(query) ||
-labelText.includes(query)
+
+zone
+.toLowerCase()
+.includes(query)
+
+||
+
+getTimezoneLabel(zone)
+.toLowerCase()
+.includes(query)
+
 );
 
 });
 
 
-const currentValue =
-select.value;
+const current =
+selectElement.value;
 
 
-select.innerHTML = "";
-
-
-if(filtered.length === 0){
-
-const option =
-document.createElement("option");
-
-option.value = "";
-
-option.textContent =
-"No matching time zone found";
-
-option.disabled = true;
-
-select.appendChild(option);
-
-
-if(count){
-
-count.textContent =
-"0 time zones found.";
-
-}
-
-return;
-
-}
+selectElement.innerHTML = "";
 
 
 filtered.forEach(
 function(zone){
 
 const option =
-document.createElement("option");
+document.createElement(
+"option"
+);
 
 option.value =
 zone;
@@ -793,41 +1262,44 @@ zone;
 option.textContent =
 getTimezoneLabel(zone);
 
-select.appendChild(option);
+selectElement.appendChild(
+option
+);
 
 });
 
 
-if(
-filtered.includes(currentValue)
-){
+if(filtered.includes(current)){
 
-select.value =
-currentValue;
+selectElement.value =
+current;
 
 }else if(
 filtered.includes(browserZone)
 ){
 
-select.value =
+selectElement.value =
 browserZone;
 
 }else if(
 filtered.includes("Asia/Karachi")
 ){
 
-select.value =
+selectElement.value =
 "Asia/Karachi";
 
-}else{
+}else if(filtered.length){
 
-select.value =
+selectElement.value =
 filtered[0];
 
 }
 
 
-if(count){
+if(
+selectElement === select &&
+count
+){
 
 count.textContent =
 filtered.length +
@@ -840,16 +1312,15 @@ ALL_TIME_ZONES.length +
 }
 
 
-/* =====================================================
-   INITIAL TIMEZONE LOAD
-===================================================== */
-
-renderTimeZones("");
+render(select);
 
 
-/* =====================================================
-   TIMEZONE SEARCH
-===================================================== */
+if(editSelect){
+
+render(editSelect);
+
+}
+
 
 if(search){
 
@@ -857,38 +1328,13 @@ search.addEventListener(
 "input",
 function(){
 
-renderTimeZones(
-search.value
-);
+render(select);
+
+render(editSelect);
 
 });
 
 }
-
-
-/* =====================================================
-   TIMEZONE SELECT
-===================================================== */
-
-select.addEventListener(
-"change",
-function(){
-
-const selectedValue =
-this.value;
-
-if(search){
-
-search.value = "";
-
-}
-
-renderTimeZones("");
-
-select.value =
-selectedValue;
-
-});
 
 }
 
@@ -899,17 +1345,22 @@ selectedValue;
 
 async function loadTeachers(){
 
-try{
-
-const result = await db
+const result =
+await db
 
 .from("teachers")
 
-.select("id,name,active")
+.select(
+"id,name,active"
+)
 
-.eq("active",true)
+.order(
+"name",
+{
+ascending:true
+}
+);
 
-.order("name",{ascending:true});
 
 if(result.error){
 
@@ -917,14 +1368,28 @@ throw result.error;
 
 }
 
+
 teachers =
 result.data || [];
 
 
 const select =
-document.getElementById("teacher_id");
+document.getElementById(
+"teacher_id"
+);
+
+
+const editSelect =
+document.getElementById(
+"edit_teacher_id"
+);
+
 
 select.innerHTML =
+'<option value="">Select Teacher</option>';
+
+
+editSelect.innerHTML =
 '<option value="">Select Teacher</option>';
 
 
@@ -932,60 +1397,53 @@ teachers.forEach(
 function(teacher){
 
 const option =
-document.createElement("option");
+document.createElement(
+"option"
+);
 
 option.value =
 teacher.id;
 
 option.textContent =
-teacher.name || "Unnamed Teacher";
+teacher.name ||
+"Unnamed Teacher";
 
-select.appendChild(option);
-
-});
-
-
-}catch(error){
-
-console.error(
-"Teacher loading error:",
-error
+select.appendChild(
+option.cloneNode(true)
 );
 
-studentMessage(
-"Teachers could not be loaded: " +
-error.message,
-"error"
-);
 
-document.getElementById(
-"teacher_id"
-).innerHTML =
-'<option value="">Unable to load teachers</option>';
+if(teacher.active){
+
+editSelect.appendChild(
+option
+);
 
 }
+
+});
 
 }
 
 
 /* =====================================================
-   LOAD STUDENTS
+   LOAD STUDENTS DATA
 ===================================================== */
 
 async function loadStudents(){
 
 const rows =
-document.getElementById("rows");
+document.getElementById(
+"rows"
+);
 
 
 rows.innerHTML = `
 
 <tr>
 
-<td colspan="10">
-
+<td colspan="12">
 Loading students...
-
 </td>
 
 </tr>
@@ -994,6 +1452,11 @@ Loading students...
 
 
 try{
+
+
+/* -----------------------------------------
+   STUDENTS
+----------------------------------------- */
 
 const studentResult =
 await db
@@ -1029,342 +1492,102 @@ throw studentResult.error;
 }
 
 
-const students =
+allStudents =
 studentResult.data || [];
 
 
-if(students.length === 0){
+/* -----------------------------------------
+   CLASS SCHEDULES
+----------------------------------------- */
 
-rows.innerHTML = `
-
-<tr>
-
-<td colspan="10">
-
-No students found.
-
-</td>
-
-</tr>
-
-`;
-
-return;
-
-}
+classCountMap = {};
 
 
-const teacherMap = {};
-
-
-teachers.forEach(
-function(teacher){
-
-teacherMap[teacher.id] =
-teacher.name;
-
-});
-
-
-const teacherIds =
-students
-
-.map(
-function(student){
-
-return student.teacher_id;
-
-})
-
-.filter(Boolean);
-
-
-const uniqueTeacherIds =
-[...new Set(teacherIds)];
-
-
-if(
-uniqueTeacherIds.length > 0
-){
-
-const teacherResult =
+const scheduleResult =
 await db
 
-.from("teachers")
+.from("class_schedules")
 
-.select("id,name,active")
-
-.in(
-"id",
-uniqueTeacherIds
+.select(
+"id,student_id,teacher_id"
 );
 
 
-if(!teacherResult.error){
+if(!scheduleResult.error){
 
 (
-teacherResult.data || []
+scheduleResult.data || []
 )
-.forEach(
-function(teacher){
+.forEach(function(schedule){
 
-teacherMap[teacher.id] =
-teacher.name;
+if(!schedule.student_id)
+return;
+
+
+classCountMap[
+schedule.student_id
+] =
+(
+classCountMap[
+schedule.student_id
+] || 0
+) + 1;
 
 });
 
 }
 
-}
+
+/* -----------------------------------------
+   PAYMENTS
+----------------------------------------- */
+
+paymentCountMap = {};
 
 
-rows.innerHTML =
-students.map(
-function(student){
+const paymentResult =
+await db
+
+.from("student_payments")
+
+.select(
+"id,student_id,status"
+);
 
 
-const teacherName =
-student.teacher_id &&
-teacherMap[
-student.teacher_id
-]
+if(!paymentResult.error){
 
-?
-
-teacherMap[
-student.teacher_id
-]
-
-:
-
-"Not Assigned";
-
-
-const isActive =
-String(
-student.status || ""
+(
+paymentResult.data || []
 )
-.toLowerCase()
-=== "active";
+.forEach(function(payment){
 
+if(!payment.student_id)
+return;
 
-const safeId =
-safeHtml(student.id);
 
+paymentCountMap[
+payment.student_id
+] =
+(
+paymentCountMap[
+payment.student_id
+] || 0
+) + 1;
 
-const safeName =
-safeHtml(
-student.full_name || ""
-);
+});
 
-
-const safeFather =
-safeHtml(
-student.father_name || "-"
-);
-
-
-const safePhone =
-safeHtml(
-student.phone || "-"
-);
-
-
-const safeEmail =
-safeHtml(
-student.email || "-"
-);
-
-
-const safeCourse =
-safeHtml(
-student.course || "-"
-);
-
-
-const safeTeacher =
-safeHtml(
-teacherName
-);
-
-
-const studentTimezone =
-student.timezone ||
-"Asia/Karachi";
-
-
-const safeTimezone =
-safeHtml(
-studentTimezone
-);
-
-
-return `
-
-<tr>
-
-<td>
-
-<small
-style="
-font-size:11px;
-word-break:break-all;
-">
-
-${safeId}
-
-</small>
-
-</td>
-
-<td>
-
-${safeName}
-
-</td>
-
-<td>
-
-${safeFather}
-
-</td>
-
-<td>
-
-${safePhone}
-
-</td>
-
-<td>
-
-${safeEmail}
-
-</td>
-
-<td>
-
-${safeCourse}
-
-</td>
-
-<td>
-
-${safeTeacher}
-
-</td>
-
-<td>
-
-<small
-style="
-font-size:12px;
-word-break:break-word;
-">
-
-${safeTimezone}
-
-</small>
-
-</td>
-
-<td>
-
-<strong>
-
-${isActive ? "Active" : "Inactive"}
-
-</strong>
-
-</td>
-
-<td>
-
-<div
-style="
-display:flex;
-gap:6px;
-flex-wrap:wrap;
-min-width:170px;
-">
-
-
-${
-isActive
-
-?
-
-`
-
-<button
-type="button"
-class="btn"
-style="
-background:#d97706;
-padding:7px 10px;
-font-size:12px;
-"
-onclick="changeStudentStatus(
-'${safeId}',
-'inactive'
-)">
-
-Deactivate
-
-</button>
-
-`
-
-:
-
-`
-
-<button
-type="button"
-class="btn"
-style="
-background:#16a34a;
-padding:7px 10px;
-font-size:12px;
-"
-onclick="changeStudentStatus(
-'${safeId}',
-'active'
-)">
-
-Activate
-
-</button>
-
-`
 }
 
 
-<button
-type="button"
-class="btn"
-style="
-background:#dc2626;
-padding:7px 10px;
-font-size:12px;
-"
-onclick="deleteStudent(
-'${safeId}',
-'${safeJs(student.full_name || "")}'
-)">
+/* -----------------------------------------
+   SUMMARY
+----------------------------------------- */
 
-Delete
+updateSummary();
 
-</button>
 
-</div>
-
-</td>
-
-</tr>
-
-`;
-
-}).join("");
+renderStudents();
 
 
 }catch(error){
@@ -1379,7 +1602,7 @@ rows.innerHTML = `
 
 <tr>
 
-<td colspan="10">
+<td colspan="12">
 
 <strong>
 Unable to load students.
@@ -1410,6 +1633,890 @@ error.message,
 
 
 /* =====================================================
+   SUMMARY
+===================================================== */
+
+function updateSummary(){
+
+const total =
+allStudents.length;
+
+
+const active =
+allStudents.filter(
+function(student){
+
+return String(
+student.status || ""
+)
+.toLowerCase()
+===
+"active";
+
+}
+).length;
+
+
+const inactive =
+total - active;
+
+
+const assigned =
+allStudents.filter(
+function(student){
+
+return !!student.teacher_id;
+
+}
+).length;
+
+
+let schedules = 0;
+
+
+Object.values(
+classCountMap
+)
+.forEach(function(value){
+
+schedules +=
+Number(value || 0);
+
+});
+
+
+document.getElementById(
+"totalStudents"
+).textContent =
+total;
+
+
+document.getElementById(
+"activeStudents"
+).textContent =
+active;
+
+
+document.getElementById(
+"inactiveStudents"
+).textContent =
+inactive;
+
+
+document.getElementById(
+"assignedStudents"
+).textContent =
+assigned;
+
+
+document.getElementById(
+"totalSchedules"
+).textContent =
+schedules;
+
+}
+
+
+/* =====================================================
+   RENDER STUDENTS
+===================================================== */
+
+function renderStudents(){
+
+const rows =
+document.getElementById(
+"rows"
+);
+
+
+const search =
+String(
+document.getElementById(
+"studentSearch"
+)?.value || ""
+)
+.toLowerCase()
+.trim();
+
+
+const teacherMap = {};
+
+
+teachers.forEach(
+function(teacher){
+
+teacherMap[
+teacher.id
+] =
+teacher.name;
+
+});
+
+
+const filtered =
+allStudents.filter(
+function(student){
+
+if(!search)
+return true;
+
+
+const teacherName =
+teacherMap[
+student.teacher_id
+] || "";
+
+
+const text = [
+
+student.full_name,
+
+student.email,
+
+student.phone,
+
+student.course,
+
+student.father_name,
+
+student.timezone,
+
+teacherName,
+
+student.id
+
+]
+.map(
+function(value){
+
+return String(
+value || ""
+)
+.toLowerCase();
+
+}
+)
+.join(" ");
+
+
+return text.includes(
+search
+);
+
+});
+
+
+if(!filtered.length){
+
+rows.innerHTML = `
+
+<tr>
+
+<td
+colspan="12"
+style="text-align:center"
+>
+
+No students found.
+
+</td>
+
+</tr>
+
+`;
+
+return;
+
+}
+
+
+rows.innerHTML =
+filtered.map(
+function(student){
+
+const teacherName =
+teacherMap[
+student.teacher_id
+] ||
+"Not Assigned";
+
+
+const isActive =
+String(
+student.status || ""
+)
+.toLowerCase()
+===
+"active";
+
+
+const classes =
+classCountMap[
+student.id
+] || 0;
+
+
+const payments =
+paymentCountMap[
+student.id
+] || 0;
+
+
+const statusHtml =
+isActive
+
+?
+
+`<span
+style="
+color:green;
+font-weight:600;
+"
+>
+Active
+</span>`
+
+:
+
+`<span
+style="
+color:#b45309;
+font-weight:600;
+"
+>
+Inactive
+</span>`;
+
+
+return `
+
+<tr>
+
+
+<td>
+
+<small
+style="
+font-size:11px;
+word-break:break-all;
+"
+>
+
+${safeHtml(student.id)}
+
+</small>
+
+</td>
+
+
+<td>
+
+<strong>
+${safeHtml(student.full_name || "")}
+</strong>
+
+</td>
+
+
+<td>
+
+${safeHtml(
+student.father_name || "-"
+)}
+
+</td>
+
+
+<td>
+
+${safeHtml(
+student.phone || "-"
+)}
+
+</td>
+
+
+<td>
+
+${safeHtml(
+student.email || "-"
+)}
+
+</td>
+
+
+<td>
+
+${safeHtml(
+student.course || "-"
+)}
+
+</td>
+
+
+<td>
+
+${safeHtml(
+teacherName
+)}
+
+</td>
+
+
+<td>
+
+<small
+style="
+font-size:12px;
+word-break:break-word;
+"
+>
+
+${safeHtml(
+student.timezone ||
+"Asia/Karachi"
+)}
+
+</small>
+
+</td>
+
+
+<td>
+
+${classes}
+
+</td>
+
+
+<td>
+
+${payments}
+
+</td>
+
+
+<td>
+
+${statusHtml}
+
+</td>
+
+
+<td>
+
+<div
+style="
+display:flex;
+gap:5px;
+flex-wrap:wrap;
+min-width:180px;
+"
+>
+
+
+<button
+type="button"
+class="btn"
+style="
+padding:7px 10px;
+font-size:12px;
+"
+onclick="openEditModal(
+'${student.id}'
+)"
+>
+
+Edit
+
+</button>
+
+
+${
+isActive
+
+?
+
+`
+
+<button
+type="button"
+class="btn"
+style="
+background:#d97706;
+padding:7px 10px;
+font-size:12px;
+"
+onclick="changeStudentStatus(
+'${student.id}',
+'inactive'
+)"
+>
+
+Deactivate
+
+</button>
+
+`
+
+:
+
+`
+
+<button
+type="button"
+class="btn"
+style="
+background:#16a34a;
+padding:7px 10px;
+font-size:12px;
+"
+onclick="changeStudentStatus(
+'${student.id}',
+'active'
+)"
+>
+
+Activate
+
+</button>
+
+`
+}
+
+
+<button
+type="button"
+class="btn"
+style="
+background:#dc2626;
+padding:7px 10px;
+font-size:12px;
+"
+onclick="deleteStudent(
+'${student.id}',
+'${safeJs(student.full_name || "")}'
+)"
+>
+
+Delete
+
+</button>
+
+
+</div>
+
+</td>
+
+</tr>
+
+`;
+
+}
+).join("");
+
+}
+
+
+/* =====================================================
+   RESET SEARCH
+===================================================== */
+
+function resetSearch(){
+
+const search =
+document.getElementById(
+"studentSearch"
+);
+
+if(search){
+
+search.value = "";
+
+}
+
+renderStudents();
+
+}
+
+
+/* =====================================================
+   OPEN EDIT
+===================================================== */
+
+function openEditModal(studentId){
+
+const student =
+allStudents.find(
+function(item){
+
+return String(item.id) ===
+String(studentId);
+
+}
+);
+
+
+if(!student){
+
+alert(
+"Student not found."
+);
+
+return;
+
+}
+
+
+document.getElementById(
+"edit_student_id"
+).value =
+student.id;
+
+
+document.getElementById(
+"edit_student_name"
+).value =
+student.full_name || "";
+
+
+document.getElementById(
+"edit_father_name"
+).value =
+student.father_name || "";
+
+
+document.getElementById(
+"edit_student_phone"
+).value =
+student.phone || "";
+
+
+document.getElementById(
+"edit_student_email"
+).value =
+student.email || "";
+
+
+document.getElementById(
+"edit_student_course"
+).value =
+student.course || "";
+
+
+document.getElementById(
+"edit_teacher_id"
+).value =
+student.teacher_id || "";
+
+
+document.getElementById(
+"edit_student_status"
+).value =
+student.status || "active";
+
+
+document.getElementById(
+"edit_student_timezone"
+).value =
+student.timezone ||
+"Asia/Karachi";
+
+
+document.getElementById(
+"editModal"
+).style.display =
+"flex";
+
+}
+
+
+/* =====================================================
+   CLOSE EDIT
+===================================================== */
+
+function closeEditModal(){
+
+document.getElementById(
+"editModal"
+).style.display =
+"none";
+
+}
+
+
+/* =====================================================
+   UPDATE STUDENT
+===================================================== */
+
+document
+.getElementById(
+"editStudentForm"
+)
+.addEventListener(
+"submit",
+async function(event){
+
+event.preventDefault();
+
+
+const button =
+document.getElementById(
+"updateStudentBtn"
+);
+
+
+button.disabled = true;
+
+button.textContent =
+"Saving...";
+
+
+const studentId =
+document.getElementById(
+"edit_student_id"
+).value;
+
+
+try{
+
+
+const newTeacherId =
+document.getElementById(
+"edit_teacher_id"
+).value;
+
+
+const oldStudent =
+allStudents.find(
+function(student){
+
+return String(student.id) ===
+String(studentId);
+
+}
+);
+
+
+const updateResult =
+await db
+
+.from("students")
+
+.update({
+
+full_name:
+document.getElementById(
+"edit_student_name"
+).value.trim(),
+
+father_name:
+document.getElementById(
+"edit_father_name"
+).value.trim()
+|| null,
+
+phone:
+document.getElementById(
+"edit_student_phone"
+).value.trim()
+|| null,
+
+email:
+document.getElementById(
+"edit_student_email"
+).value.trim()
+|| null,
+
+course:
+document.getElementById(
+"edit_student_course"
+).value.trim()
+|| null,
+
+teacher_id:
+newTeacherId || null,
+
+timezone:
+document.getElementById(
+"edit_student_timezone"
+).value,
+
+status:
+document.getElementById(
+"edit_student_status"
+).value
+
+})
+
+.eq(
+"id",
+studentId
+);
+
+
+if(updateResult.error){
+
+throw updateResult.error;
+
+}
+
+
+/* -----------------------------------------
+   UPDATE ASSIGNMENT
+----------------------------------------- */
+
+if(newTeacherId){
+
+const oldTeacherId =
+oldStudent?.teacher_id;
+
+
+/* Deactivate old assignments */
+
+if(
+oldTeacherId &&
+oldTeacherId !== newTeacherId
+){
+
+await db
+
+.from(
+"teacher_student_assignments"
+)
+
+.update({
+
+active:false,
+
+end_date:
+new Date()
+.toISOString()
+.slice(0,10)
+
+})
+
+.eq(
+"student_id",
+studentId
+)
+
+.eq(
+"active",
+true
+);
+
+}
+
+
+/* Check current assignment */
+
+const assignmentCheck =
+await db
+
+.from(
+"teacher_student_assignments"
+)
+
+.select("id")
+
+.eq(
+"student_id",
+studentId
+)
+
+.eq(
+"teacher_id",
+newTeacherId
+)
+
+.eq(
+"active",
+true
+)
+
+.maybeSingle();
+
+
+if(
+!assignmentCheck.error &&
+!assignmentCheck.data
+){
+
+await db
+
+.from(
+"teacher_student_assignments"
+)
+
+.insert({
+
+student_id:
+studentId,
+
+teacher_id:
+newTeacherId,
+
+assignment_type:
+"permanent",
+
+start_date:
+new Date()
+.toISOString()
+.slice(0,10),
+
+active:true
+
+});
+
+}
+
+}
+
+
+showMsg(
+"msg",
+"Student updated successfully.",
+"ok"
+);
+
+
+closeEditModal();
+
+
+await loadStudents();
+
+
+}
+catch(error){
+
+console.error(
+"Update student error:",
+error
+);
+
+
+studentMessage(
+"Student could not be updated: " +
+error.message,
+"error"
+);
+
+}
+finally{
+
+button.disabled = false;
+
+button.textContent =
+"Save Changes";
+
+}
+
+}
+);
+
+
+/* =====================================================
    CHANGE STATUS
 ===================================================== */
 
@@ -1424,11 +2531,13 @@ newStatus === "active"
 : "deactivate";
 
 
-if(!confirm(
+if(
+!confirm(
 "Are you sure you want to " +
 action +
 " this student?"
-)){
+)
+){
 
 return;
 
@@ -1450,7 +2559,8 @@ await db
 
 .update({
 
-status:newStatus
+status:
+newStatus
 
 })
 
@@ -1466,6 +2576,8 @@ throw result.error;
 
 }
 
+
+/* Classroom access */
 
 const accessResult =
 await db
@@ -1506,13 +2618,8 @@ action +
 );
 
 
-}catch(error){
-
-console.error(
-"Status error:",
-error
-);
-
+}
+catch(error){
 
 studentMessage(
 "Could not update student: " +
@@ -1534,7 +2641,8 @@ studentId,
 studentName
 ){
 
-if(!confirm(
+const firstConfirm =
+confirm(
 
 "PERMANENT DELETE\n\n" +
 
@@ -1543,19 +2651,33 @@ studentName +
 
 "\n\n" +
 
-"This will permanently delete:\n" +
-
-"- Student account\n" +
-"- Student record\n" +
-"- Teacher assignment\n" +
-"- Classroom access\n" +
-"- Portal profile\n\n" +
+"Student account and related portal records may be deleted.\n\n" +
 
 "This action cannot be undone.\n\n" +
 
 "Continue?"
 
-)){
+);
+
+
+if(!firstConfirm){
+
+return;
+
+}
+
+
+const secondConfirm =
+confirm(
+
+"FINAL CONFIRMATION\n\n" +
+
+"Are you absolutely sure you want to permanently delete this student?"
+
+);
+
+
+if(!secondConfirm){
 
 return;
 
@@ -1647,7 +2769,8 @@ studentMessage(
 await loadStudents();
 
 
-}catch(error){
+}
+catch(error){
 
 console.error(
 "Delete student error:",
@@ -1671,7 +2794,9 @@ error.message,
 ===================================================== */
 
 document
-.getElementById("studentForm")
+.getElementById(
+"studentForm"
+)
 .addEventListener(
 "submit",
 async function(event){
@@ -1687,70 +2812,79 @@ document.getElementById(
 
 button.disabled = true;
 
-
 button.textContent =
 "Creating Student...";
 
 
 try{
 
+
 const name =
-document
-.getElementById("student_name")
+document.getElementById(
+"student_name"
+)
 .value
 .trim();
 
 
 const email =
-document
-.getElementById("student_email")
+document.getElementById(
+"student_email"
+)
 .value
 .trim();
 
 
 const password =
-document
-.getElementById("student_password")
+document.getElementById(
+"student_password"
+)
 .value;
 
 
 const fatherName =
-document
-.getElementById("father_name")
+document.getElementById(
+"father_name"
+)
 .value
 .trim();
 
 
 const phone =
-document
-.getElementById("student_phone")
+document.getElementById(
+"student_phone"
+)
 .value
 .trim();
 
 
 const course =
-document
-.getElementById("student_course")
+document.getElementById(
+"student_course"
+)
 .value
 .trim();
 
 
 const teacherId =
-document
-.getElementById("teacher_id")
+document.getElementById(
+"teacher_id"
+)
 .value;
 
 
 const timezone =
-document
-.getElementById("student_timezone")
+document.getElementById(
+"student_timezone"
+)
 .value
 .trim();
 
 
 const status =
-document
-.getElementById("student_status")
+document.getElementById(
+"student_status"
+)
 .value;
 
 
@@ -1806,9 +2940,11 @@ const selectedTeacher =
 teachers.find(
 function(teacher){
 
-return teacher.id === teacherId;
+return teacher.id ===
+teacherId;
 
-});
+}
+);
 
 
 if(!selectedTeacher){
@@ -1838,10 +2974,9 @@ return;
 }
 
 
-/* =====================================================
-   CREATE ACCOUNT
-   TIMEZONE SENT TO EDGE FUNCTION
-===================================================== */
+/* -----------------------------------------
+   CREATE PORTAL ACCOUNT
+----------------------------------------- */
 
 const response =
 await fetch(
@@ -1925,10 +3060,9 @@ throw new Error(
 }
 
 
-/* =====================================================
-   UPDATE STUDENT
-   KEEP AUTH USER LINKED
-===================================================== */
+/* -----------------------------------------
+   UPDATE STUDENT RECORD
+----------------------------------------- */
 
 const updateResult =
 await db
@@ -1975,21 +3109,23 @@ studentId
 if(updateResult.error){
 
 throw new Error(
-"Student created, but student profile linking failed: " +
+"Student created, but profile linking failed: " +
 updateResult.error.message
 );
 
 }
 
 
-/* =====================================================
-   CHECK TEACHER ASSIGNMENT
-===================================================== */
+/* -----------------------------------------
+   CHECK ASSIGNMENT
+----------------------------------------- */
 
 const assignmentResult =
 await db
 
-.from("teacher_student_assignments")
+.from(
+"teacher_student_assignments"
+)
 
 .select("id")
 
@@ -2021,16 +3157,18 @@ assignmentResult.error.message
 }
 
 
-/* =====================================================
-   CREATE ASSIGNMENT IF MISSING
-===================================================== */
+/* -----------------------------------------
+   CREATE ASSIGNMENT
+----------------------------------------- */
 
 if(!assignmentResult.data){
 
 const insertAssignment =
 await db
 
-.from("teacher_student_assignments")
+.from(
+"teacher_student_assignments"
+)
 
 .insert({
 
@@ -2056,7 +3194,7 @@ active:true
 if(insertAssignment.error){
 
 throw new Error(
-"Student created but assignment failed: " +
+"Student created but teacher assignment failed: " +
 insertAssignment.error.message
 );
 
@@ -2065,18 +3203,16 @@ insertAssignment.error.message
 }
 
 
-/* =====================================================
+/* -----------------------------------------
    SUCCESS
-===================================================== */
+----------------------------------------- */
 
 studentMessage(
 
 "Student account created successfully and assigned to " +
 selectedTeacher.name +
-". Student Time Zone: " +
-timezone +
-". Student ID: " +
-studentId,
+". Time Zone: " +
+timezone,
 
 "ok"
 
@@ -2084,13 +3220,15 @@ studentId,
 
 
 document
-.getElementById("studentForm")
+.getElementById(
+"studentForm"
+)
 .reset();
 
 
-document
-.getElementById("student_timezone")
-.value =
+document.getElementById(
+"student_timezone"
+).value =
 "Asia/Karachi";
 
 
@@ -2098,6 +3236,7 @@ const timezoneSearch =
 document.getElementById(
 "timezone_search"
 );
+
 
 if(timezoneSearch){
 
@@ -2109,7 +3248,8 @@ timezoneSearch.value = "";
 await loadStudents();
 
 
-}catch(error){
+}
+catch(error){
 
 console.error(
 "Create student error:",
@@ -2123,8 +3263,8 @@ error.message ||
 "error"
 );
 
-
-}finally{
+}
+finally{
 
 button.disabled = false;
 
@@ -2133,16 +3273,17 @@ button.textContent =
 
 }
 
-});
+}
 
 
 /* =====================================================
-   START PAGE
+   INITIALIZE
 ===================================================== */
 
 async function initStudents(){
 
 try{
+
 
 if(
 typeof adminGuard === "function"
@@ -2163,44 +3304,20 @@ return;
 
 loadTimeZones();
 
+
 await loadTeachers();
+
 
 await loadStudents();
 
 
-}catch(error){
+}
+catch(error){
 
 console.error(
-"Student page initialization error:",
+"Student page error:",
 error
 );
-
-
-const rows =
-document.getElementById("rows");
-
-
-rows.innerHTML = `
-
-<tr>
-
-<td colspan="10">
-
-<strong>
-Page could not load.
-</strong>
-
-<br>
-
-<small>
-${safeHtml(error.message)}
-</small>
-
-</td>
-
-</tr>
-
-`;
 
 
 studentMessage(
@@ -2219,4 +3336,5 @@ initStudents();
 </script>
 
 </body>
+
 </html>
