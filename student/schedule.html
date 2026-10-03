@@ -195,6 +195,30 @@ My Schedule | Haroon Ibn Rasheed Online Quran Academy
   color:#64748b;
 }
 
+.timezone-info strong{
+  color:#2F9FBA;
+}
+
+.time-info{
+  margin-top:7px;
+  padding:8px 10px;
+  background:#f8fafc;
+  border-radius:7px;
+  border-left:3px solid #2F9FBA;
+  font-size:12px;
+  color:#64748b;
+  line-height:1.6;
+}
+
+.time-info strong{
+  color:#454D59;
+}
+
+.local-date{
+  color:#454D59;
+  font-weight:700;
+}
+
 @media(max-width:600px){
 
   .schedule-page{
@@ -337,6 +361,7 @@ Only your assigned class schedule is shown.
 <div
 id="timezoneInfo"
 class="timezone-info">
+Loading your timezone...
 </div>
 
 
@@ -393,7 +418,7 @@ const db =
 
 
 /* =====================================================
-   DAYS
+   CONSTANTS
 ===================================================== */
 
 const DAYS = [
@@ -409,6 +434,10 @@ const DAYS = [
 
 const BASE_TIMEZONE =
   "Asia/Karachi";
+
+
+const CLASSROOM_BASE_URL =
+  "https://haroonibnrasheedonlinequranacadmey.github.io/haroon-quran-classroom/";
 
 
 /* =====================================================
@@ -466,7 +495,95 @@ function normalizeDay(day){
 
   };
 
-  return map[value] || day;
+  return map[value] || "";
+
+}
+
+
+/* =====================================================
+   PARSE CLASS DAYS
+===================================================== */
+
+function parseClassDays(value){
+
+  if(Array.isArray(value)){
+
+    return value
+      .map(normalizeDay)
+      .filter(Boolean);
+
+  }
+
+
+  if(value === null || value === undefined){
+
+    return [];
+
+  }
+
+
+  const text =
+    String(value).trim();
+
+
+  if(!text){
+
+    return [];
+
+  }
+
+
+  /* PostgreSQL / JSON array */
+
+  if(
+    text.startsWith("[") &&
+    text.endsWith("]")
+  ){
+
+    try{
+
+      const parsed =
+        JSON.parse(text);
+
+      if(Array.isArray(parsed)){
+
+        return parsed
+          .map(normalizeDay)
+          .filter(Boolean);
+
+      }
+
+    }catch(error){
+
+      console.warn(
+        "Could not parse class_days JSON:",
+        error
+      );
+
+    }
+
+  }
+
+
+  /* PostgreSQL array format:
+     {Monday,Wednesday,Friday}
+  */
+
+  let cleaned =
+    text
+      .replace(/^\{/,"")
+      .replace(/\}$/,"");
+
+
+  return cleaned
+    .split(",")
+    .map(item =>
+      item
+        .replace(/^"|"$/g,"")
+        .trim()
+    )
+    .map(normalizeDay)
+    .filter(Boolean);
 
 }
 
@@ -480,19 +597,28 @@ function formatDuration(minutes){
   const m =
     parseInt(minutes,10);
 
+
   if(!m){
+
     return "";
+
   }
 
+
   if(m < 60){
+
     return m + " minutes";
+
   }
+
 
   const h =
     Math.floor(m / 60);
 
+
   const r =
     m % 60;
+
 
   if(r === 0){
 
@@ -500,6 +626,7 @@ function formatDuration(minutes){
       (h === 1 ? " hour" : " hours");
 
   }
+
 
   return h + "h " + r + "m";
 
@@ -513,8 +640,11 @@ function formatDuration(minutes){
 function isValidTimezone(timeZone){
 
   if(!timeZone){
+
     return false;
+
   }
+
 
   try{
 
@@ -524,6 +654,7 @@ function isValidTimezone(timeZone){
         timeZone:timeZone
       }
     ).format(new Date());
+
 
     return true;
 
@@ -537,6 +668,19 @@ function isValidTimezone(timeZone){
 
 
 /* =====================================================
+   SAFE TIMEZONE
+===================================================== */
+
+function safeTimezone(timeZone){
+
+  return isValidTimezone(timeZone)
+    ? timeZone
+    : BASE_TIMEZONE;
+
+}
+
+
+/* =====================================================
    GET TIMEZONE OFFSET
 ===================================================== */
 
@@ -545,11 +689,15 @@ function getTimezoneOffsetMinutes(
   timeZone
 ){
 
+  const zone =
+    safeTimezone(timeZone);
+
+
   const parts =
     new Intl.DateTimeFormat(
       "en-US",
       {
-        timeZone:timeZone,
+        timeZone:zone,
         year:"numeric",
         month:"2-digit",
         day:"2-digit",
@@ -560,16 +708,31 @@ function getTimezoneOffsetMinutes(
       }
     ).formatToParts(date);
 
+
   const values = {};
+
 
   parts.forEach(part => {
 
     if(part.type !== "literal"){
+
       values[part.type] =
         part.value;
+
     }
 
   });
+
+
+  let hour =
+    Number(values.hour);
+
+
+  if(hour === 24){
+
+    hour = 0;
+
+  }
 
 
   const asUTC =
@@ -577,7 +740,7 @@ function getTimezoneOffsetMinutes(
       Number(values.year),
       Number(values.month) - 1,
       Number(values.day),
-      Number(values.hour),
+      hour,
       Number(values.minute),
       Number(values.second)
     );
@@ -593,6 +756,7 @@ function getTimezoneOffsetMinutes(
 
 /* =====================================================
    WALL CLOCK → UTC
+   DST SAFE / IANA TIMEZONE
 ===================================================== */
 
 function wallTimeToUTC(
@@ -601,72 +765,110 @@ function wallTimeToUTC(
   timeZone
 ){
 
-  const parts =
+  const zone =
+    safeTimezone(timeZone);
+
+
+  const timeParts =
     String(
       timeString || "00:00:00"
-    ).split(":");
+    )
+    .split(":");
 
 
   const hour =
-    parseInt(parts[0],10) || 0;
+    parseInt(
+      timeParts[0],
+      10
+    ) || 0;
+
 
   const minute =
-    parseInt(parts[1],10) || 0;
+    parseInt(
+      timeParts[1],
+      10
+    ) || 0;
+
 
   const second =
-    parseInt(parts[2],10) || 0;
+    parseInt(
+      timeParts[2],
+      10
+    ) || 0;
 
 
   const dateParts =
-    dateISO.split("-")
+    String(dateISO)
+      .split("-")
       .map(Number);
 
 
   const year =
     dateParts[0];
 
+
   const month =
     dateParts[1];
+
 
   const day =
     dateParts[2];
 
 
-  let guess =
-    new Date(
-      Date.UTC(
-        year,
-        month - 1,
-        day,
-        hour,
-        minute,
-        second
-      )
+  /*
+    Treat the wall-clock components as UTC
+    temporarily. Then solve the timezone
+    offset iteratively.
+  */
+
+  const wallMs =
+    Date.UTC(
+      year,
+      month - 1,
+      day,
+      hour,
+      minute,
+      second
     );
 
 
-  for(let i=0;i<5;i++){
+  let guess =
+    new Date(wallMs);
 
-    const offset =
+
+  for(let i = 0; i < 6; i++){
+
+    const offsetMinutes =
       getTimezoneOffsetMinutes(
         guess,
-        timeZone
+        zone
       );
+
+
+    const nextMs =
+      wallMs -
+      (
+        offsetMinutes * 60000
+      );
+
+
+    if(
+      Math.abs(
+        nextMs -
+        guess.getTime()
+      ) < 1000
+    ){
+
+      guess =
+        new Date(nextMs);
+
+      break;
+
+    }
 
 
     guess =
-      new Date(
-        Date.UTC(
-          year,
-          month - 1,
-          day,
-          hour,
-          minute,
-          second
-        )
-        -
-        offset * 60000
-      );
+      new Date(nextMs);
 
   }
 
@@ -677,7 +879,7 @@ function wallTimeToUTC(
 
 
 /* =====================================================
-   FORMAT LOCAL DATE
+   FORMAT LOCAL DATE PARTS
 ===================================================== */
 
 function getLocalDateParts(
@@ -685,17 +887,23 @@ function getLocalDateParts(
   timeZone
 ){
 
+  const zone =
+    safeTimezone(timeZone);
+
+
   const parts =
     new Intl.DateTimeFormat(
       "en-US",
       {
-        timeZone:timeZone,
+        timeZone:zone,
         year:"numeric",
         month:"2-digit",
         day:"2-digit",
         weekday:"long"
       }
-    ).formatToParts(utcDate);
+    ).formatToParts(
+      utcDate
+    );
 
 
   const values = {};
@@ -704,8 +912,10 @@ function getLocalDateParts(
   parts.forEach(part => {
 
     if(part.type !== "literal"){
+
       values[part.type] =
         part.value;
+
     }
 
   });
@@ -724,6 +934,33 @@ function getLocalDateParts(
 
 
 /* =====================================================
+   DATE KEY
+===================================================== */
+
+function getDateKeyInTimezone(
+  utcDate,
+  timeZone
+){
+
+  const parts =
+    getLocalDateParts(
+      utcDate,
+      timeZone
+    );
+
+
+  return (
+    parts.year +
+    "-" +
+    parts.month +
+    "-" +
+    parts.day
+  );
+
+}
+
+
+/* =====================================================
    FORMAT LOCAL TIME
 ===================================================== */
 
@@ -735,7 +972,7 @@ function getLocalTime(
   return new Intl.DateTimeFormat(
     "en-US",
     {
-      timeZone:timeZone,
+      timeZone:safeTimezone(timeZone),
       hour:"numeric",
       minute:"2-digit",
       hour12:true
@@ -746,88 +983,24 @@ function getLocalTime(
 
 
 /* =====================================================
-   CONVERT CLASS OCCURRENCE
+   FORMAT FULL DATE
 ===================================================== */
 
-function convertOccurrence(
-  dateISO,
-  timeString,
-  scheduleTimezone,
-  studentTimezone,
-  duration
+function getReadableDate(
+  utcDate,
+  timeZone
 ){
 
-  const sourceTimezone =
-    isValidTimezone(scheduleTimezone)
-      ? scheduleTimezone
-      : BASE_TIMEZONE;
-
-
-  const targetTimezone =
-    isValidTimezone(studentTimezone)
-      ? studentTimezone
-      : BASE_TIMEZONE;
-
-
-  const utcDate =
-    wallTimeToUTC(
-      dateISO,
-      timeString,
-      sourceTimezone
-    );
-
-
-  const localParts =
-    getLocalDateParts(
-      utcDate,
-      targetTimezone
-    );
-
-
-  const localDateISO =
-    localParts.year +
-    "-" +
-    localParts.month +
-    "-" +
-    localParts.day;
-
-
-  const localTime =
-    getLocalTime(
-      utcDate,
-      targetTimezone
-    );
-
-
-  const endUTC =
-    new Date(
-      utcDate.getTime() +
-      (
-        parseInt(duration,10) || 30
-      ) * 60000
-    );
-
-
-  const endTime =
-    getLocalTime(
-      endUTC,
-      targetTimezone
-    );
-
-
-  return {
-
-    utcDate:utcDate,
-
-    date:localDateISO,
-
-    day:localParts.weekday,
-
-    time:localTime,
-
-    endTime:endTime
-
-  };
+  return new Intl.DateTimeFormat(
+    "en-US",
+    {
+      timeZone:safeTimezone(timeZone),
+      weekday:"short",
+      month:"short",
+      day:"numeric",
+      year:"numeric"
+    }
+  ).format(utcDate);
 
 }
 
@@ -840,39 +1013,9 @@ function getTodayInTimezone(
   timeZone
 ){
 
-  const parts =
-    new Intl.DateTimeFormat(
-      "en-US",
-      {
-        timeZone:timeZone,
-        year:"numeric",
-        month:"2-digit",
-        day:"2-digit"
-      }
-    ).formatToParts(
-      new Date()
-    );
-
-
-  const values = {};
-
-
-  parts.forEach(part => {
-
-    if(part.type !== "literal"){
-      values[part.type] =
-        part.value;
-    }
-
-  });
-
-
-  return (
-    values.year +
-    "-" +
-    values.month +
-    "-" +
-    values.day
+  return getDateKeyInTimezone(
+    new Date(),
+    timeZone
   );
 
 }
@@ -888,7 +1031,8 @@ function getDateAfter(
 ){
 
   const parts =
-    dateISO.split("-")
+    String(dateISO)
+      .split("-")
       .map(Number);
 
 
@@ -926,31 +1070,43 @@ function getDateAfter(
 
 
 /* =====================================================
-   GET BASE DATE LIST
+   BASE DATE LIST
 ===================================================== */
 
-function getBaseDates(){
+function getBaseDates(
+  sourceTimezone
+){
 
   const result = [];
 
 
-  const today =
-    getTodayInTimezone(
-      BASE_TIMEZONE
+  const sourceZone =
+    safeTimezone(
+      sourceTimezone
     );
 
 
-  for(let i=-2;i<=16;i++){
+  const today =
+    getTodayInTimezone(
+      sourceZone
+    );
 
-    const dateISO =
+
+  /*
+    We generate a wider range than 7 days.
+
+    This is important because a class can move
+    to the previous/next local day after timezone
+    conversion.
+  */
+
+  for(let i = -3; i <= 16; i++){
+
+    result.push(
       getDateAfter(
         today,
         i
-      );
-
-
-    result.push(
-      dateISO
+      )
     );
 
   }
@@ -964,15 +1120,17 @@ function getBaseDates(){
 
 
 /* =====================================================
-   GET BASE DAY NAME
+   BASE DAY NAME
 ===================================================== */
 
 function baseDayName(
-  dateISO
+  dateISO,
+  sourceTimezone
 ){
 
   const parts =
-    dateISO.split("-")
+    String(dateISO)
+      .split("-")
       .map(Number);
 
 
@@ -992,10 +1150,120 @@ function baseDayName(
   return new Intl.DateTimeFormat(
     "en-US",
     {
-      timeZone:BASE_TIMEZONE,
+      timeZone:safeTimezone(
+        sourceTimezone
+      ),
       weekday:"long"
     }
   ).format(d);
+
+}
+
+
+/* =====================================================
+   CONVERT OCCURRENCE
+===================================================== */
+
+function convertOccurrence(
+  dateISO,
+  timeString,
+  scheduleTimezone,
+  studentTimezone,
+  duration
+){
+
+  const sourceTimezone =
+    safeTimezone(
+      scheduleTimezone
+    );
+
+
+  const targetTimezone =
+    safeTimezone(
+      studentTimezone
+    );
+
+
+  const utcDate =
+    wallTimeToUTC(
+      dateISO,
+      timeString,
+      sourceTimezone
+    );
+
+
+  const localParts =
+    getLocalDateParts(
+      utcDate,
+      targetTimezone
+    );
+
+
+  const localDateISO =
+    localParts.year +
+    "-" +
+    localParts.month +
+    "-" +
+    localParts.day;
+
+
+  const localTime =
+    getLocalTime(
+      utcDate,
+      targetTimezone
+    );
+
+
+  const endUTC =
+    new Date(
+      utcDate.getTime() +
+      (
+        parseInt(
+          duration,
+          10
+        ) || 30
+      ) * 60000
+    );
+
+
+  const endTime =
+    getLocalTime(
+      endUTC,
+      targetTimezone
+    );
+
+
+  return {
+
+    utcDate:utcDate,
+
+    date:localDateISO,
+
+    day:localParts.weekday,
+
+    time:localTime,
+
+    endTime:endTime,
+
+    sourceTime:
+      getLocalTime(
+        utcDate,
+        sourceTimezone
+      ),
+
+    sourceDate:
+      getReadableDate(
+        utcDate,
+        sourceTimezone
+      ),
+
+    studentDate:
+      getReadableDate(
+        utcDate,
+        targetTimezone
+      )
+
+  };
 
 }
 
@@ -1012,46 +1280,55 @@ function getOccurrences(
   const occurrences = [];
 
 
-  const baseDates =
-    getBaseDates();
+  schedules.forEach(
+    schedule => {
 
 
-  baseDates.forEach(
-    baseDate => {
-
-
-      const baseDay =
-        baseDayName(
-          baseDate
+      const sourceTimezone =
+        safeTimezone(
+          schedule.schedule_timezone ||
+          BASE_TIMEZONE
         );
 
 
-      schedules.forEach(
-        schedule => {
+      const days =
+        parseClassDays(
+          schedule.class_days
+        );
 
 
-          let days =
-            schedule.class_days;
+      if(!days.length){
+
+        return;
+
+      }
 
 
-          if(!Array.isArray(days)){
-
-            days =
-              [days];
-
-          }
+      const baseDates =
+        getBaseDates(
+          sourceTimezone
+        );
 
 
-          const matches =
-            days.some(
-              day =>
-                normalizeDay(day) ===
-                baseDay
+      baseDates.forEach(
+        baseDate => {
+
+
+          const baseDay =
+            baseDayName(
+              baseDate,
+              sourceTimezone
             );
 
 
-          if(!matches){
+          if(
+            !days.includes(
+              baseDay
+            )
+          ){
+
             return;
+
           }
 
 
@@ -1059,8 +1336,7 @@ function getOccurrences(
             convertOccurrence(
               baseDate,
               schedule.class_time,
-              schedule.schedule_timezone ||
-                BASE_TIMEZONE,
+              sourceTimezone,
               studentTimezone,
               schedule.duration_minutes
             );
@@ -1076,10 +1352,8 @@ function getOccurrences(
 
           });
 
-
         }
       );
-
 
     }
   );
@@ -1089,6 +1363,25 @@ function getOccurrences(
     (a,b) =>
       a.converted.utcDate -
       b.converted.utcDate
+  );
+
+}
+
+
+/* =====================================================
+   GET TEACHER TIME
+===================================================== */
+
+function getTeacherTime(
+  utcDate,
+  teacherTimezone
+){
+
+  return getLocalTime(
+    utcDate,
+    safeTimezone(
+      teacherTimezone
+    )
   );
 
 }
@@ -1118,8 +1411,13 @@ async function loadStudentSchedule(){
     );
 
 
-  if(!container || !message){
+  if(
+    !container ||
+    !message
+  ){
+
     return;
+
   }
 
 
@@ -1155,7 +1453,9 @@ async function loadStudentSchedule(){
 
 
     if(authError){
+
       throw authError;
+
     }
 
 
@@ -1204,7 +1504,9 @@ async function loadStudentSchedule(){
 
 
     if(studentError){
+
       throw studentError;
+
     }
 
 
@@ -1260,12 +1562,18 @@ async function loadStudentSchedule(){
     if(timezoneInfo){
 
       timezoneInfo.innerHTML =
+
         "Your schedule is shown in: " +
+
         "<strong>" +
+
         safeHtml(
           studentTimezone
         ) +
-        "</strong>";
+
+        "</strong>" +
+
+        " · Local date/time";
 
     }
 
@@ -1309,7 +1617,9 @@ async function loadStudentSchedule(){
 
 
     if(scheduleError){
+
       throw scheduleError;
+
     }
 
 
@@ -1371,7 +1681,8 @@ async function loadStudentSchedule(){
           .from("teachers")
           .select(`
             id,
-            name
+            name,
+            timezone
           `)
           .in(
             "id",
@@ -1397,8 +1708,19 @@ async function loadStudentSchedule(){
 
           teacherMap[
             teacher.id
-          ] =
-            teacher.name;
+          ] = {
+
+            name:
+              teacher.name ||
+              "Assigned Teacher",
+
+            timezone:
+              safeTimezone(
+                teacher.timezone ||
+                BASE_TIMEZONE
+              )
+
+          };
 
         }
       );
@@ -1407,7 +1729,7 @@ async function loadStudentSchedule(){
 
 
     /* ===============================================
-       CONVERT OCCURRENCES
+       OCCURRENCES
     =============================================== */
 
     const occurrences =
@@ -1415,6 +1737,10 @@ async function loadStudentSchedule(){
         schedules,
         studentTimezone
       );
+
+
+    const now =
+      new Date();
 
 
     const today =
@@ -1426,7 +1752,7 @@ async function loadStudentSchedule(){
     const lastDate =
       getDateAfter(
         today,
-        7
+        6
       );
 
 
@@ -1517,6 +1843,14 @@ async function loadStudentSchedule(){
         );
 
 
+        const hasToday =
+          classes.some(
+            item =>
+              item.converted.date ===
+              today
+          );
+
+
         html += `
 
           <div class="day-section">
@@ -1526,12 +1860,7 @@ async function loadStudentSchedule(){
               ${safeHtml(day)}
 
               ${
-                classes.some(
-                  item =>
-                    item.converted.date ===
-                    today
-                )
-
+                hasToday
                 ?
 
                 `
@@ -1561,19 +1890,88 @@ async function loadStudentSchedule(){
               item.schedule;
 
 
-            const teacherName =
+            const teacher =
               teacherMap[
                 schedule.teacher_id
-              ] ||
-              "Assigned Teacher";
+              ] || {
+
+                name:
+                  "Assigned Teacher",
+
+                timezone:
+                  BASE_TIMEZONE
+
+              };
 
 
-            let actions = "";
+            const sourceTimezone =
+              safeTimezone(
+                schedule.schedule_timezone ||
+                BASE_TIMEZONE
+              );
+
+
+            const teacherTimezone =
+              safeTimezone(
+                teacher.timezone ||
+                sourceTimezone
+              );
+
+
+            const isToday =
+              item.converted.date ===
+              today;
+
+
+            const isStarted =
+              item.converted.utcDate <=
+              now;
+
+
+            const durationMinutes =
+              parseInt(
+                schedule.duration_minutes,
+                10
+              ) || 30;
+
+
+            const endUTC =
+              new Date(
+                item.converted.utcDate.getTime() +
+                durationMinutes * 60000
+              );
+
+
+            const isLive =
+              isStarted &&
+              now < endUTC;
+
+
+            let statusBadge = "";
+
+
+            if(isLive){
+
+              statusBadge = `
+
+                <span
+                  class="today-badge">
+
+                  LIVE
+
+                </span>
+
+              `;
+
+            }
 
 
             /* =========================================
                GOOGLE MEET
             ========================================= */
+
+            let actions = "";
+
 
             if(
               schedule.google_meet_url
@@ -1607,7 +2005,8 @@ async function loadStudentSchedule(){
             ){
 
               const classroomUrl =
-                "https://haroonibnrasheedonlinequranacadmey.github.io/haroon-quran-classroom/?code=" +
+                CLASSROOM_BASE_URL +
+                "?code=" +
                 encodeURIComponent(
                   schedule.classroom_code
                 );
@@ -1617,7 +2016,9 @@ async function loadStudentSchedule(){
 
                 <a
                   class="classroom-btn"
-                  href="${classroomUrl}"
+                  href="${safeHtml(
+                    classroomUrl
+                  )}"
                   target="_blank"
                   rel="noopener noreferrer">
 
@@ -1648,6 +2049,26 @@ async function loadStudentSchedule(){
                       item.converted.time
                     )}
 
+                    ${
+                      isToday
+                      ?
+
+                      `
+                        <span
+                          class="today-badge">
+
+                          TODAY
+
+                        </span>
+                      `
+
+                      :
+
+                      ""
+                    }
+
+                    ${statusBadge}
+
                   </div>
 
 
@@ -1666,7 +2087,7 @@ async function loadStudentSchedule(){
                     Teacher:
 
                     ${safeHtml(
-                      teacherName
+                      teacher.name
                     )}
 
                   </div>
@@ -1701,11 +2122,15 @@ async function loadStudentSchedule(){
                   <div
                     class="class-duration">
 
-                    Date:
+                    Local Date:
 
-                    ${safeHtml(
-                      item.converted.date
-                    )}
+                    <span class="local-date">
+
+                      ${safeHtml(
+                        item.converted.studentDate
+                      )}
+
+                    </span>
 
                   </div>
 
@@ -1718,6 +2143,82 @@ async function loadStudentSchedule(){
                     ${safeHtml(
                       item.converted.endTime
                     )}
+
+                  </div>
+
+
+                  <div
+                    class="time-info">
+
+
+                    <strong>
+                      Your Time:
+                    </strong>
+
+                    ${safeHtml(
+                      item.converted.time
+                    )}
+
+                    ·
+
+                    ${safeHtml(
+                      studentTimezone
+                    )}
+
+
+                    <br>
+
+
+                    <strong>
+                      Academy Time:
+                    </strong>
+
+                    ${safeHtml(
+                      item.converted.sourceTime
+                    )}
+
+                    ·
+
+                    ${safeHtml(
+                      sourceTimezone
+                    )}
+
+
+                    ${
+                      teacherTimezone !==
+                      sourceTimezone
+
+                      ?
+
+                      `
+
+                        <br>
+
+                        <strong>
+                          Teacher Time:
+                        </strong>
+
+                        ${safeHtml(
+                          getTeacherTime(
+                            item.converted.utcDate,
+                            teacherTimezone
+                          )
+                        )}
+
+                        ·
+
+                        ${safeHtml(
+                          teacherTimezone
+                        )}
+
+                      `
+
+                      :
+
+                      ""
+
+                    }
+
 
                   </div>
 
@@ -1765,19 +2266,35 @@ async function loadStudentSchedule(){
     );
 
 
-    container.innerHTML =
-      html ||
+    /* ===============================================
+       NO UPCOMING CLASSES
+    =============================================== */
 
-      `
+    if(!html){
+
+      html = `
 
         <div class="empty">
 
-          No active classes found
-          for the next 7 days.
+          <strong>
+            No active classes found.
+          </strong>
+
+          <br><br>
+
+          There are no classes scheduled
+          for the next 7 days in your
+          local timezone.
 
         </div>
 
       `;
+
+    }
+
+
+    container.innerHTML =
+      html;
 
 
   }catch(error){
