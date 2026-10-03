@@ -1,224 +1,262 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Payments | Haroon Ibn Rasheed Online Quran Academy</title>
+  <meta charset="utf-8">
 
-  <link rel="stylesheet" href="../css/admin.css">
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  >
+
+  <title>Payments | Haroon Ibn Rasheed</title>
+
+  <link
+    rel="stylesheet"
+    href="../css/admin.css"
+  >
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <script src="../js/config.js"></script>
+
   <script src="../js/admin-ops.js"></script>
+
 </head>
+
 
 <body>
 
 <div class="admin-layout">
 
+
   <!-- ================= SIDEBAR ================= -->
 
   <aside class="sidebar">
 
-    <div class="sidebar-brand">
-      <h2>Haroon Ibn Rasheed</h2>
-      <span>Online Quran Academy</span>
+    <div class="brand">
+
+      HR Admin
+
+      <span>
+        Haroon Ibn Rasheed Online Quran Academy
+      </span>
+
     </div>
 
-    <nav class="sidebar-nav">
+
+    <nav class="nav">
 
       <a href="dashboard.html">Dashboard</a>
-      <a href="admissions.html">Admissions / Leads</a>
-      <a href="portal-users.html">Portal Users</a>
+
+      <a href="admissions.html">Admissions</a>
+
+      <a href="users.html">Users</a>
+
       <a href="students.html">Students</a>
-      <a href="enrollments.html">Enrollments</a>
+
       <a href="teachers.html">Teachers</a>
+
+      <a href="enrollments.html">Enrollments</a>
+
+      <a href="courses.html">Courses</a>
+
       <a href="schedule.html">Schedule</a>
+
       <a href="classes.html">Classes</a>
+
       <a href="attendance.html">Attendance</a>
 
-      <a href="payments.html" class="active">Payments</a>
+      <a href="fees.html">Fees</a>
+
+      <a href="payment-methods.html">
+        Payment Methods
+      </a>
+
+      <a
+        href="payments.html"
+        class="active"
+      >
+        Payments
+      </a>
 
       <a href="leaves.html">Leaves</a>
+
       <a href="salaries.html">Salaries</a>
-      <a href="courses.html">Courses</a>
-      <a href="fees.html">Fees</a>
-      <a href="payment-methods.html">Payment Methods</a>
+
       <a href="messages.html">Messages</a>
-      <a href="testimonials.html">Testimonials</a>
-      <a href="articles.html">Blog / Articles</a>
-      <a href="notifications.html">Notifications</a>
+
+      <a href="notifications.html">
+        Notifications
+      </a>
+
       <a href="faqs.html">FAQs</a>
-      <a href="website-content.html">Website Content</a>
-      <a href="settings.html">Settings</a>
-      <a href="account-credentials.html">Account Credentials</a>
 
-      <a href="../index.html">View Website</a>
+      <a href="testimonials.html">
+        Testimonials
+      </a>
 
-      <button type="button" onclick="adminLogout()">Logout</button>
+      <a href="articles.html">
+        Articles
+      </a>
+
+      <a href="content.html">
+        Website Content
+      </a>
+
+      <a href="settings.html">
+        Settings
+      </a>
+
+      <a href="account-credentials.html">
+        Account Credentials
+      </a>
+
+      <a href="../index.html">
+        View Website
+      </a>
+
+      <a
+        href="#"
+        onclick="adminLogout();return false"
+      >
+        Logout
+      </a>
 
     </nav>
+
   </aside>
 
 
   <!-- ================= MAIN ================= -->
 
-  <main class="main-content">
+  <main class="main">
 
-    <header class="page-header">
+
+    <div class="top">
 
       <div>
-        <h1>Payments</h1>
-        <p>Manage student payments, proofs and payment status.</p>
-      </div>
 
-      <button class="primary-btn" onclick="openPaymentModal()">
-        + Record Payment
-      </button>
+        <h1>
+          Payments
+        </h1>
 
-    </header>
-
-
-    <!-- ================= SUMMARY ================= -->
-
-    <section class="stats-grid">
-
-      <div class="stat-card">
-        <div class="stat-label">Total Paid</div>
-        <div class="stat-value" id="totalPaid">0</div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-label">Completed</div>
-        <div class="stat-value" id="completedCount">0</div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-label">Pending</div>
-        <div class="stat-value" id="pendingCount">0</div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-label">Students</div>
-        <div class="stat-value" id="studentCount">0</div>
-      </div>
-
-    </section>
-
-
-    <!-- ================= FILTERS ================= -->
-
-    <section class="card">
-
-      <div class="filters">
-
-        <input
-          type="text"
-          id="searchInput"
-          placeholder="Search student, reference or ID..."
-          oninput="renderPayments()"
-        >
-
-        <select id="statusFilter" onchange="renderPayments()">
-          <option value="">All Status</option>
-          <option value="pending">Pending</option>
-          <option value="paid">Paid</option>
-          <option value="rejected">Rejected</option>
-        </select>
-
-        <select id="methodFilter" onchange="renderPayments()">
-          <option value="">All Methods</option>
-        </select>
-
-        <button type="button" onclick="resetFilters()">
-          Reset
-        </button>
+        <p>
+          Manage student payments and payment status.
+        </p>
 
       </div>
-
-    </section>
-
-
-    <!-- ================= PAYMENTS TABLE ================= -->
-
-    <section class="card">
-
-      <div class="table-wrapper">
-
-        <table>
-
-          <thead>
-
-            <tr>
-              <th>Student</th>
-              <th>Course</th>
-              <th>Amount</th>
-              <th>Method</th>
-              <th>Reference</th>
-              <th>Date</th>
-              <th>Status</th>
-              <th>Proof</th>
-              <th>Actions</th>
-            </tr>
-
-          </thead>
-
-          <tbody id="paymentsTableBody">
-
-            <tr>
-              <td colspan="9" style="text-align:center;">
-                Loading payments...
-              </td>
-            </tr>
-
-          </tbody>
-
-        </table>
-
-      </div>
-
-    </section>
-
-  </main>
-
-</div>
-
-
-<!-- ================================================= -->
-<!-- PAYMENT MODAL -->
-<!-- ================================================= -->
-
-<div class="modal" id="paymentModal">
-
-  <div class="modal-content">
-
-    <div class="modal-header">
-
-      <h2 id="paymentModalTitle">Record Payment</h2>
-
-      <button type="button" onclick="closePaymentModal()">
-        ×
-      </button>
 
     </div>
 
 
-    <form id="paymentForm" onsubmit="savePayment(event)">
+    <div
+      id="msg"
+      class="msg"
+    ></div>
 
-      <input type="hidden" id="paymentId">
+
+    <!-- ================= SUMMARY ================= -->
+
+    <div
+      style="
+        display:grid;
+        grid-template-columns:
+        repeat(auto-fit,minmax(180px,1fr));
+        gap:15px;
+        margin-bottom:20px;
+      "
+    >
+
+      <div class="card">
+
+        <small>
+          Total Paid
+        </small>
+
+        <h2 id="totalPaid">
+          0
+        </h2>
+
+      </div>
 
 
-      <div class="form-grid">
+      <div class="card">
+
+        <small>
+          Completed
+        </small>
+
+        <h2 id="completedCount">
+          0
+        </h2>
+
+      </div>
+
+
+      <div class="card">
+
+        <small>
+          Pending
+        </small>
+
+        <h2 id="pendingCount">
+          0
+        </h2>
+
+      </div>
+
+
+      <div class="card">
+
+        <small>
+          Students
+        </small>
+
+        <h2 id="studentCount">
+          0
+        </h2>
+
+      </div>
+
+    </div>
+
+
+    <!-- ================= ADD PAYMENT ================= -->
+
+    <div class="card">
+
+      <h2 id="formTitle">
+        Record Payment
+      </h2>
+
+
+      <form
+        id="paymentForm"
+        class="form-grid"
+      >
+
+
+        <input
+          type="hidden"
+          id="paymentId"
+        >
 
 
         <!-- STUDENT -->
 
-        <div class="form-group">
+        <div>
 
-          <label>Student *</label>
+          <label>
+            Student
+          </label>
 
-          <select id="studentId" required>
+          <select
+            class="input"
+            id="studentId"
+            required
+          >
 
             <option value="">
               Select Student
@@ -231,14 +269,16 @@
 
         <!-- COURSE -->
 
-        <div class="form-group">
+        <div>
 
-          <label>Course</label>
+          <label>
+            Course
+          </label>
 
           <input
-            type="text"
+            class="input"
             id="course"
-            placeholder="e.g. Quran Reading"
+            placeholder="Quran Reading"
           >
 
         </div>
@@ -246,15 +286,18 @@
 
         <!-- AMOUNT -->
 
-        <div class="form-group">
+        <div>
 
-          <label>Amount *</label>
+          <label>
+            Amount
+          </label>
 
           <input
+            class="input"
             type="number"
             id="amount"
-            step="0.01"
             min="0"
+            step="0.01"
             required
             placeholder="30"
           >
@@ -264,31 +307,58 @@
 
         <!-- CURRENCY -->
 
-        <div class="form-group">
+        <div>
 
-          <label>Currency</label>
+          <label>
+            Currency
+          </label>
 
-          <select id="currency">
+          <select
+            class="input"
+            id="currency"
+          >
 
-            <option value="USD">USD</option>
-            <option value="GBP">GBP</option>
-            <option value="EUR">EUR</option>
-            <option value="PKR">PKR</option>
-            <option value="CAD">CAD</option>
-            <option value="AED">AED</option>
+            <option value="USD">
+              USD
+            </option>
+
+            <option value="GBP">
+              GBP
+            </option>
+
+            <option value="EUR">
+              EUR
+            </option>
+
+            <option value="PKR">
+              PKR
+            </option>
+
+            <option value="CAD">
+              CAD
+            </option>
+
+            <option value="AED">
+              AED
+            </option>
 
           </select>
 
         </div>
 
 
-        <!-- PAYMENT METHOD -->
+        <!-- METHOD -->
 
-        <div class="form-group">
+        <div>
 
-          <label>Payment Method</label>
+          <label>
+            Payment Method
+          </label>
 
-          <select id="method">
+          <select
+            class="input"
+            id="method"
+          >
 
             <option value="">
               Select Method
@@ -301,11 +371,16 @@
 
         <!-- STATUS -->
 
-        <div class="form-group">
+        <div>
 
-          <label>Status</label>
+          <label>
+            Status
+          </label>
 
-          <select id="status">
+          <select
+            class="input"
+            id="status"
+          >
 
             <option value="pending">
               Pending
@@ -326,12 +401,14 @@
 
         <!-- REFERENCE -->
 
-        <div class="form-group">
+        <div>
 
-          <label>Reference / Transaction ID</label>
+          <label>
+            Reference / Transaction ID
+          </label>
 
           <input
-            type="text"
+            class="input"
             id="reference"
             placeholder="Transaction ID"
           >
@@ -341,11 +418,14 @@
 
         <!-- PAYMENT DATE -->
 
-        <div class="form-group">
+        <div>
 
-          <label>Payment Date</label>
+          <label>
+            Payment Date
+          </label>
 
           <input
+            class="input"
             type="date"
             id="paymentDate"
           >
@@ -353,35 +433,37 @@
         </div>
 
 
-        <!-- PROOF URL -->
+        <!-- PROOF -->
 
-        <div class="form-group full-width">
+        <div class="full">
 
-          <label>Payment Proof URL</label>
+          <label>
+            Payment Proof URL
+          </label>
 
           <input
+            class="input"
             type="url"
             id="proofUrl"
             placeholder="https://..."
           >
 
-          <small>
-            Paste the payment screenshot / proof URL here.
-          </small>
-
         </div>
 
 
-        <!-- STUDENT NOTES -->
+        <!-- NOTES -->
 
-        <div class="form-group full-width">
+        <div class="full">
 
-          <label>Student / Payment Notes</label>
+          <label>
+            Payment Notes
+          </label>
 
           <textarea
+            class="input"
             id="notes"
             rows="3"
-            placeholder="Payment related notes..."
+            placeholder="Payment notes..."
           ></textarea>
 
         </div>
@@ -389,11 +471,14 @@
 
         <!-- ADMIN NOTES -->
 
-        <div class="form-group full-width">
+        <div class="full">
 
-          <label>Admin Notes</label>
+          <label>
+            Admin Notes
+          </label>
 
           <textarea
+            class="input"
             id="adminNotes"
             rows="3"
             placeholder="Internal admin notes..."
@@ -402,139 +487,234 @@
         </div>
 
 
-      </div>
+        <!-- BUTTONS -->
+
+        <div
+          class="full"
+          style="
+            display:flex;
+            gap:10px;
+            flex-wrap:wrap;
+          "
+        >
+
+          <button
+            class="btn"
+            type="submit"
+            id="saveBtn"
+          >
+            Record Payment
+          </button>
 
 
-      <div class="modal-actions">
+          <button
+            class="btn"
+            type="button"
+            id="cancelBtn"
+            onclick="resetForm()"
+            style="display:none"
+          >
+            Cancel
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+
+    <!-- ================= FILTERS ================= -->
+
+    <div class="card">
+
+      <div
+        style="
+          display:grid;
+          grid-template-columns:
+          repeat(auto-fit,minmax(180px,1fr));
+          gap:10px;
+        "
+      >
+
+        <input
+          class="input"
+          id="search"
+          placeholder="Search student or reference..."
+          oninput="renderRows()"
+        >
+
+
+        <select
+          class="input"
+          id="statusFilter"
+          onchange="renderRows()"
+        >
+
+          <option value="">
+            All Status
+          </option>
+
+          <option value="pending">
+            Pending
+          </option>
+
+          <option value="paid">
+            Paid
+          </option>
+
+          <option value="rejected">
+            Rejected
+          </option>
+
+        </select>
+
+
+        <select
+          class="input"
+          id="methodFilter"
+          onchange="renderRows()"
+        >
+
+          <option value="">
+            All Methods
+          </option>
+
+        </select>
+
 
         <button
+          class="btn"
           type="button"
-          onclick="closePaymentModal()"
+          onclick="resetFilters()"
         >
-          Cancel
-        </button>
-
-        <button
-          type="submit"
-          class="primary-btn"
-          id="savePaymentBtn"
-        >
-          Save Payment
+          Reset
         </button>
 
       </div>
 
-    </form>
-
-  </div>
-
-</div>
+    </div>
 
 
-<!-- ================================================= -->
-<!-- VIEW PAYMENT MODAL -->
-<!-- ================================================= -->
+    <!-- ================= PAYMENTS TABLE ================= -->
 
-<div class="modal" id="viewPaymentModal">
+    <div class="card">
 
-  <div class="modal-content">
+      <div
+        style="
+          overflow-x:auto;
+        "
+      >
 
-    <div class="modal-header">
+        <table class="table">
 
-      <h2>Payment Details</h2>
+          <thead>
 
-      <button type="button" onclick="closeViewModal()">
-        ×
-      </button>
+            <tr>
+
+              <th>
+                Student
+              </th>
+
+              <th>
+                Course
+              </th>
+
+              <th>
+                Amount
+              </th>
+
+              <th>
+                Method
+              </th>
+
+              <th>
+                Reference
+              </th>
+
+              <th>
+                Date
+              </th>
+
+              <th>
+                Status
+              </th>
+
+              <th>
+                Proof
+              </th>
+
+              <th>
+                Actions
+              </th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody id="rows">
+
+            <tr>
+
+              <td
+                colspan="9"
+                style="text-align:center"
+              >
+                Loading payments...
+              </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
 
     </div>
 
-    <div id="paymentDetails"></div>
 
-    <div class="modal-actions">
-
-      <button type="button" onclick="closeViewModal()">
-        Close
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
-
-
-<!-- ================================================= -->
-<!-- PROOF MODAL -->
-<!-- ================================================= -->
-
-<div class="modal" id="proofModal">
-
-  <div class="modal-content proof-modal">
-
-    <div class="modal-header">
-
-      <h2>Payment Proof</h2>
-
-      <button type="button" onclick="closeProofModal()">
-        ×
-      </button>
-
-    </div>
-
-    <div id="proofContainer"></div>
-
-  </div>
+  </main>
 
 </div>
 
 
 <script>
 
-"use strict";
-
-
 /* =====================================================
-   SUPABASE
+   DATABASE
 ===================================================== */
-
-const cfg = window.SUPABASE_CONFIG || {};
 
 const db =
-  window.supabase?.createClient
-    ? window.supabase.createClient(
-        cfg.url,
-        cfg.anonKey
-      )
-    : null;
-
-window.academyDB = db;
+  window.adminDB ||
+  window.academyDB;
 
 
-/* =====================================================
-   GLOBAL DATA
-===================================================== */
-
-let payments = [];
 let students = [];
+
 let paymentMethods = [];
 
+let payments = [];
+
 
 /* =====================================================
-   HELPERS
+   ESCAPE
 ===================================================== */
 
-function esc(value) {
+function e(value) {
 
   return String(value ?? "")
     .replace(/[&<>"']/g, function(char) {
 
       return {
+
         "&": "&amp;",
         "<": "&lt;",
         ">": "&gt;",
         '"': "&quot;",
         "'": "&#39;"
+
       }[char];
 
     });
@@ -542,338 +722,368 @@ function esc(value) {
 }
 
 
-function money(amount, currency) {
+/* =====================================================
+   MESSAGE
+===================================================== */
 
-  const value = Number(amount || 0);
+function showMessage(
+  text,
+  error = false
+) {
 
-  return `${esc(currency || "")} ${value.toFixed(2)}`;
-
-}
-
-
-function formatDate(value) {
-
-  if (!value) return "-";
-
-  try {
-
-    return new Date(value).toLocaleDateString();
-
-  } catch {
-
-    return value;
-
-  }
-
-}
+  const box =
+    document.getElementById(
+      "msg"
+    );
 
 
-function statusBadge(status) {
+  box.textContent =
+    text;
 
-  const s = String(status || "pending").toLowerCase();
 
-  return `
-    <span class="status-badge status-${esc(s)}">
-      ${esc(s.charAt(0).toUpperCase() + s.slice(1))}
-    </span>
-  `;
+  box.style.display =
+    "block";
+
+
+  box.style.color =
+    error
+      ? "#b91c1c"
+      : "#166534";
+
+
+  setTimeout(
+    function() {
+
+      box.style.display =
+        "none";
+
+    },
+    4000
+  );
 
 }
 
 
 /* =====================================================
-   ADMIN GUARD
+   START
 ===================================================== */
 
-async function checkAdmin() {
-
-  try {
-
-    if (typeof adminGuardLocal === "function") {
-
-      await adminGuardLocal();
-
-    }
-
-  } catch (error) {
-
-    console.error("Admin guard error:", error);
-
-  }
-
-}
-
-
-/* =====================================================
-   LOAD ALL DATA
-===================================================== */
-
-async function loadAll() {
+async function load() {
 
   if (!db) {
 
-    alert("Supabase configuration not found.");
+    showMessage(
+      "Database connection not found.",
+      true
+    );
 
     return;
 
   }
 
 
-  await checkAdmin();
+  if (
+    typeof adminGuardLocal ===
+    "function"
+  ) {
 
-  await Promise.all([
-    loadStudents(),
-    loadPaymentMethods(),
-    loadPayments()
-  ]);
+    const allowed =
+      await adminGuardLocal();
+
+    if (!allowed) return;
+
+  }
+
+
+  await loadStudents();
+
+  await loadPaymentMethods();
+
+  await loadPayments();
 
 }
 
 
 /* =====================================================
-   LOAD STUDENTS
+   STUDENTS
 ===================================================== */
 
 async function loadStudents() {
 
-  const { data, error } = await db
+  const result =
+    await db
 
-    .from("students")
+      .from("students")
 
-    .select(`
-      id,
-      full_name,
-      status,
-      course
-    `)
+      .select(
+        "id,full_name,status,course"
+      )
 
-    .order("full_name", {
-      ascending: true
-    });
+      .order(
+        "full_name",
+        {
+          ascending: true
+        }
+      );
 
 
-  if (error) {
+  if (result.error) {
 
-    console.error("Students error:", error);
+    console.error(
+      result.error
+    );
+
+    showMessage(
+      result.error.message,
+      true
+    );
 
     return;
 
   }
 
 
-  students = data || [];
+  students =
+    result.data || [];
 
-  fillStudentSelect();
-
-}
-
-
-/* =====================================================
-   STUDENT SELECT
-===================================================== */
-
-function fillStudentSelect() {
 
   const select =
-    document.getElementById("studentId");
-
-  if (!select) return;
+    document.getElementById(
+      "studentId"
+    );
 
 
   select.innerHTML = `
+
     <option value="">
       Select Student
     </option>
+
   `;
 
 
-  students.forEach(student => {
+  students.forEach(
+    function(student) {
 
-    const option =
-      document.createElement("option");
+      const option =
+        document.createElement(
+          "option"
+        );
 
-    option.value = student.id;
 
-    option.textContent =
-      `${student.full_name || "Unnamed Student"}`;
+      option.value =
+        student.id;
 
-    select.appendChild(option);
 
-  });
+      option.textContent =
+        student.full_name ||
+        "Unnamed Student";
+
+
+      select.appendChild(
+        option
+      );
+
+    }
+  );
 
 }
 
 
 /* =====================================================
-   LOAD PAYMENT METHODS
+   PAYMENT METHODS
 ===================================================== */
 
 async function loadPaymentMethods() {
 
-  const { data, error } = await db
+  const result =
+    await db
 
-    .from("payment_methods")
+      .from("payment_methods")
 
-    .select(`
-      id,
-      name,
-      enabled,
-      is_active,
-      sort_order
-    `)
+      .select(
+        "id,name,enabled,is_active,sort_order"
+      )
 
-    .order("sort_order", {
-      ascending: true
-    });
+      .order(
+        "sort_order",
+        {
+          ascending: true
+        }
+      );
 
 
-  if (error) {
+  if (result.error) {
 
-    console.error("Payment methods error:", error);
+    console.error(
+      result.error
+    );
 
     return;
 
   }
 
 
-  paymentMethods = data || [];
+  paymentMethods =
+    result.data || [];
 
-  fillMethodSelect();
-
-}
-
-
-/* =====================================================
-   METHOD SELECTS
-===================================================== */
-
-function fillMethodSelect() {
 
   const method =
-    document.getElementById("method");
+    document.getElementById(
+      "method"
+    );
+
 
   const filter =
-    document.getElementById("methodFilter");
+    document.getElementById(
+      "methodFilter"
+    );
 
 
-  if (method) {
+  method.innerHTML = `
 
-    method.innerHTML = `
-      <option value="">
-        Select Method
-      </option>
-    `;
+    <option value="">
+      Select Method
+    </option>
 
-  }
+  `;
 
 
-  if (filter) {
+  filter.innerHTML = `
 
-    filter.innerHTML = `
-      <option value="">
-        All Methods
-      </option>
-    `;
+    <option value="">
+      All Methods
+    </option>
 
-  }
+  `;
 
 
-  paymentMethods.forEach(item => {
+  paymentMethods.forEach(
+    function(item) {
 
-    if (
-      item.enabled === false ||
-      item.is_active === false
-    ) return;
+      if (
+        item.enabled === false ||
+        item.is_active === false
+      ) {
 
+        return;
 
-    if (method) {
+      }
+
 
       const option =
-        document.createElement("option");
+        document.createElement(
+          "option"
+        );
 
-      option.value = item.name;
 
-      option.textContent = item.name;
+      option.value =
+        item.name;
 
-      method.appendChild(option);
+
+      option.textContent =
+        item.name;
+
+
+      method.appendChild(
+        option.cloneNode(true)
+      );
+
+
+      filter.appendChild(
+        option
+      );
 
     }
-
-
-    if (filter) {
-
-      const option =
-        document.createElement("option");
-
-      option.value = item.name;
-
-      option.textContent = item.name;
-
-      filter.appendChild(option);
-
-    }
-
-  });
+  );
 
 }
 
 
 /* =====================================================
-   LOAD PAYMENTS
+   PAYMENTS
 ===================================================== */
 
 async function loadPayments() {
 
-  const { data, error } = await db
+  const result =
+    await db
 
-    .from("student_payments")
+      .from(
+        "student_payments"
+      )
 
-    .select(`
-      id,
-      student_id,
-      course,
-      amount,
-      currency,
-      method,
-      reference,
-      status,
-      proof_url,
-      notes,
-      admin_notes,
-      paid_at,
-      payment_date,
-      created_at,
-      updated_at
-    `)
+      .select(`
+        id,
+        student_id,
+        course,
+        amount,
+        currency,
+        method,
+        reference,
+        status,
+        proof_url,
+        notes,
+        admin_notes,
+        paid_at,
+        payment_date,
+        created_at,
+        updated_at
+      `)
 
-    .order("payment_date", {
-      ascending: false
-    });
+      .order(
+        "payment_date",
+        {
+          ascending: false
+        }
+      );
 
 
-  if (error) {
+  if (result.error) {
 
-    console.error("Payments error:", error);
+    console.error(
+      result.error
+    );
+
 
     document.getElementById(
-      "paymentsTableBody"
+      "rows"
     ).innerHTML = `
+
       <tr>
-        <td colspan="9">
-          Error loading payments:
-          ${esc(error.message)}
+
+        <td
+          colspan="9"
+          style="text-align:center"
+        >
+
+          ${e(
+            result.error.message
+          )}
+
         </td>
+
       </tr>
+
     `;
+
+
+    showMessage(
+      result.error.message,
+      true
+    );
+
 
     return;
 
   }
 
 
-  payments = data || [];
+  payments =
+    result.data || [];
 
-  renderPayments();
+
+  renderRows();
 
   updateSummary();
 
@@ -881,113 +1091,135 @@ async function loadPayments() {
 
 
 /* =====================================================
-   GET STUDENT NAME
+   STUDENT NAME
 ===================================================== */
 
-function getStudentName(id) {
+function studentName(id) {
 
   const student =
     students.find(
-      s => String(s.id) === String(id)
+      function(item) {
+
+        return String(
+          item.id
+        ) === String(id);
+
+      }
     );
+
 
   return student
     ? student.full_name
-    : "Unknown Student";
+    : id;
 
 }
 
 
 /* =====================================================
-   RENDER PAYMENTS
+   RENDER
 ===================================================== */
 
-function renderPayments() {
+function renderRows() {
 
   const tbody =
     document.getElementById(
-      "paymentsTableBody"
+      "rows"
     );
-
-
-  if (!tbody) return;
 
 
   const search =
     String(
       document.getElementById(
-        "searchInput"
-      )?.value || ""
+        "search"
+      ).value || ""
     )
-      .trim()
-      .toLowerCase();
+      .toLowerCase()
+      .trim();
 
 
   const status =
     document.getElementById(
       "statusFilter"
-    )?.value || "";
+    ).value;
 
 
   const method =
     document.getElementById(
       "methodFilter"
-    )?.value || "";
+    ).value;
 
 
-  let rows = payments.filter(payment => {
+  const filtered =
+    payments.filter(
+      function(payment) {
 
-    const studentName =
-      getStudentName(payment.student_id)
-        .toLowerCase();
-
-
-    const reference =
-      String(
-        payment.reference || ""
-      ).toLowerCase();
-
-
-    const id =
-      String(
-        payment.id || ""
-      ).toLowerCase();
+        const name =
+          String(
+            studentName(
+              payment.student_id
+            ) || ""
+          )
+            .toLowerCase();
 
 
-    const matchesSearch =
-      !search ||
-      studentName.includes(search) ||
-      reference.includes(search) ||
-      id.includes(search);
+        const reference =
+          String(
+            payment.reference ||
+            ""
+          )
+            .toLowerCase();
 
 
-    const matchesStatus =
-      !status ||
-      payment.status === status;
+        const id =
+          String(
+            payment.id ||
+            ""
+          )
+            .toLowerCase();
 
 
-    const matchesMethod =
-      !method ||
-      payment.method === method;
+        const searchOK =
+          !search ||
+          name.includes(search) ||
+          reference.includes(search) ||
+          id.includes(search);
 
 
-    return (
-      matchesSearch &&
-      matchesStatus &&
-      matchesMethod
+        const statusOK =
+          !status ||
+          payment.status === status;
+
+
+        const methodOK =
+          !method ||
+          payment.method === method;
+
+
+        return (
+          searchOK &&
+          statusOK &&
+          methodOK
+        );
+
+      }
     );
 
-  });
 
-
-  if (!rows.length) {
+  if (!filtered.length) {
 
     tbody.innerHTML = `
+
       <tr>
-        <td colspan="9" style="text-align:center;">
+
+        <td
+          colspan="9"
+          style="text-align:center"
+        >
           No payments found.
         </td>
+
       </tr>
+
     `;
 
     return;
@@ -996,121 +1228,183 @@ function renderPayments() {
 
 
   tbody.innerHTML =
-    rows.map(payment => {
+    filtered.map(
+      function(payment) {
 
-      const proof =
-        payment.proof_url
-          ? `
+        let proof =
+          "-";
+
+
+        if (
+          payment.proof_url
+        ) {
+
+          proof = `
+
             <button
+              class="btn"
               type="button"
-              onclick="viewProof('${esc(payment.proof_url)}')"
+              onclick="viewProof('${e(
+                payment.proof_url
+              )}')"
             >
               View
             </button>
-          `
-          : `<span>-</span>`;
+
+          `;
+
+        }
 
 
-      return `
+        return `
 
-        <tr>
+          <tr>
 
-          <td>
-            <strong>
-              ${esc(
-                getStudentName(
-                  payment.student_id
-                )
+            <td>
+
+              <strong>
+                ${e(
+                  studentName(
+                    payment.student_id
+                  )
+                )}
+              </strong>
+
+            </td>
+
+
+            <td>
+              ${e(
+                payment.course ||
+                "-"
               )}
-            </strong>
-          </td>
+            </td>
 
-          <td>
-            ${esc(payment.course || "-")}
-          </td>
 
-          <td>
-            ${money(
-              payment.amount,
-              payment.currency
-            )}
-          </td>
+            <td>
 
-          <td>
-            ${esc(payment.method || "-")}
-          </td>
+              ${e(
+                payment.amount
+              )}
 
-          <td>
-            ${esc(payment.reference || "-")}
-          </td>
+              ${e(
+                payment.currency ||
+                ""
+              )}
 
-          <td>
-            ${formatDate(
-              payment.payment_date
-            )}
-          </td>
+            </td>
 
-          <td>
-            ${statusBadge(payment.status)}
-          </td>
 
-          <td>
-            ${proof}
-          </td>
+            <td>
+              ${e(
+                payment.method ||
+                "-"
+              )}
+            </td>
 
-          <td>
 
-            <div class="action-buttons">
+            <td>
+              ${e(
+                payment.reference ||
+                "-"
+              )}
+            </td>
 
-              <button
-                type="button"
-                onclick="viewPayment('${payment.id}')"
+
+            <td>
+              ${e(
+                payment.payment_date ||
+                "-"
+              )}
+            </td>
+
+
+            <td>
+              ${e(
+                payment.status ||
+                "pending"
+              )}
+            </td>
+
+
+            <td>
+              ${proof}
+            </td>
+
+
+            <td>
+
+              <div
+                style="
+                  display:flex;
+                  gap:5px;
+                  flex-wrap:wrap;
+                "
               >
-                View
-              </button>
 
-              <button
-                type="button"
-                onclick="editPayment('${payment.id}')"
-              >
-                Edit
-              </button>
+                <button
+                  class="btn"
+                  type="button"
+                  onclick="editPayment('${payment.id}')"
+                >
+                  Edit
+                </button>
 
-              ${
-                payment.status !== "paid"
-                ? `
-                  <button
-                    type="button"
-                    onclick="markPaid('${payment.id}')"
-                  >
-                    Mark Paid
-                  </button>
-                `
-                : ""
-              }
 
-              ${
-                payment.status !== "rejected"
-                ? `
-                  <button
-                    type="button"
-                    onclick="rejectPayment('${payment.id}')"
-                  >
-                    Reject
-                  </button>
-                `
-                : ""
-              }
+                ${
+                  payment.status !==
+                  "paid"
+                    ? `
 
-            </div>
+                      <button
+                        class="btn"
+                        type="button"
+                        onclick="markPaid('${payment.id}')"
+                      >
+                        Mark Paid
+                      </button>
 
-          </td>
+                    `
+                    : ""
+                }
 
-        </tr>
 
-      `;
+                ${
+                  payment.status !==
+                  "rejected"
+                    ? `
 
-    }).join("");
+                      <button
+                        class="btn"
+                        type="button"
+                        onclick="rejectPayment('${payment.id}')"
+                      >
+                        Reject
+                      </button>
+
+                    `
+                    : ""
+                }
+
+
+                <button
+                  class="btn"
+                  type="button"
+                  onclick="viewPayment('${payment.id}')"
+                >
+                  View
+                </button>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+        `;
+
+      }
+    ).join("");
 
 }
 
@@ -1133,7 +1427,7 @@ function updateSummary() {
     );
 
 
-  const uniqueStudents =
+  const unique =
     new Set(
       payments.map(
         p => p.student_id
@@ -1141,421 +1435,535 @@ function updateSummary() {
     );
 
 
-  const currencies =
-    [
-      ...new Set(
-        paid
-          .map(p => p.currency)
-          .filter(Boolean)
-      )
-    ];
+  let total =
+    0;
 
 
-  let total = "0";
+  paid.forEach(
+    function(payment) {
 
+      total +=
+        Number(
+          payment.amount ||
+          0
+        );
 
-  if (currencies.length === 1) {
-
-    const sum =
-      paid.reduce(
-        (total, p) =>
-          total + Number(p.amount || 0),
-        0
-      );
-
-    total =
-      `${currencies[0]} ${sum.toFixed(2)}`;
-
-  } else if (currencies.length > 1) {
-
-    total = "Multiple";
-
-  }
+    }
+  );
 
 
   document.getElementById(
     "totalPaid"
-  ).textContent = total;
+  ).textContent =
+    total.toFixed(2);
 
 
   document.getElementById(
     "completedCount"
-  ).textContent = paid.length;
+  ).textContent =
+    paid.length;
 
 
   document.getElementById(
     "pendingCount"
-  ).textContent = pending.length;
+  ).textContent =
+    pending.length;
 
 
   document.getElementById(
     "studentCount"
   ).textContent =
-    uniqueStudents.size;
+    unique.size;
 
 }
 
 
 /* =====================================================
-   OPEN PAYMENT MODAL
+   FORM
 ===================================================== */
 
-function openPaymentModal(payment = null) {
-
-  document.getElementById(
-    "paymentModal"
-  ).style.display = "flex";
-
-
-  document.getElementById(
+document
+  .getElementById(
     "paymentForm"
-  ).reset();
+  )
+  .addEventListener(
+    "submit",
+    async function(event) {
 
+      event.preventDefault();
 
-  document.getElementById(
-    "paymentId"
-  ).value = "";
 
+      const id =
+        document.getElementById(
+          "paymentId"
+        ).value;
 
-  document.getElementById(
-    "paymentModalTitle"
-  ).textContent =
-    payment
-      ? "Edit Payment"
-      : "Record Payment";
 
+      const studentId =
+        document.getElementById(
+          "studentId"
+        ).value;
 
-  document.getElementById(
-    "paymentDate"
-  ).value =
-    new Date()
-      .toISOString()
-      .slice(0, 10);
 
+      const amount =
+        Number(
+          document.getElementById(
+            "amount"
+          ).value
+        );
 
-  if (payment) {
 
-    document.getElementById(
-      "paymentId"
-    ).value =
-      payment.id || "";
+      if (!studentId) {
 
+        alert(
+          "Please select a student."
+        );
 
-    document.getElementById(
-      "studentId"
-    ).value =
-      payment.student_id || "";
+        return;
 
+      }
 
-    document.getElementById(
-      "course"
-    ).value =
-      payment.course || "";
 
+      if (
+        isNaN(amount) ||
+        amount < 0
+      ) {
 
-    document.getElementById(
-      "amount"
-    ).value =
-      payment.amount || "";
+        alert(
+          "Please enter a valid amount."
+        );
 
+        return;
 
-    document.getElementById(
-      "currency"
-    ).value =
-      payment.currency || "USD";
+      }
 
 
-    document.getElementById(
-      "method"
-    ).value =
-      payment.method || "";
+      const status =
+        document.getElementById(
+          "status"
+        ).value;
 
 
-    document.getElementById(
-      "status"
-    ).value =
-      payment.status || "pending";
+      const data = {
 
+        student_id:
+          studentId,
 
-    document.getElementById(
-      "reference"
-    ).value =
-      payment.reference || "";
+        course:
+          document.getElementById(
+            "course"
+          ).value.trim() ||
+          null,
 
+        amount:
+          amount,
 
-    document.getElementById(
-      "paymentDate"
-    ).value =
-      payment.payment_date
-        ? String(
-            payment.payment_date
-          ).slice(0, 10)
-        : "";
+        currency:
+          document.getElementById(
+            "currency"
+          ).value,
 
+        method:
+          document.getElementById(
+            "method"
+          ).value ||
+          null,
 
-    document.getElementById(
-      "proofUrl"
-    ).value =
-      payment.proof_url || "";
+        reference:
+          document.getElementById(
+            "reference"
+          ).value.trim() ||
+          null,
 
+        status:
+          status,
 
-    document.getElementById(
-      "notes"
-    ).value =
-      payment.notes || "";
+        proof_url:
+          document.getElementById(
+            "proofUrl"
+          ).value.trim() ||
+          null,
 
+        notes:
+          document.getElementById(
+            "notes"
+          ).value.trim() ||
+          null,
 
-    document.getElementById(
-      "adminNotes"
-    ).value =
-      payment.admin_notes || "";
+        admin_notes:
+          document.getElementById(
+            "adminNotes"
+          ).value.trim() ||
+          null,
 
-  }
+        payment_date:
+          document.getElementById(
+            "paymentDate"
+          ).value ||
+          null
 
-}
+      };
 
 
-/* =====================================================
-   CLOSE PAYMENT MODAL
-===================================================== */
+      if (
+        status === "paid"
+      ) {
 
-function closePaymentModal() {
+        data.paid_at =
+          new Date()
+            .toISOString();
 
-  document.getElementById(
-    "paymentModal"
-  ).style.display = "none";
+      } else {
 
-}
+        data.paid_at =
+          null;
 
+      }
 
-/* =====================================================
-   SAVE PAYMENT
-===================================================== */
 
-async function savePayment(event) {
+      const button =
+        document.getElementById(
+          "saveBtn"
+        );
 
-  event.preventDefault();
 
+      button.disabled =
+        true;
 
-  if (!db) {
 
-    alert("Database connection unavailable.");
+      button.textContent =
+        id
+          ? "Updating..."
+          : "Saving...";
 
-    return;
 
-  }
+      let result;
 
 
-  const paymentId =
-    document.getElementById(
-      "paymentId"
-    ).value;
+      if (id) {
 
+        result =
+          await db
 
-  const studentId =
-    document.getElementById(
-      "studentId"
-    ).value;
+            .from(
+              "student_payments"
+            )
 
+            .update(data)
 
-  const amount =
-    Number(
-      document.getElementById(
-        "amount"
-      ).value
-    );
+            .eq(
+              "id",
+              id
+            );
 
+      } else {
 
-  if (!studentId) {
+        result =
+          await db
 
-    alert("Please select a student.");
+            .from(
+              "student_payments"
+            )
 
-    return;
+            .insert(data);
 
-  }
+      }
 
 
-  if (!amount || amount < 0) {
+      button.disabled =
+        false;
 
-    alert("Please enter a valid amount.");
 
-    return;
+      button.textContent =
+        id
+          ? "Update Payment"
+          : "Record Payment";
 
-  }
 
+      if (result.error) {
 
-  const status =
-    document.getElementById(
-      "status"
-    ).value;
+        alert(
+          result.error.message
+        );
 
+        return;
 
-  const data = {
+      }
 
-    student_id:
-      studentId,
 
-    course:
-      document.getElementById(
-        "course"
-      ).value.trim() || null,
+      showMessage(
+        id
+          ? "Payment updated successfully."
+          : "Payment recorded successfully."
+      );
 
-    amount:
-      amount,
 
-    currency:
-      document.getElementById(
-        "currency"
-      ).value,
+      resetForm();
 
-    method:
-      document.getElementById(
-        "method"
-      ).value || null,
-
-    reference:
-      document.getElementById(
-        "reference"
-      ).value.trim() || null,
-
-    status:
-      status,
-
-    proof_url:
-      document.getElementById(
-        "proofUrl"
-      ).value.trim() || null,
-
-    notes:
-      document.getElementById(
-        "notes"
-      ).value.trim() || null,
-
-    admin_notes:
-      document.getElementById(
-        "adminNotes"
-      ).value.trim() || null,
-
-    payment_date:
-      document.getElementById(
-        "paymentDate"
-      ).value || null
-
-  };
-
-
-  if (status === "paid") {
-
-    data.paid_at =
-      new Date().toISOString();
-
-  } else {
-
-    data.paid_at = null;
-
-  }
-
-
-  const button =
-    document.getElementById(
-      "savePaymentBtn"
-    );
-
-
-  button.disabled = true;
-
-  button.textContent = "Saving...";
-
-
-  try {
-
-    let result;
-
-
-    if (paymentId) {
-
-      result =
-        await db
-
-          .from("student_payments")
-
-          .update(data)
-
-          .eq("id", paymentId);
-
-    } else {
-
-      result =
-        await db
-
-          .from("student_payments")
-
-          .insert(data);
+      await loadPayments();
 
     }
-
-
-    if (result.error) {
-
-      throw result.error;
-
-    }
-
-
-    closePaymentModal();
-
-    await loadPayments();
-
-    alert(
-      paymentId
-        ? "Payment updated successfully."
-        : "Payment recorded successfully."
-    );
-
-
-  } catch (error) {
-
-    console.error(error);
-
-    alert(
-      "Payment save failed:\n\n" +
-      error.message
-    );
-
-  } finally {
-
-    button.disabled = false;
-
-    button.textContent =
-      "Save Payment";
-
-  }
-
-}
+  );
 
 
 /* =====================================================
-   EDIT PAYMENT
+   EDIT
 ===================================================== */
 
 function editPayment(id) {
 
   const payment =
     payments.find(
-      p => String(p.id) === String(id)
+      p =>
+        String(p.id) ===
+        String(id)
     );
 
 
-  if (!payment) {
+  if (!payment) return;
 
-    alert("Payment not found.");
+
+  document.getElementById(
+    "paymentId"
+  ).value =
+    payment.id;
+
+
+  document.getElementById(
+    "studentId"
+  ).value =
+    payment.student_id;
+
+
+  document.getElementById(
+    "course"
+  ).value =
+    payment.course ||
+    "";
+
+
+  document.getElementById(
+    "amount"
+  ).value =
+    payment.amount ||
+    "";
+
+
+  document.getElementById(
+    "currency"
+  ).value =
+    payment.currency ||
+    "USD";
+
+
+  document.getElementById(
+    "method"
+  ).value =
+    payment.method ||
+    "";
+
+
+  document.getElementById(
+    "status"
+  ).value =
+    payment.status ||
+    "pending";
+
+
+  document.getElementById(
+    "reference"
+  ).value =
+    payment.reference ||
+    "";
+
+
+  document.getElementById(
+    "paymentDate"
+  ).value =
+    payment.payment_date ||
+    "";
+
+
+  document.getElementById(
+    "proofUrl"
+  ).value =
+    payment.proof_url ||
+    "";
+
+
+  document.getElementById(
+    "notes"
+  ).value =
+    payment.notes ||
+    "";
+
+
+  document.getElementById(
+    "adminNotes"
+  ).value =
+    payment.admin_notes ||
+    "";
+
+
+  document.getElementById(
+    "formTitle"
+  ).textContent =
+    "Edit Payment";
+
+
+  document.getElementById(
+    "saveBtn"
+  ).textContent =
+    "Update Payment";
+
+
+  document.getElementById(
+    "cancelBtn"
+  ).style.display =
+    "inline-block";
+
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+
+}
+
+
+/* =====================================================
+   MARK PAID
+===================================================== */
+
+async function markPaid(id) {
+
+  const confirmed =
+    confirm(
+      "Mark this payment as PAID?"
+    );
+
+
+  if (!confirmed) return;
+
+
+  const result =
+    await db
+
+      .from(
+        "student_payments"
+      )
+
+      .update({
+
+        status:
+          "paid",
+
+        paid_at:
+          new Date()
+            .toISOString()
+
+      })
+
+      .eq(
+        "id",
+        id
+      );
+
+
+  if (result.error) {
+
+    alert(
+      result.error.message
+    );
 
     return;
 
   }
 
 
-  openPaymentModal(payment);
+  await loadPayments();
+
+}
+
+
+/* =====================================================
+   REJECT
+===================================================== */
+
+async function rejectPayment(id) {
+
+  const reason =
+    prompt(
+      "Enter rejection reason:"
+    );
+
+
+  if (reason === null) return;
+
+
+  const payment =
+    payments.find(
+      p =>
+        String(p.id) ===
+        String(id)
+    );
+
+
+  const oldNotes =
+    payment?.admin_notes ||
+    "";
+
+
+  const newNotes =
+    reason.trim()
+      ? (
+          oldNotes
+            ? oldNotes + "\n"
+            : ""
+        ) +
+        "Rejected: " +
+        reason.trim()
+      : oldNotes;
+
+
+  const result =
+    await db
+
+      .from(
+        "student_payments"
+      )
+
+      .update({
+
+        status:
+          "rejected",
+
+        admin_notes:
+          newNotes,
+
+        paid_at:
+          null
+
+      })
+
+      .eq(
+        "id",
+        id
+      );
+
+
+  if (result.error) {
+
+    alert(
+      result.error.message
+    );
+
+    return;
+
+  }
+
+
+  await loadPayments();
 
 }
 
@@ -1568,142 +1976,55 @@ function viewPayment(id) {
 
   const payment =
     payments.find(
-      p => String(p.id) === String(id)
+      p =>
+        String(p.id) ===
+        String(id)
     );
 
 
   if (!payment) return;
 
 
-  const studentName =
-    getStudentName(
+  alert(
+
+    "Student: " +
+    studentName(
       payment.student_id
-    );
+    ) +
 
+    "\nCourse: " +
+    (payment.course || "-") +
 
-  document.getElementById(
-    "paymentDetails"
-  ).innerHTML = `
+    "\nAmount: " +
+    (payment.amount || 0) +
+    " " +
+    (payment.currency || "") +
 
-    <div class="details-grid">
+    "\nMethod: " +
+    (payment.method || "-") +
 
-      <div>
-        <strong>Student</strong>
-        <span>${esc(studentName)}</span>
-      </div>
+    "\nReference: " +
+    (payment.reference || "-") +
 
-      <div>
-        <strong>Course</strong>
-        <span>${esc(payment.course || "-")}</span>
-      </div>
+    "\nDate: " +
+    (payment.payment_date || "-") +
 
-      <div>
-        <strong>Amount</strong>
-        <span>
-          ${money(
-            payment.amount,
-            payment.currency
-          )}
-        </span>
-      </div>
+    "\nStatus: " +
+    (payment.status || "-") +
 
-      <div>
-        <strong>Method</strong>
-        <span>${esc(payment.method || "-")}</span>
-      </div>
+    "\nNotes: " +
+    (payment.notes || "-") +
 
-      <div>
-        <strong>Reference</strong>
-        <span>${esc(payment.reference || "-")}</span>
-      </div>
+    "\nAdmin Notes: " +
+    (payment.admin_notes || "-")
 
-      <div>
-        <strong>Payment Date</strong>
-        <span>
-          ${formatDate(payment.payment_date)}
-        </span>
-      </div>
-
-      <div>
-        <strong>Status</strong>
-        <span>
-          ${statusBadge(payment.status)}
-        </span>
-      </div>
-
-      <div>
-        <strong>Paid At</strong>
-        <span>
-          ${formatDate(payment.paid_at)}
-        </span>
-      </div>
-
-      <div class="full-width">
-
-        <strong>Student / Payment Notes</strong>
-
-        <p>
-          ${esc(payment.notes || "-")}
-        </p>
-
-      </div>
-
-      <div class="full-width">
-
-        <strong>Admin Notes</strong>
-
-        <p>
-          ${esc(payment.admin_notes || "-")}
-        </p>
-
-      </div>
-
-      <div class="full-width">
-
-        <strong>Payment Proof</strong>
-
-        ${
-          payment.proof_url
-            ? `
-              <button
-                type="button"
-                onclick="viewProof('${esc(payment.proof_url)}')"
-              >
-                View Payment Proof
-              </button>
-            `
-            : "No proof uploaded."
-        }
-
-      </div>
-
-    </div>
-
-  `;
-
-
-  document.getElementById(
-    "viewPaymentModal"
-  ).style.display = "flex";
+  );
 
 }
 
 
 /* =====================================================
-   CLOSE VIEW MODAL
-===================================================== */
-
-function closeViewModal() {
-
-  document.getElementById(
-    "viewPaymentModal"
-  ).style.display = "none";
-
-}
-
-
-/* =====================================================
-   VIEW PROOF
+   PROOF
 ===================================================== */
 
 function viewProof(url) {
@@ -1711,314 +2032,100 @@ function viewProof(url) {
   if (!url) return;
 
 
-  const container =
-    document.getElementById(
-      "proofContainer"
-    );
+  window.open(
+    url,
+    "_blank",
+    "noopener"
+  );
+
+}
 
 
-  const lower =
-    url.toLowerCase();
+/* =====================================================
+   RESET FORM
+===================================================== */
 
+function resetForm() {
 
-  const isImage =
-    /\.(jpg|jpeg|png|gif|webp|bmp)(\?.*)?$/
-      .test(lower);
-
-
-  if (isImage) {
-
-    container.innerHTML = `
-
-      <div style="text-align:center;">
-
-        <img
-          src="${esc(url)}"
-          alt="Payment Proof"
-          style="
-            max-width:100%;
-            max-height:70vh;
-            object-fit:contain;
-          "
-        >
-
-        <p>
-          <a
-            href="${esc(url)}"
-            target="_blank"
-            rel="noopener"
-          >
-            Open Proof in New Tab
-          </a>
-        </p>
-
-      </div>
-
-    `;
-
-  } else {
-
-    container.innerHTML = `
-
-      <div style="text-align:center;">
-
-        <p>
-          Payment proof is available at:
-        </p>
-
-        <a
-          href="${esc(url)}"
-          target="_blank"
-          rel="noopener"
-        >
-          Open Payment Proof
-        </a>
-
-      </div>
-
-    `;
-
-  }
+  document
+    .getElementById(
+      "paymentForm"
+    )
+    .reset();
 
 
   document.getElementById(
-    "proofModal"
-  ).style.display = "flex";
+    "paymentId"
+  ).value =
+    "";
 
-}
-
-
-/* =====================================================
-   CLOSE PROOF
-===================================================== */
-
-function closeProofModal() {
 
   document.getElementById(
-    "proofModal"
-  ).style.display = "none";
+    "currency"
+  ).value =
+    "USD";
+
+
+  document.getElementById(
+    "status"
+  ).value =
+    "pending";
+
+
+  document.getElementById(
+    "formTitle"
+  ).textContent =
+    "Record Payment";
+
+
+  document.getElementById(
+    "saveBtn"
+  ).textContent =
+    "Record Payment";
+
+
+  document.getElementById(
+    "cancelBtn"
+  ).style.display =
+    "none";
 
 }
 
 
 /* =====================================================
-   MARK PAID
-===================================================== */
-
-async function markPaid(id) {
-
-  const payment =
-    payments.find(
-      p => String(p.id) === String(id)
-    );
-
-
-  if (!payment) return;
-
-
-  const confirmed =
-    confirm(
-      `Mark payment from ${getStudentName(
-        payment.student_id
-      )} as PAID?`
-    );
-
-
-  if (!confirmed) return;
-
-
-  const { error } =
-    await db
-
-      .from("student_payments")
-
-      .update({
-
-        status: "paid",
-
-        paid_at:
-          new Date().toISOString()
-
-      })
-
-      .eq("id", id);
-
-
-  if (error) {
-
-    alert(
-      "Could not mark payment as paid:\n\n" +
-      error.message
-    );
-
-    return;
-
-  }
-
-
-  await loadPayments();
-
-}
-
-
-/* =====================================================
-   REJECT PAYMENT
-===================================================== */
-
-async function rejectPayment(id) {
-
-  const payment =
-    payments.find(
-      p => String(p.id) === String(id)
-    );
-
-
-  if (!payment) return;
-
-
-  const reason =
-    prompt(
-      "Enter rejection reason (optional):"
-    );
-
-
-  if (reason === null) return;
-
-
-  const oldNotes =
-    payment.admin_notes || "";
-
-
-  const newNotes =
-    reason.trim()
-      ? `${oldNotes ? oldNotes + "\n" : ""}Rejected: ${reason.trim()}`
-      : oldNotes;
-
-
-  const { error } =
-    await db
-
-      .from("student_payments")
-
-      .update({
-
-        status: "rejected",
-
-        admin_notes:
-          newNotes,
-
-        paid_at: null
-
-      })
-
-      .eq("id", id);
-
-
-  if (error) {
-
-    alert(
-      "Could not reject payment:\n\n" +
-      error.message
-    );
-
-    return;
-
-  }
-
-
-  await loadPayments();
-
-}
-
-
-/* =====================================================
-   RESET FILTERS
+   FILTER RESET
 ===================================================== */
 
 function resetFilters() {
 
   document.getElementById(
-    "searchInput"
-  ).value = "";
+    "search"
+  ).value =
+    "";
 
 
   document.getElementById(
     "statusFilter"
-  ).value = "";
+  ).value =
+    "";
 
 
   document.getElementById(
     "methodFilter"
-  ).value = "";
+  ).value =
+    "";
 
 
-  renderPayments();
+  renderRows();
 
 }
 
 
 /* =====================================================
-   MODAL CLICK OUTSIDE
+   RUN
 ===================================================== */
 
-window.addEventListener(
-  "click",
-  function(event) {
-
-    const paymentModal =
-      document.getElementById(
-        "paymentModal"
-      );
-
-    const viewModal =
-      document.getElementById(
-        "viewPaymentModal"
-      );
-
-    const proofModal =
-      document.getElementById(
-        "proofModal"
-      );
-
-
-    if (
-      event.target === paymentModal
-    ) {
-
-      closePaymentModal();
-
-    }
-
-
-    if (
-      event.target === viewModal
-    ) {
-
-      closeViewModal();
-
-    }
-
-
-    if (
-      event.target === proofModal
-    ) {
-
-      closeProofModal();
-
-    }
-
-  }
-);
-
-
-/* =====================================================
-   START
-===================================================== */
-
-document.addEventListener(
-  "DOMContentLoaded",
-  loadAll
-);
+load();
 
 </script>
 
