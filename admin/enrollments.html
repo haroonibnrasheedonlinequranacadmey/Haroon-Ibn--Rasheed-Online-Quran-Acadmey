@@ -1,6 +1,1450 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Enrollments | Admin</title><link rel="stylesheet" href="../css/admin.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../js/config.js"></script><script src="../js/admin.js"></script></head><body><div class="admin-layout"><aside class="sidebar"><div class="brand">HR Admin<span>Haroon Ibn Rasheed Online Quran Academy</span></div><nav class="nav"><a href="dashboard.html">Dashboard</a><a href="admissions.html">Admissions / Leads</a><a href="users.html">Portal Users</a><a href="students.html">Students</a><a class="active" href="enrollments.html">Enrollments</a><a href="teachers.html">Teachers</a><a href="schedule.html">Schedule</a><a href="classes.html">Classes</a><a href="attendance.html">Attendance</a><a href="payments.html">Payments</a><a href="leaves.html">Leaves</a><a href="salaries.html">Salaries</a><a href="courses.html">Courses</a><a href="fees.html">Fees</a><a href="payment-methods.html">Payment Methods</a><a href="messages.html">Messages</a><a href="testimonials.html">Testimonials</a><a href="articles.html">Blog / Articles</a><a href="notifications.html">Notifications</a><a href="faqs.html">FAQs</a><a href="content.html">Website Content</a><a href="settings.html">Settings</a><a href="../index.html">View Website</a><a href="#" onclick="logout();return false">Logout</a></nav></aside><main class="main"><div class="top"><h1>Course Enrollments</h1></div><div id="msg" class="msg"></div><div class="card"><form id="f" class="form-grid"><div class="field"><label>Student User ID</label><input id="student_id" class="input" required placeholder="Student profile UUID"></div><div class="field"><label>Course ID</label><input id="course_id" class="input" placeholder="Course UUID"></div><div class="field"><label>Teacher User ID</label><input id="teacher_id" class="input" placeholder="Teacher profile UUID"></div><div class="field"><label>Progress %</label><input id="progress" class="input" type="number" min="0" max="100" value="0"></div><div class="field"><label>Status</label><select id="status" class="input"><option>pending</option><option selected>active</option><option>completed</option><option>cancelled</option></select></div><div class="field full"><button class="btn">Enroll Student</button></div></form></div><div class="card"><div class="table-wrap"><table class="table"><thead><tr><th>Student</th><th>Course</th><th>Teacher</th><th>Status</th><th>Progress</th><th>Action</th></tr></thead><tbody id="rows"></tbody></table></div></div></main></div><script>
-let data=[];
-async function load(){if(!(await adminGuard()))return;const {data:d,error}=await db.from('student_enrollments').select('*,courses(title)').order('enrolled_at',{ascending:false});if(error){showMsg('msg',error.message,'error');return}data=d||[];rows.innerHTML=data.map(x=>`<tr><td>${escapeHtml(x.student_id)}</td><td>${escapeHtml(x.courses?.title||x.course_id||'')}</td><td>${escapeHtml(x.teacher_id||'')}</td><td><span class="pill">${escapeHtml(x.status)}</span></td><td>${x.progress}%</td><td><button class="btn danger" onclick="del('${x.id}')">Delete</button></td></tr>`).join('')||'<tr><td colspan="6">No enrollments.</td></tr>'}
-f.addEventListener('submit',async e=>{e.preventDefault();const r=await db.from('student_enrollments').insert({student_id:student_id.value.trim(),course_id:course_id.value.trim()||null,teacher_id:teacher_id.value.trim()||null,progress:Number(progress.value)||0,status:status.value});if(r.error)showMsg('msg',r.error.message,'error');else{showMsg('msg','Student enrolled.','ok');f.reset();progress.value=0;load()}});
-async function del(id){if(!confirm('Delete enrollment?'))return;const r=await db.from('student_enrollments').delete().eq('id',id);if(r.error)showMsg('msg',r.error.message,'error');else load()}load();
-</script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Enrollments | Admin</title>
+
+<link rel="stylesheet" href="../css/admin.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script src="../js/admin.js"></script>
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+<aside class="sidebar">
+
+<div class="brand">
+HR Admin
+<span>Haroon Ibn Rasheed Online Quran Academy</span>
+</div>
+
+<nav class="nav">
+
+<a href="dashboard.html">Dashboard</a>
+<a href="admissions.html">Admissions / Leads</a>
+<a href="users.html">Portal Users</a>
+<a href="students.html">Students</a>
+<a class="active" href="enrollments.html">Enrollments</a>
+<a href="teachers.html">Teachers</a>
+<a href="schedule.html">Schedule</a>
+<a href="classes.html">Classes</a>
+<a href="attendance.html">Attendance</a>
+<a href="payments.html">Payments</a>
+<a href="leaves.html">Leaves</a>
+<a href="salaries.html">Salaries</a>
+<a href="courses.html">Courses</a>
+<a href="fees.html">Fees</a>
+<a href="payment-methods.html">Payment Methods</a>
+<a href="messages.html">Messages</a>
+<a href="testimonials.html">Testimonials</a>
+<a href="articles.html">Blog / Articles</a>
+<a href="notifications.html">Notifications</a>
+<a href="faqs.html">FAQs</a>
+<a href="content.html">Website Content</a>
+<a href="settings.html">Settings</a>
+<a href="../index.html">View Website</a>
+
+<a href="#" onclick="logout();return false">
+Logout
+</a>
+
+</nav>
+</aside>
+
+
+<main class="main">
+
+<div class="top">
+<h1>Course Enrollments</h1>
+</div>
+
+<div id="msg" class="msg"></div>
+
+
+<!-- =====================================================
+     CREATE ENROLLMENT
+===================================================== -->
+
+<div class="card">
+
+<h2>Enroll Student</h2>
+
+<form id="enrollmentForm" class="form-grid">
+
+
+<!-- STUDENT -->
+
+<div class="field">
+
+<label>Student</label>
+
+<select
+id="student_id"
+class="input"
+required>
+
+<option value="">
+Loading students...
+</option>
+
+</select>
+
+</div>
+
+
+<!-- COURSE -->
+
+<div class="field">
+
+<label>Course</label>
+
+<select
+id="course_id"
+class="input"
+required>
+
+<option value="">
+Loading courses...
+</option>
+
+</select>
+
+</div>
+
+
+<!-- TEACHER -->
+
+<div class="field">
+
+<label>Teacher</label>
+
+<select
+id="teacher_id"
+class="input">
+
+<option value="">
+No Teacher / Select Teacher
+</option>
+
+</select>
+
+</div>
+
+
+<!-- PROGRESS -->
+
+<div class="field">
+
+<label>Progress %</label>
+
+<input
+id="progress"
+class="input"
+type="number"
+min="0"
+max="100"
+value="0"
+required>
+
+</div>
+
+
+<!-- STATUS -->
+
+<div class="field">
+
+<label>Status</label>
+
+<select
+id="status"
+class="input">
+
+<option value="pending">
+Pending
+</option>
+
+<option value="active" selected>
+Active
+</option>
+
+<option value="completed">
+Completed
+</option>
+
+<option value="cancelled">
+Cancelled
+</option>
+
+</select>
+
+</div>
+
+
+<div class="field full">
+
+<button
+id="enrollBtn"
+class="btn"
+type="submit">
+
+Enroll Student
+
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+
+<!-- =====================================================
+     ENROLLMENT LIST
+===================================================== -->
+
+<div class="card">
+
+<h2>All Enrollments</h2>
+
+<div class="table-wrap">
+
+<table class="table">
+
+<thead>
+
+<tr>
+
+<th>Student</th>
+<th>Course</th>
+<th>Teacher</th>
+<th>Status</th>
+<th>Progress</th>
+<th>Enrolled</th>
+<th>Actions</th>
+
+</tr>
+
+</thead>
+
+<tbody id="rows">
+
+<tr>
+
+<td colspan="7">
+Loading enrollments...
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</main>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   DATA
+===================================================== */
+
+let students = [];
+let teachers = [];
+let courses = [];
+
+
+/* =====================================================
+   SAFE HTML
+===================================================== */
+
+function safeHtml(value){
+
+if(value === null || value === undefined){
+
+return "";
+
+}
+
+return String(value)
+
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
+}
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+function enrollmentMessage(message,type){
+
+const box =
+document.getElementById("msg");
+
+box.textContent =
+message;
+
+box.style.display =
+"block";
+
+box.style.padding =
+"10px";
+
+box.style.marginBottom =
+"15px";
+
+box.style.borderRadius =
+"8px";
+
+
+if(type === "error"){
+
+box.style.color =
+"#b91c1c";
+
+box.style.background =
+"#fee2e2";
+
+}else{
+
+box.style.color =
+"#166534";
+
+box.style.background =
+"#dcfce7";
+
+}
+
+}
+
+
+/* =====================================================
+   LOAD STUDENTS
+===================================================== */
+
+async function loadStudents(){
+
+const select =
+document.getElementById(
+"student_id"
+);
+
+
+const result =
+await db
+
+.from("students")
+
+.select(
+"id,full_name,status"
+)
+
+.order(
+"full_name",
+{
+ascending:true
+}
+);
+
+
+if(result.error){
+
+throw result.error;
+
+}
+
+
+students =
+result.data || [];
+
+
+select.innerHTML =
+'<option value="">Select Student</option>';
+
+
+students.forEach(
+function(student){
+
+const option =
+document.createElement("option");
+
+option.value =
+student.id;
+
+option.textContent =
+(student.full_name || "Unnamed Student") +
+(
+student.status
+? " — " + student.status
+: ""
+);
+
+select.appendChild(option);
+
+});
+
+
+}
+
+
+/* =====================================================
+   LOAD TEACHERS
+===================================================== */
+
+async function loadTeachers(){
+
+const select =
+document.getElementById(
+"teacher_id"
+);
+
+
+const result =
+await db
+
+.from("teachers")
+
+.select(
+"id,name,active"
+)
+
+.order(
+"name",
+{
+ascending:true
+}
+);
+
+
+if(result.error){
+
+throw result.error;
+
+}
+
+
+teachers =
+result.data || [];
+
+
+select.innerHTML =
+'<option value="">No Teacher / Select Teacher</option>';
+
+
+teachers.forEach(
+function(teacher){
+
+const option =
+document.createElement("option");
+
+option.value =
+teacher.id;
+
+option.textContent =
+(teacher.name || "Unnamed Teacher") +
+(
+teacher.active
+? " — Active"
+: " — Inactive"
+);
+
+select.appendChild(option);
+
+});
+
+
+}
+
+
+/* =====================================================
+   LOAD COURSES
+===================================================== */
+
+async function loadCourses(){
+
+const select =
+document.getElementById(
+"course_id"
+);
+
+
+const result =
+await db
+
+.from("courses")
+
+.select(
+"id,title,active,is_active,status"
+)
+
+.order(
+"title",
+{
+ascending:true
+}
+);
+
+
+if(result.error){
+
+throw result.error;
+
+}
+
+
+courses =
+result.data || [];
+
+
+select.innerHTML =
+'<option value="">Select Course</option>';
+
+
+courses.forEach(
+function(course){
+
+/*
+   Course is considered selectable if:
+   active is true OR is_active is true
+   OR status is active.
+*/
+
+const isActive =
+course.active === true ||
+course.is_active === true ||
+course.status === "active";
+
+
+if(!isActive){
+
+return;
+
+}
+
+
+const option =
+document.createElement("option");
+
+option.value =
+course.id;
+
+option.textContent =
+course.title ||
+"Unnamed Course";
+
+select.appendChild(option);
+
+});
+
+
+}
+
+
+/* =====================================================
+   LOAD ENROLLMENTS
+===================================================== */
+
+async function loadEnrollments(){
+
+const rows =
+document.getElementById(
+"rows"
+);
+
+
+rows.innerHTML = `
+
+<tr>
+
+<td colspan="7">
+
+Loading enrollments...
+
+</td>
+
+</tr>
+
+`;
+
+
+const result =
+await db
+
+.from("student_enrollments")
+
+.select(`
+id,
+student_id,
+course_id,
+teacher_id,
+status,
+progress,
+enrolled_at,
+created_at,
+updated_at
+`)
+
+.order(
+"enrolled_at",
+{
+ascending:false
+}
+);
+
+
+if(result.error){
+
+throw result.error;
+
+}
+
+
+const enrollments =
+result.data || [];
+
+
+if(enrollments.length === 0){
+
+rows.innerHTML = `
+
+<tr>
+
+<td colspan="7">
+
+No enrollments found.
+
+</td>
+
+</tr>
+
+`;
+
+return;
+
+}
+
+
+/* =====================================================
+   LOOKUPS
+===================================================== */
+
+const studentMap = {};
+
+students.forEach(
+function(student){
+
+studentMap[student.id] =
+student.full_name;
+
+});
+
+
+const teacherMap = {};
+
+teachers.forEach(
+function(teacher){
+
+teacherMap[teacher.id] =
+teacher.name;
+
+});
+
+
+const courseMap = {};
+
+courses.forEach(
+function(course){
+
+courseMap[course.id] =
+course.title;
+
+});
+
+
+/*
+   Some existing records may use IDs that
+   were not loaded because they are inactive.
+   Fetch missing names separately.
+*/
+
+
+const missingStudentIds =
+[
+...new Set(
+enrollments
+.map(function(x){
+return x.student_id;
+})
+.filter(function(id){
+return id && !studentMap[id];
+})
+)
+];
+
+
+if(missingStudentIds.length){
+
+const resultStudents =
+await db
+
+.from("students")
+
+.select(
+"id,full_name"
+)
+
+.in(
+"id",
+missingStudentIds
+);
+
+
+if(!resultStudents.error){
+
+(resultStudents.data || [])
+.forEach(
+function(student){
+
+studentMap[student.id] =
+student.full_name;
+
+});
+
+}
+
+}
+
+
+/* Missing teachers */
+
+const missingTeacherIds =
+[
+...new Set(
+enrollments
+.map(function(x){
+return x.teacher_id;
+})
+.filter(function(id){
+return id && !teacherMap[id];
+})
+)
+];
+
+
+if(missingTeacherIds.length){
+
+const resultTeachers =
+await db
+
+.from("teachers")
+
+.select(
+"id,name"
+)
+
+.in(
+"id",
+missingTeacherIds
+);
+
+
+if(!resultTeachers.error){
+
+(resultTeachers.data || [])
+.forEach(
+function(teacher){
+
+teacherMap[teacher.id] =
+teacher.name;
+
+});
+
+}
+
+}
+
+
+/* Missing courses */
+
+const missingCourseIds =
+[
+...new Set(
+enrollments
+.map(function(x){
+return x.course_id;
+})
+.filter(function(id){
+return id && !courseMap[id];
+})
+)
+];
+
+
+if(missingCourseIds.length){
+
+const resultCourses =
+await db
+
+.from("courses")
+
+.select(
+"id,title"
+)
+
+.in(
+"id",
+missingCourseIds
+);
+
+
+if(!resultCourses.error){
+
+(resultCourses.data || [])
+.forEach(
+function(course){
+
+courseMap[course.id] =
+course.title;
+
+});
+
+}
+
+}
+
+
+/* =====================================================
+   RENDER
+===================================================== */
+
+rows.innerHTML =
+enrollments.map(
+function(enrollment){
+
+
+const studentName =
+studentMap[
+enrollment.student_id
+]
+||
+enrollment.student_id
+||
+"Unknown Student";
+
+
+const courseName =
+courseMap[
+enrollment.course_id
+]
+||
+enrollment.course_id
+||
+"Unknown Course";
+
+
+const teacherName =
+enrollment.teacher_id
+?
+(
+teacherMap[
+enrollment.teacher_id
+]
+||
+enrollment.teacher_id
+)
+:
+"Not Assigned";
+
+
+const status =
+enrollment.status ||
+"pending";
+
+
+let statusClass = "";
+
+if(status === "active"){
+
+statusClass =
+"color:green;font-weight:600";
+
+}else if(status === "completed"){
+
+statusClass =
+"color:#2563eb;font-weight:600";
+
+}else if(status === "cancelled"){
+
+statusClass =
+"color:#dc2626;font-weight:600";
+
+}else{
+
+statusClass =
+"color:#d97706;font-weight:600";
+
+}
+
+
+const progress =
+Number(
+enrollment.progress || 0
+);
+
+
+const enrolledDate =
+enrollment.enrolled_at
+?
+new Date(
+enrollment.enrolled_at
+).toLocaleDateString()
+:
+"";
+
+
+return `
+
+<tr>
+
+<td>
+
+<strong>
+${safeHtml(studentName)}
+</strong>
+
+</td>
+
+
+<td>
+
+${safeHtml(courseName)}
+
+</td>
+
+
+<td>
+
+${safeHtml(teacherName)}
+
+</td>
+
+
+<td>
+
+<span style="${statusClass}">
+
+${safeHtml(status)}
+
+</span>
+
+</td>
+
+
+<td>
+
+<div
+style="
+min-width:100px;
+">
+
+<div
+style="
+font-size:12px;
+margin-bottom:4px;
+">
+
+${progress}%
+
+</div>
+
+<div
+style="
+height:7px;
+background:#e5e7eb;
+border-radius:10px;
+overflow:hidden;
+">
+
+<div
+style="
+width:${Math.min(
+100,
+Math.max(
+0,
+progress
+)
+)}%;
+height:100%;
+background:#2563eb;
+">
+
+</div>
+
+</div>
+
+</div>
+
+</td>
+
+
+<td>
+
+${safeHtml(enrolledDate)}
+
+</td>
+
+
+<td>
+
+<button
+type="button"
+class="btn danger"
+style="padding:7px 10px;font-size:12px"
+onclick="deleteEnrollment(
+'${safeHtml(enrollment.id)}'
+)">
+
+Delete
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+}).join("");
+
+}
+
+
+/* =====================================================
+   CREATE ENROLLMENT
+===================================================== */
+
+document
+.getElementById("enrollmentForm")
+.addEventListener(
+"submit",
+async function(event){
+
+event.preventDefault();
+
+
+const button =
+document.getElementById(
+"enrollBtn"
+);
+
+
+button.disabled =
+true;
+
+button.textContent =
+"Enrolling...";
+
+
+try{
+
+
+const studentId =
+document
+.getElementById("student_id")
+.value;
+
+
+const courseId =
+document
+.getElementById("course_id")
+.value;
+
+
+const teacherId =
+document
+.getElementById("teacher_id")
+.value;
+
+
+const progressValue =
+Number(
+document
+.getElementById("progress")
+.value
+);
+
+
+const statusValue =
+document
+.getElementById("status")
+.value;
+
+
+if(!studentId){
+
+throw new Error(
+"Please select a student."
+);
+
+}
+
+
+if(!courseId){
+
+throw new Error(
+"Please select a course."
+);
+
+}
+
+
+if(
+progressValue < 0 ||
+progressValue > 100
+){
+
+throw new Error(
+"Progress must be between 0 and 100."
+);
+
+}
+
+
+/* =====================================================
+   CHECK DUPLICATE ACTIVE ENROLLMENT
+===================================================== */
+
+const existing =
+await db
+
+.from("student_enrollments")
+
+.select("id,status")
+
+.eq(
+"student_id",
+studentId
+)
+
+.eq(
+"course_id",
+courseId
+)
+
+.maybeSingle();
+
+
+if(existing.error){
+
+throw existing.error;
+
+}
+
+
+if(
+existing.data &&
+(
+existing.data.status === "active" ||
+existing.data.status === "pending"
+)
+){
+
+throw new Error(
+"This student is already enrolled in this course."
+);
+
+}
+
+
+/* =====================================================
+   INSERT
+===================================================== */
+
+const insertData = {
+
+student_id:
+studentId,
+
+course_id:
+courseId,
+
+teacher_id:
+teacherId || null,
+
+status:
+statusValue,
+
+progress:
+progressValue
+
+};
+
+
+const result =
+await db
+
+.from("student_enrollments")
+
+.insert(
+insertData
+);
+
+
+if(result.error){
+
+throw result.error;
+
+}
+
+
+/* =====================================================
+   SUCCESS
+===================================================== */
+
+const studentName =
+(
+students.find(
+function(student){
+
+return student.id === studentId;
+
+})
+||
+{}
+).full_name
+||
+"Student";
+
+
+const courseName =
+(
+courses.find(
+function(course){
+
+return course.id === courseId;
+
+})
+||
+{}
+).title
+||
+"Course";
+
+
+enrollmentMessage(
+
+studentName +
+" successfully enrolled in " +
+courseName +
+".",
+
+"ok"
+
+);
+
+
+document
+.getElementById(
+"enrollmentForm"
+)
+.reset();
+
+
+document
+.getElementById(
+"progress"
+)
+.value =
+0;
+
+
+document
+.getElementById(
+"status"
+)
+.value =
+"active";
+
+
+await loadEnrollments();
+
+
+}
+catch(error){
+
+console.error(
+"Enrollment error:",
+error
+);
+
+
+enrollmentMessage(
+error.message ||
+"Could not create enrollment.",
+"error"
+);
+
+
+}
+finally{
+
+button.disabled =
+false;
+
+button.textContent =
+"Enroll Student";
+
+}
+
+});
+
+
+/* =====================================================
+   DELETE ENROLLMENT
+===================================================== */
+
+async function deleteEnrollment(
+enrollmentId
+){
+
+if(
+!confirm(
+"Are you sure you want to delete this enrollment?\n\n" +
+"This action cannot be undone."
+)
+){
+
+return;
+
+}
+
+
+try{
+
+enrollmentMessage(
+"Deleting enrollment...",
+"ok"
+);
+
+
+const result =
+await db
+
+.from("student_enrollments")
+
+.delete()
+
+.eq(
+"id",
+enrollmentId
+);
+
+
+if(result.error){
+
+throw result.error;
+
+}
+
+
+enrollmentMessage(
+"Enrollment deleted successfully.",
+"ok"
+);
+
+
+await loadEnrollments();
+
+
+}
+catch(error){
+
+console.error(
+"Delete enrollment error:",
+error
+);
+
+
+enrollmentMessage(
+"Could not delete enrollment: " +
+error.message,
+"error"
+);
+
+}
+
+}
+
+
+/* =====================================================
+   INITIALIZE
+===================================================== */
+
+async function initEnrollments(){
+
+try{
+
+
+const allowed =
+await adminGuard();
+
+
+if(!allowed){
+
+return;
+
+}
+
+
+await loadStudents();
+
+await loadTeachers();
+
+await loadCourses();
+
+await loadEnrollments();
+
+
+}
+catch(error){
+
+console.error(
+"Enrollment page error:",
+error
+);
+
+
+enrollmentMessage(
+"Page could not load: " +
+error.message,
+"error"
+);
+
+}
+
+}
+
+
+initEnrollments();
+
+</script>
+
+</body>
+</html>
