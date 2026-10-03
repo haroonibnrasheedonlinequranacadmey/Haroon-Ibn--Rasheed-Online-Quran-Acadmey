@@ -1,21 +1,219 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Admin Dashboard</title>
+<title>Admin Dashboard | Haroon Ibn Rasheed Online Quran Academy</title>
 
 <link rel="stylesheet" href="../css/admin.css">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../js/config.js"></script>
 <script src="../js/admin.js"></script>
+
+<style>
+/* =========================
+   DASHBOARD ONLY
+   Existing admin.css/design
+   remains untouched.
+========================= */
+
+.dashboard-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+  margin-bottom:20px;
+}
+
+.dashboard-grid .stat{
+  min-height:125px;
+  position:relative;
+}
+
+.stat-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.stat-icon{
+  width:38px;
+  height:38px;
+  border-radius:10px;
+  display:grid;
+  place-items:center;
+  background:#e9f7fa;
+  font-size:20px;
+}
+
+.stat-value{
+  margin-top:12px;
+  font-size:30px;
+  font-weight:800;
+  color:var(--green);
+}
+
+.stat-sub{
+  display:block;
+  margin-top:5px;
+  color:#58717a;
+  font-size:12px;
+}
+
+.dashboard-two{
+  display:grid;
+  grid-template-columns:1.35fr .65fr;
+  gap:20px;
+}
+
+.quick-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+}
+
+.quick-btn{
+  display:block;
+  padding:14px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:#fff;
+  font-weight:700;
+  color:#173c4b;
+}
+
+.quick-btn:hover{
+  border-color:var(--green);
+  background:#f3fbfd;
+}
+
+.section-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:15px;
+}
+
+.section-head h2{
+  margin:0;
+}
+
+.badge{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+}
+
+.badge-new{
+  background:#e9f7fa;
+  color:#08788e;
+}
+
+.badge-contacted{
+  background:#fff2dc;
+  color:#946200;
+}
+
+.badge-enrolled{
+  background:#e8f7ed;
+  color:#137333;
+}
+
+.badge-pending{
+  background:#fff2dc;
+  color:#946200;
+}
+
+.badge-paid{
+  background:#e8f7ed;
+  color:#137333;
+}
+
+.badge-upcoming{
+  background:#e9f7fa;
+  color:#08788e;
+}
+
+.badge-active{
+  background:#e8f7ed;
+  color:#137333;
+}
+
+.badge-late{
+  background:#fdecec;
+  color:#a61b1b;
+}
+
+.class-time{
+  font-weight:800;
+}
+
+.empty{
+  text-align:center;
+  padding:25px;
+  color:#58717a;
+}
+
+.dashboard-note{
+  padding:12px 14px;
+  border-radius:10px;
+  background:#eef9fb;
+  color:#315967;
+  margin-bottom:20px;
+}
+
+.money{
+  font-weight:800;
+}
+
+.refresh-btn{
+  border:0;
+  border-radius:9px;
+  padding:10px 15px;
+  background:var(--green);
+  color:#fff;
+  font-weight:700;
+  cursor:pointer;
+}
+
+@media(max-width:1100px){
+  .dashboard-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .dashboard-two{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:650px){
+  .dashboard-grid{
+    grid-template-columns:1fr;
+  }
+
+  .quick-grid{
+    grid-template-columns:1fr;
+  }
+
+  .top{
+    width:100%;
+  }
+}
+</style>
 </head>
 
 <body>
 
 <div class="admin-layout">
+
+<!-- =========================
+     SIDEBAR
+========================= -->
 
 <aside class="sidebar">
 
@@ -114,13 +312,9 @@ Website Content
 Settings
 </a>
 
-
-<!-- ACCOUNT CREDENTIALS -->
-
 <a href="admin-accounts.html">
 🔐 Account Credentials
 </a>
-
 
 <a href="../index.html">
 View Website
@@ -135,13 +329,19 @@ Logout
 </aside>
 
 
+<!-- =========================
+     MAIN
+========================= -->
+
 <main class="main">
+
+<!-- TOP -->
 
 <div class="top">
 
 <div>
 
-<h1>Dashboard</h1>
+<h1>Admin Dashboard</h1>
 
 <span class="muted">
 Welcome, <b data-admin-name>Admin</b>
@@ -149,52 +349,303 @@ Welcome, <b data-admin-name>Admin</b>
 
 </div>
 
+<button class="refresh-btn" id="refreshBtn">
+↻ Refresh
+</button>
+
 </div>
 
 
-<div class="stats">
+<div id="dashboardMsg" class="msg"></div>
+
+
+<div class="dashboard-note">
+<strong>Today:</strong>
+<span id="todayText">Loading...</span>
+</div>
+
+
+<!-- =========================
+     MAIN STAT CARDS
+========================= -->
+
+<div class="dashboard-grid">
+
+
+<!-- LEADS -->
 
 <div class="card stat">
+
+<div class="stat-title">
 
 <small>Total Leads</small>
 
-<b id="total">—</b>
+<div class="stat-icon">
+📩
+</div>
+
+</div>
+
+<div class="stat-value" id="totalLeads">
+0
+</div>
+
+<span class="stat-sub">
+All admission enquiries
+</span>
 
 </div>
 
 
+<!-- NEW LEADS -->
+
 <div class="card stat">
+
+<div class="stat-title">
 
 <small>New Leads</small>
 
-<b id="new">—</b>
+<div class="stat-icon">
+🆕
+</div>
 
 </div>
 
+<div class="stat-value" id="newLeads">
+0
+</div>
+
+<span class="stat-sub">
+New admissions
+</span>
+
+</div>
+
+
+<!-- STUDENTS -->
 
 <div class="card stat">
 
-<small>Contacted</small>
+<div class="stat-title">
 
-<b id="contacted">—</b>
+<small>Total Students</small>
+
+<div class="stat-icon">
+👨‍🎓
+</div>
 
 </div>
 
+<div class="stat-value" id="totalStudents">
+0
+</div>
+
+<span class="stat-sub">
+Active students
+</span>
+
+</div>
+
+
+<!-- TEACHERS -->
 
 <div class="card stat">
 
-<small>Enrolled</small>
+<div class="stat-title">
 
-<b id="enrolled">—</b>
+<small>Total Teachers</small>
+
+<div class="stat-icon">
+👨‍🏫
+</div>
+
+</div>
+
+<div class="stat-value" id="totalTeachers">
+0
+</div>
+
+<span class="stat-sub">
+Active teachers
+</span>
+
+</div>
+
+
+<!-- COURSES -->
+
+<div class="card stat">
+
+<div class="stat-title">
+
+<small>Total Courses</small>
+
+<div class="stat-icon">
+📚
+</div>
+
+</div>
+
+<div class="stat-value" id="totalCourses">
+0
+</div>
+
+<span class="stat-sub">
+Active courses
+</span>
+
+</div>
+
+
+<!-- TODAY CLASSES -->
+
+<div class="card stat">
+
+<div class="stat-title">
+
+<small>Today's Classes</small>
+
+<div class="stat-icon">
+🗓️
+</div>
+
+</div>
+
+<div class="stat-value" id="todayClasses">
+0
+</div>
+
+<span class="stat-sub">
+Classes scheduled today
+</span>
+
+</div>
+
+
+<!-- PENDING PAYMENTS -->
+
+<div class="card stat">
+
+<div class="stat-title">
+
+<small>Pending Payments</small>
+
+<div class="stat-icon">
+💰
+</div>
+
+</div>
+
+<div class="stat-value" id="pendingPayments">
+0
+</div>
+
+<span class="stat-sub">
+Student payments
+</span>
+
+</div>
+
+
+<!-- PENDING SALARY -->
+
+<div class="card stat">
+
+<div class="stat-title">
+
+<small>Pending Salary</small>
+
+<div class="stat-icon">
+💵
+</div>
+
+</div>
+
+<div class="stat-value" id="pendingSalary">
+0
+</div>
+
+<span class="stat-sub">
+Teacher salary records
+</span>
 
 </div>
 
 </div>
 
+
+<!-- =========================
+     TODAY CLASSES
+========================= -->
 
 <div class="card">
 
+<div class="section-head">
+
+<h2>Today's Classes</h2>
+
+<span class="muted" id="classCountText">
+0 classes
+</span>
+
+</div>
+
+<div class="table-wrap">
+
+<table class="table">
+
+<thead>
+
+<tr>
+
+<th>Student</th>
+<th>Teacher</th>
+<th>Course</th>
+<th>Time</th>
+<th>Duration</th>
+<th>Status</th>
+
+</tr>
+
+</thead>
+
+<tbody id="todayClassRows">
+
+<tr>
+<td colspan="6" class="empty">
+Loading today's classes...
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+<!-- =========================
+     TWO COLUMNS
+========================= -->
+
+<div class="dashboard-two">
+
+
+<!-- RECENT ADMISSIONS -->
+
+<div class="card">
+
+<div class="section-head">
+
 <h2>Recent Admissions</h2>
+
+<a class="btn" href="admissions.html">
+View All
+</a>
+
+</div>
 
 <div class="table-wrap">
 
@@ -214,8 +665,294 @@ Welcome, <b data-admin-name>Admin</b>
 
 </thead>
 
+<tbody id="admissionRows">
 
-<tbody id="rows"></tbody>
+<tr>
+<td colspan="5" class="empty">
+Loading...
+</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+<!-- QUICK ACTIONS -->
+
+<div class="card">
+
+<div class="section-head">
+
+<h2>Quick Actions</h2>
+
+</div>
+
+<div class="quick-grid">
+
+<a class="quick-btn" href="students.html">
+👨‍🎓 Students
+</a>
+
+<a class="quick-btn" href="teachers.html">
+👨‍🏫 Teachers
+</a>
+
+<a class="quick-btn" href="schedule.html">
+🗓️ Schedule
+</a>
+
+<a class="quick-btn" href="classes.html">
+🎓 Classes
+</a>
+
+<a class="quick-btn" href="payments.html">
+💳 Payments
+</a>
+
+<a class="quick-btn" href="salaries.html">
+💰 Salaries
+</a>
+
+<a class="quick-btn" href="fees.html">
+🧾 Fees
+</a>
+
+<a class="quick-btn" href="payment-methods.html">
+🏦 Payment Methods
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =========================
+     FINANCE SUMMARY
+========================= -->
+
+<div class="dashboard-two">
+
+
+<div class="card">
+
+<div class="section-head">
+
+<h2>Student Payments</h2>
+
+<a class="btn" href="payments.html">
+Manage
+</a>
+
+</div>
+
+<div class="table-wrap">
+
+<table class="table">
+
+<thead>
+
+<tr>
+
+<th>Status</th>
+<th>Records</th>
+<th>Amount</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>
+<span class="badge badge-paid">
+Paid
+</span>
+</td>
+
+<td id="paidPaymentCount">
+0
+</td>
+
+<td class="money" id="paidPaymentAmount">
+0
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+<span class="badge badge-pending">
+Pending
+</span>
+</td>
+
+<td id="pendingPaymentCount">
+0
+</td>
+
+<td class="money" id="pendingPaymentAmount">
+0
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="section-head">
+
+<h2>Teacher Salary</h2>
+
+<a class="btn" href="salaries.html">
+Manage
+</a>
+
+</div>
+
+<div class="table-wrap">
+
+<table class="table">
+
+<thead>
+
+<tr>
+
+<th>Status</th>
+<th>Records</th>
+<th>Amount</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>
+<span class="badge badge-paid">
+Paid
+</span>
+</td>
+
+<td id="paidSalaryCount">
+0
+</td>
+
+<td class="money" id="paidSalaryAmount">
+0
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+<span class="badge badge-pending">
+Pending
+</span>
+</td>
+
+<td id="pendingSalaryCount">
+0
+</td>
+
+<td class="money" id="pendingSalaryAmount">
+0
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =========================
+     SYSTEM ACTIVITY
+========================= -->
+
+<div class="card">
+
+<div class="section-head">
+
+<h2>Academy Overview</h2>
+
+</div>
+
+<div class="table-wrap">
+
+<table class="table">
+
+<thead>
+
+<tr>
+
+<th>Item</th>
+<th>Current Count</th>
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+<td>Students</td>
+<td id="overviewStudents">0</td>
+<td><a class="btn" href="students.html">Open</a></td>
+</tr>
+
+<tr>
+<td>Teachers</td>
+<td id="overviewTeachers">0</td>
+<td><a class="btn" href="teachers.html">Open</a></td>
+</tr>
+
+<tr>
+<td>Courses</td>
+<td id="overviewCourses">0</td>
+<td><a class="btn" href="courses.html">Open</a></td>
+</tr>
+
+<tr>
+<td>Active Schedules</td>
+<td id="overviewSchedules">0</td>
+<td><a class="btn" href="schedule.html">Open</a></td>
+</tr>
+
+<tr>
+<td>Notifications</td>
+<td id="overviewNotifications">0</td>
+<td><a class="btn" href="notifications.html">Open</a></td>
+</tr>
+
+</tbody>
 
 </table>
 
@@ -229,126 +966,884 @@ Welcome, <b data-admin-name>Admin</b>
 
 
 <script>
+/* =========================================================
+   ADMIN DASHBOARD
+   Supabase connection comes from ../js/admin.js
+========================================================= */
 
 (async()=>{
 
+"use strict";
+
+
+/* -----------------------------------------
+   Helpers
+----------------------------------------- */
+
+const $ = id => document.getElementById(id);
+
+const moneyFormat = (amount,currency="") => {
+
+  const n = Number(amount || 0);
+
+  const value = n.toLocaleString(undefined,{
+    minimumFractionDigits:0,
+    maximumFractionDigits:2
+  });
+
+  return currency ? `${value} ${currency}` : value;
+
+};
+
+
+const setText = (id,value) => {
+
+  const el = $(id);
+
+  if(el) el.textContent = value ?? 0;
+
+};
+
+
+const statusBadge = status => {
+
+  const s = String(status || "upcoming").toLowerCase();
+
+  let cls = "badge-upcoming";
+
+  if(s === "active") cls = "badge-active";
+  if(s === "late") cls = "badge-late";
+  if(s === "completed") cls = "badge-paid";
+
+  return `<span class="badge ${cls}">${escapeHtml(s)}</span>`;
+
+};
+
+
+const getTodayName = () => {
+
+  return new Intl.DateTimeFormat("en-US",{
+    weekday:"long",
+    timeZone:"Asia/Karachi"
+  }).format(new Date());
+
+};
+
+
+const formatDate = value => {
+
+  if(!value) return "";
+
+  try{
+
+    return new Date(value).toLocaleDateString(undefined,{
+      year:"numeric",
+      month:"short",
+      day:"numeric",
+      timeZone:"Asia/Karachi"
+    });
+
+  }catch(e){
+
+    return String(value);
+
+  }
+
+};
+
+
+const formatTime = value => {
+
+  if(!value) return "";
+
+  const parts = String(value).split(":");
+
+  let h = Number(parts[0]);
+  const m = parts[1] || "00";
+
+  const suffix = h >= 12 ? "PM" : "AM";
+
+  h = h % 12 || 12;
+
+  return `${h}:${m} ${suffix}`;
+
+};
+
+
+/* -----------------------------------------
+   Parse class_days safely
+----------------------------------------- */
+
+const parseDays = value => {
+
+  if(Array.isArray(value)) return value;
+
+  if(!value) return [];
+
+  if(typeof value === "string"){
+
+    const trimmed = value.trim();
+
+    if(!trimmed) return [];
+
+    try{
+
+      const parsed = JSON.parse(trimmed);
+
+      if(Array.isArray(parsed)) return parsed;
+
+    }catch(e){}
+
+    return trimmed
+      .replace(/[{}[\]"]/g,"")
+      .split(",")
+      .map(x=>x.trim())
+      .filter(Boolean);
+
+  }
+
+  return [];
+
+};
+
+
+const isTodaySchedule = schedule => {
+
+  const today = getTodayName().toLowerCase();
+
+  const days = parseDays(schedule.class_days)
+    .map(x=>String(x).toLowerCase().trim());
+
+  return days.some(day => {
+
+    if(day === today) return true;
+
+    if(day.startsWith(today.slice(0,3))) return true;
+
+    return false;
+
+  });
+
+};
+
+
+/* -----------------------------------------
+   Determine class status
+----------------------------------------- */
+
+const getClassStatus = schedule => {
+
+  const time = String(schedule.class_time || "");
+
+  if(!time) return "upcoming";
+
+  const [h,m] = time.split(":").map(Number);
+
+  const now = new Date();
+
+  const nowPK = new Intl.DateTimeFormat("en-US",{
+    timeZone:"Asia/Karachi",
+    hour:"2-digit",
+    minute:"2-digit",
+    hour12:false
+  }).formatToParts(now);
+
+  const hour = Number(
+    nowPK.find(x=>x.type==="hour")?.value || 0
+  );
+
+  const minute = Number(
+    nowPK.find(x=>x.type==="minute")?.value || 0
+  );
+
+  const current = hour * 60 + minute;
+
+  const start = h * 60 + m;
+
+  const duration = Number(schedule.duration_minutes || 30);
+
+  const end = start + duration;
+
+  if(current < start) return "upcoming";
+
+  if(current >= start && current <= end) return "active";
+
+  return "late";
+
+};
+
+
+/* -----------------------------------------
+   Database
+----------------------------------------- */
+
 if(!window.db){
 
-location.href='login.html';
+  location.href="login.html";
 
-return;
-
-}
-
-
-const g=await adminGuard();
-
-if(!g)return;
-
-
-const [
-
-allR,
-newR,
-contactR,
-enrollR,
-recentR
-
-]=await Promise.all([
-
-db.from('admissions')
-.select('id',{count:'exact',head:true}),
-
-db.from('admissions')
-.select('id',{count:'exact',head:true})
-.eq('status','new'),
-
-db.from('admissions')
-.select('id',{count:'exact',head:true})
-.eq('status','contacted'),
-
-db.from('admissions')
-.select('id',{count:'exact',head:true})
-.eq('status','enrolled'),
-
-db.from('admissions')
-.select('*')
-.order('created_at',{ascending:false})
-.limit(10)
-
-]);
-
-
-if(recentR.error){
-
-document.getElementById('rows').innerHTML=
-
-'<tr><td colspan="5">'+
-escapeHtml(recentR.error.message)+
-'</td></tr>';
-
-return;
+  return;
 
 }
 
 
-const data=recentR.data||[];
+const guardResult = await adminGuard();
+
+if(!guardResult) return;
 
 
-document.getElementById('total')
-.textContent=allR.count||0;
+$("todayText").textContent =
+  new Intl.DateTimeFormat("en-US",{
+    weekday:"long",
+    year:"numeric",
+    month:"long",
+    day:"numeric",
+    timeZone:"Asia/Karachi"
+  }).format(new Date());
 
 
-document.getElementById('new')
-.textContent=newR.count||0;
+/* -----------------------------------------
+   Main loader
+----------------------------------------- */
+
+async function loadDashboard(){
+
+  $("refreshBtn").disabled = true;
+  $("refreshBtn").textContent = "Loading...";
 
 
-document.getElementById('contacted')
-.textContent=contactR.count||0;
+  try{
 
 
-document.getElementById('enrolled')
-.textContent=enrollR.count||0;
+    /* =====================================
+       BASIC COUNTS
+    ===================================== */
+
+    const [
+
+      admissionsCount,
+      newAdmissionsCount,
+      studentsCount,
+      teachersCount,
+      coursesCount,
+      schedulesCount,
+      notificationsCount
+
+    ] = await Promise.all([
 
 
-document.getElementById('rows').innerHTML=
+      db
+      .from("admissions")
+      .select("id",{count:"exact",head:true}),
 
-data.map(x=>`
 
-<tr>
+      db
+      .from("admissions")
+      .select("id",{count:"exact",head:true})
+      .eq("status","new"),
 
-<td>
-${escapeHtml(x.student_name)}
-</td>
 
-<td>
-${escapeHtml(x.course)}
-</td>
+      db
+      .from("students")
+      .select("id",{count:"exact",head:true})
+      .eq("status","active"),
 
-<td>
-${escapeHtml(x.phone)}
-</td>
 
-<td>
-${escapeHtml(x.status)}
-</td>
+      db
+      .from("teachers")
+      .select("id",{count:"exact",head:true})
+      .eq("active",true),
 
-<td>
-${new Date(x.created_at).toLocaleString()}
-</td>
 
-</tr>
+      db
+      .from("courses")
+      .select("id",{count:"exact",head:true})
+      .or("active.eq.true,is_active.eq.true"),
 
-`).join('')
 
-||
+      db
+      .from("class_schedules")
+      .select("id",{count:"exact",head:true})
+      .eq("active",true),
 
-'<tr><td colspan="5">
-No admissions yet.
-</td></tr>';
+
+      db
+      .from("notifications")
+      .select("id",{count:"exact",head:true})
+      .is("read_at",null)
+
+    ]);
+
+
+    setText(
+      "totalLeads",
+      admissionsCount.count || 0
+    );
+
+    setText(
+      "newLeads",
+      newAdmissionsCount.count || 0
+    );
+
+    setText(
+      "totalStudents",
+      studentsCount.count || 0
+    );
+
+    setText(
+      "totalTeachers",
+      teachersCount.count || 0
+    );
+
+    setText(
+      "totalCourses",
+      coursesCount.count || 0
+    );
+
+    setText(
+      "overviewStudents",
+      studentsCount.count || 0
+    );
+
+    setText(
+      "overviewTeachers",
+      teachersCount.count || 0
+    );
+
+    setText(
+      "overviewCourses",
+      coursesCount.count || 0
+    );
+
+    setText(
+      "overviewSchedules",
+      schedulesCount.count || 0
+    );
+
+    setText(
+      "overviewNotifications",
+      notificationsCount.count || 0
+    );
+
+
+    /* =====================================
+       TODAY'S CLASSES
+    ===================================== */
+
+    const scheduleResult = await db
+      .from("class_schedules")
+      .select(`
+        id,
+        student_id,
+        teacher_id,
+        course,
+        class_days,
+        class_time,
+        duration_minutes,
+        active,
+        google_meet_url,
+        classroom_code
+      `)
+      .eq("active",true)
+      .order("class_time",{ascending:true});
+
+
+    if(scheduleResult.error){
+
+      console.error(
+        "Schedule error:",
+        scheduleResult.error
+      );
+
+      $("todayClassRows").innerHTML = `
+        <tr>
+          <td colspan="6" class="empty">
+            Unable to load today's classes.
+          </td>
+        </tr>
+      `;
+
+    }else{
+
+      const todaySchedules =
+        (scheduleResult.data || [])
+        .filter(isTodaySchedule);
+
+
+      setText(
+        "todayClasses",
+        todaySchedules.length
+      );
+
+      setText(
+        "classCountText",
+        `${todaySchedules.length} class${todaySchedules.length === 1 ? "" : "es"}`
+      );
+
+
+      /* Get students */
+
+      const studentIds = [
+        ...new Set(
+          todaySchedules
+          .map(x=>x.student_id)
+          .filter(Boolean)
+        )
+      ];
+
+
+      const teacherIds = [
+        ...new Set(
+          todaySchedules
+          .map(x=>x.teacher_id)
+          .filter(Boolean)
+        )
+      ];
+
+
+      let studentMap = {};
+      let teacherMap = {};
+
+
+      if(studentIds.length){
+
+        const r = await db
+          .from("students")
+          .select("id,full_name,teacher_id,status")
+          .in("id",studentIds);
+
+        if(!r.error){
+
+          (r.data || []).forEach(student=>{
+
+            studentMap[student.id] = student;
+
+          });
+
+        }
+
+      }
+
+
+      if(teacherIds.length){
+
+        const r = await db
+          .from("teachers")
+          .select("id,name")
+          .in("id",teacherIds);
+
+        if(!r.error){
+
+          (r.data || []).forEach(teacher=>{
+
+            teacherMap[teacher.id] = teacher;
+
+          });
+
+        }
+
+      }
+
+
+      if(!todaySchedules.length){
+
+        $("todayClassRows").innerHTML = `
+          <tr>
+            <td colspan="6" class="empty">
+              No classes scheduled for today.
+            </td>
+          </tr>
+        `;
+
+      }else{
+
+        $("todayClassRows").innerHTML =
+          todaySchedules.map(schedule=>{
+
+            const student =
+              studentMap[schedule.student_id];
+
+            const teacher =
+              teacherMap[schedule.teacher_id];
+
+            const status =
+              getClassStatus(schedule);
+
+
+            return `
+
+              <tr>
+
+                <td>
+                  <strong>
+                    ${escapeHtml(
+                      student?.full_name ||
+                      "Unknown Student"
+                    )}
+                  </strong>
+                </td>
+
+                <td>
+                  ${escapeHtml(
+                    teacher?.name ||
+                    "Unknown Teacher"
+                  )}
+                </td>
+
+                <td>
+                  ${escapeHtml(
+                    schedule.course || "-"
+                  )}
+                </td>
+
+                <td class="class-time">
+                  ${escapeHtml(
+                    formatTime(schedule.class_time)
+                  )}
+                </td>
+
+                <td>
+                  ${escapeHtml(
+                    String(
+                      schedule.duration_minutes || 30
+                    )
+                  )} min
+                </td>
+
+                <td>
+                  ${statusBadge(status)}
+                </td>
+
+              </tr>
+
+            `;
+
+          }).join("");
+
+      }
+
+    }
+
+
+    /* =====================================
+       RECENT ADMISSIONS
+    ===================================== */
+
+    const admissionsResult = await db
+      .from("admissions")
+      .select(
+        "id,student_name,course,phone,status,created_at"
+      )
+      .order("created_at",{ascending:false})
+      .limit(10);
+
+
+    if(admissionsResult.error){
+
+      $("admissionRows").innerHTML = `
+        <tr>
+          <td colspan="5" class="empty">
+            ${escapeHtml(
+              admissionsResult.error.message
+            )}
+          </td>
+        </tr>
+      `;
+
+    }else{
+
+      const rows = admissionsResult.data || [];
+
+
+      if(!rows.length){
+
+        $("admissionRows").innerHTML = `
+          <tr>
+            <td colspan="5" class="empty">
+              No admissions yet.
+            </td>
+          </tr>
+        `;
+
+      }else{
+
+        $("admissionRows").innerHTML =
+          rows.map(x=>{
+
+            const status =
+              String(x.status || "new")
+              .toLowerCase();
+
+            let badgeClass = "badge-new";
+
+            if(status === "contacted")
+              badgeClass = "badge-contacted";
+
+            if(status === "enrolled")
+              badgeClass = "badge-enrolled";
+
+
+            return `
+
+              <tr>
+
+                <td>
+                  ${escapeHtml(
+                    x.student_name || "-"
+                  )}
+                </td>
+
+                <td>
+                  ${escapeHtml(
+                    x.course || "-"
+                  )}
+                </td>
+
+                <td>
+                  ${escapeHtml(
+                    x.phone || "-"
+                  )}
+                </td>
+
+                <td>
+                  <span class="badge ${badgeClass}">
+                    ${escapeHtml(status)}
+                  </span>
+                </td>
+
+                <td>
+                  ${escapeHtml(
+                    formatDate(x.created_at)
+                  )}
+                </td>
+
+              </tr>
+
+            `;
+
+          }).join("");
+
+      }
+
+    }
+
+
+    /* =====================================
+       STUDENT PAYMENTS
+    ===================================== */
+
+    const paymentsResult = await db
+      .from("student_payments")
+      .select("id,amount,currency,status");
+
+
+    let paidPaymentCount = 0;
+    let pendingPaymentCount = 0;
+
+    let paidPaymentAmount = 0;
+    let pendingPaymentAmount = 0;
+
+    let paymentCurrency = "";
+
+
+    if(!paymentsResult.error){
+
+      (paymentsResult.data || []).forEach(payment=>{
+
+        const amount =
+          Number(payment.amount || 0);
+
+        const status =
+          String(payment.status || "")
+          .toLowerCase();
+
+        paymentCurrency =
+          paymentCurrency ||
+          payment.currency ||
+          "";
+
+
+        if(status === "paid"){
+
+          paidPaymentCount++;
+          paidPaymentAmount += amount;
+
+        }else{
+
+          pendingPaymentCount++;
+          pendingPaymentAmount += amount;
+
+        }
+
+      });
+
+    }
+
+
+    setText(
+      "paidPaymentCount",
+      paidPaymentCount
+    );
+
+    setText(
+      "pendingPaymentCount",
+      pendingPaymentCount
+    );
+
+    setText(
+      "paidPaymentAmount",
+      moneyFormat(
+        paidPaymentAmount,
+        paymentCurrency
+      )
+    );
+
+    setText(
+      "pendingPaymentAmount",
+      moneyFormat(
+        pendingPaymentAmount,
+        paymentCurrency
+      )
+    );
+
+    setText(
+      "pendingPayments",
+      pendingPaymentCount
+    );
+
+
+    /* =====================================
+       TEACHER SALARIES
+    ===================================== */
+
+    const salariesResult = await db
+      .from("teacher_salaries")
+      .select("id,amount,currency,status");
+
+
+    let paidSalaryCount = 0;
+    let pendingSalaryCount = 0;
+
+    let paidSalaryAmount = 0;
+    let pendingSalaryAmount = 0;
+
+    let salaryCurrency = "";
+
+
+    if(!salariesResult.error){
+
+      (salariesResult.data || []).forEach(salary=>{
+
+        const amount =
+          Number(salary.amount || 0);
+
+        const status =
+          String(salary.status || "")
+          .toLowerCase();
+
+        salaryCurrency =
+          salaryCurrency ||
+          salary.currency ||
+          "";
+
+
+        if(status === "paid"){
+
+          paidSalaryCount++;
+          paidSalaryAmount += amount;
+
+        }else{
+
+          pendingSalaryCount++;
+          pendingSalaryAmount += amount;
+
+        }
+
+      });
+
+    }
+
+
+    setText(
+      "paidSalaryCount",
+      paidSalaryCount
+    );
+
+    setText(
+      "pendingSalaryCount",
+      pendingSalaryCount
+    );
+
+    setText(
+      "paidSalaryAmount",
+      moneyFormat(
+        paidSalaryAmount,
+        salaryCurrency
+      )
+    );
+
+    setText(
+      "pendingSalaryAmount",
+      moneyFormat(
+        pendingSalaryAmount,
+        salaryCurrency
+      )
+    );
+
+    setText(
+      "pendingSalary",
+      pendingSalaryCount
+    );
+
+
+    /* =====================================
+       SUCCESS MESSAGE
+    ===================================== */
+
+    showMsg(
+      "dashboardMsg",
+      "Dashboard updated successfully.",
+      "ok"
+    );
+
+
+  }catch(error){
+
+    console.error(error);
+
+    showMsg(
+      "dashboardMsg",
+      error.message || "Dashboard loading failed.",
+      "error"
+    );
+
+  }finally{
+
+    $("refreshBtn").disabled = false;
+    $("refreshBtn").textContent = "↻ Refresh";
+
+  }
+
+}
+
+
+/* =========================================
+   REFRESH BUTTON
+========================================= */
+
+$("refreshBtn").addEventListener(
+  "click",
+  loadDashboard
+);
+
+
+/* =========================================
+   START
+========================================= */
+
+await loadDashboard();
+
 
 })();
-
 </script>
 
 </body>
