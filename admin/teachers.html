@@ -1,108 +1,309 @@
 <!doctype html>
 <html lang="en">
+
 <head>
+
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1"
+>
 
 <title>Teachers | Admin</title>
 
-<link rel="stylesheet" href="../css/admin.css">
+<link
+  rel="stylesheet"
+  href="../css/admin.css"
+>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="../js/config.js"></script>
+
 <script src="../js/admin.js"></script>
+
 </head>
+
 
 <body>
 
 <div class="admin-layout">
 
+
+<!-- =====================================================
+     SIDEBAR
+===================================================== -->
+
 <aside class="sidebar">
 
 <div class="brand">
+
 HR Admin
-<span>Haroon Ibn Rasheed Online Quran Academy</span>
+
+<span>
+Haroon Ibn Rasheed Online Quran Academy
+</span>
+
 </div>
+
 
 <nav class="nav">
 
-<a href="dashboard.html">Dashboard</a>
-<a href="admissions.html">Admissions / Leads</a>
-<a href="users.html">Portal Users</a>
-<a href="students.html">Students</a>
-<a href="enrollments.html">Enrollments</a>
-<a class="active" href="teachers.html">Teachers</a>
-<a href="schedule.html">Schedule</a>
-<a href="classes.html">Classes</a>
-<a href="attendance.html">Attendance</a>
-<a href="payments.html">Payments</a>
-<a href="leaves.html">Leaves</a>
-<a href="salaries.html">Salaries</a>
-<a href="courses.html">Courses</a>
-<a href="fees.html">Fees</a>
-<a href="payment-methods.html">Payment Methods</a>
-<a href="messages.html">Messages</a>
-<a href="testimonials.html">Testimonials</a>
-<a href="articles.html">Blog / Articles</a>
-<a href="notifications.html">Notifications</a>
-<a href="faqs.html">FAQs</a>
-<a href="content.html">Website Content</a>
-<a href="settings.html">Settings</a>
-<a href="../index.html">View Website</a>
-<a href="#" onclick="logout();return false">Logout</a>
+<a href="dashboard.html">
+Dashboard
+</a>
+
+<a href="admissions.html">
+Admissions / Leads
+</a>
+
+<a href="users.html">
+Portal Users
+</a>
+
+<a href="students.html">
+Students
+</a>
+
+<a
+  class="active"
+  href="teachers.html"
+>
+Teachers
+</a>
+
+<a href="enrollments.html">
+Enrollments
+</a>
+
+<a href="courses.html">
+Courses
+</a>
+
+<a href="schedule.html">
+Schedule
+</a>
+
+<a href="classes.html">
+Classes
+</a>
+
+<a href="attendance.html">
+Attendance
+</a>
+
+<a href="payments.html">
+Payments
+</a>
+
+<a href="leaves.html">
+Leaves
+</a>
+
+<a href="salaries.html">
+Salaries
+</a>
+
+<a href="fees.html">
+Fees
+</a>
+
+<a href="payment-methods.html">
+Payment Methods
+</a>
+
+<a href="messages.html">
+Messages
+</a>
+
+<a href="testimonials.html">
+Testimonials
+</a>
+
+<a href="articles.html">
+Blog / Articles
+</a>
+
+<a href="notifications.html">
+Notifications
+</a>
+
+<a href="faqs.html">
+FAQs
+</a>
+
+<a href="content.html">
+Website Content
+</a>
+
+<a href="settings.html">
+Settings
+</a>
+
+<a href="../index.html">
+View Website
+</a>
+
+<a
+  href="#"
+  onclick="logout();return false"
+>
+Logout
+</a>
 
 </nav>
+
 </aside>
 
 
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
 <main class="main">
 
+
 <div class="top">
-<h1>Teachers</h1>
+
+<h1>
+Teachers
+</h1>
+
 </div>
 
-<div id="msg" class="msg"></div>
+
+<div
+  id="msg"
+  class="msg"
+></div>
 
 
-<!-- CREATE TEACHER -->
+<!-- =====================================================
+     SUMMARY
+===================================================== -->
+
+<div
+style="
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:15px;
+margin-bottom:20px;
+"
+>
+
 
 <div class="card">
 
-<h2>Create Teacher Account</h2>
+<small>
+Total Teachers
+</small>
 
-<form id="teacherForm" class="form-grid">
+<h2 id="totalTeachers">
+0
+</h2>
+
+</div>
+
+
+<div class="card">
+
+<small>
+Active Teachers
+</small>
+
+<h2 id="activeTeachers">
+0
+</h2>
+
+</div>
+
+
+<div class="card">
+
+<small>
+Inactive Teachers
+</small>
+
+<h2 id="inactiveTeachers">
+0
+</h2>
+
+</div>
+
+
+<div class="card">
+
+<small>
+Total Assigned Students
+</small>
+
+<h2 id="totalAssignedStudents">
+0
+</h2>
+
+</div>
+
+
+</div>
+
+
+<!-- =====================================================
+     CREATE TEACHER
+===================================================== -->
+
+<div class="card">
+
+<h2>
+Create Teacher Account
+</h2>
+
+
+<form
+id="teacherForm"
+class="form-grid"
+>
+
 
 <div class="field">
 
-<label>Teacher Name</label>
+<label>
+Teacher Name
+</label>
 
 <input
 id="teacher_name"
 class="input"
 type="text"
 placeholder="Enter teacher name"
-required>
+required
+>
 
 </div>
 
 
 <div class="field">
 
-<label>Email</label>
+<label>
+Email
+</label>
 
 <input
 id="teacher_email"
 class="input"
 type="email"
 placeholder="teacher@example.com"
-required>
+required
+>
 
 </div>
 
 
 <div class="field">
 
-<label>Password</label>
+<label>
+Password
+</label>
 
 <input
 id="teacher_password"
@@ -110,20 +311,26 @@ class="input"
 type="password"
 placeholder="Create password"
 required
-minlength="6">
+minlength="6"
+>
 
 </div>
 
 
 <div class="field">
 
-<label>Gender</label>
+<label>
+Gender
+</label>
 
 <select
 id="teacher_gender"
-class="input">
+class="input"
+>
 
-<option value="">Select Gender</option>
+<option value="">
+Select Gender
+</option>
 
 <option value="Male">
 Male
@@ -138,16 +345,17 @@ Female
 </div>
 
 
-<!-- TIMEZONE -->
-
 <div class="field">
 
-<label>Teacher Time Zone</label>
+<label>
+Teacher Time Zone
+</label>
 
 <select
 id="teacher_timezone"
 class="input"
-required>
+required
+>
 
 <option value="Asia/Karachi">
 Asia/Karachi — Pakistan
@@ -161,10 +369,10 @@ display:block;
 margin-top:6px;
 opacity:.7;
 line-height:1.4;
-">
+"
+>
 
 Select the teacher's local IANA time zone.
-All supported time zones are available.
 
 </small>
 
@@ -173,13 +381,16 @@ All supported time zones are available.
 
 <div class="field full">
 
-<label>Bio</label>
+<label>
+Bio
+</label>
 
 <textarea
 id="teacher_bio"
 class="input"
 rows="4"
-placeholder="Teacher bio"></textarea>
+placeholder="Teacher bio"
+></textarea>
 
 </div>
 
@@ -189,7 +400,8 @@ placeholder="Teacher bio"></textarea>
 <button
 id="createTeacherBtn"
 class="btn"
-type="submit">
+type="submit"
+>
 
 Create Teacher Account
 
@@ -202,11 +414,54 @@ Create Teacher Account
 </div>
 
 
-<!-- TEACHER LIST -->
+<!-- =====================================================
+     SEARCH
+===================================================== -->
 
 <div class="card">
 
-<h2>All Teachers</h2>
+<div
+style="
+display:grid;
+grid-template-columns:1fr auto;
+gap:10px;
+"
+>
+
+<input
+id="teacherSearch"
+class="input"
+type="search"
+placeholder="Search teacher by name, gender or timezone..."
+oninput="renderTeachers()"
+>
+
+
+<button
+class="btn"
+type="button"
+onclick="resetSearch()"
+>
+
+Reset
+
+</button>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     TEACHER LIST
+===================================================== -->
+
+<div class="card">
+
+<h2>
+All Teachers
+</h2>
+
 
 <div class="table-wrap">
 
@@ -216,21 +471,45 @@ Create Teacher Account
 
 <tr>
 
-<th>Name</th>
+<th>
+Name
+</th>
 
-<th>Gender</th>
+<th>
+Gender
+</th>
 
-<th>Bio</th>
+<th>
+Bio
+</th>
 
-<th>Time Zone</th>
+<th>
+Time Zone
+</th>
 
-<th>Status</th>
+<th>
+Students
+</th>
 
-<th>Classroom</th>
+<th>
+Classes
+</th>
 
-<th>Account ID</th>
+<th>
+Status
+</th>
 
-<th>Actions</th>
+<th>
+Classroom
+</th>
+
+<th>
+Account ID
+</th>
+
+<th>
+Actions
+</th>
 
 </tr>
 
@@ -241,7 +520,7 @@ Create Teacher Account
 
 <tr>
 
-<td colspan="8">
+<td colspan="10">
 Loading...
 </td>
 
@@ -254,6 +533,168 @@ Loading...
 </div>
 
 </div>
+
+
+<!-- =====================================================
+     EDIT TEACHER MODAL
+===================================================== -->
+
+<div
+id="editModal"
+style="
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.55);
+z-index:9999;
+align-items:center;
+justify-content:center;
+padding:20px;
+"
+>
+
+
+<div
+class="card"
+style="
+width:100%;
+max-width:600px;
+max-height:90vh;
+overflow:auto;
+"
+>
+
+
+<h2>
+Edit Teacher
+</h2>
+
+
+<form
+id="editTeacherForm"
+class="form-grid"
+>
+
+
+<input
+type="hidden"
+id="edit_teacher_id"
+>
+
+
+<div class="field">
+
+<label>
+Teacher Name
+</label>
+
+<input
+id="edit_teacher_name"
+class="input"
+required
+>
+
+</div>
+
+
+<div class="field">
+
+<label>
+Gender
+</label>
+
+<select
+id="edit_teacher_gender"
+class="input"
+>
+
+<option value="">
+Select Gender
+</option>
+
+<option value="Male">
+Male
+</option>
+
+<option value="Female">
+Female
+</option>
+
+</select>
+
+</div>
+
+
+<div class="field full">
+
+<label>
+Time Zone
+</label>
+
+<select
+id="edit_teacher_timezone"
+class="input"
+required
+>
+
+</select>
+
+</div>
+
+
+<div class="field full">
+
+<label>
+Bio
+</label>
+
+<textarea
+id="edit_teacher_bio"
+class="input"
+rows="5"
+></textarea>
+
+</div>
+
+
+<div
+class="field full"
+style="
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+"
+>
+
+<button
+class="btn"
+type="submit"
+id="updateTeacherBtn"
+>
+
+Save Changes
+
+</button>
+
+
+<button
+class="btn"
+type="button"
+onclick="closeEditModal()"
+>
+
+Cancel
+
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
 
 </main>
 
@@ -270,16 +711,22 @@ const EDGE_FUNCTION_URL =
 "https://olxytsmwqkrrnutsegtr.supabase.co/functions/v1/create-portal-user";
 
 
+let allTeachers = [];
+
+let classroomMap = {};
+
+let studentCountMap = {};
+
+let scheduleCountMap = {};
+
+
 /* =========================================================
-   TIMEZONE SYSTEM
-   Uses browser-supported IANA time zones.
-   No limited country list.
+   TIMEZONES
 ========================================================= */
 
 function getSupportedTimeZones(){
 
 let zones = [];
-
 
 try{
 
@@ -296,7 +743,7 @@ Intl.supportedValuesOf("timeZone");
 }catch(error){
 
 console.warn(
-"Could not read browser timezone list:",
+"Timezone list unavailable:",
 error
 );
 
@@ -328,16 +775,26 @@ return [...new Set(zones)].sort();
 
 function loadTimeZones(){
 
-const select =
+const zones =
+getSupportedTimeZones();
+
+
+const selects = [
+
 document.getElementById(
 "teacher_timezone"
-);
+),
 
-if(!select){
+document.getElementById(
+"edit_teacher_timezone"
+)
 
-return;
+];
 
-}
+
+selects.forEach(function(select){
+
+if(!select) return;
 
 
 let browserZone =
@@ -352,18 +809,7 @@ Intl.DateTimeFormat()
 .timeZone ||
 "Asia/Karachi";
 
-}catch(error){
-
-console.warn(
-"Browser timezone unavailable:",
-error
-);
-
-}
-
-
-const zones =
-getSupportedTimeZones();
+}catch(error){}
 
 
 select.innerHTML = "";
@@ -372,7 +818,9 @@ select.innerHTML = "";
 zones.forEach(function(zone){
 
 const option =
-document.createElement("option");
+document.createElement(
+"option"
+);
 
 option.value =
 zone;
@@ -380,22 +828,59 @@ zone;
 option.textContent =
 zone;
 
-select.appendChild(option);
+select.appendChild(
+option
+);
 
 });
 
 
-if(zones.includes(browserZone)){
-
 select.value =
-browserZone;
+zones.includes(browserZone)
+? browserZone
+: "Asia/Karachi";
 
-}else{
-
-select.value =
-"Asia/Karachi";
+});
 
 }
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHtml(value){
+
+return String(value ?? "")
+.replace(/[&<>"']/g,function(char){
+
+return {
+
+"&":"&amp;",
+"<":"&lt;",
+">":"&gt;",
+'"':"&quot;",
+"'":"&#39;"
+
+}[char];
+
+});
+
+}
+
+
+/* =========================================================
+   ESCAPE JS
+========================================================= */
+
+function escapeJs(value){
+
+return String(value || "")
+.replace(/\\/g,"\\\\")
+.replace(/'/g,"\\'")
+.replace(/"/g,'\\"')
+.replace(/\n/g," ")
+.replace(/\r/g," ");
 
 }
 
@@ -406,34 +891,47 @@ select.value =
 
 async function loadTeachers(){
 
-const guardResult = await adminGuard();
+const guardResult =
+await adminGuard();
 
 if(!guardResult) return;
 
 
 const rows =
-document.getElementById("rows");
+document.getElementById(
+"rows"
+);
 
 
 rows.innerHTML = `
+
 <tr>
-<td colspan="8">
+
+<td colspan="10">
 Loading teachers...
 </td>
+
 </tr>
+
 `;
 
 
-/* Get teachers */
+/* -----------------------------------------
+   TEACHERS
+----------------------------------------- */
 
 const {
 data: teachers,
 error: teacherError
-} = await db
+} =
+await db
+
 .from("teachers")
+
 .select(
 "id,name,gender,bio,active,timezone,created_at"
 )
+
 .order(
 "created_at",
 {
@@ -450,67 +948,276 @@ teacherError.message,
 "error"
 );
 
-rows.innerHTML = `
-<tr>
-<td colspan="8">
-Could not load teachers.
-</td>
-</tr>
-`;
-
 return;
 
 }
 
 
-/* Get classroom access */
+allTeachers =
+teachers || [];
+
+
+/* -----------------------------------------
+   CLASSROOMS
+----------------------------------------- */
 
 const {
-data: classrooms,
-error: classroomError
-} = await db
+data: classrooms
+} =
+await db
+
 .from("class_access")
+
 .select(
 "teacher_id,access_code,room,active"
 )
+
 .eq(
 "role",
 "teacher"
 );
 
 
-if(classroomError){
-
-console.warn(
-"Classroom data could not be loaded:",
-classroomError.message
-);
-
-}
+classroomMap = {};
 
 
-/* Create classroom lookup */
+(classrooms || [])
+.forEach(function(c){
 
-const classroomMap = {};
-
-(classrooms || []).forEach(
-function(c){
-
-classroomMap[c.teacher_id] = c;
+classroomMap[
+c.teacher_id
+] = c;
 
 });
 
 
-/* No teachers */
+/* -----------------------------------------
+   STUDENTS
+----------------------------------------- */
 
-if(!teachers || teachers.length === 0){
+const {
+data: students
+} =
+await db
+
+.from("students")
+
+.select(
+"id,teacher_id"
+);
+
+
+studentCountMap = {};
+
+
+(students || [])
+.forEach(function(student){
+
+if(!student.teacher_id)
+return;
+
+
+studentCountMap[
+student.teacher_id
+] =
+(
+studentCountMap[
+student.teacher_id
+] || 0
+) + 1;
+
+});
+
+
+/* -----------------------------------------
+   SCHEDULES
+----------------------------------------- */
+
+const {
+data: schedules
+} =
+await db
+
+.from("class_schedules")
+
+.select(
+"id,teacher_id"
+);
+
+
+scheduleCountMap = {};
+
+
+(schedules || [])
+.forEach(function(schedule){
+
+if(!schedule.teacher_id)
+return;
+
+
+scheduleCountMap[
+schedule.teacher_id
+] =
+(
+scheduleCountMap[
+schedule.teacher_id
+] || 0
+) + 1;
+
+});
+
+
+updateSummary();
+
+renderTeachers();
+
+}
+
+
+/* =========================================================
+   SUMMARY
+========================================================= */
+
+function updateSummary(){
+
+const total =
+allTeachers.length;
+
+
+const active =
+allTeachers.filter(
+function(t){
+
+return t.active === true;
+
+}
+).length;
+
+
+const inactive =
+total - active;
+
+
+let students = 0;
+
+
+Object.keys(
+studentCountMap
+).forEach(function(id){
+
+students +=
+Number(
+studentCountMap[id] || 0
+);
+
+});
+
+
+document.getElementById(
+"totalTeachers"
+).textContent =
+total;
+
+
+document.getElementById(
+"activeTeachers"
+).textContent =
+active;
+
+
+document.getElementById(
+"inactiveTeachers"
+).textContent =
+inactive;
+
+
+document.getElementById(
+"totalAssignedStudents"
+).textContent =
+students;
+
+}
+
+
+/* =========================================================
+   RENDER
+========================================================= */
+
+function renderTeachers(){
+
+const rows =
+document.getElementById(
+"rows"
+);
+
+
+const search =
+String(
+document.getElementById(
+"teacherSearch"
+)?.value || ""
+)
+.toLowerCase()
+.trim();
+
+
+const filtered =
+allTeachers.filter(
+function(t){
+
+if(!search)
+return true;
+
+
+const text = [
+
+t.name,
+
+t.gender,
+
+t.bio,
+
+t.timezone,
+
+t.id
+
+]
+.map(
+function(v){
+
+return String(
+v || ""
+).toLowerCase();
+
+}
+)
+.join(" ");
+
+
+return text.includes(
+search
+);
+
+});
+
+
+if(!filtered.length){
 
 rows.innerHTML = `
+
 <tr>
-<td colspan="8">
+
+<td
+colspan="10"
+style="text-align:center"
+>
+
 No teachers found.
+
 </td>
+
 </tr>
+
 `;
 
 return;
@@ -518,17 +1225,52 @@ return;
 }
 
 
-/* Render */
-
 rows.innerHTML =
-teachers.map(
+filtered.map(
 function(t){
 
 const classroom =
 classroomMap[t.id];
 
 
-let classroomHtml = "";
+const students =
+studentCountMap[t.id] || 0;
+
+
+const schedules =
+scheduleCountMap[t.id] || 0;
+
+
+const statusHtml =
+t.active
+
+?
+
+`<span
+style="
+color:green;
+font-weight:600;
+"
+>
+Active
+</span>`
+
+:
+
+`<span
+style="
+color:#b45309;
+font-weight:600;
+"
+>
+Inactive
+</span>`;
+
+
+let classroomHtml =
+`<span style="opacity:.65">
+No Classroom
+</span>`;
 
 
 if(classroom){
@@ -536,115 +1278,115 @@ if(classroom){
 classroomHtml = `
 
 <div>
+
 <strong>
 ${escapeHtml(
 classroom.access_code || ""
 )}
 </strong>
+
 </div>
 
-<div style="font-size:12px;opacity:.75">
-${classroom.active
+<div
+style="
+font-size:12px;
+opacity:.75;
+"
+>
+
+${
+classroom.active
 ? "Classroom Active"
-: "Classroom Disabled"}
+: "Classroom Disabled"
+}
+
 </div>
 
-`;
-
-}else{
-
-classroomHtml = `
-<span style="opacity:.65">
-No Classroom
-</span>
 `;
 
 }
 
 
-/* Status */
+const actions = t.active
 
-const statusHtml = t.active
+?
 
-? `<span style="color:green;font-weight:600">
-Active
-</span>`
-
-: `<span style="color:#b45309;font-weight:600">
-Inactive
-</span>`;
-
-
-/* Timezone */
-
-const teacherTimezone =
-t.timezone ||
-"Asia/Karachi";
-
-
-const timezoneHtml = `
-
-<small
-style="
-font-size:12px;
-word-break:break-word;
-">
-
-${escapeHtml(teacherTimezone)}
-
-</small>
-
-`;
-
-
-/* Action */
-
-const actionHtml = t.active
-
-? `
+`
 
 <button
 type="button"
 class="btn"
 style="margin:2px"
-onclick="deactivateTeacher('${t.id}')">
-
-Deactivate
-
+onclick="openEditModal('${t.id}')"
+>
+Edit
 </button>
+
 
 <button
 type="button"
 class="btn"
-style="margin:2px;background:#b91c1c"
-onclick="deleteTeacher('${t.id}','${escapeJs(t.name || "")}')">
+style="margin:2px"
+onclick="deactivateTeacher('${t.id}')"
+>
+Deactivate
+</button>
 
+
+<button
+type="button"
+class="btn"
+style="
+margin:2px;
+background:#b91c1c;
+"
+onclick="deleteTeacher(
+'${t.id}',
+'${escapeJs(t.name || "")}'
+)"
+>
 Delete
-
 </button>
 
 `
 
-: `
+:
+
+`
 
 <button
 type="button"
 class="btn"
 style="margin:2px"
-onclick="activateTeacher('${t.id}')">
-
-Activate
-
+onclick="openEditModal('${t.id}')"
+>
+Edit
 </button>
+
 
 <button
 type="button"
 class="btn"
-style="margin:2px;background:#b91c1c"
-onclick="deleteTeacher('${t.id}','${escapeJs(t.name || "")}')">
+style="margin:2px"
+onclick="activateTeacher('${t.id}')"
+>
+Activate
+</button>
 
+
+<button
+type="button"
+class="btn"
+style="
+margin:2px;
+background:#b91c1c;
+"
+onclick="deleteTeacher(
+'${t.id}',
+'${escapeJs(t.name || "")}'
+)"
+>
 Delete
-
 </button>
 
 `;
@@ -655,22 +1397,48 @@ return `
 <tr>
 
 <td>
+<strong>
 ${escapeHtml(t.name || "")}
+</strong>
 </td>
 
 
 <td>
-${escapeHtml(t.gender || "")}
+${escapeHtml(t.gender || "-")}
 </td>
 
 
 <td>
-${escapeHtml(t.bio || "")}
+${escapeHtml(t.bio || "-")}
 </td>
 
 
 <td>
-${timezoneHtml}
+
+<small
+style="
+font-size:12px;
+word-break:break-word;
+"
+>
+
+${escapeHtml(
+t.timezone ||
+"Asia/Karachi"
+)}
+
+</small>
+
+</td>
+
+
+<td>
+${students}
+</td>
+
+
+<td>
+${schedules}
 </td>
 
 
@@ -684,13 +1452,32 @@ ${classroomHtml}
 </td>
 
 
-<td style="font-size:11px;word-break:break-all">
+<td
+style="
+font-size:11px;
+word-break:break-all;
+"
+>
+
 ${escapeHtml(t.id || "")}
+
 </td>
 
 
 <td>
-${actionHtml}
+
+<div
+style="
+display:flex;
+flex-wrap:wrap;
+gap:4px;
+"
+>
+
+${actions}
+
+</div>
+
 </td>
 
 </tr>
@@ -698,23 +1485,23 @@ ${actionHtml}
 `;
 
 }
-).join("");
+)
+.join("");
 
 }
 
 
 /* =========================================================
-   ESCAPE JS STRING
+   RESET SEARCH
 ========================================================= */
 
-function escapeJs(value){
+function resetSearch(){
 
-return String(value || "")
-.replace(/\\/g,"\\\\")
-.replace(/'/g,"\\'")
-.replace(/"/g,'\\"')
-.replace(/\n/g," ")
-.replace(/\r/g," ");
+document.getElementById(
+"teacherSearch"
+).value = "";
+
+renderTeachers();
 
 }
 
@@ -724,7 +1511,9 @@ return String(value || "")
 ========================================================= */
 
 document
-.getElementById("teacherForm")
+.getElementById(
+"teacherForm"
+)
 .addEventListener(
 "submit",
 async function(e){
@@ -745,47 +1534,52 @@ button.textContent =
 
 
 const name =
-document
-.getElementById("teacher_name")
+document.getElementById(
+"teacher_name"
+)
 .value
 .trim();
 
 
 const email =
-document
-.getElementById("teacher_email")
+document.getElementById(
+"teacher_email"
+)
 .value
 .trim();
 
 
 const password =
-document
-.getElementById("teacher_password")
+document.getElementById(
+"teacher_password"
+)
 .value;
 
 
 const gender =
-document
-.getElementById("teacher_gender")
+document.getElementById(
+"teacher_gender"
+)
 .value;
 
 
 const bio =
-document
-.getElementById("teacher_bio")
+document.getElementById(
+"teacher_bio"
+)
 .value
 .trim();
 
 
 const timezone =
-document
-.getElementById("teacher_timezone")
+document.getElementById(
+"teacher_timezone"
+)
 .value
 .trim();
 
 
 try{
-
 
 if(!timezone){
 
@@ -797,7 +1591,7 @@ throw new Error(
 
 
 const {
-data: {
+data:{
 session
 }
 } =
@@ -813,8 +1607,6 @@ return;
 
 }
 
-
-/* Call Edge Function */
 
 const response =
 await fetch(
@@ -878,10 +1670,6 @@ result.error ||
 }
 
 
-/* =====================================================
-   SAVE TIMEZONE
-===================================================== */
-
 const teacherId =
 result.user_id;
 
@@ -894,6 +1682,8 @@ throw new Error(
 
 }
 
+
+/* SAVE TIMEZONE */
 
 const timezoneResult =
 await db
@@ -916,16 +1706,14 @@ teacherId
 if(timezoneResult.error){
 
 throw new Error(
-"Teacher account created, but timezone could not be saved: " +
+"Teacher created, but timezone could not be saved: " +
 timezoneResult.error.message
 );
 
 }
 
 
-/* Success */
-
-let successMessage =
+let message =
 "Teacher account created successfully.";
 
 
@@ -934,21 +1722,21 @@ result.classroom &&
 result.classroom.access_code
 ){
 
-successMessage +=
+message +=
 " Classroom Code: " +
 result.classroom.access_code;
 
 }
 
 
-successMessage +=
+message +=
 " Time Zone: " +
 timezone;
 
 
 showMsg(
 "msg",
-successMessage,
+message,
 "ok"
 );
 
@@ -960,15 +1748,9 @@ document
 .reset();
 
 
-/*
-   Keep safe default after reset.
-*/
-
-document
-.getElementById(
+document.getElementById(
 "teacher_timezone"
-)
-.value =
+).value =
 "Asia/Karachi";
 
 
@@ -1000,7 +1782,206 @@ button.textContent =
 
 
 /* =========================================================
-   DEACTIVATE TEACHER
+   EDIT MODAL
+========================================================= */
+
+function openEditModal(id){
+
+const teacher =
+allTeachers.find(
+function(t){
+
+return String(t.id) ===
+String(id);
+
+}
+);
+
+
+if(!teacher){
+
+alert(
+"Teacher not found."
+);
+
+return;
+
+}
+
+
+document.getElementById(
+"edit_teacher_id"
+).value =
+teacher.id;
+
+
+document.getElementById(
+"edit_teacher_name"
+).value =
+teacher.name || "";
+
+
+document.getElementById(
+"edit_teacher_gender"
+).value =
+teacher.gender || "";
+
+
+document.getElementById(
+"edit_teacher_timezone"
+).value =
+teacher.timezone ||
+"Asia/Karachi";
+
+
+document.getElementById(
+"edit_teacher_bio"
+).value =
+teacher.bio || "";
+
+
+document.getElementById(
+"editModal"
+).style.display =
+"flex";
+
+}
+
+
+/* =========================================================
+   CLOSE MODAL
+========================================================= */
+
+function closeEditModal(){
+
+document.getElementById(
+"editModal"
+).style.display =
+"none";
+
+}
+
+
+/* =========================================================
+   UPDATE TEACHER
+========================================================= */
+
+document
+.getElementById(
+"editTeacherForm"
+)
+.addEventListener(
+"submit",
+async function(e){
+
+e.preventDefault();
+
+
+const button =
+document.getElementById(
+"updateTeacherBtn"
+);
+
+
+button.disabled = true;
+
+button.textContent =
+"Saving...";
+
+
+const id =
+document.getElementById(
+"edit_teacher_id"
+).value;
+
+
+const data = {
+
+name:
+document.getElementById(
+"edit_teacher_name"
+).value.trim(),
+
+gender:
+document.getElementById(
+"edit_teacher_gender"
+).value ||
+null,
+
+bio:
+document.getElementById(
+"edit_teacher_bio"
+).value.trim() ||
+null,
+
+timezone:
+document.getElementById(
+"edit_teacher_timezone"
+).value
+
+};
+
+
+try{
+
+const result =
+await db
+
+.from("teachers")
+
+.update(data)
+
+.eq(
+"id",
+id
+);
+
+
+if(result.error){
+
+throw result.error;
+
+}
+
+
+showMsg(
+"msg",
+"Teacher updated successfully.",
+"ok"
+);
+
+
+closeEditModal();
+
+await loadTeachers();
+
+
+}
+catch(error){
+
+showMsg(
+"msg",
+error.message ||
+"Teacher could not be updated.",
+"error"
+);
+
+}
+finally{
+
+button.disabled = false;
+
+button.textContent =
+"Save Changes";
+
+}
+
+}
+);
+
+
+/* =========================================================
+   DEACTIVATE
 ========================================================= */
 
 async function deactivateTeacher(
@@ -1010,7 +1991,7 @@ teacherId
 if(
 !confirm(
 "Is teacher ko deactivate karna hai?\n\n" +
-"Teacher inactive ho jayega aur Classroom access bhi disable ho jayega."
+"Teacher inactive ho jayega."
 )
 ){
 
@@ -1028,7 +2009,7 @@ teacherId,
 
 
 /* =========================================================
-   ACTIVATE TEACHER
+   ACTIVATE
 ========================================================= */
 
 async function activateTeacher(
@@ -1064,7 +2045,6 @@ action
 ){
 
 try{
-
 
 const {
 data:{
@@ -1165,7 +2145,7 @@ error.message ||
 
 
 /* =========================================================
-   DELETE TEACHER
+   DELETE
 ========================================================= */
 
 async function deleteTeacher(
@@ -1193,7 +2173,7 @@ return;
 const secondConfirm =
 confirm(
 "FINAL CONFIRMATION\n\n" +
-"Teacher account, Classroom access aur related assignment records delete ho jayenge.\n\n" +
+"Teacher account aur related records delete ho sakte hain.\n\n" +
 "Ye action undo nahi kiya ja sakta.\n\n" +
 "Delete permanently?"
 );
@@ -1207,7 +2187,6 @@ return;
 
 
 try{
-
 
 const {
 data:{
@@ -1227,16 +2206,12 @@ return;
 }
 
 
-/* Show deleting message */
-
 showMsg(
 "msg",
 "Deleting teacher...",
 "ok"
 );
 
-
-/* Call Edge Function */
 
 const response =
 await fetch(
