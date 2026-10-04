@@ -1,265 +1,133 @@
 <!doctype html>
 <html lang="en">
-
 <head>
-
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
-<meta name="viewport"
-      content="width=device-width,initial-scale=1">
+<title>Student Profile | Haroon Ibn Rasheed Online Quran Academy</title>
 
-<title>
-Student Profile | Haroon Ibn Rasheed Online Quran Academy
-</title>
-
-<link rel="stylesheet"
-      href="../css/portal.css">
+<link rel="stylesheet" href="../css/portal.css">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script src="../js/config.js"></script>
-
 <script src="../js/portal.js" defer></script>
 
 <style>
-
-*{
-  box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
 body{
   margin:0;
-  background:#f5f7fb;
-  color:#1f2937;
-  font-family:Arial,Helvetica,sans-serif;
+  background:#f5f8fa;
 }
 
-/* =========================
-   SIDEBAR
-========================= */
+.student-shell{
+  min-height:100vh;
+  display:flex;
+}
 
-.sidebar{
+.student-sidebar{
+  width:250px;
+  background:#454d59;
+  color:#fff;
+  padding:25px 18px;
   position:fixed;
   left:0;
   top:0;
-  width:250px;
-  height:100vh;
-  background:#ffffff;
-  border-right:1px solid #e5e7eb;
-  z-index:1000;
+  bottom:0;
   overflow-y:auto;
+  z-index:20;
 }
 
-.sidebar-logo{
-  height:82px;
+.brand{
+  text-align:center;
+  padding-bottom:24px;
+  border-bottom:1px solid rgba(255,255,255,.12);
+}
+
+.brand img{
+  width:72px;
+  height:72px;
+  object-fit:contain;
+  border-radius:50%;
+  background:#fff;
+  padding:5px;
+}
+
+.brand h3{
+  margin:12px 0 4px;
+  font-size:17px;
+}
+
+.brand span{
+  font-size:12px;
+  color:#d9e2e8;
+}
+
+.student-nav{
+  margin-top:22px;
+}
+
+.student-nav a{
   display:flex;
   align-items:center;
-  gap:12px;
-  padding:18px;
-  border-bottom:1px solid #eef0f3;
-}
-
-.hr-logo{
-  width:45px;
-  height:45px;
-  border-radius:12px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:800;
-  font-size:19px;
-  background:#111827;
-  color:#ffffff;
-}
-
-.logo-text{
-  font-size:14px;
-  line-height:1.25;
-  font-weight:700;
-}
-
-.logo-text span{
-  display:block;
-  color:#6b7280;
-  font-size:11px;
-  font-weight:500;
-  margin-top:3px;
-}
-
-.nav{
-  padding:18px 12px;
-}
-
-.nav-title{
-  padding:0 12px 10px;
-  color:#9ca3af;
-  font-size:11px;
-  font-weight:700;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-}
-
-.nav a{
-  display:flex;
-  align-items:center;
-  gap:12px;
+  color:#e9eef2;
   text-decoration:none;
-  color:#4b5563;
   padding:12px 13px;
-  margin-bottom:5px;
-  border-radius:10px;
+  margin:5px 0;
+  border-radius:9px;
   font-size:14px;
   transition:.2s;
 }
 
-.nav a:hover{
-  background:#f3f4f6;
-  color:#111827;
+.student-nav a:hover,
+.student-nav a.active{
+  background:#2f9fba;
+  color:#fff;
 }
 
-.nav a.active{
-  background:#111827;
-  color:#ffffff;
+.logout{
+  margin-top:25px;
+  padding-top:18px;
+  border-top:1px solid rgba(255,255,255,.12);
 }
 
-.nav-icon{
-  width:20px;
-  text-align:center;
-  font-size:16px;
+.logout a{
+  color:#fff;
+  text-decoration:none;
 }
 
-/* =========================
-   MAIN
-========================= */
-
-.main{
+.student-main{
   margin-left:250px;
-  min-height:100vh;
+  width:calc(100% - 250px);
+  padding:30px;
 }
-
-/* =========================
-   TOPBAR
-========================= */
 
 .topbar{
-  height:72px;
-  background:#ffffff;
-  border-bottom:1px solid #e5e7eb;
   display:flex;
-  align-items:center;
   justify-content:space-between;
-  padding:0 28px;
-  position:sticky;
-  top:0;
-  z-index:900;
-}
-
-.page-title{
-  font-size:20px;
-  font-weight:700;
-  color:#111827;
-}
-
-.page-subtitle{
-  font-size:12px;
-  color:#6b7280;
-  margin-top:3px;
-}
-
-.top-user{
-  display:flex;
   align-items:center;
-  gap:10px;
+  margin-bottom:25px;
 }
 
-.top-avatar{
-  width:38px;
-  height:38px;
-  border-radius:50%;
-  background:#111827;
-  color:#fff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:700;
+.topbar h1{
+  margin:0;
+  color:#27313a;
+  font-size:28px;
 }
 
-.top-user-info{
-  line-height:1.2;
+.topbar p{
+  margin:6px 0 0;
+  color:#71808b;
 }
 
-.top-user-name{
-  font-size:13px;
-  font-weight:700;
-}
-
-.top-user-role{
-  font-size:11px;
-  color:#6b7280;
-}
-
-/* =========================
-   CONTENT
-========================= */
-
-.content{
-  padding:28px;
-  max-width:1200px;
-  margin:auto;
-}
-
-/* =========================
-   PROFILE HEADER
-========================= */
-
-.profile-header{
-  background:#111827;
-  color:#ffffff;
-  border-radius:16px;
-  padding:26px;
-  display:flex;
-  align-items:center;
-  gap:20px;
-  margin-bottom:22px;
-}
-
-.profile-avatar{
-  width:82px;
-  height:82px;
-  border-radius:50%;
-  background:#ffffff;
-  color:#111827;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:30px;
-  font-weight:800;
-  flex-shrink:0;
-}
-
-.profile-name{
-  font-size:23px;
-  font-weight:800;
-  margin-bottom:6px;
-}
-
-.profile-email{
-  color:#d1d5db;
+.date-box{
+  background:#fff;
+  border:1px solid #e5eaee;
+  padding:11px 15px;
+  border-radius:10px;
+  color:#52616b;
   font-size:13px;
 }
-
-.profile-role{
-  display:inline-block;
-  margin-top:10px;
-  padding:5px 10px;
-  border-radius:20px;
-  background:rgba(255,255,255,.12);
-  font-size:11px;
-}
-
-/* =========================
-   GRID
-========================= */
 
 .profile-grid{
   display:grid;
@@ -268,32 +136,75 @@ body{
 }
 
 .card{
-  background:#ffffff;
-  border:1px solid #e5e7eb;
+  background:#fff;
+  border:1px solid #e5eaee;
   border-radius:15px;
-  padding:22px;
+  padding:20px;
+  box-shadow:0 4px 14px rgba(30,50,60,.04);
 }
 
 .card.full{
   grid-column:1 / -1;
 }
 
-.card-title{
-  font-size:16px;
-  font-weight:700;
-  color:#111827;
-  margin-bottom:5px;
+.card-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:17px;
 }
 
-.card-subtitle{
-  font-size:12px;
-  color:#6b7280;
+.card-header h2{
+  margin:0;
+  color:#303c45;
+  font-size:18px;
+}
+
+.profile-header{
+  background:linear-gradient(135deg,#2f9fba,#257f98);
+  color:#fff;
+  border-radius:16px;
+  padding:25px;
   margin-bottom:20px;
+  box-shadow:0 8px 25px rgba(47,159,186,.16);
+  display:flex;
+  align-items:center;
+  gap:20px;
 }
 
-/* =========================
-   FORM
-========================= */
+.profile-avatar{
+  width:78px;
+  height:78px;
+  border-radius:50%;
+  background:#fff;
+  color:#2f9fba;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:26px;
+  font-weight:bold;
+  flex-shrink:0;
+}
+
+.profile-name{
+  font-size:23px;
+  font-weight:bold;
+  margin-bottom:6px;
+}
+
+.profile-email{
+  font-size:13px;
+  opacity:.9;
+}
+
+.profile-role{
+  display:inline-block;
+  margin-top:9px;
+  padding:5px 9px;
+  border-radius:20px;
+  background:rgba(255,255,255,.15);
+  font-size:11px;
+}
 
 .form-row{
   display:grid;
@@ -307,9 +218,9 @@ body{
 
 .form-group label{
   display:block;
+  color:#687780;
   font-size:12px;
-  font-weight:700;
-  color:#374151;
+  font-weight:bold;
   margin-bottom:7px;
 }
 
@@ -317,76 +228,78 @@ body{
 .form-group select{
   width:100%;
   height:44px;
-  border:1px solid #d1d5db;
+  border:1px solid #dfe6ea;
   border-radius:9px;
   padding:0 12px;
-  outline:none;
+  background:#fff;
+  color:#34414a;
   font-size:13px;
-  background:#ffffff;
-  color:#111827;
+  outline:none;
 }
 
 .form-group input:focus,
 .form-group select:focus{
-  border-color:#111827;
-  box-shadow:0 0 0 2px rgba(17,24,39,.08);
+  border-color:#2f9fba;
+  box-shadow:0 0 0 2px rgba(47,159,186,.08);
 }
 
 .form-group input[readonly]{
-  background:#f3f4f6;
-  color:#6b7280;
+  background:#f5f8fa;
+  color:#7b8991;
   cursor:not-allowed;
 }
 
 .help-text{
+  margin-top:6px;
+  color:#91a0a8;
   font-size:11px;
-  color:#9ca3af;
-  margin-top:5px;
+  line-height:1.5;
 }
 
 .save-btn{
+  display:inline-block;
+  background:#2f9fba;
+  color:#fff;
   border:0;
-  background:#111827;
-  color:#ffffff;
-  border-radius:9px;
-  padding:11px 20px;
+  padding:10px 17px;
+  border-radius:8px;
   font-size:13px;
-  font-weight:700;
   cursor:pointer;
 }
 
 .save-btn:hover{
-  opacity:.9;
+  background:#287f96;
 }
 
 .save-btn:disabled{
-  opacity:.55;
+  opacity:.6;
   cursor:not-allowed;
 }
 
 .message{
-  margin-top:12px;
-  font-size:12px;
   display:none;
+  margin-top:12px;
+  padding:10px 12px;
+  border-radius:8px;
+  font-size:12px;
 }
 
 .message.success{
   display:block;
-  color:#15803d;
+  background:#eef8f1;
+  color:#287a43;
+  border:1px solid #d8eddd;
 }
 
 .message.error{
   display:block;
-  color:#dc2626;
+  background:#fff3f2;
+  color:#b84d47;
+  border:1px solid #f2d7d5;
 }
-
-/* =========================
-   INFO
-========================= */
 
 .info-list{
   display:grid;
-  gap:0;
 }
 
 .info-item{
@@ -395,7 +308,7 @@ body{
   align-items:center;
   gap:20px;
   padding:13px 0;
-  border-bottom:1px solid #f0f1f3;
+  border-bottom:1px solid #edf0f2;
 }
 
 .info-item:last-child{
@@ -403,45 +316,28 @@ body{
 }
 
 .info-label{
-  color:#6b7280;
+  color:#7a8992;
   font-size:12px;
 }
 
 .info-value{
-  color:#111827;
+  color:#34414a;
   font-size:13px;
-  font-weight:600;
+  font-weight:bold;
   text-align:right;
 }
 
-/* =========================
-   LOADING
-========================= */
-
 .loading{
-  padding:50px 20px;
+  background:#fff;
+  border:1px solid #e5eaee;
+  border-radius:15px;
+  padding:30px;
   text-align:center;
-  color:#6b7280;
+  color:#8a989f;
   font-size:13px;
 }
 
-/* =========================
-   MOBILE
-========================= */
-
-.mobile-menu{
-  display:none;
-}
-
-@media(max-width:850px){
-
-  .sidebar{
-    width:220px;
-  }
-
-  .main{
-    margin-left:220px;
-  }
+@media(max-width:1000px){
 
   .profile-grid{
     grid-template-columns:1fr;
@@ -453,22 +349,50 @@ body{
 
 }
 
-@media(max-width:650px){
+@media(max-width:700px){
 
-  .sidebar{
-    display:none;
+  .student-sidebar{
+    position:relative;
+    width:100%;
+    min-height:auto;
+    padding:15px;
   }
 
-  .main{
+  .student-shell{
+    display:block;
+  }
+
+  .student-main{
     margin-left:0;
+    width:100%;
+    padding:18px 13px;
+  }
+
+  .student-nav{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:4px;
+  }
+
+  .student-nav a{
+    margin:0;
+  }
+
+  .logout{
+    margin-top:12px;
   }
 
   .topbar{
-    padding:0 15px;
+    align-items:flex-start;
+    gap:10px;
   }
 
-  .content{
-    padding:15px;
+  .topbar h1{
+    font-size:22px;
+  }
+
+  .date-box{
+    display:none;
   }
 
   .profile-header{
@@ -478,11 +402,11 @@ body{
   .profile-avatar{
     width:65px;
     height:65px;
-    font-size:23px;
+    font-size:22px;
   }
 
   .profile-name{
-    font-size:18px;
+    font-size:19px;
   }
 
   .form-row{
@@ -490,186 +414,156 @@ body{
     gap:0;
   }
 
-  .top-user-info{
-    display:none;
+  .card{
+    padding:15px;
   }
 
 }
-
 </style>
-
 </head>
-
 
 <body data-page="student-profile">
 
+<div class="student-shell">
 
-<!-- =========================
-     SIDEBAR
-========================= -->
+<aside class="student-sidebar">
 
-<aside class="sidebar">
+  <div class="brand">
 
-  <div class="sidebar-logo">
+    <img
+      src="../assets/hr-logo.svg"
+      alt="HR"
+    >
 
-    <div class="hr-logo">
-      HR
+    <h3>
+      Haroon Ibn Rasheed
+    </h3>
+
+    <span>
+      Student Portal
+    </span>
+
+  </div>
+
+  <nav class="student-nav">
+
+    <a href="dashboard.html">
+      Dashboard
+    </a>
+
+    <a href="profile.html" class="active">
+      Profile
+    </a>
+
+    <a href="teacher.html">
+      My Teacher
+    </a>
+
+    <a href="course.html">
+      My Courses
+    </a>
+
+    <a href="classes.html">
+      My Classes
+    </a>
+
+    <a href="schedule.html">
+      Schedule
+    </a>
+
+    <a href="attendance.html">
+      Attendance
+    </a>
+
+    <a href="fees.html">
+      Fees
+    </a>
+
+    <a href="leaves.html">
+      Leaves
+    </a>
+
+  </nav>
+
+  <div class="logout">
+
+    <a
+      href="#"
+      onclick="portalLogout();return false"
+    >
+      Logout
+    </a>
+
+  </div>
+
+</aside>
+
+
+<main class="student-main">
+
+  <div class="topbar">
+
+    <div>
+
+      <h1>
+        My Profile
+      </h1>
+
+      <p>
+        Manage your student profile
+      </p>
+
     </div>
 
-    <div class="logo-text">
-      Haroon Ibn Rasheed
-      <span>Online Quran Academy</span>
+    <div
+      class="date-box"
+      id="todayDate"
+    >
+      Loading date...
     </div>
 
   </div>
 
 
-  <nav class="nav">
-
-    <div class="nav-title">
-      Student Panel
-    </div>
-
-
-    <a href="./dashboard.html">
-
-      <span class="nav-icon">⌂</span>
-
-      <span>Dashboard</span>
-
-    </a>
+  <div
+    id="loadingBox"
+    class="loading"
+  >
+    Loading profile...
+  </div>
 
 
-    <a href="./schedule.html">
-
-      <span class="nav-icon">▣</span>
-
-      <span>My Schedule</span>
-
-    </a>
-
-
-    <a href="./courses.html">
-
-      <span class="nav-icon">▤</span>
-
-      <span>My Courses</span>
-
-    </a>
-
-
-    <a href="./payments.html">
-
-      <span class="nav-icon">▣</span>
-
-      <span>Payments</span>
-
-    </a>
-
-
-    <a href="./notifications.html">
-
-      <span class="nav-icon">●</span>
-
-      <span>Notifications</span>
-
-    </a>
-
-
-    <a href="./profile.html" class="active">
-
-      <span class="nav-icon">◉</span>
-
-      <span>Profile</span>
-
-    </a>
-
-  </nav>
-
-</aside>
-
-
-<!-- =========================
-     MAIN
-========================= -->
-
-<main class="main">
-
-
-  <!-- TOPBAR -->
-
-  <header class="topbar">
-
-    <div>
-
-      <div class="page-title">
-        My Profile
-      </div>
-
-      <div class="page-subtitle">
-        Manage your student account
-      </div>
-
-    </div>
-
-
-    <div class="top-user">
-
-      <div class="top-user-info">
-
-        <div
-          class="top-user-name"
-          id="topUserName">
-          Student
-        </div>
-
-        <div class="top-user-role">
-          Student
-        </div>
-
-      </div>
-
-
-      <div
-        class="top-avatar"
-        id="topAvatar">
-        S
-      </div>
-
-    </div>
-
-  </header>
-
-
-
-  <!-- CONTENT -->
-
-  <section class="content">
+  <div
+    id="profileContent"
+    style="display:none;"
+  >
 
 
     <!-- PROFILE HEADER -->
 
-    <div class="profile-header">
+    <section class="profile-header">
 
       <div
         class="profile-avatar"
-        id="profileAvatar">
+        id="profileAvatar"
+      >
         S
       </div>
-
 
       <div>
 
         <div
           class="profile-name"
-          id="profileName">
-          Loading...
+          id="profileName"
+        >
+          Student
         </div>
 
         <div
           class="profile-email"
-          id="profileEmail">
-          Loading...
+          id="profileEmail"
+        >
+          —
         </div>
 
         <div class="profile-role">
@@ -678,35 +572,23 @@ body{
 
       </div>
 
-    </div>
+    </section>
 
 
-
-    <div id="loadingBox" class="loading">
-      Loading profile...
-    </div>
+    <div class="profile-grid">
 
 
-    <div
-      id="profileContent"
-      class="profile-grid"
-      style="display:none;">
+      <!-- EDITABLE INFORMATION -->
 
+      <section class="card">
 
-      <!-- =========================
-           EDIT PROFILE
-      ========================= -->
+        <div class="card-header">
 
-      <div class="card">
+          <h2>
+            Personal Information
+          </h2>
 
-        <div class="card-title">
-          Personal Information
         </div>
-
-        <div class="card-subtitle">
-          You can update the information below.
-        </div>
-
 
         <form id="profileForm">
 
@@ -720,8 +602,9 @@ body{
             <input
               id="fullName"
               type="text"
+              placeholder="Enter your full name"
               autocomplete="name"
-              placeholder="Enter your full name">
+            >
 
           </div>
 
@@ -786,39 +669,34 @@ body{
           <button
             type="submit"
             class="save-btn"
-            id="saveBtn">
-
+            id="saveBtn"
+          >
             Save Changes
-
           </button>
 
 
           <div
             id="saveMessage"
-            class="message">
-          </div>
+            class="message"
+          ></div>
 
 
         </form>
 
-      </div>
+      </section>
 
 
+      <!-- ACCOUNT INFORMATION -->
 
-      <!-- =========================
-           ACCOUNT INFORMATION
-      ========================= -->
+      <section class="card">
 
-      <div class="card">
+        <div class="card-header">
 
-        <div class="card-title">
-          Account Information
+          <h2>
+            Account Information
+          </h2>
+
         </div>
-
-        <div class="card-subtitle">
-          Your academy account details.
-        </div>
-
 
         <div class="info-list">
 
@@ -831,7 +709,8 @@ body{
 
             <span
               class="info-value"
-              id="accountEmail">
+              id="accountEmail"
+            >
               —
             </span>
 
@@ -844,8 +723,7 @@ body{
               Account Type
             </span>
 
-            <span
-              class="info-value">
+            <span class="info-value">
               Student
             </span>
 
@@ -855,12 +733,13 @@ body{
           <div class="info-item">
 
             <span class="info-label">
-              Student Status
+              Status
             </span>
 
             <span
               class="info-value"
-              id="accountStatus">
+              id="accountStatus"
+            >
               —
             </span>
 
@@ -875,7 +754,8 @@ body{
 
             <span
               class="info-value"
-              id="accountCourse">
+              id="accountCourse"
+            >
               —
             </span>
 
@@ -890,7 +770,8 @@ body{
 
             <span
               class="info-value"
-              id="accountTimezone">
+              id="accountTimezone"
+            >
               —
             </span>
 
@@ -899,24 +780,20 @@ body{
 
         </div>
 
-      </div>
+      </section>
 
 
+      <!-- ACADEMY INFORMATION -->
 
-      <!-- =========================
-           ACADEMY INFORMATION
-      ========================= -->
+      <section class="card full">
 
-      <div class="card full">
+        <div class="card-header">
 
-        <div class="card-title">
-          Academy Information
+          <h2>
+            Academy Information
+          </h2>
+
         </div>
-
-        <div class="card-subtitle">
-          Your learning account is managed by Haroon Ibn Rasheed Online Quran Academy.
-        </div>
-
 
         <div class="info-list">
 
@@ -942,7 +819,8 @@ body{
 
             <span
               class="info-value"
-              id="studentId">
+              id="studentId"
+            >
               —
             </span>
 
@@ -957,7 +835,8 @@ body{
 
             <span
               class="info-value"
-              id="teacherName">
+              id="teacherName"
+            >
               —
             </span>
 
@@ -966,15 +845,16 @@ body{
 
         </div>
 
-      </div>
+      </section>
 
 
     </div>
 
-  </section>
+  </div>
 
 </main>
 
+</div>
 
 
 <script>
@@ -983,24 +863,6 @@ body{
 
 "use strict";
 
-
-/* =========================
-   SUPABASE
-========================= */
-
-const cfg = window.SUPABASE_CONFIG || {};
-
-const db =
-  window.academyDB ||
-  window.supabase?.createClient(
-    cfg.url,
-    cfg.anonKey
-  );
-
-
-/* =========================
-   HELPERS
-========================= */
 
 const $ = id =>
   document.getElementById(id);
@@ -1011,10 +873,12 @@ function setText(id,value){
   const el = $(id);
 
   if(el){
+
     el.textContent =
       value == null || value === ""
         ? "—"
         : String(value);
+
   }
 
 }
@@ -1023,15 +887,24 @@ function setText(id,value){
 function initials(name){
 
   const value =
-    String(name || "Student").trim();
+    String(name || "Student")
+      .trim();
 
-  if(!value) return "S";
+  if(!value){
+    return "S";
+  }
 
   const parts =
-    value.split(/\s+/).filter(Boolean);
+    value
+      .split(/\s+/)
+      .filter(Boolean);
 
   if(parts.length === 1){
-    return parts[0].substring(0,2).toUpperCase();
+
+    return parts[0]
+      .substring(0,2)
+      .toUpperCase();
+
   }
 
   return (
@@ -1042,47 +915,49 @@ function initials(name){
 }
 
 
-/* =========================
-   TIMEZONE OPTIONS
-========================= */
-
-const timezoneOptions = [
-  "Asia/Karachi",
-  "Asia/Dubai",
-  "Europe/London",
-  "America/New_York",
-  "America/Chicago",
-  "America/Denver",
-  "America/Los_Angeles",
-  "America/Toronto",
-  "Australia/Sydney",
-  "Europe/Berlin"
-];
-
-
-/* =========================
-   LOAD PROFILE
-========================= */
-
-async function loadProfile(){
-
-  const loading =
-    $("loadingBox");
-
-  const content =
-    $("profileContent");
-
+function validTimezone(zone){
 
   try{
 
-    if(!db){
+    new Intl.DateTimeFormat(
+      "en-US",
+      {
+        timeZone:zone
+      }
+    ).format();
 
-      throw new Error(
-        "Supabase client is not available."
-      );
+    return true;
 
-    }
+  }catch(error){
 
+    return false;
+
+  }
+
+}
+
+
+async function loadProfile(){
+
+  const db =
+    window.academyDB ||
+    window.supabase?.createClient(
+      window.SUPABASE_CONFIG?.url,
+      window.SUPABASE_CONFIG?.anonKey
+    );
+
+
+  if(!db){
+
+    $("loadingBox").textContent =
+      "Database connection is not available.";
+
+    return;
+
+  }
+
+
+  try{
 
     const {
       data:sessionData,
@@ -1091,8 +966,9 @@ async function loadProfile(){
       await db.auth.getSession();
 
 
-    if(sessionError)
+    if(sessionError){
       throw sessionError;
+    }
 
 
     const session =
@@ -1113,10 +989,6 @@ async function loadProfile(){
       session.user.id;
 
 
-    /* =========================
-       GET STUDENT
-    ========================= */
-
     const {
       data:student,
       error:studentError
@@ -1132,12 +1004,16 @@ async function loadProfile(){
           timezone,
           teacher_id
         `)
-        .eq("user_id",uid)
+        .eq(
+          "user_id",
+          uid
+        )
         .maybeSingle();
 
 
-    if(studentError)
+    if(studentError){
       throw studentError;
+    }
 
 
     if(!student){
@@ -1150,27 +1026,31 @@ async function loadProfile(){
 
 
     const email =
-      session.user.email || "—";
+      session.user.email ||
+      "—";
 
 
-    const fullName =
+    const name =
       student.full_name ||
       session.user.user_metadata?.full_name ||
       "Student";
 
 
     const timezone =
-      student.timezone ||
+      validTimezone(
+        student.timezone
+      )
+      ?
+      student.timezone
+      :
       "Asia/Karachi";
 
 
-    /* =========================
-       HEADER
-    ========================= */
+    /* PROFILE HEADER */
 
     setText(
       "profileName",
-      fullName
+      name
     );
 
     setText(
@@ -1179,65 +1059,38 @@ async function loadProfile(){
     );
 
     setText(
-      "topUserName",
-      fullName
-    );
-
-
-    const avatar =
-      initials(fullName);
-
-
-    setText(
       "profileAvatar",
-      avatar
-    );
-
-    setText(
-      "topAvatar",
-      avatar
+      initials(name)
     );
 
 
-    /* =========================
-       FORM
-    ========================= */
+    /* TOP DATE */
 
-    $("fullName").value =
-      fullName;
-
-
-    if(
-      timezoneOptions.includes(timezone)
-    ){
-
-      $("timezone").value =
-        timezone;
-
-    }else{
-
-      const option =
-        document.createElement("option");
-
-      option.value =
-        timezone;
-
-      option.textContent =
-        timezone;
-
-      $("timezone").appendChild(
-        option
+    $("todayDate").textContent =
+      new Intl.DateTimeFormat(
+        "en-US",
+        {
+          timeZone:timezone,
+          weekday:"long",
+          month:"long",
+          day:"numeric",
+          year:"numeric"
+        }
+      ).format(
+        new Date()
       );
 
-      $("timezone").value =
-        timezone;
 
-    }
+    /* EDITABLE FIELDS */
+
+    $("fullName").value =
+      name;
+
+    $("timezone").value =
+      timezone;
 
 
-    /* =========================
-       ACCOUNT INFO
-    ========================= */
+    /* ACCOUNT INFORMATION */
 
     setText(
       "accountEmail",
@@ -1265,14 +1118,13 @@ async function loadProfile(){
     );
 
 
-    /* =========================
-       TEACHER
-    ========================= */
+    /* TEACHER */
 
     if(student.teacher_id){
 
       const {
-        data:teacher
+        data:teacher,
+        error:teacherError
       } =
         await db
           .from("profiles")
@@ -1287,7 +1139,10 @@ async function loadProfile(){
           .maybeSingle();
 
 
-      if(teacher){
+      if(
+        !teacherError &&
+        teacher
+      ){
 
         setText(
           "teacherName",
@@ -1295,304 +1150,309 @@ async function loadProfile(){
           "Assigned Teacher"
         );
 
-      }
+      }else{
 
-    }
-
-
-    /* =========================
-       SHOW PAGE
-    ========================= */
-
-    loading.style.display =
-      "none";
-
-    content.style.display =
-      "grid";
-
-
-  }catch(error){
-
-    console.error(
-      "Student profile error:",
-      error
-    );
-
-
-    loading.innerHTML =
-      `<div style="color:#dc2626;">
-        Unable to load your profile.<br>
-        <small>
-          ${String(
-            error?.message ||
-            "Please try again."
-          )}
-        </small>
-      </div>`;
-
-  }
-
-}
-
-
-/* =========================
-   SAVE PROFILE
-========================= */
-
-async function saveProfile(event){
-
-  event.preventDefault();
-
-
-  const button =
-    $("saveBtn");
-
-  const message =
-    $("saveMessage");
-
-
-  message.className =
-    "message";
-
-  message.textContent =
-    "";
-
-
-  const fullName =
-    $("fullName").value.trim();
-
-
-  const timezone =
-    $("timezone").value;
-
-
-  if(!fullName){
-
-    message.textContent =
-      "Please enter your full name.";
-
-    message.className =
-      "message error";
-
-    return;
-
-  }
-
-
-  if(!timezone){
-
-    message.textContent =
-      "Please select your timezone.";
-
-    message.className =
-      "message error";
-
-    return;
-
-  }
-
-
-  try{
-
-    button.disabled =
-      true;
-
-    button.textContent =
-      "Saving...";
-
-
-    const {
-      data:sessionData,
-      error:sessionError
-    } =
-      await db.auth.getSession();
-
-
-    if(sessionError)
-      throw sessionError;
-
-
-    const session =
-      sessionData?.session;
-
-
-    if(!session){
-
-      window.location.href =
-        "../portal-login.html";
-
-      return;
-
-    }
-
-
-    const uid =
-      session.user.id;
-
-
-    /* =========================
-       UPDATE STUDENT
-    ========================= */
-
-    const {
-      error:updateError
-    } =
-      await db
-        .from("students")
-        .update({
-          full_name:fullName,
-          timezone:timezone
-        })
-        .eq(
-          "user_id",
-          uid
+        setText(
+          "teacherName",
+          "Assigned Teacher"
         );
 
+      }
 
-    if(updateError)
-      throw updateError;
+    }else{
 
-
-    /* =========================
-       UPDATE AUTH USER NAME
-       IF AVAILABLE
-    ========================= */
-
-    try{
-
-      await db.auth.updateUser({
-        data:{
-          full_name:fullName
-        }
-      });
-
-    }catch(authError){
-
-      console.warn(
-        "Auth profile name update skipped:",
-        authError
+      setText(
+        "teacherName",
+        "Not Assigned"
       );
 
     }
 
 
-    /* =========================
-       LOCAL TIMEZONE
-    ========================= */
+    /* SHOW */
 
-    window.currentStudentTimezone =
-      timezone;
+    $("loadingBox").style.display =
+      "none";
 
-    window.studentTimezone =
-      timezone;
-
-
-    localStorage.setItem(
-      "student_timezone",
-      timezone
-    );
-
-
-    /* =========================
-       UPDATE UI
-    ========================= */
-
-    setText(
-      "profileName",
-      fullName
-    );
-
-    setText(
-      "topUserName",
-      fullName
-    );
-
-    setText(
-      "profileAvatar",
-      initials(fullName)
-    );
-
-    setText(
-      "topAvatar",
-      initials(fullName)
-    );
-
-    setText(
-      "accountTimezone",
-      timezone
-    );
-
-
-    document.dispatchEvent(
-      new CustomEvent(
-        "studentTimezoneReady",
-        {
-          detail:{
-            timezone:timezone
-          }
-        }
-      )
-    );
-
-
-    message.textContent =
-      "Profile updated successfully.";
-
-    message.className =
-      "message success";
+    $("profileContent").style.display =
+      "block";
 
 
   }catch(error){
 
     console.error(
-      "Profile update error:",
+      "Profile loading error:",
       error
     );
 
 
-    message.textContent =
-      error?.message ||
-      "Unable to update profile.";
+    $("loadingBox").innerHTML =
+      `
+        <div style="color:#b84d47;">
+          Unable to load your profile.
+        </div>
 
-    message.className =
-      "message error";
-
-
-  }finally{
-
-    button.disabled =
-      false;
-
-    button.textContent =
-      "Save Changes";
+        <div style="
+          margin-top:6px;
+          font-size:11px;
+        ">
+          ${String(
+            error?.message ||
+            "Please refresh the page."
+          )}
+        </div>
+      `;
 
   }
 
 }
 
 
-/* =========================
-   FORM EVENT
-========================= */
+/* SAVE PROFILE */
 
 $("profileForm")
   .addEventListener(
     "submit",
-    saveProfile
+    async function(event){
+
+      event.preventDefault();
+
+
+      const db =
+        window.academyDB ||
+        window.supabase?.createClient(
+          window.SUPABASE_CONFIG?.url,
+          window.SUPABASE_CONFIG?.anonKey
+        );
+
+
+      const button =
+        $("saveBtn");
+
+      const message =
+        $("saveMessage");
+
+
+      const fullName =
+        $("fullName")
+          .value
+          .trim();
+
+
+      const timezone =
+        $("timezone")
+          .value;
+
+
+      message.className =
+        "message";
+
+      message.textContent =
+        "";
+
+
+      if(!fullName){
+
+        message.textContent =
+          "Please enter your full name.";
+
+        message.className =
+          "message error";
+
+        return;
+
+      }
+
+
+      if(!timezone){
+
+        message.textContent =
+          "Please select your timezone.";
+
+        message.className =
+          "message error";
+
+        return;
+
+      }
+
+
+      try{
+
+        button.disabled =
+          true;
+
+        button.textContent =
+          "Saving...";
+
+
+        const {
+          data:sessionData,
+          error:sessionError
+        } =
+          await db.auth.getSession();
+
+
+        if(sessionError){
+          throw sessionError;
+        }
+
+
+        const session =
+          sessionData?.session;
+
+
+        if(!session){
+
+          window.location.href =
+            "../portal-login.html";
+
+          return;
+
+        }
+
+
+        const {
+          error:updateError
+        } =
+          await db
+            .from("students")
+            .update({
+              full_name:fullName,
+              timezone:timezone
+            })
+            .eq(
+              "user_id",
+              session.user.id
+            );
+
+
+        if(updateError){
+          throw updateError;
+        }
+
+
+        /* Update Auth metadata */
+
+        try{
+
+          await db.auth.updateUser({
+            data:{
+              full_name:fullName
+            }
+          });
+
+        }catch(authError){
+
+          console.warn(
+            "Auth name update skipped:",
+            authError
+          );
+
+        }
+
+
+        /* Update screen immediately */
+
+        setText(
+          "profileName",
+          fullName
+        );
+
+        setText(
+          "profileAvatar",
+          initials(fullName)
+        );
+
+        setText(
+          "accountTimezone",
+          timezone
+        );
+
+
+        $("todayDate").textContent =
+          new Intl.DateTimeFormat(
+            "en-US",
+            {
+              timeZone:timezone,
+              weekday:"long",
+              month:"long",
+              day:"numeric",
+              year:"numeric"
+            }
+          ).format(
+            new Date()
+          );
+
+
+        /* Save timezone for portal */
+
+        window.currentStudentTimezone =
+          timezone;
+
+        window.studentTimezone =
+          timezone;
+
+        localStorage.setItem(
+          "student_timezone",
+          timezone
+        );
+
+
+        document.dispatchEvent(
+          new CustomEvent(
+            "studentTimezoneReady",
+            {
+              detail:{
+                timezone:timezone
+              }
+            }
+          )
+        );
+
+
+        message.textContent =
+          "Profile updated successfully.";
+
+        message.className =
+          "message success";
+
+
+      }catch(error){
+
+        console.error(
+          "Profile update error:",
+          error
+        );
+
+
+        message.textContent =
+          error?.message ||
+          "Unable to update profile.";
+
+        message.className =
+          "message error";
+
+
+      }finally{
+
+        button.disabled =
+          false;
+
+        button.textContent =
+          "Save Changes";
+
+      }
+
+    }
   );
 
 
-/* =========================
-   START
-========================= */
-
 loadProfile();
-
 
 })();
 
 </script>
 
 </body>
-
 </html>
