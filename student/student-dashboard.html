@@ -1,0 +1,865 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Student Dashboard | Haroon Ibn Rasheed Online Quran Academy</title>
+
+  <link rel="stylesheet" href="../css/portal.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/portal.js" defer></script>
+
+  <style>
+    .dashboard-loading {
+      opacity:.7;
+    }
+    .dashboard-error {
+      padding:14px;
+      margin:12px 0;
+      border-radius:10px;
+      background:#fff3f3;
+      color:#a40000;
+    }
+    .student-card-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+      gap:14px;
+      margin:16px 0;
+    }
+    .student-card {
+      padding:16px;
+      border-radius:12px;
+    }
+    .student-card h3 {
+      margin:0 0 7px;
+      font-size:14px;
+    }
+    .student-card strong {
+      font-size:20px;
+    }
+    .dashboard-table-wrap {
+      width:100%;
+      overflow-x:auto;
+    }
+    .dashboard-table {
+      width:100%;
+      border-collapse:collapse;
+    }
+    .dashboard-table th,
+    .dashboard-table td {
+      padding:10px;
+      text-align:left;
+      vertical-align:top;
+    }
+    .empty-state {
+      padding:18px;
+      text-align:center;
+      opacity:.7;
+    }
+    .class-link {
+      display:inline-block;
+      margin:2px 4px 2px 0;
+    }
+  </style>
+</head>
+
+<body class="dashboard" data-page="student-dashboard">
+
+  <div id="studentDashboardError" class="dashboard-error" hidden></div>
+
+  <main>
+
+    <section class="dashboard-header">
+      <div>
+        <h1>Student Dashboard</h1>
+        <p>Welcome, <strong id="studentName">Loading...</strong></p>
+      </div>
+    </section>
+
+    <section class="student-card-grid">
+
+      <div class="card student-card">
+        <h3>Today's Classes</h3>
+        <strong id="todayClassesCount">Loading...</strong>
+      </div>
+
+      <div class="card student-card">
+        <h3>Upcoming Classes</h3>
+        <strong id="upcomingClassesCount">Loading...</strong>
+      </div>
+
+      <div class="card student-card">
+        <h3>Course</h3>
+        <strong id="studentCourse">Loading...</strong>
+      </div>
+
+      <div class="card student-card">
+        <h3>Timezone</h3>
+        <strong id="studentTimezone">Loading...</strong>
+      </div>
+
+      <div class="card student-card">
+        <h3>Notifications</h3>
+        <strong id="notificationCount">Loading...</strong>
+      </div>
+
+      <div class="card student-card">
+        <h3>Attendance</h3>
+        <strong id="attendanceValue">Loading...</strong>
+      </div>
+
+    </section>
+
+    <section class="card">
+      <div class="section-header">
+        <h2>Today's Class</h2>
+      </div>
+      <div id="todayClass">
+        <div class="dashboard-loading">Loading...</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-header">
+        <h2>Upcoming Classes</h2>
+      </div>
+
+      <div class="dashboard-table-wrap">
+        <table class="dashboard-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Course</th>
+              <th>Teacher</th>
+              <th>Duration</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="upcomingClasses">
+            <tr>
+              <td colspan="6" class="empty-state">Loading...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-header">
+        <h2>My Courses</h2>
+      </div>
+      <div id="courseCards">
+        <div class="dashboard-loading">Loading...</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-header">
+        <h2>Recent Payments</h2>
+      </div>
+
+      <div class="dashboard-table-wrap">
+        <table class="dashboard-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Amount</th>
+              <th>Currency</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="paymentRows">
+            <tr>
+              <td colspan="4" class="empty-state">Loading...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-header">
+        <h2>Notifications</h2>
+      </div>
+
+      <div id="notificationRows">
+        <div class="dashboard-loading">Loading...</div>
+      </div>
+    </section>
+
+  </main>
+
+<script>
+(() => {
+  "use strict";
+
+  const DateTime = window.luxon?.DateTime;
+
+  const $ = (id) => document.getElementById(id);
+
+  const escapeHtml = (value) =>
+    String(value ?? "").replace(/[&<>"']/g, (c) => ({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#39;"
+    }[c]));
+
+  const showError = (message) => {
+    const box = $("studentDashboardError");
+    if (!box) return;
+    box.hidden = false;
+    box.textContent = message;
+  };
+
+  const setText = (id, value) => {
+    const el = $(id);
+    if (el) el.textContent = value ?? "";
+  };
+
+  const db = window.academyDB ||
+    window.supabase?.createClient(
+      window.SUPABASE_CONFIG?.url,
+      window.SUPABASE_CONFIG?.anonKey
+    );
+
+  if (db) window.academyDB = db;
+
+  const getSessionUser = async () => {
+    const { data, error } = await db.auth.getUser();
+    if (error) throw error;
+    if (!data?.user) throw new Error("Student session not found.");
+    return data.user;
+  };
+
+  const normalizeDays = (value) => {
+    if (Array.isArray(value)) return value;
+
+    if (typeof value === "string") {
+      const s = value.trim();
+      if (!s) return [];
+
+      try {
+        const parsed = JSON.parse(s);
+        if (Array.isArray(parsed)) return parsed;
+      } catch (_) {}
+
+      return s.split(",").map(x => x.trim()).filter(Boolean);
+    }
+
+    return [];
+  };
+
+  const dayNames = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday"
+  ];
+
+  const normalizeDay = (value) => {
+    const s = String(value ?? "").trim().toLowerCase();
+
+    const aliases = {
+      sun:"Sunday", sunday:"Sunday",
+      mon:"Monday", monday:"Monday",
+      tue:"Tuesday", tues:"Tuesday", tuesday:"Tuesday",
+      wed:"Wednesday", wednesday:"Wednesday",
+      thu:"Thursday", thur:"Thursday", thurs:"Thursday", thursday:"Thursday",
+      fri:"Friday", friday:"Friday",
+      sat:"Saturday", saturday:"Saturday"
+    };
+
+    return aliases[s] || String(value ?? "");
+  };
+
+  const timeParts = (value) => {
+    const s = String(value ?? "").trim();
+    const m = s.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+    if (!m) return null;
+
+    return {
+      hour: Number(m[1]),
+      minute: Number(m[2]),
+      second: Number(m[3] || 0)
+    };
+  };
+
+  const scheduleOccurrence = (schedule, timezone, fromDate = null) => {
+    if (!DateTime || !timezone) return null;
+
+    const days = normalizeDays(schedule.class_days)
+      .map(normalizeDay);
+
+    const parts = timeParts(schedule.class_time);
+    if (!parts || !days.length) return null;
+
+    const base = fromDate
+      ? fromDate.setZone(timezone).startOf("day")
+      : DateTime.now().setZone(timezone).startOf("day");
+
+    for (let offset = 0; offset <= 7; offset++) {
+      const date = base.plus({ days: offset });
+
+      if (!days.includes(date.toFormat("cccc"))) continue;
+
+      let occurrence = date.set({
+        hour: parts.hour,
+        minute: parts.minute,
+        second: parts.second,
+        millisecond: 0
+      });
+
+      return occurrence;
+    }
+
+    return null;
+  };
+
+  const getNextOccurrence = (schedule, timezone) => {
+    if (!DateTime || !timezone) return null;
+
+    const now = DateTime.now().setZone(timezone);
+
+    const days = normalizeDays(schedule.class_days)
+      .map(normalizeDay);
+
+    const parts = timeParts(schedule.class_time);
+    if (!parts || !days.length) return null;
+
+    for (let offset = 0; offset <= 14; offset++) {
+      const date = now.startOf("day").plus({ days: offset });
+
+      if (!days.includes(date.toFormat("cccc"))) continue;
+
+      const occurrence = date.set({
+        hour: parts.hour,
+        minute: parts.minute,
+        second: parts.second,
+        millisecond: 0
+      });
+
+      if (occurrence > now.minus({ minutes: 1 })) {
+        return occurrence;
+      }
+    }
+
+    return null;
+  };
+
+  const displayTime = (schedule, timezone) => {
+    if (!DateTime || !timezone) {
+      return schedule.class_time || "-";
+    }
+
+    const parts = timeParts(schedule.class_time);
+    if (!parts) return schedule.class_time || "-";
+
+    let sourceZone = schedule.schedule_timezone || "Asia/Karachi";
+
+    try {
+      return DateTime.now()
+        .setZone(sourceZone)
+        .set({
+          hour: parts.hour,
+          minute: parts.minute,
+          second: parts.second,
+          millisecond: 0
+        })
+        .setZone(timezone)
+        .toFormat("hh:mm a");
+    } catch (_) {
+      return schedule.class_time || "-";
+    }
+  };
+
+  const classroomUrl = (code) => {
+    if (!code) return "";
+
+    return (
+      "https://haroonibnrasheedonlinequranacadmey.github.io/" +
+      "haroon-quran-classroom/?code=" +
+      encodeURIComponent(code)
+    );
+  };
+
+  const actionLinks = (schedule) => {
+    const links = [];
+
+    if (schedule.google_meet_url) {
+      links.push(
+        `<a class="class-link" href="${escapeHtml(schedule.google_meet_url)}" target="_blank" rel="noopener">Google Meet</a>`
+      );
+    }
+
+    if (schedule.classroom_code) {
+      const url = classroomUrl(schedule.classroom_code);
+      links.push(
+        `<a class="class-link" href="${escapeHtml(url)}" target="_blank" rel="noopener">Classroom</a>`
+      );
+    }
+
+    return links.length ? links.join(" ") : "-";
+  };
+
+  const findTeacherNames = async (schedules) => {
+    const ids = [...new Set(
+      schedules
+        .map(s => s.teacher_id)
+        .filter(Boolean)
+    )];
+
+    if (!ids.length) return {};
+
+    const { data, error } = await db
+      .from("profiles")
+      .select("id,full_name")
+      .in("id", ids);
+
+    if (error) {
+      console.warn("Teacher profile lookup failed:", error);
+      return {};
+    }
+
+    return Object.fromEntries(
+      (data || []).map(row => [
+        row.id,
+        row.full_name || "Teacher"
+      ])
+    );
+  };
+
+  const loadStudent = async (uid) => {
+    /*
+      IMPORTANT:
+      Do not select "teacher".
+      The current student table uses teacher_id.
+    */
+    const result = await db
+      .from("students")
+      .select(`
+        id,
+        user_id,
+        full_name,
+        status,
+        course,
+        teacher_id,
+        timezone
+      `)
+      .eq("user_id", uid)
+      .maybeSingle();
+
+    if (result.error) throw result.error;
+    if (!result.data) {
+      throw new Error(
+        "No student record was found for this account. Please ask the Admin to check the student's user_id."
+      );
+    }
+
+    return result.data;
+  };
+
+  const loadSchedules = async (studentId) => {
+    const result = await db
+      .from("class_schedules")
+      .select(`
+        id,
+        teacher_id,
+        student_id,
+        course,
+        class_days,
+        class_time,
+        duration_minutes,
+        google_meet_url,
+        classroom_code,
+        active,
+        schedule_timezone
+      `)
+      .eq("student_id", studentId)
+      .eq("active", true)
+      .order("class_time", { ascending: true });
+
+    if (result.error) throw result.error;
+
+    return result.data || [];
+  };
+
+  const loadPayments = async (studentId) => {
+    const result = await db
+      .from("student_payments")
+      .select("*")
+      .eq("student_id", studentId)
+      .order("created_at", { ascending: false })
+      .limit(10);
+
+    if (result.error) {
+      console.warn("Payments could not be loaded:", result.error);
+      return [];
+    }
+
+    return result.data || [];
+  };
+
+  const loadNotifications = async (uid) => {
+    const result = await db
+      .from("notifications")
+      .select("*")
+      .eq("user_id", uid)
+      .order("created_at", { ascending: false })
+      .limit(10);
+
+    if (result.error) {
+      console.warn("Notifications could not be loaded:", result.error);
+      return [];
+    }
+
+    return result.data || [];
+  };
+
+  const renderToday = (schedule, teacherNames, timezone) => {
+    const box = $("todayClass");
+
+    if (!box) return;
+
+    if (!schedule) {
+      box.innerHTML =
+        `<div class="empty-state">No class scheduled for today.</div>`;
+      return;
+    }
+
+    const teacher =
+      teacherNames[schedule.teacher_id] ||
+      "Teacher";
+
+    const occurrence =
+      scheduleOccurrence(schedule, timezone);
+
+    const status = occurrence
+      ? (
+          DateTime.now().setZone(timezone) < occurrence
+            ? "Upcoming"
+            : DateTime.now().setZone(timezone) <
+              occurrence.plus({
+                minutes: Number(schedule.duration_minutes || 30)
+              })
+              ? "Active"
+              : "Completed"
+        )
+      : "Scheduled";
+
+    box.innerHTML = `
+      <div class="student-card">
+        <h3>${escapeHtml(schedule.course || "Quran Class")}</h3>
+        <p><strong>Teacher:</strong> ${escapeHtml(teacher)}</p>
+        <p><strong>Time:</strong> ${escapeHtml(displayTime(schedule, timezone))}</p>
+        <p><strong>Duration:</strong> ${escapeHtml(schedule.duration_minutes || 30)} minutes</p>
+        <p><strong>Status:</strong> ${escapeHtml(status)}</p>
+        <p><strong>Timezone:</strong> ${escapeHtml(timezone)}</p>
+        <div>${actionLinks(schedule)}</div>
+      </div>
+    `;
+  };
+
+  const renderUpcoming = (schedules, teacherNames, timezone) => {
+    const tbody = $("upcomingClasses");
+    if (!tbody) return;
+
+    const now = DateTime.now().setZone(timezone);
+
+    const items = schedules
+      .map(schedule => ({
+        schedule,
+        occurrence: getNextOccurrence(schedule, timezone)
+      }))
+      .filter(x => x.occurrence && x.occurrence > now)
+      .sort((a,b) => a.occurrence.toMillis() - b.occurrence.toMillis())
+      .slice(0, 10);
+
+    if (!items.length) {
+      tbody.innerHTML =
+        `<tr><td colspan="6" class="empty-state">No upcoming classes.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = items.map(({schedule, occurrence}) => `
+      <tr>
+        <td>${escapeHtml(occurrence.toFormat("dd MMM yyyy"))}</td>
+        <td>${escapeHtml(occurrence.toFormat("hh:mm a"))}</td>
+        <td>${escapeHtml(schedule.course || "-")}</td>
+        <td>${escapeHtml(teacherNames[schedule.teacher_id] || "Teacher")}</td>
+        <td>${escapeHtml(schedule.duration_minutes || 30)} min</td>
+        <td>${actionLinks(schedule)}</td>
+      </tr>
+    `).join("");
+  };
+
+  const renderCourses = async (student, schedules) => {
+    const box = $("courseCards");
+    if (!box) return;
+
+    const courseNames = [
+      ...new Set(
+        schedules
+          .map(x => x.course)
+          .filter(Boolean)
+      )
+    ];
+
+    if (student.course && !courseNames.includes(student.course)) {
+      courseNames.unshift(student.course);
+    }
+
+    if (!courseNames.length) {
+      box.innerHTML =
+        `<div class="empty-state">No course information available.</div>`;
+      return;
+    }
+
+    box.innerHTML = courseNames.map(course => `
+      <div class="student-card">
+        <h3>${escapeHtml(course)}</h3>
+        <p>Active Quran Academy course</p>
+      </div>
+    `).join("");
+  };
+
+  const renderPayments = (payments) => {
+    const tbody = $("paymentRows");
+    if (!tbody) return;
+
+    if (!payments.length) {
+      tbody.innerHTML =
+        `<tr><td colspan="4" class="empty-state">No payment records found.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = payments.map(payment => {
+      const date =
+        payment.payment_date ||
+        payment.created_at ||
+        payment.date;
+
+      const amount =
+        payment.amount ??
+        payment.paid_amount ??
+        payment.total ??
+        "-";
+
+      const currency =
+        payment.currency ||
+        payment.currency_code ||
+        "-";
+
+      const status =
+        payment.status ||
+        "Recorded";
+
+      return `
+        <tr>
+          <td>${escapeHtml(date ? new Date(date).toLocaleDateString() : "-")}</td>
+          <td>${escapeHtml(amount)}</td>
+          <td>${escapeHtml(currency)}</td>
+          <td>${escapeHtml(status)}</td>
+        </tr>
+      `;
+    }).join("");
+  };
+
+  const renderNotifications = (notifications) => {
+    const box = $("notificationRows");
+    if (!box) return;
+
+    setText("notificationCount", notifications.length);
+
+    if (!notifications.length) {
+      box.innerHTML =
+        `<div class="empty-state">No notifications.</div>`;
+      return;
+    }
+
+    box.innerHTML = notifications.map(n => `
+      <div class="student-card">
+        <h3>${escapeHtml(n.title || "Notification")}</h3>
+        <p>${escapeHtml(n.message || n.body || "")}</p>
+        <small>${escapeHtml(
+          n.created_at
+            ? new Date(n.created_at).toLocaleString()
+            : ""
+        )}</small>
+      </div>
+    `).join("");
+  };
+
+  const loadAttendance = async (studentId) => {
+    /*
+      Attendance schema may vary between installations.
+      We therefore do not allow an attendance-query error to break
+      the complete dashboard.
+    */
+    const el = $("attendanceValue");
+    if (!el) return;
+
+    try {
+      const result = await db
+        .from("teacher_class_sessions")
+        .select("status")
+        .eq("student_id", studentId);
+
+      if (result.error) {
+        el.textContent = "—";
+        return;
+      }
+
+      const rows = result.data || [];
+
+      if (!rows.length) {
+        el.textContent = "—";
+        return;
+      }
+
+      const completed = rows.filter(x =>
+        String(x.status || "").toLowerCase() === "completed"
+      ).length;
+
+      const total = rows.length;
+
+      el.textContent =
+        `${completed}/${total} completed`;
+    } catch (_) {
+      el.textContent = "—";
+    }
+  };
+
+  const loadDashboard = async () => {
+    if (!db) {
+      throw new Error(
+        "Supabase could not be initialized. Check config.js."
+      );
+    }
+
+    const user = await getSessionUser();
+    const student = await loadStudent(user.id);
+
+    const timezone =
+      student.timezone ||
+      Intl.DateTimeFormat().resolvedOptions().timeZone ||
+      "Asia/Karachi";
+
+    setText("studentName", student.full_name || user.email || "Student");
+    setText("studentTimezone", timezone);
+    setText("studentCourse", student.course || "—");
+
+    const schedules = await loadSchedules(student.id);
+    const teacherNames = await findTeacherNames(schedules);
+
+    const todayName =
+      DateTime
+        .now()
+        .setZone(timezone)
+        .toFormat("cccc");
+
+    const todaySchedules = schedules.filter(schedule => {
+      const days = normalizeDays(schedule.class_days)
+        .map(normalizeDay);
+
+      return days.includes(todayName);
+    });
+
+    setText("todayClassesCount", todaySchedules.length);
+
+    const upcoming = schedules
+      .map(schedule => getNextOccurrence(schedule, timezone))
+      .filter(Boolean)
+      .filter(dt => dt > DateTime.now().setZone(timezone))
+      .length;
+
+    setText("upcomingClassesCount", upcoming);
+
+    let todayClass = null;
+
+    if (todaySchedules.length) {
+      const now = DateTime.now().setZone(timezone);
+
+      todayClass =
+        todaySchedules
+          .map(schedule => ({
+            schedule,
+            occurrence: scheduleOccurrence(schedule, timezone)
+          }))
+          .sort((a,b) =>
+            (a.occurrence?.toMillis() || 0) -
+            (b.occurrence?.toMillis() || 0)
+          )
+          .map(x => x.schedule)
+          .find(schedule => {
+            const occurrence =
+              scheduleOccurrence(schedule, timezone);
+
+            return occurrence &&
+              occurrence.plus({
+                minutes: Number(schedule.duration_minutes || 30)
+              }) > now;
+          }) ||
+        todaySchedules[0];
+    }
+
+    renderToday(todayClass, teacherNames, timezone);
+    renderUpcoming(schedules, teacherNames, timezone);
+    await renderCourses(student, schedules);
+
+    const [payments, notifications] = await Promise.all([
+      loadPayments(student.id),
+      loadNotifications(user.id)
+    ]);
+
+    renderPayments(payments);
+    renderNotifications(notifications);
+    await loadAttendance(student.id);
+  };
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    try {
+      await loadDashboard();
+    } catch (error) {
+      console.error("Student Dashboard error:", error);
+
+      showError(
+        "Student Dashboard could not load: " +
+        (error?.message || "Unknown error")
+      );
+
+      setText("studentName", "Unable to load");
+      setText("todayClassesCount", "—");
+      setText("upcomingClassesCount", "—");
+      setText("studentCourse", "—");
+      setText("studentTimezone", "—");
+      setText("notificationCount", "—");
+      setText("attendanceValue", "—");
+
+      const today = $("todayClass");
+      if (today) {
+        today.innerHTML =
+          `<div class="empty-state">Dashboard data could not be loaded.</div>`;
+      }
+
+      const upcoming = $("upcomingClasses");
+      if (upcoming) {
+        upcoming.innerHTML =
+          `<tr><td colspan="6" class="empty-state">Dashboard data could not be loaded.</td></tr>`;
+      }
+    }
+  });
+
+})();
+</script>
+
+</body>
+</html>
