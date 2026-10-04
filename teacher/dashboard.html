@@ -45,20 +45,9 @@
   opacity:.9;
 }
 
-.action-group button:disabled{
-  background:#d8e3e6;
-  color:#58717a;
-  cursor:not-allowed;
-}
-
 .action-group .danger-action{
   background:#f18b82;
   color:#07394a;
-}
-
-.action-group .absent-action{
-  background:#4d9ed8;
-  color:#fff;
 }
 
 .action-group .reschedule-action{
@@ -81,13 +70,8 @@
   color:#fff;
 }
 
-
-/* =====================================================
-   CLASS ROW COLORS
-===================================================== */
-
 .class-row.status-upcoming{
-  background:#ffffff;
+  background:#fff;
 }
 
 .class-row.status-active{
@@ -112,17 +96,12 @@
 
 .class-row.status-on_leave,
 .class-row.status-cancelled{
-  background:#eeeeee;
+  background:#eee;
 }
 
 .class-row td{
-  background:transparent !important;
+  background:transparent!important;
 }
-
-
-/* =====================================================
-   STATUS PILLS
-===================================================== */
 
 .status-pill{
   display:inline-block;
@@ -134,7 +113,7 @@
 }
 
 .status-upcoming{
-  background:#ffffff;
+  background:#fff;
   color:#087f99;
 }
 
@@ -175,30 +154,23 @@
   color:#58717a;
 }
 
-.action-done{
-  display:inline-block;
-  padding:7px 10px;
-  border-radius:7px;
-  background:#257a32;
-  color:#fff;
-  font-size:12px;
-  font-weight:700;
-}
-
+.action-done,
 .action-absent{
   display:inline-block;
   padding:7px 10px;
   border-radius:7px;
-  background:#4d9ed8;
   color:#fff;
   font-size:12px;
   font-weight:700;
 }
 
+.action-done{
+  background:#257a32;
+}
 
-/* =====================================================
-   LESSON MODAL
-===================================================== */
+.action-absent{
+  background:#4d9ed8;
+}
 
 .lesson-modal{
   display:none;
@@ -245,7 +217,6 @@
   background:transparent;
   color:#fff;
   font-size:26px;
-  line-height:1;
   cursor:pointer;
 }
 
@@ -361,15 +332,6 @@
   color:#fff;
 }
 
-.lesson-btn.submit:hover{
-  opacity:.9;
-}
-
-
-/* =====================================================
-   OPEN LESSON VIEW
-===================================================== */
-
 .lesson-view-box{
   background:#f8fbfc;
   border:1px solid #d9e7ea;
@@ -379,10 +341,6 @@
 
 .lesson-view-item{
   margin-bottom:12px;
-}
-
-.lesson-view-item:last-child{
-  margin-bottom:0;
 }
 
 .lesson-view-item small{
@@ -414,11 +372,6 @@
   font-size:12px;
   font-weight:700;
 }
-
-
-/* =====================================================
-   MOBILE
-===================================================== */
 
 @media(max-width:700px){
 
@@ -463,15 +416,9 @@
 </style>
 </head>
 
-
 <body class="dashboard" data-page="teacher-dashboard">
 
 <div class="side-layout">
-
-
-<!-- =====================================================
-     SIDEBAR
-===================================================== -->
 
 <aside class="side">
 
@@ -483,41 +430,15 @@
 
 <nav style="margin-top:16px">
 
-<a href="dashboard.html" class="active">
-Dashboard
-</a>
-
-<a href="students.html">
-My Students
-</a>
-
-<a href="classes.html">
-My Classes
-</a>
-
-<a href="schedule.html">
-Schedule
-</a>
-
-<a href="attendance.html">
-Attendance
-</a>
-
-<a href="courses.html">
-Courses
-</a>
-
-<a href="leaves.html">
-Leaves
-</a>
-
-<a href="salary.html">
-Salary
-</a>
-
-<a href="profile.html">
-Profile
-</a>
+<a href="dashboard.html" class="active">Dashboard</a>
+<a href="students.html">My Students</a>
+<a href="classes.html">My Classes</a>
+<a href="schedule.html">Schedule</a>
+<a href="attendance.html">Attendance</a>
+<a href="courses.html">Courses</a>
+<a href="leaves.html">Leaves</a>
+<a href="salary.html">Salary</a>
+<a href="profile.html">Profile</a>
 
 </nav>
 
@@ -527,13 +448,7 @@ Logout
 
 </aside>
 
-
-<!-- =====================================================
-     MAIN CONTENT
-===================================================== -->
-
 <main class="content">
-
 
 <section class="card">
 
@@ -547,17 +462,10 @@ Manage your assigned academy work.
 
 <div class="dashboard-date">
 Today:
-<b id="dashboardDate">
-Loading...
-</b>
+<b id="dashboardDate">Loading...</b>
 </div>
 
 </section>
-
-
-<!-- =====================================================
-     SUMMARY CARDS
-===================================================== -->
 
 <section class="cards">
 
@@ -593,16 +501,9 @@ Loading...
 
 </section>
 
-
-<!-- =====================================================
-     TODAY'S CLASSES
-===================================================== -->
-
 <section class="card">
 
-<h2>
-Today's Classes
-</h2>
+<h2>Today's Classes</h2>
 
 <p id="todaySummary">
 Loading today's classes...
@@ -615,31 +516,12 @@ Loading today's classes...
 <thead>
 
 <tr>
-
-<th>
-Teacher Time
-</th>
-
-<th>
-Student Name
-</th>
-
-<th>
-Course
-</th>
-
-<th>
-Duration
-</th>
-
-<th>
-Status
-</th>
-
-<th>
-Action
-</th>
-
+<th>Teacher Time</th>
+<th>Student Name</th>
+<th>Course</th>
+<th>Duration</th>
+<th>Status</th>
+<th>Action</th>
 </tr>
 
 </thead>
@@ -647,11 +529,9 @@ Action
 <tbody id="todayClassRows">
 
 <tr>
-
 <td colspan="6" class="today-empty">
 Loading...
 </td>
-
 </tr>
 
 </tbody>
@@ -662,21 +542,14 @@ Loading...
 
 </section>
 
-
 </main>
 
 </div>
 
 
-<!-- =====================================================
-     LESSON FORM MODAL
-===================================================== -->
+<!-- LESSON MODAL -->
 
-<div
-  id="lessonModal"
-  class="lesson-modal"
-  aria-hidden="true"
->
+<div id="lessonModal" class="lesson-modal" aria-hidden="true">
 
 <div class="lesson-modal-box">
 
@@ -687,54 +560,41 @@ End Class - Add Lesson
 </h3>
 
 <button
-  type="button"
-  class="lesson-modal-close"
-  onclick="closeLessonModal()"
-  aria-label="Close">
+type="button"
+class="lesson-modal-close"
+onclick="closeLessonModal()">
 ×
 </button>
 
 </div>
 
-
 <div class="lesson-modal-body">
-
 
 <div class="lesson-student-info">
 
 Student:
-<strong id="lessonStudentName">
-—
-</strong>
+<strong id="lessonStudentName">—</strong>
 
 <br>
 
 Class:
-<strong id="lessonClassInfo">
-—
-</strong>
+<strong id="lessonClassInfo">—</strong>
 
 </div>
 
-
 <form
-  id="lessonForm"
-  onsubmit="return submitTeacherLesson(event)"
->
-
+id="lessonForm"
+onsubmit="return submitTeacherLesson(event)">
 
 <input
-  type="hidden"
-  id="lessonScheduleId"
-  name="schedule_id"
->
+type="hidden"
+id="lessonScheduleId"
+name="schedule_id">
 
 <input
-  type="hidden"
-  id="lessonMode"
-  name="mode"
->
-
+type="hidden"
+id="lessonMode"
+name="mode">
 
 <div class="lesson-row">
 
@@ -745,17 +605,15 @@ Juz Number
 </label>
 
 <input
-  type="number"
-  id="lessonJuz"
-  name="juz_number"
-  min="1"
-  max="30"
-  placeholder="Enter Juz number"
-  required
->
+type="number"
+id="lessonJuz"
+name="juz_number"
+min="1"
+max="30"
+placeholder="Enter Juz number"
+required>
 
 </div>
-
 
 <div class="lesson-field">
 
@@ -764,18 +622,16 @@ Page Number
 </label>
 
 <input
-  type="number"
-  id="lessonPage"
-  name="page_number"
-  min="1"
-  placeholder="Enter page number"
-  required
->
+type="number"
+id="lessonPage"
+name="page_number"
+min="1"
+placeholder="Enter page number"
+required>
 
 </div>
 
 </div>
-
 
 <div class="lesson-field">
 
@@ -784,13 +640,11 @@ Description
 </label>
 
 <textarea
-  id="lessonDescription"
-  name="description"
-  placeholder="Write lesson description..."
-></textarea>
+id="lessonDescription"
+name="description"
+placeholder="Write lesson description..."></textarea>
 
 </div>
-
 
 <div class="lesson-field">
 
@@ -799,15 +653,13 @@ Lesson / Subject Name
 </label>
 
 <input
-  type="text"
-  id="lessonName"
-  name="lesson_name"
-  placeholder="Example: Kalma, Namaz, Quran..."
-  required
->
+type="text"
+id="lessonName"
+name="lesson_name"
+placeholder="Example: Kalma, Namaz, Quran..."
+required>
 
 </div>
-
 
 <div class="lesson-field">
 
@@ -816,111 +668,74 @@ Lesson Details
 </label>
 
 <textarea
-  id="lessonDetails"
-  name="lesson_details"
-  placeholder="Example: Which Kalma was read or which Namaz/page was taught..."
-></textarea>
+id="lessonDetails"
+name="lesson_details"
+placeholder="Which lesson/page was taught..."></textarea>
 
 </div>
-
 
 <div class="lesson-field">
 
-<label>
-Student Performance
-</label>
+<label>Student Performance</label>
 
 <div class="performance-options">
 
+<div class="performance-option">
+<input
+type="radio"
+id="performanceGood"
+name="performance"
+value="Good">
+<label for="performanceGood">Good</label>
+</div>
 
 <div class="performance-option">
-
 <input
-  type="radio"
-  id="performanceGood"
-  name="performance"
-  value="Good"
->
-
-<label for="performanceGood">
-Good
-</label>
-
+type="radio"
+id="performanceNotGood"
+name="performance"
+value="Not Good">
+<label for="performanceNotGood">Not Good</label>
 </div>
-
 
 <div class="performance-option">
-
 <input
-  type="radio"
-  id="performanceNotGood"
-  name="performance"
-  value="Not Good"
->
-
-<label for="performanceNotGood">
-Not Good
-</label>
-
+type="radio"
+id="performanceExcellent"
+name="performance"
+value="Excellent">
+<label for="performanceExcellent">Excellent</label>
 </div>
-
 
 <div class="performance-option">
-
 <input
-  type="radio"
-  id="performanceExcellent"
-  name="performance"
-  value="Excellent"
->
-
-<label for="performanceExcellent">
-Excellent
-</label>
-
-</div>
-
-
-<div class="performance-option">
-
-<input
-  type="radio"
-  id="performanceVeryGood"
-  name="performance"
-  value="Very Good"
->
-
-<label for="performanceVeryGood">
-Very Good
-</label>
-
-</div>
-
-
+type="radio"
+id="performanceVeryGood"
+name="performance"
+value="Very Good">
+<label for="performanceVeryGood">Very Good</label>
 </div>
 
 </div>
 
+</div>
 
 <div class="lesson-submit-row">
 
 <button
-  type="button"
-  class="lesson-btn cancel"
-  onclick="closeLessonModal()"
->
+type="button"
+class="lesson-btn cancel"
+onclick="closeLessonModal()">
 Cancel
 </button>
 
 <button
-  type="submit"
-  class="lesson-btn submit"
->
+type="submit"
+class="lesson-btn submit">
 Submit Lesson
 </button>
 
 </div>
-
 
 </form>
 
@@ -931,51 +746,35 @@ Submit Lesson
 </div>
 
 
-<!-- =====================================================
-     OPEN LESSON MODAL
-===================================================== -->
+<!-- OPEN LESSON MODAL -->
 
-<div
-  id="openLessonModal"
-  class="lesson-modal"
-  aria-hidden="true"
->
+<div id="openLessonModal" class="lesson-modal" aria-hidden="true">
 
 <div class="lesson-modal-box">
 
 <div class="lesson-modal-header">
 
-<h3>
-Previous Lesson
-</h3>
+<h3>Previous Lesson</h3>
 
 <button
-  type="button"
-  class="lesson-modal-close"
-  onclick="closeOpenLessonModal()"
-  aria-label="Close">
+type="button"
+class="lesson-modal-close"
+onclick="closeOpenLessonModal()">
 ×
 </button>
 
 </div>
-
 
 <div class="lesson-modal-body">
 
 <div class="lesson-student-info">
 
 Student:
-<strong id="openLessonStudentName">
-—
-</strong>
+<strong id="openLessonStudentName">—</strong>
 
 </div>
 
-
-<div
-  id="openLessonContent"
-  class="lesson-view-box"
->
+<div id="openLessonContent" class="lesson-view-box">
 
 <div class="today-empty">
 Loading previous lesson...
@@ -983,14 +782,12 @@ Loading previous lesson...
 
 </div>
 
-
 <div class="lesson-submit-row">
 
 <button
-  type="button"
-  class="lesson-btn cancel"
-  onclick="closeOpenLessonModal()"
->
+type="button"
+class="lesson-btn cancel"
+onclick="closeOpenLessonModal()">
 Close
 </button>
 
@@ -1009,1581 +806,1382 @@ Close
 
 "use strict";
 
-
-/* =====================================================
-   SUPABASE
-===================================================== */
-
 const cfg =
-  window.SUPABASE_CONFIG || {};
-
+window.SUPABASE_CONFIG || {};
 
 const db =
-  window.supabase?.createClient(
-    cfg.url,
-    cfg.anonKey
-  );
+window.supabase?.createClient(
+cfg.url,
+cfg.anonKey
+);
 
+window.academyDB = db;
 
-window.academyDB =
-  db;
+const BASE_TIMEZONE = "Asia/Karachi";
 
-
-const BASE_TIMEZONE =
-  "Asia/Karachi";
-
-
-/* =====================================================
-   HELPERS
-===================================================== */
 
 function escapeHTML(value){
 
-  return String(
-    value ?? ""
-  ).replace(
-    /[&<>"']/g,
-    function(char){
+return String(value ?? "").replace(
+/[&<>"']/g,
+function(char){
 
-      return {
-        "&":"&amp;",
-        "<":"&lt;",
-        ">":"&gt;",
-        '"':"&quot;",
-        "'":"&#39;"
-      }[char];
+return {
+"&":"&amp;",
+"<":"&lt;",
+">":"&gt;",
+'"':"&quot;",
+"'":"&#39;"
+}[char];
 
-    }
-  );
+}
+);
 
 }
 
 
 function getTeacherTimezone(){
 
-  return (
-    window.currentTeacherTimezone ||
-    window.teacherTimezone ||
-    localStorage.getItem(
-      "teacher_timezone"
-    ) ||
-    BASE_TIMEZONE
-  );
+return (
+window.currentTeacherTimezone ||
+window.teacherTimezone ||
+localStorage.getItem("teacher_timezone") ||
+BASE_TIMEZONE
+);
 
 }
 
 
 function getTeacherNow(){
 
-  return luxon.DateTime.now()
-    .setZone(
-      getTeacherTimezone()
-    );
+return luxon.DateTime.now()
+.setZone(getTeacherTimezone());
 
 }
 
 
 function todayISO(){
 
-  return getTeacherNow()
-    .toFormat(
-      "yyyy-MM-dd"
-    );
+return getTeacherNow()
+.toFormat("yyyy-MM-dd");
 
 }
 
 
 function todayName(){
 
-  return getTeacherNow()
-    .toFormat(
-      "cccc"
-    );
+return getTeacherNow()
+.toFormat("cccc");
 
 }
 
 
 function normalizeDay(value){
 
-  return String(
-    value || ""
-  )
-  .trim()
-  .toLowerCase();
+return String(value || "")
+.trim()
+.toLowerCase();
 
 }
 
 
-function dayMatches(
-  classDays,
-  currentDay
-){
+function dayMatches(classDays,currentDay){
 
-  if(Array.isArray(classDays)){
+if(Array.isArray(classDays)){
 
-    return classDays.some(
-      function(day){
+return classDays.some(function(day){
 
-        return normalizeDay(day) ===
-          normalizeDay(currentDay);
+return normalizeDay(day) ===
+normalizeDay(currentDay);
 
-      }
-    );
+});
 
-  }
+}
 
+if(typeof classDays === "string"){
 
-  if(typeof classDays === "string"){
+let text = classDays.trim();
 
-    let text =
-      classDays.trim();
+try{
 
+if(text.startsWith("[") && text.endsWith("]")){
 
-    try{
+const parsed = JSON.parse(text);
 
-      if(
-        text.startsWith("[") &&
-        text.endsWith("]")
-      ){
+if(Array.isArray(parsed)){
 
-        const parsed =
-          JSON.parse(text);
+return parsed.some(function(day){
 
+return normalizeDay(day) ===
+normalizeDay(currentDay);
 
-        if(Array.isArray(parsed)){
+});
 
-          return parsed.some(
-            function(day){
+}
 
-              return normalizeDay(day) ===
-                normalizeDay(currentDay);
+}
 
-            }
-          );
+}catch(error){}
 
-        }
+return text.split(",").some(function(day){
 
-      }
+return normalizeDay(day) ===
+normalizeDay(currentDay);
 
-    }catch(error){}
+});
 
+}
 
-    return text
-      .split(",")
-      .some(
-        function(day){
-
-          return normalizeDay(day) ===
-            normalizeDay(currentDay);
-
-        }
-      );
-
-  }
-
-
-  return false;
+return false;
 
 }
 
 
 function getScheduleDateTime(
-  classDate,
-  classTime,
-  scheduleTimezone
+classDate,
+classTime,
+scheduleTimezone
 ){
 
-  return luxon.DateTime.fromISO(
-    classDate +
-    "T" +
-    String(classTime)
-      .slice(0,8),
-    {
-      zone:
-        scheduleTimezone ||
-        BASE_TIMEZONE
-    }
-  );
-
+return luxon.DateTime.fromISO(
+classDate + "T" + String(classTime).slice(0,8),
+{
+zone:scheduleTimezone || BASE_TIMEZONE
 }
-
-
-function getEndDateTime(
-  classDate,
-  classTime,
-  duration,
-  scheduleTimezone
-){
-
-  return getScheduleDateTime(
-    classDate,
-    classTime,
-    scheduleTimezone
-  ).plus({
-    minutes:
-      Number(duration || 30)
-  });
+);
 
 }
 
 
 function formatTime(
-  classDate,
-  classTime,
-  scheduleTimezone
+classDate,
+classTime,
+scheduleTimezone
 ){
 
-  try{
+try{
 
-    const source =
-      getScheduleDateTime(
-        classDate,
-        classTime,
-        scheduleTimezone
-      );
+const source =
+getScheduleDateTime(
+classDate,
+classTime,
+scheduleTimezone
+);
 
+if(!source.isValid)
+return classTime || "—";
 
-    if(!source.isValid)
-      return classTime || "—";
+return source
+.setZone(getTeacherTimezone())
+.toFormat("h:mm a");
 
+}catch(error){
 
-    return source
-      .setZone(
-        getTeacherTimezone()
-      )
-      .toFormat(
-        "h:mm a"
-      );
+return classTime || "—";
 
-  }catch(error){
-
-    return classTime || "—";
-
-  }
+}
 
 }
 
 
 function safeURL(url){
 
-  if(!url)
-    return "";
+if(!url)
+return "";
 
+try{
 
-  try{
+const parsed = new URL(url);
 
-    const parsed =
-      new URL(url);
-
-
-    if(
-      parsed.protocol !== "http:" &&
-      parsed.protocol !== "https:"
-    ){
-
-      return "";
-
-    }
-
-
-    return parsed.href;
-
-  }catch(error){
-
-    return "";
-
-  }
-
-}
-
-
-function getClassroomURL(
-  classroomCode
+if(
+parsed.protocol !== "http:" &&
+parsed.protocol !== "https:"
 ){
 
-  if(!classroomCode)
-    return "";
+return "";
 
+}
 
-  const value =
-    String(classroomCode)
-      .trim();
+return parsed.href;
 
+}catch(error){
 
-  if(
-    value.startsWith("http://") ||
-    value.startsWith("https://")
-  ){
+return "";
 
-    return safeURL(value);
-
-  }
-
-
-  return (
-    "https://haroonibnrasheedonlinequranacadmey.github.io/" +
-    "haroon-quran-classroom/?code=" +
-    encodeURIComponent(value)
-  );
+}
 
 }
 
 
-/* =====================================================
-   STATUS
-===================================================== */
+function getClassroomURL(classroomCode){
+
+if(!classroomCode)
+return "";
+
+const value =
+String(classroomCode).trim();
+
+if(
+value.startsWith("http://") ||
+value.startsWith("https://")
+){
+
+return safeURL(value);
+
+}
+
+return (
+"https://haroonibnrasheedonlinequranacadmey.github.io/" +
+"haroon-quran-classroom/?code=" +
+encodeURIComponent(value)
+);
+
+}
+
 
 function normalizeSessionStatus(value){
 
-  return String(
-    value || ""
-  )
-  .trim()
-  .toLowerCase()
-  .replace(/\s+/g,"_");
+return String(value || "")
+.trim()
+.toLowerCase()
+.replace(/\s+/g,"_");
 
 }
 
 
-function calculateStatus(
-  session
+function calculateStatus(session){
+
+const saved =
+normalizeSessionStatus(session?.status);
+
+if(
+saved === "completed" ||
+saved === "complete" ||
+saved === "ended"
 ){
 
-  const saved =
-    normalizeSessionStatus(
-      session?.status
-    );
+return "completed";
 
+}
 
-  if(
-    saved === "completed" ||
-    saved === "complete" ||
-    saved === "ended"
-  ){
+if(saved === "absent")
+return "absent";
 
-    return "completed";
+if(
+saved === "on_leave" ||
+saved === "leave"
+){
 
-  }
+return "on_leave";
 
+}
 
-  if(saved === "absent")
-    return "absent";
+if(
+saved === "cancelled" ||
+saved === "canceled"
+){
 
+return "cancelled";
 
-  if(
-    saved === "on_leave" ||
-    saved === "leave"
-  ){
+}
 
-    return "on_leave";
+if(
+saved === "student_joined" ||
+saved === "both_joined" ||
+saved === "joined"
+){
 
-  }
+return "student_joined";
 
+}
 
-  if(
-    saved === "cancelled" ||
-    saved === "canceled"
-  ){
+if(
+saved === "active" ||
+saved === "in_progress" ||
+saved === "teacher_active"
+){
 
-    return "cancelled";
+return "active";
 
-  }
+}
 
-
-  if(
-    saved === "student_joined" ||
-    saved === "both_joined" ||
-    saved === "joined"
-  ){
-
-    return "student_joined";
-
-  }
-
-
-  if(
-    saved === "active" ||
-    saved === "in_progress" ||
-    saved === "teacher_active"
-  ){
-
-    return "active";
-
-  }
-
-
-  return "upcoming";
+return "upcoming";
 
 }
 
 
 function statusText(status){
 
-  const map = {
+const map = {
 
-    upcoming:
-      "Not Active",
+upcoming:"Not Active",
+active:"Active",
+late:"Late",
+student_joined:"Student Joined",
+completed:"Completed",
+absent:"Absent",
+on_leave:"On Leave",
+cancelled:"Cancelled"
 
-    active:
-      "Active",
+};
 
-    late:
-      "Late",
-
-    student_joined:
-      "Student Joined",
-
-    completed:
-      "Completed",
-
-    absent:
-      "Absent",
-
-    on_leave:
-      "On Leave",
-
-    cancelled:
-      "Cancelled"
-
-  };
-
-
-  return map[status] || "Not Active";
+return map[status] || "Not Active";
 
 }
 
 
 /* =====================================================
-   LOAD TODAY'S CLASSES
+   GET REAL STUDENT NAME
+   =====================================================
+
+   This function deliberately tries all possible IDs:
+
+   1. students.id
+   2. students.user_id
+   3. profiles.id
+
+   So if Admin saved "Uzma", "Jabeel", etc. in the
+   students table, the dashboard uses that REAL name
+   instead of displaying "Student".
+===================================================== */
+
+async function getRealStudent(
+studentId,
+teacherId
+){
+
+if(!studentId)
+return null;
+
+
+/* FIRST: students.id */
+
+let result =
+await db
+.from("students")
+.select(`
+id,
+user_id,
+full_name,
+status,
+course,
+timezone,
+teacher_id
+`)
+.eq("id",studentId)
+.maybeSingle();
+
+
+if(
+!result.error &&
+result.data &&
+String(result.data.full_name || "").trim()
+){
+
+return result.data;
+
+}
+
+
+/* SECOND: students.user_id */
+
+result =
+await db
+.from("students")
+.select(`
+id,
+user_id,
+full_name,
+status,
+course,
+timezone,
+teacher_id
+`)
+.eq("user_id",studentId)
+.maybeSingle();
+
+
+if(
+!result.error &&
+result.data &&
+String(result.data.full_name || "").trim()
+){
+
+return result.data;
+
+}
+
+
+/* THIRD: teacher's students by teacher_id */
+
+if(teacherId){
+
+result =
+await db
+.from("students")
+.select(`
+id,
+user_id,
+full_name,
+status,
+course,
+timezone,
+teacher_id
+`)
+.eq("teacher_id",teacherId);
+
+
+if(!result.error){
+
+const found =
+(result.data || []).find(function(student){
+
+return (
+String(student.id || "") === String(studentId) ||
+String(student.user_id || "") === String(studentId)
+);
+
+});
+
+
+if(
+found &&
+String(found.full_name || "").trim()
+){
+
+return found;
+
+}
+
+}
+
+}
+
+
+/* FOURTH: profiles */
+
+result =
+await db
+.from("profiles")
+.select(`
+id,
+full_name,
+role
+`)
+.eq("id",studentId)
+.maybeSingle();
+
+
+if(
+!result.error &&
+result.data &&
+String(result.data.full_name || "").trim()
+){
+
+return {
+
+id:result.data.id,
+user_id:result.data.id,
+full_name:result.data.full_name,
+course:"",
+status:"",
+timezone:BASE_TIMEZONE,
+teacher_id:teacherId || null
+
+};
+
+}
+
+
+return null;
+
+}
+
+
+/* =====================================================
+   LOAD TODAY
 ===================================================== */
 
 async function loadTeacherToday(){
 
-  if(!db)
-    return;
+if(!db)
+return;
 
+const rows =
+document.getElementById("todayClassRows");
 
-  const rows =
-    document.getElementById(
-      "todayClassRows"
-    );
+if(!rows)
+return;
 
+rows.innerHTML = `
+<tr>
+<td colspan="6" class="today-empty">
+Loading...
+</td>
+</tr>
+`;
 
-  if(!rows)
-    return;
+const auth =
+await db.auth.getUser();
 
+const user =
+auth?.data?.user;
 
-  rows.innerHTML = `
-    <tr>
-      <td colspan="6" class="today-empty">
-        Loading...
-      </td>
-    </tr>
-  `;
+if(!user){
 
+rows.innerHTML = `
+<tr>
+<td colspan="6" class="today-empty">
+Teacher login required.
+</td>
+</tr>
+`;
 
-  const auth =
-    await db.auth.getUser();
+return;
 
+}
 
-  const user =
-    auth?.data?.user;
+const uid = user.id;
 
+const todayDate = todayISO();
+const currentDay = todayName();
 
-  if(!user){
 
-    rows.innerHTML = `
-      <tr>
-        <td colspan="6" class="today-empty">
-          Teacher login required.
-        </td>
-      </tr>
-    `;
+/* =====================================================
+   SCHEDULES
+===================================================== */
 
-    return;
+const scheduleResult =
+await db
+.from("class_schedules")
+.select(`
+id,
+teacher_id,
+student_id,
+course,
+class_days,
+class_time,
+duration_minutes,
+google_meet_url,
+classroom_code,
+active,
+schedule_timezone
+`)
+.eq("teacher_id",uid)
+.eq("active",true)
+.order("class_time",{ascending:true});
 
-  }
 
+if(scheduleResult.error){
 
-  const uid =
-    user.id;
+console.error(
+"Teacher schedule error:",
+scheduleResult.error
+);
 
+rows.innerHTML = `
+<tr>
+<td colspan="6" class="today-empty">
+Unable to load today's classes.
+</td>
+</tr>
+`;
 
-  /* ===================================================
-     SCHEDULES
-  =================================================== */
+return;
 
-  const scheduleResult =
-    await db
-      .from("class_schedules")
-      .select(`
-        id,
-        teacher_id,
-        student_id,
-        course,
-        class_days,
-        class_time,
-        duration_minutes,
-        google_meet_url,
-        classroom_code,
-        active,
-        schedule_timezone
-      `)
-      .eq(
-        "teacher_id",
-        uid
-      )
-      .eq(
-        "active",
-        true
-      )
-      .order(
-        "class_time",
-        {
-          ascending:true
-        }
-      );
+}
 
 
-  if(scheduleResult.error){
+const allSchedules =
+scheduleResult.data || [];
 
-    console.error(
-      "Teacher schedule error:",
-      scheduleResult.error
-    );
 
+const todaySchedules =
+allSchedules.filter(function(schedule){
 
-    rows.innerHTML = `
-      <tr>
-        <td colspan="6" class="today-empty">
-          Unable to load today's classes.
-        </td>
-      </tr>
-    `;
+return dayMatches(
+schedule.class_days,
+currentDay
+);
 
-    return;
+});
 
-  }
 
+/* =====================================================
+   STUDENT MAP
+===================================================== */
 
-  const allSchedules =
-    scheduleResult.data || [];
+const studentMap = new Map();
 
 
-  const currentDay =
-    todayName();
+/*
+  First load ALL teacher students.
+*/
 
+const studentsResult =
+await db
+.from("students")
+.select(`
+id,
+user_id,
+full_name,
+status,
+course,
+timezone,
+teacher_id
+`)
+.eq("teacher_id",uid);
 
-  const todayDate =
-    todayISO();
 
+if(!studentsResult.error){
 
-  const todaySchedules =
-    allSchedules.filter(
-      function(schedule){
+(studentsResult.data || [])
+.forEach(function(student){
 
-        return dayMatches(
-          schedule.class_days,
-          currentDay
-        );
+if(student.id){
 
-      }
-    );
+studentMap.set(
+String(student.id),
+student
+);
 
+}
 
-  /* ===================================================
-     STUDENTS
-     
-     IMPORTANT:
-     student_id can refer to either students.id
-     or, in some existing records, students.user_id.
-     
-     Therefore we load the teacher's students and
-     match BOTH ids so the REAL full_name is shown.
-  =================================================== */
+if(student.user_id){
 
-  let students = [];
+studentMap.set(
+String(student.user_id),
+student
+);
 
+}
 
-  const teacherStudentsResult =
-    await db
-      .from("students")
-      .select(`
-        id,
-        user_id,
-        full_name,
-        timezone,
-        status,
-        course,
-        teacher_id
-      `)
-      .eq(
-        "teacher_id",
-        uid
-      );
+});
 
+}
 
-  if(!teacherStudentsResult.error){
 
-    students =
-      teacherStudentsResult.data || [];
+/*
+  Now directly resolve every scheduled student.
+  This is the important part that fixes the
+  "Student" fallback problem.
+*/
 
-  }else{
+for(
+const schedule of todaySchedules
+){
 
-    console.error(
-      "Teacher students error:",
-      teacherStudentsResult.error
-    );
+const sid =
+String(schedule.student_id || "");
 
-  }
+if(!sid)
+continue;
 
+if(studentMap.has(sid))
+continue;
 
-  const studentMap =
-    new Map();
+const realStudent =
+await getRealStudent(
+schedule.student_id,
+uid
+);
 
+if(realStudent){
 
-  students.forEach(
-    function(student){
+if(realStudent.id){
 
-      /*
-        Map by students.id
-      */
-      if(student.id){
+studentMap.set(
+String(realStudent.id),
+realStudent
+);
 
-        studentMap.set(
-          String(student.id),
-          student
-        );
+}
 
-      }
+if(realStudent.user_id){
 
+studentMap.set(
+String(realStudent.user_id),
+realStudent
+);
 
-      /*
-        Also map by students.user_id
-      */
-      if(student.user_id){
+}
 
-        studentMap.set(
-          String(student.user_id),
-          student
-        );
+}
 
-      }
+}
 
-    }
-  );
 
+/* =====================================================
+   SESSIONS
+===================================================== */
 
-  /*
-    Fallback:
-    If teacher_id filtering did not return the student,
-    search directly by the schedule student IDs.
-  */
+const scheduleIds =
+todaySchedules.map(function(schedule){
 
-  const scheduleStudentIds =
-    todaySchedules
-      .map(
-        function(schedule){
+return schedule.id;
 
-          return schedule.student_id;
+});
 
-        }
-      )
-      .filter(Boolean)
-      .map(
-        function(id){
 
-          return String(id);
+let sessions = [];
 
-        }
-      );
 
+if(scheduleIds.length){
 
-  const missingIds =
-    scheduleStudentIds.filter(
-      function(id){
+const sessionResult =
+await db
+.from("teacher_class_sessions")
+.select(`
+id,
+schedule_id,
+teacher_id,
+student_id,
+class_date,
+status,
+started_at,
+completed_at,
+student_joined_at,
+class,
+test,
+session,
+timezone
+`)
+.in("schedule_id",scheduleIds)
+.eq("class_date",todayDate);
 
-        return !studentMap.has(id);
 
-      }
-    );
+if(!sessionResult.error){
 
+sessions =
+sessionResult.data || [];
 
-  if(missingIds.length){
+}else{
 
-    const directResult =
-      await db
-        .from("students")
-        .select(`
-          id,
-          user_id,
-          full_name,
-          timezone,
-          status,
-          course,
-          teacher_id
-        `)
-        .or(
-          "id.in.(" +
-          missingIds.join(",") +
-          "),user_id.in.(" +
-          missingIds.join(",") +
-          ")"
-        );
+console.error(
+"Teacher sessions error:",
+sessionResult.error
+);
 
+}
 
-    if(!directResult.error){
+}
 
-      (directResult.data || [])
-        .forEach(
-          function(student){
 
-            if(student.id){
+const sessionMap = new Map();
 
-              studentMap.set(
-                String(student.id),
-                student
-              );
 
-            }
+sessions.forEach(function(session){
 
+sessionMap.set(
+String(session.schedule_id),
+session
+);
 
-            if(student.user_id){
+});
 
-              studentMap.set(
-                String(student.user_id),
-                student
-              );
 
-            }
+/* =====================================================
+   SUMMARY
+===================================================== */
 
-          }
-        );
+let lateCount = 0;
+let completedCount = 0;
+let leftCount = 0;
 
-    }
+const nowTeacher =
+getTeacherNow();
 
-  }
 
+todaySchedules.forEach(function(schedule){
 
-  /* ===================================================
-     TODAY SESSIONS
-  =================================================== */
+const session =
+sessionMap.get(
+String(schedule.id)
+);
 
-  const scheduleIds =
-    todaySchedules
-      .map(
-        function(schedule){
+const status =
+calculateStatus(session);
 
-          return schedule.id;
 
-        }
-      );
+if(status === "completed"){
 
+completedCount++;
 
-  let sessions = [];
+return;
 
+}
 
-  if(scheduleIds.length){
 
-    const sessionResult =
-      await db
-        .from("teacher_class_sessions")
-        .select(`
-          id,
-          schedule_id,
-          student_id,
-          class_date,
-          status,
-          started_at,
-          completed_at
-        `)
-        .in(
-          "schedule_id",
-          scheduleIds
-        )
-        .eq(
-          "class_date",
-          todayDate
-        );
+if(
+status === "absent" ||
+status === "on_leave" ||
+status === "cancelled"
+){
 
+return;
 
-    if(!sessionResult.error){
+}
 
-      sessions =
-        sessionResult.data || [];
 
-    }else{
+if(status === "upcoming"){
 
-      console.error(
-        "Teacher session error:",
-        sessionResult.error
-      );
+const start =
+getScheduleDateTime(
+todayDate,
+schedule.class_time,
+schedule.schedule_timezone
+).setZone(
+getTeacherTimezone()
+);
 
-    }
 
-  }
+if(nowTeacher >= start){
 
+lateCount++;
 
-  const sessionMap =
-    new Map();
+}
 
+leftCount++;
 
-  sessions.forEach(
-    function(session){
+}
 
-      sessionMap.set(
-        String(session.schedule_id),
-        session
-      );
 
-    }
-  );
+if(
+session &&
+session.started_at
+){
 
+const start =
+getScheduleDateTime(
+todayDate,
+schedule.class_time,
+schedule.schedule_timezone
+).setZone(
+getTeacherTimezone()
+);
 
-  /* ===================================================
-     SUMMARY
-  =================================================== */
+const started =
+luxon.DateTime.fromISO(
+session.started_at
+).setZone(
+getTeacherTimezone()
+);
 
-  let lateCount = 0;
-  let completedCount = 0;
-  let leftCount = 0;
 
+if(started >= start){
 
-  const nowTeacher =
-    getTeacherNow();
+lateCount++;
 
+}
 
-  todaySchedules.forEach(
-    function(schedule){
+}
 
-      const session =
-        sessionMap.get(
-          String(schedule.id)
-        );
+});
 
 
-      const status =
-        calculateStatus(
-          session
-        );
+document.getElementById("totalClasses").textContent =
+todaySchedules.length;
 
+document.getElementById("lateClasses").textContent =
+lateCount;
 
-      if(status === "completed"){
+document.getElementById("leftClasses").textContent =
+leftCount;
 
-        completedCount++;
+document.getElementById("classRate").textContent =
+(
+todaySchedules.length
+?
+Math.round(
+(completedCount / todaySchedules.length) * 100
+)
+:
+0
+) + "%";
 
-        return;
 
-      }
+document.getElementById("todaySummary").textContent =
+todaySchedules.length +
+" class" +
+(todaySchedules.length === 1 ? "" : "es") +
+" scheduled for today.";
 
 
-      if(
-        status === "absent" ||
-        status === "on_leave" ||
-        status === "cancelled"
-      ){
+if(!todaySchedules.length){
 
-        return;
+rows.innerHTML = `
+<tr>
+<td colspan="6" class="today-empty">
+No classes scheduled for today.
+</td>
+</tr>
+`;
 
-      }
+return;
 
+}
 
-      if(
-        status === "upcoming"
-      ){
 
-        const start =
-          getScheduleDateTime(
-            todayDate,
-            schedule.class_time,
-            schedule.schedule_timezone
-          );
+/* =====================================================
+   RENDER
+===================================================== */
 
+rows.innerHTML =
+todaySchedules.map(function(schedule){
 
-        const startTeacher =
-          start.setZone(
-            getTeacherTimezone()
-          );
+const student =
+studentMap.get(
+String(schedule.student_id || "")
+) || null;
 
 
-        if(
-          nowTeacher >= startTeacher
-        ){
+const session =
+sessionMap.get(
+String(schedule.id)
+);
 
-          lateCount++;
 
-        }
+let status =
+calculateStatus(session);
 
 
-        leftCount++;
+const duration =
+Number(
+schedule.duration_minutes || 30
+);
 
-      }
 
+const teacherTime =
+formatTime(
+todayDate,
+schedule.class_time,
+schedule.schedule_timezone
+);
 
-      /*
-        If teacher activated at/after start,
-        count it as a late class.
-      */
 
-      if(
-        session &&
-        session.started_at &&
-        status === "active"
-      ){
+const start =
+getScheduleDateTime(
+todayDate,
+schedule.class_time,
+schedule.schedule_timezone
+).setZone(
+getTeacherTimezone()
+);
 
-        const start =
-          getScheduleDateTime(
-            todayDate,
-            schedule.class_time,
-            schedule.schedule_timezone
-          );
 
+const now =
+getTeacherNow();
 
-        const started =
-          luxon.DateTime.fromISO(
-            session.started_at
-          )
-          .setZone(
-            getTeacherTimezone()
-          );
 
+/*
+  If teacher has NOT activated:
+  - before class = Not Active
+  - at/after class time = Late
 
-        const startTeacher =
-          start.setZone(
-            getTeacherTimezone()
-          );
+  IMPORTANT:
+  The system does NOT automatically activate.
+*/
 
+if(
+status === "upcoming" &&
+now >= start
+){
 
-        if(
-          started >= startTeacher
-        ){
+status = "late";
 
-          lateCount++;
+}
 
-        }
 
-      }
+/*
+  If teacher DID activate:
+  - before scheduled time = Active / Pink
+  - at or after scheduled time = Late
+*/
 
-    }
-  );
+if(
+session &&
+session.started_at &&
+(
+status === "active" ||
+status === "student_joined"
+)
+){
 
+const started =
+luxon.DateTime.fromISO(
+session.started_at
+).setZone(
+getTeacherTimezone()
+);
 
-  const totalEl =
-    document.getElementById(
-      "totalClasses"
-    );
 
-  const lateEl =
-    document.getElementById(
-      "lateClasses"
-    );
+if(started >= start){
 
-  const leftEl =
-    document.getElementById(
-      "leftClasses"
-    );
+status = "late";
 
-  const rateEl =
-    document.getElementById(
-      "classRate"
-    );
+}
 
+}
 
-  if(totalEl)
-    totalEl.textContent =
-      todaySchedules.length;
 
+/*
+  REAL NAME ONLY.
 
-  if(lateEl)
-    lateEl.textContent =
-      lateCount;
+  If Admin saved the name in students.full_name,
+  that exact name is displayed.
 
+  We do NOT blindly show "Student" when a record
+  exists without a name.
+*/
 
-  if(leftEl)
-    leftEl.textContent =
-      leftCount;
+const studentName =
+student &&
+String(student.full_name || "").trim()
+?
+String(student.full_name).trim()
+:
+"Student";
 
 
-  if(rateEl){
+const course =
+schedule.course ||
+student?.course ||
+"—";
 
-    const rate =
-      todaySchedules.length
-        ? Math.round(
-            (
-              completedCount /
-              todaySchedules.length
-            ) * 100
-          )
-        : 0;
 
+const rowClass =
+"class-row status-" + status;
 
-    rateEl.textContent =
-      rate + "%";
 
-  }
+let actionHTML = "";
 
 
-  const summary =
-    document.getElementById(
-      "todaySummary"
-    );
+/* ===================================================
+   NOT ACTIVE
+=================================================== */
 
+if(
+(status === "upcoming" || status === "late") &&
+!session?.started_at
+){
 
-  if(summary){
+actionHTML = `
 
-    summary.textContent =
-      todaySchedules.length +
-      " class" +
-      (
-        todaySchedules.length === 1
-          ? ""
-          : "es"
-      ) +
-      " scheduled for today.";
+<div class="action-group">
 
-  }
+<button
+type="button"
+onclick="teacherActivateClass('${escapeHTML(schedule.id)}')">
+Activate
+</button>
 
+<button
+type="button"
+class="reschedule-action"
+onclick="teacherRescheduleClass('${escapeHTML(schedule.id)}')">
+Reschedule
+</button>
 
-  /* ===================================================
-     NO CLASSES
-  =================================================== */
+</div>
 
-  if(!todaySchedules.length){
+`;
 
-    rows.innerHTML = `
-      <tr>
-        <td colspan="6" class="today-empty">
-          No classes scheduled for today.
-        </td>
-      </tr>
-    `;
+}
 
-    return;
 
-  }
+/* ===================================================
+   ACTIVE
+   OR LATE AFTER TEACHER ACTIVATED
+=================================================== */
 
+else if(
+status === "active" ||
+(
+status === "late" &&
+session?.started_at
+)
+){
 
-  /* ===================================================
-     RENDER CLASSES
-  =================================================== */
+const meet =
+safeURL(
+schedule.google_meet_url
+);
 
-  rows.innerHTML =
-    todaySchedules.map(
-      function(schedule){
+const classroom =
+getClassroomURL(
+schedule.classroom_code
+);
 
-        /*
-          REAL STUDENT NAME:
-          First try students.id,
-          then students.user_id.
-        */
+actionHTML = `
 
-        const student =
-          studentMap.get(
-            String(
-              schedule.student_id || ""
-            )
-          ) || {};
+<div class="action-group">
 
+<button
+type="button"
+class="danger-action"
+onclick="teacherEndClass(
+'${escapeHTML(schedule.id)}',
+'${escapeHTML(studentName)}',
+'${escapeHTML(course + " • " + teacherTime)}'
+)">
+End Class
+</button>
 
-        const session =
-          sessionMap.get(
-            String(schedule.id)
-          );
+${
+meet
+?
+`
+<a
+href="${escapeHTML(meet)}"
+target="_blank"
+rel="noopener"
+class="join-meeting">
+Join Meeting
+</a>
+`
+:
+""
+}
 
+${
+classroom
+?
+`
+<a
+href="${escapeHTML(classroom)}"
+target="_blank"
+rel="noopener"
+class="join-classroom">
+Join Classroom
+</a>
+`
+:
+""
+}
 
-        let status =
-          calculateStatus(
-            session
-          );
+<button
+type="button"
+class="lesson-action"
+onclick="showOpenLessonModal(
+'${escapeHTML(schedule.id)}',
+'${escapeHTML(studentName)}'
+)">
+Open Lesson
+</button>
 
+</div>
 
-        const duration =
-          Number(
-            schedule.duration_minutes ||
-            30
-          );
+`;
 
+}
 
-        const teacherTime =
-          formatTime(
-            todayDate,
-            schedule.class_time,
-            schedule.schedule_timezone
-          );
 
+/* ===================================================
+   STUDENT JOINED
+=================================================== */
 
-        const start =
-          getScheduleDateTime(
-            todayDate,
-            schedule.class_time,
-            schedule.schedule_timezone
-          );
+else if(
+status === "student_joined"
+){
 
+const meet =
+safeURL(
+schedule.google_meet_url
+);
 
-        const startTeacher =
-          start.setZone(
-            getTeacherTimezone()
-          );
+const classroom =
+getClassroomURL(
+schedule.classroom_code
+);
 
+actionHTML = `
 
-        const now =
-          getTeacherNow();
+<div class="action-group">
 
+<button
+type="button"
+class="danger-action"
+onclick="teacherEndClass(
+'${escapeHTML(schedule.id)}',
+'${escapeHTML(studentName)}',
+'${escapeHTML(course + " • " + teacherTime)}'
+)">
+End Class
+</button>
 
-        /*
-          IMPORTANT RULE:
+${
+meet
+?
+`
+<a
+href="${escapeHTML(meet)}"
+target="_blank"
+rel="noopener"
+class="join-meeting">
+Join Meeting
+</a>
+`
+:
+""
+}
 
-          9:00 class:
-          - Teacher can activate at 8:55
-          - Teacher can activate at 8:56
-          - Teacher can activate at 8:59
-          => Normal Active / PINK
+${
+classroom
+?
+`
+<a
+href="${escapeHTML(classroom)}"
+target="_blank"
+rel="noopener"
+class="join-classroom">
+Join Classroom
+</a>
+`
+:
+""
+}
 
-          If teacher activates at 9:00 or later:
-          => LATE
+<button
+type="button"
+class="lesson-action"
+onclick="showOpenLessonModal(
+'${escapeHTML(schedule.id)}',
+'${escapeHTML(studentName)}'
+)">
+Open Lesson
+</button>
 
-          Class NEVER auto-activates.
-        */
+</div>
 
-        let lateActivation =
-          false;
+`;
 
+}
 
-        if(
-          session &&
-          session.started_at &&
-          (
-            status === "active" ||
-            status === "student_joined"
-          )
-        ){
 
-          const started =
-            luxon.DateTime.fromISO(
-              session.started_at
-            )
-            .setZone(
-              getTeacherTimezone()
-            );
+/* ===================================================
+   COMPLETED
+=================================================== */
 
+else if(status === "completed"){
 
-          if(
-            started >= startTeacher
-          ){
+actionHTML = `
 
-            lateActivation =
-              true;
+<div class="action-group">
 
-          }
+<button
+type="button"
+class="lesson-action"
+onclick="showOpenLessonModal(
+'${escapeHTML(schedule.id)}',
+'${escapeHTML(studentName)}'
+)">
+Open Lesson
+</button>
 
-        }
+</div>
 
+`;
 
-        /*
-          If not activated and scheduled time
-          has arrived/passed, show LATE.
+}
 
-          It still only has Activate + Reschedule.
-        */
 
-        if(
-          status === "upcoming" &&
-          now >= startTeacher
-        ){
+/* ===================================================
+   ABSENT
+=================================================== */
 
-          status =
-            "late";
+else if(status === "absent"){
 
-        }
+actionHTML = `
 
+<div class="action-group">
 
-        /*
-          If teacher activated late, show LATE
-          but keep the active-class buttons.
-        */
+<span class="action-absent">
+Absent
+</span>
 
-        if(
-          lateActivation &&
-          status !== "completed"
-        ){
+</div>
 
-          status =
-            "late";
+`;
 
-        }
+}
 
 
-        const studentName =
-          String(
-            student.full_name ||
-            ""
-          ).trim() ||
-          "Student";
+/* ===================================================
+   LEAVE / CANCELLED
+=================================================== */
 
+else if(
+status === "on_leave" ||
+status === "cancelled"
+){
 
-        const course =
-          schedule.course ||
-          student.course ||
-          "—";
+actionHTML = `
 
+<div class="action-group">
 
-        const rowClass =
-          "class-row status-" +
-          status;
+<span class="action-done">
+${
+status === "on_leave"
+?
+"On Leave"
+:
+"Cancelled"
+}
+</span>
 
+</div>
 
-        let actionHTML =
-          "";
+`;
 
+}
 
-        /* =================================================
-           NOT ACTIVE / LATE BEFORE ACTIVATION
-           
-           ONLY:
-           Activate
-           Reschedule
-        ================================================= */
 
-        if(
-          (
-            status === "upcoming" ||
-            status === "late"
-          ) &&
-          !session?.started_at
-        ){
+return `
 
-          actionHTML = `
+<tr
+class="${rowClass}"
+data-schedule-id="${escapeHTML(schedule.id)}">
 
-            <div class="action-group">
+<td>
+${escapeHTML(teacherTime)}
+</td>
 
-              <button
-                type="button"
-                onclick="teacherActivateClass('${escapeHTML(schedule.id)}')"
-              >
-                Activate
-              </button>
+<td>
 
-              <button
-                type="button"
-                class="reschedule-action"
-                onclick="teacherRescheduleClass('${escapeHTML(schedule.id)}')"
-              >
-                Reschedule
-              </button>
+<strong>
+${escapeHTML(studentName)}
+</strong>
 
-            </div>
+</td>
 
-          `;
+<td>
+${escapeHTML(course)}
+</td>
 
-        }
+<td>
+${escapeHTML(duration + " min")}
+</td>
 
+<td>
 
-        /* =================================================
-           ACTIVE / PINK
+<span
+class="status-pill status-${escapeHTML(status)}">
 
-           END CLASS
-           JOIN MEETING
-           JOIN CLASSROOM
-           OPEN LESSON
+${escapeHTML(statusText(status))}
 
-           NO RESTART
-           NO COPY LINK
-        ================================================= */
+</span>
 
-        else if(
-          status === "active" ||
-          (
-            status === "late" &&
-            session?.started_at
-          )
-        ){
+</td>
 
-          const meet =
-            safeURL(
-              schedule.google_meet_url
-            );
+<td>
+${actionHTML}
+</td>
 
+</tr>
 
-          const classroom =
-            getClassroomURL(
-              schedule.classroom_code
-            );
+`;
 
-
-          actionHTML = `
-
-            <div class="action-group">
-
-              <button
-                type="button"
-                class="danger-action"
-                onclick="teacherEndClass(
-                  '${escapeHTML(schedule.id)}',
-                  '${escapeHTML(studentName)}',
-                  '${escapeHTML(course + ' • ' + teacherTime)}'
-                )"
-              >
-                End Class
-              </button>
-
-              ${
-                meet
-                  ? `
-                    <a
-                      href="${escapeHTML(meet)}"
-                      target="_blank"
-                      rel="noopener"
-                      class="join-meeting"
-                    >
-                      Join Meeting
-                    </a>
-                  `
-                  : ""
-              }
-
-              ${
-                classroom
-                  ? `
-                    <a
-                      href="${escapeHTML(classroom)}"
-                      target="_blank"
-                      rel="noopener"
-                      class="join-classroom"
-                    >
-                      Join Classroom
-                    </a>
-                  `
-                  : ""
-              }
-
-              <button
-                type="button"
-                class="lesson-action"
-                onclick="showOpenLessonModal(
-                  '${escapeHTML(schedule.id)}',
-                  '${escapeHTML(studentName)}'
-                )"
-              >
-                Open Lesson
-              </button>
-
-            </div>
-
-          `;
-
-        }
-
-
-        /* =================================================
-           STUDENT JOINED / YELLOW
-        ================================================= */
-
-        else if(
-          status === "student_joined"
-        ){
-
-          const meet =
-            safeURL(
-              schedule.google_meet_url
-            );
-
-
-          const classroom =
-            getClassroomURL(
-              schedule.classroom_code
-            );
-
-
-          actionHTML = `
-
-            <div class="action-group">
-
-              <button
-                type="button"
-                class="danger-action"
-                onclick="teacherEndClass(
-                  '${escapeHTML(schedule.id)}',
-                  '${escapeHTML(studentName)}',
-                  '${escapeHTML(course + ' • ' + teacherTime)}'
-                )"
-              >
-                End Class
-              </button>
-
-              ${
-                meet
-                  ? `
-                    <a
-                      href="${escapeHTML(meet)}"
-                      target="_blank"
-                      rel="noopener"
-                      class="join-meeting"
-                    >
-                      Join Meeting
-                    </a>
-                  `
-                  : ""
-              }
-
-              ${
-                classroom
-                  ? `
-                    <a
-                      href="${escapeHTML(classroom)}"
-                      target="_blank"
-                      rel="noopener"
-                      class="join-classroom"
-                    >
-                      Join Classroom
-                    </a>
-                  `
-                  : ""
-              }
-
-              <button
-                type="button"
-                class="lesson-action"
-                onclick="showOpenLessonModal(
-                  '${escapeHTML(schedule.id)}',
-                  '${escapeHTML(studentName)}'
-                )"
-              >
-                Open Lesson
-              </button>
-
-            </div>
-
-          `;
-
-        }
-
-
-        /* =================================================
-           COMPLETED / GREEN
-        ================================================= */
-
-        else if(
-          status === "completed"
-        ){
-
-          actionHTML = `
-
-            <div class="action-group">
-
-              <button
-                type="button"
-                class="lesson-action"
-                onclick="showOpenLessonModal(
-                  '${escapeHTML(schedule.id)}',
-                  '${escapeHTML(studentName)}'
-                )"
-              >
-                Open Lesson
-              </button>
-
-            </div>
-
-          `;
-
-        }
-
-
-        /* =================================================
-           ABSENT
-        ================================================= */
-
-        else if(
-          status === "absent"
-        ){
-
-          actionHTML = `
-
-            <div class="action-group">
-
-              <span class="action-absent">
-                Absent
-              </span>
-
-            </div>
-
-          `;
-
-        }
-
-
-        /* =================================================
-           LEAVE / CANCELLED
-        ================================================= */
-
-        else if(
-          status === "on_leave" ||
-          status === "cancelled"
-        ){
-
-          actionHTML = `
-
-            <div class="action-group">
-
-              <span class="action-done">
-                ${
-                  status === "on_leave"
-                    ? "On Leave"
-                    : "Cancelled"
-                }
-              </span>
-
-            </div>
-
-          `;
-
-        }
-
-
-        return `
-
-          <tr
-            class="${rowClass}"
-            data-schedule-id="${escapeHTML(schedule.id)}"
-          >
-
-            <td>
-              ${escapeHTML(teacherTime)}
-            </td>
-
-            <td>
-              <strong>
-                ${escapeHTML(studentName)}
-              </strong>
-            </td>
-
-            <td>
-              ${escapeHTML(course)}
-            </td>
-
-            <td>
-              ${escapeHTML(duration + " min")}
-            </td>
-
-            <td>
-
-              <span
-                class="status-pill status-${escapeHTML(status)}"
-              >
-                ${escapeHTML(statusText(status))}
-              </span>
-
-            </td>
-
-            <td>
-              ${actionHTML}
-            </td>
-
-          </tr>
-
-        `;
-
-      }
-    ).join("");
+}).join("");
 
 }
 
@@ -2595,145 +2193,134 @@ async function loadTeacherToday(){
 window.teacherActivateClass =
 async function(scheduleId){
 
-  if(!db)
-    return;
+if(!db)
+return;
 
 
-  const auth =
-    await db.auth.getUser();
+const auth =
+await db.auth.getUser();
+
+const user =
+auth?.data?.user;
 
 
-  const user =
-    auth?.data?.user;
+if(!user){
+
+alert("Teacher login required.");
+
+return;
+
+}
 
 
-  if(!user){
-
-    alert(
-      "Teacher login required."
-    );
-
-    return;
-
-  }
+const today =
+todayISO();
 
 
-  const today =
-    todayISO();
+/*
+  Verify this schedule belongs to this teacher.
+*/
+
+const scheduleResult =
+await db
+.from("class_schedules")
+.select(`
+id,
+teacher_id,
+student_id,
+class_time,
+duration_minutes,
+schedule_timezone
+`)
+.eq("id",scheduleId)
+.eq("teacher_id",user.id)
+.maybeSingle();
 
 
-  const scheduleResult =
-    await db
-      .from("class_schedules")
-      .select(`
-        id,
-        teacher_id,
-        student_id,
-        class_time,
-        duration_minutes,
-        schedule_timezone
-      `)
-      .eq(
-        "id",
-        scheduleId
-      )
-      .eq(
-        "teacher_id",
-        user.id
-      )
-      .maybeSingle();
+if(scheduleResult.error){
+
+alert(
+"Schedule error: " +
+scheduleResult.error.message
+);
+
+return;
+
+}
 
 
-  if(scheduleResult.error){
+if(!scheduleResult.data){
 
-    alert(
-      scheduleResult.error.message
-    );
+alert("Class schedule not found.");
 
-    return;
+return;
 
-  }
+}
 
 
-  if(!scheduleResult.data){
+/*
+  IMPORTANT:
 
-    alert(
-      "Class schedule not found."
-    );
+  teacher_id IS NOW INCLUDED.
 
-    return;
+  This fixes:
 
-  }
+  "new row violates row-level security
+   policy for table teacher_class_sessions"
 
+  Because the RLS policy requires:
 
-  /*
-    IMPORTANT:
-
-    Teacher is allowed to activate BEFORE
-    class start time.
-
-    Example:
-    Class = 9:00 AM
-    Activate = 8:55 AM
-    => NORMAL ACTIVE / PINK
-
-    Activate = 9:00 AM
-    => LATE
-
-    Activate = 9:03 AM
-    => LATE
-
-    The class is NEVER automatically activated.
-  */
+  teacher_id = auth.uid()
+*/
 
 
-  const result =
-    await db
-      .from("teacher_class_sessions")
-      .upsert(
-        {
-          schedule_id:
-            scheduleId,
+const result =
+await db
+.from("teacher_class_sessions")
+.upsert(
+{
+schedule_id:scheduleId,
 
-          student_id:
-            scheduleResult.data.student_id,
+teacher_id:user.id,
 
-          class_date:
-            today,
+student_id:
+scheduleResult.data.student_id,
 
-          status:
-            "active",
+class_date:today,
 
-          started_at:
-            new Date().toISOString()
+status:"active",
 
-        },
-        {
-          onConflict:
-            "schedule_id,class_date"
-        }
-      );
+started_at:
+new Date().toISOString(),
 
+timezone:
+getTeacherTimezone()
 
-  if(result.error){
-
-    console.error(
-      "Activate class error:",
-      result.error
-    );
+},
+{
+onConflict:"schedule_id,class_date"
+}
+);
 
 
-    alert(
-      "Unable to activate class: " +
-      result.error.message
-    );
+if(result.error){
 
-    return;
+console.error(
+"Activate class error:",
+result.error
+);
 
-  }
+alert(
+"Unable to activate class: " +
+result.error.message
+);
+
+return;
+
+}
 
 
-  await loadTeacherToday();
+await loadTeacherToday();
 
 };
 
@@ -2744,17 +2331,17 @@ async function(scheduleId){
 
 window.teacherEndClass =
 function(
-  scheduleId,
-  studentName,
-  classInfo
+scheduleId,
+studentName,
+classInfo
 ){
 
-  openLessonModal(
-    scheduleId,
-    studentName,
-    classInfo,
-    "end"
-  );
+openLessonModal(
+scheduleId,
+studentName,
+classInfo,
+"end"
+);
 
 };
 
@@ -2766,257 +2353,140 @@ function(
 window.teacherRescheduleClass =
 function(scheduleId){
 
-  if(
-    typeof window.openRescheduleClass ===
-    "function"
-  ){
+if(
+typeof window.openRescheduleClass ===
+"function"
+){
 
-    window.openRescheduleClass(
-      scheduleId
-    );
+window.openRescheduleClass(
+scheduleId
+);
 
-    return;
+return;
 
-  }
+}
 
-
-  alert(
-    "Please use the Schedule page to reschedule this class."
-  );
+alert(
+"Please use the Schedule page to reschedule this class."
+);
 
 };
 
 
 /* =====================================================
-   AUTO REFRESH
+   REFRESH
 ===================================================== */
 
-let dashboardRefreshTimer =
-  null;
+let dashboardRefreshTimer = null;
 
 
 function startDashboardRefresh(){
 
-  if(dashboardRefreshTimer){
+if(dashboardRefreshTimer){
 
-    clearInterval(
-      dashboardRefreshTimer
-    );
+clearInterval(
+dashboardRefreshTimer
+);
 
-  }
+}
 
+dashboardRefreshTimer =
+setInterval(
+function(){
 
-  dashboardRefreshTimer =
-    setInterval(
-      function(){
+loadTeacherToday();
 
-        loadTeacherToday();
-
-      },
-      30000
-    );
+},
+30000
+);
 
 }
 
 
 document.addEventListener(
-  "teacherTimezoneReady",
-  function(){
+"teacherTimezoneReady",
+function(){
 
-    loadTeacherToday();
+loadTeacherToday();
 
-  }
+}
 );
 
 
 document.addEventListener(
-  "DOMContentLoaded",
-  function(){
+"DOMContentLoaded",
+function(){
 
-    setTimeout(
-      function(){
+setTimeout(
+function(){
 
-        loadTeacherToday();
+loadTeacherToday();
 
-        startDashboardRefresh();
+startDashboardRefresh();
 
-      },
-      700
-    );
+},
+700
+);
 
-  }
+}
 );
 
 
 window.loadTeacherTodayClasses =
-  loadTeacherToday;
+loadTeacherToday;
 
 
 /* =====================================================
-   TEACHER TIMEZONE
+   TIMEZONE
 ===================================================== */
-
-window.convertScheduleForTeacher =
-function(
-  classDate,
-  classTime,
-  scheduleTimezone
-){
-
-  try{
-
-    const source =
-      getScheduleDateTime(
-        classDate,
-        classTime,
-        scheduleTimezone
-      );
-
-
-    if(!source.isValid)
-      return null;
-
-
-    return source.setZone(
-      getTeacherTimezone()
-    );
-
-  }catch(error){
-
-    console.error(
-      "Teacher timezone conversion error:",
-      error
-    );
-
-    return null;
-
-  }
-
-};
-
-
-window.formatTeacherClassTime =
-function(
-  classDate,
-  classTime,
-  scheduleTimezone
-){
-
-  const converted =
-    window.convertScheduleForTeacher(
-      classDate,
-      classTime,
-      scheduleTimezone
-    );
-
-
-  if(!converted)
-    return classTime || "—";
-
-
-  return converted.toFormat(
-    "h:mm a"
-  );
-
-};
-
-
-window.formatTeacherClassDate =
-function(
-  classDate,
-  classTime,
-  scheduleTimezone
-){
-
-  const converted =
-    window.convertScheduleForTeacher(
-      classDate,
-      classTime,
-      scheduleTimezone
-    );
-
-
-  if(!converted)
-    return classDate || "—";
-
-
-  return converted.toFormat(
-    "EEE, dd LLL yyyy"
-  );
-
-};
-
-
-window.teacherTodayISO =
-function(){
-
-  return todayISO();
-
-};
-
-
-window.teacherTodayName =
-function(){
-
-  return todayName();
-
-};
-
 
 window.setTeacherTimezone =
 function(timezone){
 
-  if(!timezone)
-    return;
+if(!timezone)
+return;
 
+window.currentTeacherTimezone =
+timezone;
 
-  window.currentTeacherTimezone =
-    timezone;
+window.teacherTimezone =
+timezone;
 
+localStorage.setItem(
+"teacher_timezone",
+timezone
+);
 
-  window.teacherTimezone =
-    timezone;
+const dateEl =
+document.getElementById(
+"dashboardDate"
+);
 
+if(dateEl){
 
-  localStorage.setItem(
-    "teacher_timezone",
-    timezone
-  );
+dateEl.textContent =
+getTeacherNow().toFormat(
+"EEEE, dd LLLL yyyy"
+);
 
+}
 
-  const dateEl =
-    document.getElementById(
-      "dashboardDate"
-    );
-
-
-  if(dateEl){
-
-    dateEl.textContent =
-      getTeacherNow().toFormat(
-        "EEEE, dd LLLL yyyy"
-      );
-
-  }
-
-
-  loadTeacherToday();
+loadTeacherToday();
 
 };
 
 
 const dateEl =
-  document.getElementById(
-    "dashboardDate"
-  );
-
+document.getElementById(
+"dashboardDate"
+);
 
 if(dateEl){
 
-  dateEl.textContent =
-    getTeacherNow().toFormat(
-      "EEEE, dd LLLL yyyy"
-    );
+dateEl.textContent =
+getTeacherNow().toFormat(
+"EEEE, dd LLLL yyyy"
+);
 
 }
 
@@ -3029,91 +2499,51 @@ if(dateEl){
 
 window.openLessonModal =
 function(
-  scheduleId,
-  studentName,
-  classInfo,
-  mode
+scheduleId,
+studentName,
+classInfo,
+mode
 ){
 
-  const modal =
-    document.getElementById(
-      "lessonModal"
-    );
+const modal =
+document.getElementById(
+"lessonModal"
+);
 
+if(!modal)
+return;
 
-  if(!modal)
-    return;
+document.getElementById(
+"lessonScheduleId"
+).value =
+scheduleId || "";
 
+document.getElementById(
+"lessonStudentName"
+).textContent =
+studentName || "Student";
 
-  const id =
-    document.getElementById(
-      "lessonScheduleId"
-    );
+document.getElementById(
+"lessonClassInfo"
+).textContent =
+classInfo || "Today";
 
+document.getElementById(
+"lessonMode"
+).value =
+mode || "end";
 
-  const student =
-    document.getElementById(
-      "lessonStudentName"
-    );
+document.getElementById(
+"lessonModalTitle"
+).textContent =
+"End Class - Add Lesson";
 
+modal.classList.add("show");
 
-  const info =
-    document.getElementById(
-      "lessonClassInfo"
-    );
-
-
-  const lessonMode =
-    document.getElementById(
-      "lessonMode"
-    );
-
-
-  const title =
-    document.getElementById(
-      "lessonModalTitle"
-    );
-
-
-  if(id)
-    id.value =
-      scheduleId || "";
-
-
-  if(student)
-    student.textContent =
-      studentName || "Student";
-
-
-  if(info)
-    info.textContent =
-      classInfo || "Today";
-
-
-  if(lessonMode)
-    lessonMode.value =
-      mode || "end";
-
-
-  if(title){
-
-    title.textContent =
-      mode === "offline"
-        ? "Take an Offline - Add Lesson"
-        : "End Class - Add Lesson";
-
-  }
-
-
-  modal.classList.add(
-    "show"
-  );
-
-
-  modal.setAttribute(
-    "aria-hidden",
-    "false"
-  );
+modal.setAttribute(
+"aria-hidden",
+"false"
+);
 
 };
 
@@ -3121,54 +2551,69 @@ function(
 window.closeLessonModal =
 function(){
 
-  const modal =
-    document.getElementById(
-      "lessonModal"
-    );
+const modal =
+document.getElementById(
+"lessonModal"
+);
 
+if(!modal)
+return;
 
-  if(!modal)
-    return;
+modal.classList.remove("show");
 
-
-  modal.classList.remove(
-    "show"
-  );
-
-
-  modal.setAttribute(
-    "aria-hidden",
-    "true"
-  );
+modal.setAttribute(
+"aria-hidden",
+"true"
+);
 
 };
 
 
 window.submitTeacherLesson =
-function(event){
+async function(event){
 
-  if(event)
-    event.preventDefault();
-
-
-  if(
-    typeof window.saveTeacherLesson ===
-    "function"
-  ){
-
-    return window.saveTeacherLesson(
-      event
-    );
-
-  }
+if(event)
+event.preventDefault();
 
 
-  alert(
-    "Lesson system is being connected. Please update js/portal.js next."
-  );
+if(
+typeof window.saveTeacherLesson ===
+"function"
+){
+
+return window.saveTeacherLesson(
+event
+);
+
+}
 
 
-  return false;
+const scheduleId =
+document.getElementById(
+"lessonScheduleId"
+).value;
+
+
+if(!scheduleId){
+
+alert("Class not found.");
+
+return false;
+
+}
+
+
+/*
+  If your existing portal.js already contains
+  saveTeacherLesson(), it will handle the complete
+  lesson saving process.
+*/
+
+alert(
+"Lesson saving function is not connected in portal.js yet."
+);
+
+return false;
 
 };
 
@@ -3178,74 +2623,171 @@ function(event){
 ===================================================== */
 
 window.showOpenLessonModal =
-function(
-  scheduleId,
-  studentName
+async function(
+scheduleId,
+studentName
 ){
 
-  const modal =
-    document.getElementById(
-      "openLessonModal"
-    );
+const modal =
+document.getElementById(
+"openLessonModal"
+);
+
+if(!modal)
+return;
 
 
-  if(!modal)
-    return;
+document.getElementById(
+"openLessonStudentName"
+).textContent =
+studentName || "Student";
 
 
-  const student =
-    document.getElementById(
-      "openLessonStudentName"
-    );
+const content =
+document.getElementById(
+"openLessonContent"
+);
+
+content.innerHTML = `
+<div class="today-empty">
+Loading previous lesson...
+</div>
+`;
 
 
-  if(student)
-    student.textContent =
-      studentName || "Student";
+modal.classList.add("show");
+
+modal.setAttribute(
+"aria-hidden",
+"false"
+);
 
 
-  const content =
-    document.getElementById(
-      "openLessonContent"
-    );
+if(
+typeof window.loadPreviousTeacherLesson ===
+"function"
+){
+
+await window.loadPreviousTeacherLesson(
+scheduleId
+);
+
+return;
+
+}
 
 
-  if(content){
+/*
+  Direct fallback:
+  Try to load the most recent completed session.
+*/
 
-    content.innerHTML = `
-      <div class="today-empty">
-        Loading previous lesson...
-      </div>
-    `;
+if(window.academyDB){
 
-  }
+const result =
+await window.academyDB
+.from("teacher_class_sessions")
+.select(`
+id,
+schedule_id,
+class,
+test,
+session,
+status,
+started_at,
+completed_at
+`)
+.eq(
+"schedule_id",
+scheduleId
+)
+.order(
+"completed_at",
+{
+ascending:false
+}
+)
+.limit(1)
+.maybeSingle();
 
 
-  modal.dataset.scheduleId =
-    scheduleId || "";
+if(
+!result.error &&
+result.data
+){
+
+const lesson =
+result.data;
 
 
-  modal.classList.add(
-    "show"
-  );
+content.innerHTML = `
+
+<div class="lesson-view-item">
+
+<small>Status</small>
+
+<strong>
+${escapeHTML(
+lesson.status || "Completed"
+)}
+</strong>
+
+</div>
+
+<div class="lesson-view-item">
+
+<small>Lesson</small>
+
+<span>
+${escapeHTML(
+lesson.class || "—"
+)}
+</span>
+
+</div>
+
+<div class="lesson-view-item">
+
+<small>Lesson Details</small>
+
+<span>
+${escapeHTML(
+lesson.session || "—"
+)}
+</span>
+
+</div>
+
+<div class="lesson-view-item">
+
+<small>Performance</small>
+
+<span>
+${escapeHTML(
+lesson.test || "—"
+)}
+</span>
+
+</div>
+
+`;
+
+return;
+
+}
+
+}
 
 
-  modal.setAttribute(
-    "aria-hidden",
-    "false"
-  );
+content.innerHTML = `
 
+<div class="today-empty">
 
-  if(
-    typeof window.loadPreviousTeacherLesson ===
-    "function"
-  ){
+No previous lesson found.
 
-    window.loadPreviousTeacherLesson(
-      scheduleId
-    );
+</div>
 
-  }
+`;
 
 };
 
@@ -3253,79 +2795,68 @@ function(
 window.closeOpenLessonModal =
 function(){
 
-  const modal =
-    document.getElementById(
-      "openLessonModal"
-    );
+const modal =
+document.getElementById(
+"openLessonModal"
+);
 
+if(!modal)
+return;
 
-  if(!modal)
-    return;
+modal.classList.remove("show");
 
-
-  modal.classList.remove(
-    "show"
-  );
-
-
-  modal.setAttribute(
-    "aria-hidden",
-    "true"
-  );
+modal.setAttribute(
+"aria-hidden",
+"true"
+);
 
 };
 
 
 /* =====================================================
-   MODAL BACKGROUND CLOSE
+   MODAL CLOSE
 ===================================================== */
 
 document.addEventListener(
-  "click",
-  function(event){
+"click",
+function(event){
 
-    if(
-      event.target &&
-      event.target.id ===
-      "lessonModal"
-    ){
+if(
+event.target &&
+event.target.id ===
+"lessonModal"
+){
 
-      closeLessonModal();
+closeLessonModal();
 
-    }
+}
 
+if(
+event.target &&
+event.target.id ===
+"openLessonModal"
+){
 
-    if(
-      event.target &&
-      event.target.id ===
-      "openLessonModal"
-    ){
+closeOpenLessonModal();
 
-      closeOpenLessonModal();
+}
 
-    }
-
-  }
+}
 );
 
 
-/* =====================================================
-   ESC KEY
-===================================================== */
-
 document.addEventListener(
-  "keydown",
-  function(event){
+"keydown",
+function(event){
 
-    if(event.key !== "Escape")
-      return;
+if(event.key !== "Escape")
+return;
 
+closeLessonModal();
 
-    closeLessonModal();
+closeOpenLessonModal();
 
-    closeOpenLessonModal();
-
-  }
+}
 );
 
 </script>
