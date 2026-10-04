@@ -94,6 +94,10 @@
   background:#f7c6cf;
 }
 
+.class-row.status-late{
+  background:#ffe0d9;
+}
+
 .class-row.status-student_joined{
   background:#fff2a8;
 }
@@ -104,10 +108,6 @@
 
 .class-row.status-absent{
   background:#b9dcf5;
-}
-
-.class-row.status-late{
-  background:#ffe0d9;
 }
 
 .class-row.status-on_leave,
@@ -143,6 +143,11 @@
   color:#8b2942;
 }
 
+.status-late{
+  background:#ffe0d9;
+  color:#b42318;
+}
+
 .status-student_joined{
   background:#fff2a8;
   color:#735c00;
@@ -156,11 +161,6 @@
 .status-absent{
   background:#b9dcf5;
   color:#155b91;
-}
-
-.status-late{
-  background:#ffe0d9;
-  color:#b42318;
 }
 
 .status-on_leave,
@@ -832,6 +832,7 @@ Student Performance
 
 <div class="performance-options">
 
+
 <div class="performance-option">
 
 <input
@@ -894,6 +895,7 @@ Very Good
 </label>
 
 </div>
+
 
 </div>
 
@@ -1003,16 +1005,18 @@ Close
 
 <script>
 
-/* =====================================================
-   SUPABASE
-===================================================== */
-
 (function(){
 
 "use strict";
 
+
+/* =====================================================
+   SUPABASE
+===================================================== */
+
 const cfg =
   window.SUPABASE_CONFIG || {};
+
 
 const db =
   window.supabase?.createClient(
@@ -1020,8 +1024,10 @@ const db =
     cfg.anonKey
   );
 
+
 window.academyDB =
   db;
+
 
 const BASE_TIMEZONE =
   "Asia/Karachi";
@@ -1132,6 +1138,7 @@ function dayMatches(
     let text =
       classDays.trim();
 
+
     try{
 
       if(
@@ -1141,6 +1148,7 @@ function dayMatches(
 
         const parsed =
           JSON.parse(text);
+
 
         if(Array.isArray(parsed)){
 
@@ -1175,47 +1183,6 @@ function dayMatches(
 
 
   return false;
-
-}
-
-
-function formatTime(
-  classDate,
-  classTime,
-  scheduleTimezone
-){
-
-  try{
-
-    const source =
-      luxon.DateTime.fromISO(
-        classDate +
-        "T" +
-        String(classTime)
-          .slice(0,8),
-        {
-          zone:
-            scheduleTimezone ||
-            BASE_TIMEZONE
-        }
-      );
-
-    if(!source.isValid)
-      return classTime || "—";
-
-    return source
-      .setZone(
-        getTeacherTimezone()
-      )
-      .toFormat(
-        "h:mm a"
-      );
-
-  }catch(error){
-
-    return classTime || "—";
-
-  }
 
 }
 
@@ -1260,15 +1227,54 @@ function getEndDateTime(
 }
 
 
+function formatTime(
+  classDate,
+  classTime,
+  scheduleTimezone
+){
+
+  try{
+
+    const source =
+      getScheduleDateTime(
+        classDate,
+        classTime,
+        scheduleTimezone
+      );
+
+
+    if(!source.isValid)
+      return classTime || "—";
+
+
+    return source
+      .setZone(
+        getTeacherTimezone()
+      )
+      .toFormat(
+        "h:mm a"
+      );
+
+  }catch(error){
+
+    return classTime || "—";
+
+  }
+
+}
+
+
 function safeURL(url){
 
   if(!url)
     return "";
 
+
   try{
 
     const parsed =
       new URL(url);
+
 
     if(
       parsed.protocol !== "http:" &&
@@ -1278,6 +1284,7 @@ function safeURL(url){
       return "";
 
     }
+
 
     return parsed.href;
 
@@ -1297,9 +1304,11 @@ function getClassroomURL(
   if(!classroomCode)
     return "";
 
+
   const value =
     String(classroomCode)
       .trim();
+
 
   if(
     value.startsWith("http://") ||
@@ -1309,6 +1318,7 @@ function getClassroomURL(
     return safeURL(value);
 
   }
+
 
   return (
     "https://haroonibnrasheedonlinequranacadmey.github.io/" +
@@ -1320,12 +1330,10 @@ function getClassroomURL(
 
 
 /* =====================================================
-   SESSION STATUS
+   STATUS
 ===================================================== */
 
-function normalizeSessionStatus(
-  value
-){
+function normalizeSessionStatus(value){
 
   return String(
     value || ""
@@ -1338,7 +1346,6 @@ function normalizeSessionStatus(
 
 
 function calculateStatus(
-  schedule,
   session
 ){
 
@@ -1346,6 +1353,7 @@ function calculateStatus(
     normalizeSessionStatus(
       session?.status
     );
+
 
   if(
     saved === "completed" ||
@@ -1357,8 +1365,10 @@ function calculateStatus(
 
   }
 
+
   if(saved === "absent")
     return "absent";
+
 
   if(
     saved === "on_leave" ||
@@ -1369,6 +1379,7 @@ function calculateStatus(
 
   }
 
+
   if(
     saved === "cancelled" ||
     saved === "canceled"
@@ -1377,6 +1388,7 @@ function calculateStatus(
     return "cancelled";
 
   }
+
 
   if(
     saved === "student_joined" ||
@@ -1388,6 +1400,7 @@ function calculateStatus(
 
   }
 
+
   if(
     saved === "active" ||
     saved === "in_progress" ||
@@ -1398,14 +1411,13 @@ function calculateStatus(
 
   }
 
+
   return "upcoming";
 
 }
 
 
-function statusText(
-  status
-){
+function statusText(status){
 
   const map = {
 
@@ -1414,6 +1426,9 @@ function statusText(
 
     active:
       "Active",
+
+    late:
+      "Late",
 
     student_joined:
       "Student Joined",
@@ -1428,23 +1443,18 @@ function statusText(
       "On Leave",
 
     cancelled:
-      "Cancelled",
-
-    late:
-      "Late"
+      "Cancelled"
 
   };
 
-  return (
-    map[status] ||
-    "Not Active"
-  );
+
+  return map[status] || "Not Active";
 
 }
 
 
 /* =====================================================
-   LOAD TEACHER TODAY
+   LOAD TODAY'S CLASSES
 ===================================================== */
 
 async function loadTeacherToday(){
@@ -1452,13 +1462,16 @@ async function loadTeacherToday(){
   if(!db)
     return;
 
+
   const rows =
     document.getElementById(
       "todayClassRows"
     );
 
+
   if(!rows)
     return;
+
 
   rows.innerHTML = `
     <tr>
@@ -1469,16 +1482,15 @@ async function loadTeacherToday(){
   `;
 
 
-  const {
-    data:{
-      user
-    } = {},
-    error:authError
-  } =
+  const auth =
     await db.auth.getUser();
 
 
-  if(authError || !user){
+  const user =
+    auth?.data?.user;
+
+
+  if(!user){
 
     rows.innerHTML = `
       <tr>
@@ -1498,7 +1510,7 @@ async function loadTeacherToday(){
 
 
   /* ===================================================
-     TEACHER SCHEDULES
+     SCHEDULES
   =================================================== */
 
   const scheduleResult =
@@ -1540,6 +1552,7 @@ async function loadTeacherToday(){
       scheduleResult.error
     );
 
+
     rows.innerHTML = `
       <tr>
         <td colspan="6" class="today-empty">
@@ -1560,6 +1573,7 @@ async function loadTeacherToday(){
   const currentDay =
     todayName();
 
+
   const todayDate =
     todayISO();
 
@@ -1578,21 +1592,20 @@ async function loadTeacherToday(){
 
 
   /* ===================================================
-     LOAD REAL STUDENT NAMES
+     STUDENTS
      
      IMPORTANT:
-     We load students by teacher_id instead of
-     depending only on class_schedules.student_id.
+     student_id can refer to either students.id
+     or, in some existing records, students.user_id.
      
-     Then we map BOTH students.id and students.user_id.
-     This handles both possible relationships and
-     makes the actual full_name appear.
+     Therefore we load the teacher's students and
+     match BOTH ids so the REAL full_name is shown.
   =================================================== */
 
   let students = [];
 
 
-  const studentResult =
+  const teacherStudentsResult =
     await db
       .from("students")
       .select(`
@@ -1610,66 +1623,17 @@ async function loadTeacherToday(){
       );
 
 
-  if(!studentResult.error){
+  if(!teacherStudentsResult.error){
 
     students =
-      studentResult.data || [];
+      teacherStudentsResult.data || [];
 
   }else{
 
     console.error(
       "Teacher students error:",
-      studentResult.error
+      teacherStudentsResult.error
     );
-
-  }
-
-
-  /*
-    Extra fallback:
-    If teacher_id filtering does not return the
-    student's record, try the exact schedule IDs.
-  */
-
-  const scheduleStudentIds =
-    todaySchedules
-      .map(
-        function(item){
-          return item.student_id;
-        }
-      )
-      .filter(Boolean);
-
-
-  if(
-    scheduleStudentIds.length &&
-    students.length === 0
-  ){
-
-    const fallbackStudentResult =
-      await db
-        .from("students")
-        .select(`
-          id,
-          user_id,
-          full_name,
-          timezone,
-          status,
-          course,
-          teacher_id
-        `)
-        .in(
-          "id",
-          scheduleStudentIds
-        );
-
-
-    if(!fallbackStudentResult.error){
-
-      students =
-        fallbackStudentResult.data || [];
-
-    }
 
   }
 
@@ -1681,39 +1645,27 @@ async function loadTeacherToday(){
   students.forEach(
     function(student){
 
-      const name =
-        String(
-          student.full_name || ""
-        ).trim();
-
-
-      if(!name)
-        return;
-
-
       /*
         Map by students.id
       */
-
       if(student.id){
 
         studentMap.set(
           String(student.id),
-          name
+          student
         );
 
       }
 
 
       /*
-        Map by students.user_id
+        Also map by students.user_id
       */
-
       if(student.user_id){
 
         studentMap.set(
           String(student.user_id),
-          name
+          student
         );
 
       }
@@ -1722,59 +1674,85 @@ async function loadTeacherToday(){
   );
 
 
-  /* ===================================================
-     EXTRA PROFILE FALLBACK
-     
-     If class_schedules.student_id is actually the
-     Supabase Auth user ID, use profiles.full_name.
-  =================================================== */
+  /*
+    Fallback:
+    If teacher_id filtering did not return the student,
+    search directly by the schedule student IDs.
+  */
 
-  const possibleProfileIds =
-    scheduleStudentIds
+  const scheduleStudentIds =
+    todaySchedules
+      .map(
+        function(schedule){
+
+          return schedule.student_id;
+
+        }
+      )
       .filter(Boolean)
       .map(
         function(id){
+
           return String(id);
+
         }
       );
 
 
-  if(possibleProfileIds.length){
+  const missingIds =
+    scheduleStudentIds.filter(
+      function(id){
 
-    const profileResult =
+        return !studentMap.has(id);
+
+      }
+    );
+
+
+  if(missingIds.length){
+
+    const directResult =
       await db
-        .from("profiles")
+        .from("students")
         .select(`
           id,
+          user_id,
           full_name,
-          role
+          timezone,
+          status,
+          course,
+          teacher_id
         `)
-        .in(
-          "id",
-          possibleProfileIds
+        .or(
+          "id.in.(" +
+          missingIds.join(",") +
+          "),user_id.in.(" +
+          missingIds.join(",") +
+          ")"
         );
 
 
-    if(!profileResult.error){
+    if(!directResult.error){
 
-      (profileResult.data || [])
+      (directResult.data || [])
         .forEach(
-          function(profile){
+          function(student){
 
-            const name =
-              String(
-                profile.full_name || ""
-              ).trim();
-
-
-            if(
-              name &&
-              profile.id
-            ){
+            if(student.id){
 
               studentMap.set(
-                String(profile.id),
-                name
+                String(student.id),
+                student
+              );
+
+            }
+
+
+            if(student.user_id){
+
+              studentMap.set(
+                String(student.user_id),
+                student
               );
 
             }
@@ -1794,8 +1772,10 @@ async function loadTeacherToday(){
   const scheduleIds =
     todaySchedules
       .map(
-        function(item){
-          return item.id;
+        function(schedule){
+
+          return schedule.id;
+
         }
       );
 
@@ -1832,6 +1812,13 @@ async function loadTeacherToday(){
       sessions =
         sessionResult.data || [];
 
+    }else{
+
+      console.error(
+        "Teacher session error:",
+        sessionResult.error
+      );
+
     }
 
   }
@@ -1845,7 +1832,7 @@ async function loadTeacherToday(){
     function(session){
 
       sessionMap.set(
-        session.schedule_id,
+        String(session.schedule_id),
         session
       );
 
@@ -1858,9 +1845,7 @@ async function loadTeacherToday(){
   =================================================== */
 
   let lateCount = 0;
-
   let completedCount = 0;
-
   let leftCount = 0;
 
 
@@ -1873,13 +1858,12 @@ async function loadTeacherToday(){
 
       const session =
         sessionMap.get(
-          schedule.id
+          String(schedule.id)
         );
 
 
-      let status =
+      const status =
         calculateStatus(
-          schedule,
           session
         );
 
@@ -1904,34 +1888,79 @@ async function loadTeacherToday(){
       }
 
 
-      const end =
-        getEndDateTime(
-          todayDate,
-          schedule.class_time,
-          schedule.duration_minutes,
-          schedule.schedule_timezone
-        );
-
-
-      const teacherEnd =
-        end.setZone(
-          getTeacherTimezone()
-        );
-
-
       if(
-        status === "upcoming" &&
-        nowTeacher > teacherEnd
+        status === "upcoming"
       ){
 
-        lateCount++;
+        const start =
+          getScheduleDateTime(
+            todayDate,
+            schedule.class_time,
+            schedule.schedule_timezone
+          );
+
+
+        const startTeacher =
+          start.setZone(
+            getTeacherTimezone()
+          );
+
+
+        if(
+          nowTeacher >= startTeacher
+        ){
+
+          lateCount++;
+
+        }
+
+
+        leftCount++;
 
       }
 
 
-      if(status === "upcoming"){
+      /*
+        If teacher activated at/after start,
+        count it as a late class.
+      */
 
-        leftCount++;
+      if(
+        session &&
+        session.started_at &&
+        status === "active"
+      ){
+
+        const start =
+          getScheduleDateTime(
+            todayDate,
+            schedule.class_time,
+            schedule.schedule_timezone
+          );
+
+
+        const started =
+          luxon.DateTime.fromISO(
+            session.started_at
+          )
+          .setZone(
+            getTeacherTimezone()
+          );
+
+
+        const startTeacher =
+          start.setZone(
+            getTeacherTimezone()
+          );
+
+
+        if(
+          started >= startTeacher
+        ){
+
+          lateCount++;
+
+        }
 
       }
 
@@ -1987,6 +2016,7 @@ async function loadTeacherToday(){
           )
         : 0;
 
+
     rateEl.textContent =
       rate + "%";
 
@@ -2034,7 +2064,7 @@ async function loadTeacherToday(){
 
 
   /* ===================================================
-     RENDER TODAY'S CLASSES
+     RENDER CLASSES
   =================================================== */
 
   rows.innerHTML =
@@ -2042,123 +2072,29 @@ async function loadTeacherToday(){
       function(schedule){
 
         /*
-          FIRST:
-          Get the actual student's name from the map.
+          REAL STUDENT NAME:
+          First try students.id,
+          then students.user_id.
         */
 
-        let studentName =
+        const student =
           studentMap.get(
-            String(schedule.student_id || "")
-          );
-
-
-        /*
-          If the student name still cannot be found,
-          try matching against the loaded students
-          one more time by both IDs.
-        */
-
-        if(!studentName){
-
-          const matchedStudent =
-            students.find(
-              function(student){
-
-                return (
-                  String(student.id || "") ===
-                    String(schedule.student_id || "")
-                  ||
-                  String(student.user_id || "") ===
-                    String(schedule.student_id || "")
-                );
-
-              }
-            );
-
-
-          if(matchedStudent){
-
-            studentName =
-              matchedStudent.full_name || "";
-
-          }
-
-        }
-
-
-        /*
-          Only use "Student" if there is genuinely
-          no full_name in Supabase.
-        */
-
-        studentName =
-          String(
-            studentName || ""
-          ).trim();
-
-
-        if(!studentName){
-
-          studentName =
-            "Student";
-
-        }
+            String(
+              schedule.student_id || ""
+            )
+          ) || {};
 
 
         const session =
           sessionMap.get(
-            schedule.id
+            String(schedule.id)
           );
 
 
         let status =
           calculateStatus(
-            schedule,
             session
           );
-
-
-        const start =
-          getScheduleDateTime(
-            todayDate,
-            schedule.class_time,
-            schedule.schedule_timezone
-          );
-
-
-        const end =
-          getEndDateTime(
-            todayDate,
-            schedule.class_time,
-            schedule.duration_minutes,
-            schedule.schedule_timezone
-          );
-
-
-        const now =
-          getTeacherNow();
-
-
-        /*
-          Class is still NOT ACTIVE until teacher
-          presses Activate.
-        */
-
-        if(
-          status === "upcoming" &&
-          now > end.setZone(
-            getTeacherTimezone()
-          )
-        ){
-
-          status = "late";
-
-        }
-
-
-        const course =
-          schedule.course ||
-          "—";
 
 
         const duration =
@@ -2176,6 +2112,121 @@ async function loadTeacherToday(){
           );
 
 
+        const start =
+          getScheduleDateTime(
+            todayDate,
+            schedule.class_time,
+            schedule.schedule_timezone
+          );
+
+
+        const startTeacher =
+          start.setZone(
+            getTeacherTimezone()
+          );
+
+
+        const now =
+          getTeacherNow();
+
+
+        /*
+          IMPORTANT RULE:
+
+          9:00 class:
+          - Teacher can activate at 8:55
+          - Teacher can activate at 8:56
+          - Teacher can activate at 8:59
+          => Normal Active / PINK
+
+          If teacher activates at 9:00 or later:
+          => LATE
+
+          Class NEVER auto-activates.
+        */
+
+        let lateActivation =
+          false;
+
+
+        if(
+          session &&
+          session.started_at &&
+          (
+            status === "active" ||
+            status === "student_joined"
+          )
+        ){
+
+          const started =
+            luxon.DateTime.fromISO(
+              session.started_at
+            )
+            .setZone(
+              getTeacherTimezone()
+            );
+
+
+          if(
+            started >= startTeacher
+          ){
+
+            lateActivation =
+              true;
+
+          }
+
+        }
+
+
+        /*
+          If not activated and scheduled time
+          has arrived/passed, show LATE.
+
+          It still only has Activate + Reschedule.
+        */
+
+        if(
+          status === "upcoming" &&
+          now >= startTeacher
+        ){
+
+          status =
+            "late";
+
+        }
+
+
+        /*
+          If teacher activated late, show LATE
+          but keep the active-class buttons.
+        */
+
+        if(
+          lateActivation &&
+          status !== "completed"
+        ){
+
+          status =
+            "late";
+
+        }
+
+
+        const studentName =
+          String(
+            student.full_name ||
+            ""
+          ).trim() ||
+          "Student";
+
+
+        const course =
+          schedule.course ||
+          student.course ||
+          "—";
+
+
         const rowClass =
           "class-row status-" +
           status;
@@ -2185,17 +2236,20 @@ async function loadTeacherToday(){
           "";
 
 
-        /* =============================================
-           NOT ACTIVE / LATE
-
+        /* =================================================
+           NOT ACTIVE / LATE BEFORE ACTIVATION
+           
            ONLY:
            Activate
            Reschedule
-        ============================================= */
+        ================================================= */
 
         if(
-          status === "upcoming" ||
-          status === "late"
+          (
+            status === "upcoming" ||
+            status === "late"
+          ) &&
+          !session?.started_at
         ){
 
           actionHTML = `
@@ -2224,20 +2278,24 @@ async function loadTeacherToday(){
         }
 
 
-        /* =============================================
+        /* =================================================
            ACTIVE / PINK
 
-           End Class
-           Join Meeting
-           Join Classroom
-           Open Lesson
+           END CLASS
+           JOIN MEETING
+           JOIN CLASSROOM
+           OPEN LESSON
 
-           NO Restart
-           NO Copy Link
-        ============================================= */
+           NO RESTART
+           NO COPY LINK
+        ================================================= */
 
         else if(
-          status === "active"
+          status === "active" ||
+          (
+            status === "late" &&
+            session?.started_at
+          )
         ){
 
           const meet =
@@ -2316,9 +2374,9 @@ async function loadTeacherToday(){
         }
 
 
-        /* =============================================
+        /* =================================================
            STUDENT JOINED / YELLOW
-        ============================================= */
+        ================================================= */
 
         else if(
           status === "student_joined"
@@ -2400,9 +2458,9 @@ async function loadTeacherToday(){
         }
 
 
-        /* =============================================
+        /* =================================================
            COMPLETED / GREEN
-        ============================================= */
+        ================================================= */
 
         else if(
           status === "completed"
@@ -2430,9 +2488,9 @@ async function loadTeacherToday(){
         }
 
 
-        /* =============================================
+        /* =================================================
            ABSENT
-        ============================================= */
+        ================================================= */
 
         else if(
           status === "absent"
@@ -2453,9 +2511,9 @@ async function loadTeacherToday(){
         }
 
 
-        /* =============================================
+        /* =================================================
            LEAVE / CANCELLED
-        ============================================= */
+        ================================================= */
 
         else if(
           status === "on_leave" ||
@@ -2541,12 +2599,12 @@ async function(scheduleId){
     return;
 
 
-  const {
-    data:{
-      user
-    } = {}
-  } =
+  const auth =
     await db.auth.getUser();
+
+
+  const user =
+    auth?.data?.user;
 
 
   if(!user){
@@ -2572,7 +2630,8 @@ async function(scheduleId){
         teacher_id,
         student_id,
         class_time,
-        duration_minutes
+        duration_minutes,
+        schedule_timezone
       `)
       .eq(
         "id",
@@ -2607,6 +2666,27 @@ async function(scheduleId){
   }
 
 
+  /*
+    IMPORTANT:
+
+    Teacher is allowed to activate BEFORE
+    class start time.
+
+    Example:
+    Class = 9:00 AM
+    Activate = 8:55 AM
+    => NORMAL ACTIVE / PINK
+
+    Activate = 9:00 AM
+    => LATE
+
+    Activate = 9:03 AM
+    => LATE
+
+    The class is NEVER automatically activated.
+  */
+
+
   const result =
     await db
       .from("teacher_class_sessions")
@@ -2638,8 +2718,10 @@ async function(scheduleId){
   if(result.error){
 
     console.error(
+      "Activate class error:",
       result.error
     );
+
 
     alert(
       "Unable to activate class: " +
@@ -2759,7 +2841,7 @@ document.addEventListener(
         startDashboardRefresh();
 
       },
-      500
+      700
     );
 
   }
@@ -2784,16 +2866,10 @@ function(
   try{
 
     const source =
-      luxon.DateTime.fromISO(
-        classDate +
-        "T" +
-        String(classTime)
-          .slice(0,8),
-        {
-          zone:
-            scheduleTimezone ||
-            BASE_TIMEZONE
-        }
+      getScheduleDateTime(
+        classDate,
+        classTime,
+        scheduleTimezone
       );
 
 
@@ -2897,6 +2973,7 @@ function(timezone){
   window.currentTeacherTimezone =
     timezone;
 
+
   window.teacherTimezone =
     timezone;
 
@@ -2947,7 +3024,7 @@ if(dateEl){
 
 
 /* =====================================================
-   LESSON MODAL CONTROLS
+   LESSON MODAL
 ===================================================== */
 
 window.openLessonModal =
