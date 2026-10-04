@@ -1,864 +1,2722 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Student Dashboard | Haroon Ibn Rasheed Online Quran Academy</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
-  <link rel="stylesheet" href="../css/portal.css">
+<title>Student Dashboard | Haroon Ibn Rasheed Online Quran Academy</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
-  <script src="../js/config.js"></script>
-  <script src="../js/portal.js" defer></script>
+<link rel="stylesheet" href="../css/portal.css">
 
-  <style>
-    .dashboard-loading {
-      opacity:.7;
-    }
-    .dashboard-error {
-      padding:14px;
-      margin:12px 0;
-      border-radius:10px;
-      background:#fff3f3;
-      color:#a40000;
-    }
-    .student-card-grid {
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-      gap:14px;
-      margin:16px 0;
-    }
-    .student-card {
-      padding:16px;
-      border-radius:12px;
-    }
-    .student-card h3 {
-      margin:0 0 7px;
-      font-size:14px;
-    }
-    .student-card strong {
-      font-size:20px;
-    }
-    .dashboard-table-wrap {
-      width:100%;
-      overflow-x:auto;
-    }
-    .dashboard-table {
-      width:100%;
-      border-collapse:collapse;
-    }
-    .dashboard-table th,
-    .dashboard-table td {
-      padding:10px;
-      text-align:left;
-      vertical-align:top;
-    }
-    .empty-state {
-      padding:18px;
-      text-align:center;
-      opacity:.7;
-    }
-    .class-link {
-      display:inline-block;
-      margin:2px 4px 2px 0;
-    }
-  </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script src="../js/portal.js" defer></script>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:#f5f8fa;
+}
+
+.student-shell{
+  min-height:100vh;
+  display:flex;
+}
+
+.student-sidebar{
+  width:250px;
+  background:#454d59;
+  color:#fff;
+  padding:25px 18px;
+  position:fixed;
+  left:0;
+  top:0;
+  bottom:0;
+  overflow-y:auto;
+  z-index:20;
+}
+
+.brand{
+  text-align:center;
+  padding-bottom:24px;
+  border-bottom:1px solid rgba(255,255,255,.12);
+}
+
+.brand img{
+  width:72px;
+  height:72px;
+  object-fit:contain;
+  border-radius:50%;
+  background:#fff;
+  padding:5px;
+}
+
+.brand h3{
+  margin:12px 0 4px;
+  font-size:17px;
+}
+
+.brand span{
+  font-size:12px;
+  color:#d9e2e8;
+}
+
+.student-nav{
+  margin-top:22px;
+}
+
+.student-nav a{
+  display:flex;
+  align-items:center;
+  color:#e9eef2;
+  text-decoration:none;
+  padding:12px 13px;
+  margin:5px 0;
+  border-radius:9px;
+  font-size:14px;
+  transition:.2s;
+}
+
+.student-nav a:hover,
+.student-nav a.active{
+  background:#2f9fba;
+  color:#fff;
+}
+
+.logout{
+  margin-top:25px;
+  padding-top:18px;
+  border-top:1px solid rgba(255,255,255,.12);
+}
+
+.logout a{
+  color:#fff;
+  text-decoration:none;
+}
+
+.student-main{
+  margin-left:250px;
+  width:calc(100% - 250px);
+  padding:30px;
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:25px;
+}
+
+.topbar h1{
+  margin:0;
+  color:#27313a;
+  font-size:28px;
+}
+
+.topbar p{
+  margin:6px 0 0;
+  color:#71808b;
+}
+
+.date-box{
+  background:#fff;
+  border:1px solid #e5eaee;
+  padding:11px 15px;
+  border-radius:10px;
+  color:#52616b;
+  font-size:13px;
+}
+
+.welcome{
+  background:linear-gradient(135deg,#2f9fba,#257f98);
+  color:#fff;
+  border-radius:16px;
+  padding:25px;
+  margin-bottom:18px;
+  box-shadow:0 8px 25px rgba(47,159,186,.16);
+}
+
+.welcome h2{
+  margin:0 0 7px;
+  font-size:23px;
+}
+
+.welcome p{
+  margin:0;
+  opacity:.9;
+}
+
+.fee-notification{
+  display:none;
+  margin-bottom:22px;
+  border-radius:14px;
+  padding:17px 19px;
+  background:#fff;
+  border:1px solid #e8e0d0;
+  box-shadow:0 5px 18px rgba(30,50,60,.05);
+}
+
+.fee-notification.show{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+}
+
+.fee-notification.due{
+  border-left:5px solid #f18b82;
+  background:#fffafa;
+}
+
+.fee-notification.submitted{
+  border-left:5px solid #2f9fba;
+  background:#f7fcfd;
+}
+
+.fee-notification.rejected{
+  border-left:5px solid #f18b82;
+  background:#fffafa;
+}
+
+.fee-notification-content{
+  flex:1;
+}
+
+.fee-notification-title{
+  color:#303c45;
+  font-weight:bold;
+  font-size:15px;
+  margin-bottom:5px;
+}
+
+.fee-notification-message{
+  color:#71808b;
+  font-size:12px;
+  line-height:1.6;
+}
+
+.fee-notification-btn{
+  display:inline-block;
+  background:#2f9fba;
+  color:#fff;
+  text-decoration:none;
+  border:0;
+  padding:9px 16px;
+  border-radius:8px;
+  font-size:12px;
+  white-space:nowrap;
+}
+
+.fee-notification-btn:hover{
+  background:#287f96;
+}
+
+.fee-notification.rejected .fee-notification-btn,
+.fee-notification.due .fee-notification-btn{
+  background:#f18b82;
+}
+
+.fee-notification.rejected .fee-notification-btn:hover,
+.fee-notification.due .fee-notification-btn:hover{
+  background:#df7770;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:17px;
+  margin-bottom:22px;
+}
+
+.stat-card{
+  background:#fff;
+  border:1px solid #e7ecef;
+  border-radius:14px;
+  padding:20px;
+  box-shadow:0 4px 14px rgba(30,50,60,.04);
+}
+
+.stat-card small{
+  color:#7a8992;
+  display:block;
+  margin-bottom:9px;
+}
+
+.stat-card strong{
+  display:block;
+  color:#293640;
+  font-size:25px;
+}
+
+.stat-card .stat-note{
+  font-size:12px;
+  color:#91a0a8;
+  margin-top:5px;
+}
+
+.dashboard-grid{
+  display:grid;
+  grid-template-columns:1.4fr .8fr;
+  gap:20px;
+  margin-bottom:20px;
+}
+
+.card{
+  background:#fff;
+  border:1px solid #e5eaee;
+  border-radius:15px;
+  padding:20px;
+  box-shadow:0 4px 14px rgba(30,50,60,.04);
+}
+
+.card-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:17px;
+}
+
+.card-header h2{
+  margin:0;
+  color:#303c45;
+  font-size:18px;
+}
+
+.view-link{
+  color:#2f9fba;
+  text-decoration:none;
+  font-size:13px;
+}
+
+.view-link:hover{
+  color:#287f96;
+}
+
+.today-class{
+  border:1px solid #dcecef;
+  border-left:5px solid #2f9fba;
+  border-radius:11px;
+  padding:17px;
+  background:#f9fcfd;
+  margin-bottom:10px;
+}
+
+.today-label{
+  color:#2f9fba;
+  font-size:12px;
+  font-weight:bold;
+  text-transform:uppercase;
+  margin-bottom:7px;
+}
+
+.today-course{
+  font-size:18px;
+  font-weight:bold;
+  color:#293640;
+}
+
+.today-meta{
+  color:#6d7c85;
+  font-size:13px;
+  margin-top:7px;
+  line-height:1.7;
+}
+
+.join-btn{
+  display:inline-block;
+  background:#2f9fba;
+  color:#fff;
+  text-decoration:none;
+  border:0;
+  padding:9px 15px;
+  border-radius:8px;
+  margin-top:12px;
+  margin-right:7px;
+  font-size:13px;
+  cursor:pointer;
+}
+
+.join-btn:hover{
+  background:#287f96;
+}
+
+.classroom-btn{
+  background:#454d59;
+}
+
+.classroom-btn:hover{
+  background:#343b45;
+}
+
+.no-class{
+  padding:22px 10px;
+  text-align:center;
+  color:#8a989f;
+}
+
+.upcoming-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  padding:13px 0;
+  border-bottom:1px solid #edf0f2;
+}
+
+.upcoming-item:last-child{
+  border-bottom:0;
+}
+
+.day-badge{
+  min-width:82px;
+  text-align:center;
+  background:#eef7f9;
+  color:#277f96;
+  border-radius:8px;
+  padding:8px 5px;
+  font-size:11px;
+  font-weight:bold;
+}
+
+.upcoming-info{
+  flex:1;
+}
+
+.upcoming-info strong{
+  display:block;
+  color:#34414a;
+  font-size:14px;
+}
+
+.upcoming-info span{
+  color:#7c8990;
+  font-size:12px;
+  line-height:1.6;
+}
+
+.course-mini-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+}
+
+.course-mini{
+  border:1px solid #e5eaee;
+  border-radius:10px;
+  padding:12px;
+  background:#fbfcfd;
+  min-width:0;
+}
+
+.course-mini-title{
+  color:#34414a;
+  font-weight:bold;
+  font-size:13px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.course-mini-status{
+  display:inline-block;
+  margin-top:7px;
+  padding:4px 7px;
+  border-radius:15px;
+  background:#eef7f9;
+  color:#277f96;
+  font-size:10px;
+}
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+th{
+  text-align:left;
+  background:#f7f9fa;
+  color:#687780;
+  font-size:12px;
+  padding:12px;
+  white-space:nowrap;
+}
+
+td{
+  padding:12px;
+  border-top:1px solid #edf0f2;
+  color:#44525b;
+  font-size:13px;
+}
+
+.status{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:20px;
+  background:#eef7f9;
+  color:#277f96;
+  font-size:11px;
+}
+
+.notification{
+  padding:12px 0;
+  border-bottom:1px solid #edf0f2;
+}
+
+.notification:last-child{
+  border-bottom:0;
+}
+
+.notification strong{
+  display:block;
+  color:#34414a;
+  font-size:14px;
+}
+
+.notification p{
+  margin:4px 0 0;
+  color:#77858d;
+  font-size:12px;
+}
+
+.empty{
+  text-align:center;
+  padding:20px;
+  color:#8a989f;
+  font-size:13px;
+}
+
+.timezone-info{
+  margin-top:10px;
+  padding:8px 10px;
+  border-radius:8px;
+  background:#eef7f9;
+  color:#277f96;
+  font-size:11px;
+  display:inline-block;
+}
+
+@media(max-width:1000px){
+
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .dashboard-grid{
+    grid-template-columns:1fr;
+  }
+
+}
+
+@media(max-width:700px){
+
+  .student-sidebar{
+    position:relative;
+    width:100%;
+    min-height:auto;
+    padding:15px;
+  }
+
+  .student-shell{
+    display:block;
+  }
+
+  .student-main{
+    margin-left:0;
+    width:100%;
+    padding:18px 13px;
+  }
+
+  .student-nav{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:4px;
+  }
+
+  .student-nav a{
+    margin:0;
+  }
+
+  .logout{
+    margin-top:12px;
+  }
+
+  .topbar{
+    align-items:flex-start;
+    gap:10px;
+  }
+
+  .topbar h1{
+    font-size:22px;
+  }
+
+  .date-box{
+    display:none;
+  }
+
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+  }
+
+  .stat-card{
+    padding:15px;
+  }
+
+  .stat-card strong{
+    font-size:21px;
+  }
+
+  .card{
+    padding:15px;
+  }
+
+  .course-mini-grid{
+    grid-template-columns:1fr;
+  }
+
+  .fee-notification.show{
+    display:block;
+  }
+
+  .fee-notification-btn{
+    margin-top:12px;
+  }
+
+  .join-btn{
+    margin-top:10px;
+  }
+
+}
+</style>
 </head>
 
-<body class="dashboard" data-page="student-dashboard">
+<body data-page="student-dashboard">
 
-  <div id="studentDashboardError" class="dashboard-error" hidden></div>
+<div class="student-shell">
 
-  <main>
+<aside class="student-sidebar">
 
-    <section class="dashboard-header">
-      <div>
-        <h1>Student Dashboard</h1>
-        <p>Welcome, <strong id="studentName">Loading...</strong></p>
+  <div class="brand">
+
+    <img
+      src="../assets/hr-logo.svg"
+      alt="HR"
+    >
+
+    <h3>
+      Haroon Ibn Rasheed
+    </h3>
+
+    <span>
+      Student Portal
+    </span>
+
+  </div>
+
+  <nav class="student-nav">
+
+    <a href="dashboard.html" class="active">Dashboard</a>
+    <a href="profile.html">Profile</a>
+    <a href="teacher.html">My Teacher</a>
+    <a href="course.html">My Courses</a>
+    <a href="classes.html">My Classes</a>
+    <a href="schedule.html">Schedule</a>
+    <a href="attendance.html">Attendance</a>
+    <a href="fees.html">Fees</a>
+    <a href="leaves.html">Leaves</a>
+
+  </nav>
+
+  <div class="logout">
+
+    <a
+      href="#"
+      onclick="portalLogout();return false"
+    >
+      Logout
+    </a>
+
+  </div>
+
+</aside>
+
+<main class="student-main">
+
+  <div class="topbar">
+
+    <div>
+
+      <h1>Student Dashboard</h1>
+
+      <p>Your learning overview</p>
+
+    </div>
+
+    <div class="date-box" id="todayDate">
+      Loading date...
+    </div>
+
+  </div>
+
+  <section class="welcome">
+
+    <h2>
+      Welcome,
+      <span id="studentName">Student</span>
+    </h2>
+
+    <p>
+      Here is your latest class schedule,
+      courses and academy activity.
+    </p>
+
+    <div
+      id="studentTimezoneInfo"
+      class="timezone-info"
+    >
+      Timezone loading...
+    </div>
+
+  </section>
+
+  <section
+    id="feeNotification"
+    class="fee-notification"
+  >
+
+    <div class="fee-notification-content">
+
+      <div
+        id="feeNotificationTitle"
+        class="fee-notification-title"
+      >
+        🔔 Fee Payment Reminder
       </div>
-    </section>
 
-    <section class="student-card-grid">
-
-      <div class="card student-card">
-        <h3>Today's Classes</h3>
-        <strong id="todayClassesCount">Loading...</strong>
+      <div
+        id="feeNotificationMessage"
+        class="fee-notification-message"
+      >
+        Your monthly fee payment is due.
       </div>
 
-      <div class="card student-card">
-        <h3>Upcoming Classes</h3>
-        <strong id="upcomingClassesCount">Loading...</strong>
-      </div>
+    </div>
 
-      <div class="card student-card">
-        <h3>Course</h3>
-        <strong id="studentCourse">Loading...</strong>
-      </div>
+    <a
+      id="feeNotificationButton"
+      class="fee-notification-btn"
+      href="fees.html"
+    >
+      Submit Payment
+    </a>
 
-      <div class="card student-card">
-        <h3>Timezone</h3>
-        <strong id="studentTimezone">Loading...</strong>
-      </div>
+  </section>
 
-      <div class="card student-card">
-        <h3>Notifications</h3>
-        <strong id="notificationCount">Loading...</strong>
-      </div>
+  <section class="stats">
 
-      <div class="card student-card">
-        <h3>Attendance</h3>
-        <strong id="attendanceValue">Loading...</strong>
-      </div>
+    <div class="stat-card">
+      <small>Enrolled Courses</small>
+      <strong id="courseCount">0</strong>
+      <div class="stat-note">Academy courses</div>
+    </div>
 
-    </section>
+    <div class="stat-card">
+      <small>Upcoming Classes</small>
+      <strong id="classCount">0</strong>
+      <div class="stat-note">Next 7 days</div>
+    </div>
 
-    <section class="card">
-      <div class="section-header">
+    <div class="stat-card">
+      <small>Attendance</small>
+      <strong id="attendanceRate">—</strong>
+      <div class="stat-note">Attendance record</div>
+    </div>
+
+    <div class="stat-card">
+      <small>Notifications</small>
+      <strong id="notificationCount">0</strong>
+      <div class="stat-note">Your notifications</div>
+    </div>
+
+  </section>
+
+  <section class="dashboard-grid">
+
+    <div class="card">
+
+      <div class="card-header">
+
         <h2>Today's Class</h2>
+
+        <a
+          href="schedule.html"
+          class="view-link"
+        >
+          Full Schedule
+        </a>
+
       </div>
+
       <div id="todayClass">
-        <div class="dashboard-loading">Loading...</div>
-      </div>
-    </section>
 
-    <section class="card">
-      <div class="section-header">
+        <div class="no-class">
+          Loading today's class...
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="card">
+
+      <div class="card-header">
+
         <h2>Upcoming Classes</h2>
+
+        <a
+          href="schedule.html"
+          class="view-link"
+        >
+          View All
+        </a>
+
       </div>
 
-      <div class="dashboard-table-wrap">
-        <table class="dashboard-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Course</th>
-              <th>Teacher</th>
-              <th>Duration</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="upcomingClasses">
-            <tr>
-              <td colspan="6" class="empty-state">Loading...</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+      <div id="upcomingClasses">
 
-    <section class="card">
-      <div class="section-header">
+        <div class="empty">
+          Loading upcoming classes...
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <section class="dashboard-grid">
+
+    <div class="card">
+
+      <div class="card-header">
+
         <h2>My Courses</h2>
+
+        <a
+          href="course.html"
+          class="view-link"
+        >
+          View All
+        </a>
+
       </div>
+
       <div id="courseCards">
-        <div class="dashboard-loading">Loading...</div>
-      </div>
-    </section>
 
-    <section class="card">
-      <div class="section-header">
+        <div class="empty">
+          Loading courses...
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="card">
+
+      <div class="card-header">
+
         <h2>Recent Payments</h2>
+
+        <a
+          href="fees.html"
+          class="view-link"
+        >
+          View All
+        </a>
+
       </div>
 
-      <div class="dashboard-table-wrap">
-        <table class="dashboard-table">
+      <div class="table-wrap">
+
+        <table>
+
           <thead>
+
             <tr>
-              <th>Date</th>
               <th>Amount</th>
-              <th>Currency</th>
               <th>Status</th>
+              <th>Date</th>
             </tr>
+
           </thead>
+
           <tbody id="paymentRows">
+
             <tr>
-              <td colspan="4" class="empty-state">Loading...</td>
+
+              <td
+                colspan="3"
+                class="empty"
+              >
+                Loading payments...
+              </td>
+
             </tr>
+
           </tbody>
+
         </table>
-      </div>
-    </section>
 
-    <section class="card">
-      <div class="section-header">
-        <h2>Notifications</h2>
       </div>
 
-      <div id="notificationRows">
-        <div class="dashboard-loading">Loading...</div>
-      </div>
-    </section>
+    </div>
 
-  </main>
+  </section>
+
+  <section class="card">
+
+    <div class="card-header">
+
+      <h2>Notifications</h2>
+
+    </div>
+
+    <div id="notificationRows">
+
+      <div class="empty">
+        Loading notifications...
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+</div>
 
 <script>
-(() => {
-  "use strict";
 
-  const DateTime = window.luxon?.DateTime;
+(function(){
 
-  const $ = (id) => document.getElementById(id);
+"use strict";
 
-  const escapeHtml = (value) =>
-    String(value ?? "").replace(/[&<>"']/g, (c) => ({
-      "&":"&amp;",
-      "<":"&lt;",
-      ">":"&gt;",
-      '"':"&quot;",
-      "'":"&#39;"
-    }[c]));
+function $(id){
+  return document.getElementById(id);
+}
 
-  const showError = (message) => {
-    const box = $("studentDashboardError");
-    if (!box) return;
-    box.hidden = false;
-    box.textContent = message;
-  };
+function escapeHTML(value){
 
-  const setText = (id, value) => {
-    const el = $(id);
-    if (el) el.textContent = value ?? "";
-  };
+  if(
+    value === null ||
+    value === undefined
+  ){
+    return "";
+  }
 
-  const db = window.academyDB ||
-    window.supabase?.createClient(
-      window.SUPABASE_CONFIG?.url,
-      window.SUPABASE_CONFIG?.anonKey
-    );
+  return String(value)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 
-  if (db) window.academyDB = db;
+}
 
-  const getSessionUser = async () => {
-    const { data, error } = await db.auth.getUser();
-    if (error) throw error;
-    if (!data?.user) throw new Error("Student session not found.");
-    return data.user;
-  };
+const ACADEMY_CLASSROOM_URL =
+  "https://haroonibnrasheedonlinequranacadmey.github.io/haroon-quran-classroom/";
 
-  const normalizeDays = (value) => {
-    if (Array.isArray(value)) return value;
+const DEFAULT_SCHEDULE_TIMEZONE =
+  "Asia/Karachi";
 
-    if (typeof value === "string") {
-      const s = value.trim();
-      if (!s) return [];
+const dayNames = [
+  "sunday",
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday"
+];
 
-      try {
-        const parsed = JSON.parse(s);
-        if (Array.isArray(parsed)) return parsed;
-      } catch (_) {}
+function parseDays(value){
 
-      return s.split(",").map(x => x.trim()).filter(Boolean);
-    }
-
+  if(!value){
     return [];
-  };
+  }
 
-  const dayNames = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday"
-  ];
+  let text =
+    String(value)
+      .toLowerCase()
+      .trim();
 
-  const normalizeDay = (value) => {
-    const s = String(value ?? "").trim().toLowerCase();
+  text =
+    text
+      .replace(/\band\b/g,",")
+      .replace(/[|\/]+/g,",")
+      .replace(/\s+/g," ");
 
-    const aliases = {
-      sun:"Sunday", sunday:"Sunday",
-      mon:"Monday", monday:"Monday",
-      tue:"Tuesday", tues:"Tuesday", tuesday:"Tuesday",
-      wed:"Wednesday", wednesday:"Wednesday",
-      thu:"Thursday", thur:"Thursday", thurs:"Thursday", thursday:"Thursday",
-      fri:"Friday", friday:"Friday",
-      sat:"Saturday", saturday:"Saturday"
-    };
+  return text
+    .split(",")
+    .flatMap(
+      x =>
+        x.trim().split(/\s+/)
+    )
+    .filter(Boolean);
 
-    return aliases[s] || String(value ?? "");
-  };
+}
 
-  const timeParts = (value) => {
-    const s = String(value ?? "").trim();
-    const m = s.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?/);
-    if (!m) return null;
+function dayMatches(value,index){
 
-    return {
-      hour: Number(m[1]),
-      minute: Number(m[2]),
-      second: Number(m[3] || 0)
-    };
-  };
+  const days =
+    parseDays(value);
 
-  const scheduleOccurrence = (schedule, timezone, fromDate = null) => {
-    if (!DateTime || !timezone) return null;
+  const full =
+    dayNames[index];
 
-    const days = normalizeDays(schedule.class_days)
-      .map(normalizeDay);
+  const short =
+    full.substring(0,3);
 
-    const parts = timeParts(schedule.class_time);
-    if (!parts || !days.length) return null;
+  return days.some(
+    day =>
+      day === full ||
+      day === short ||
+      day.startsWith(full) ||
+      day.startsWith(short)
+  );
 
-    const base = fromDate
-      ? fromDate.setZone(timezone).startOf("day")
-      : DateTime.now().setZone(timezone).startOf("day");
+}
 
-    for (let offset = 0; offset <= 7; offset++) {
-      const date = base.plus({ days: offset });
+function validTimeZone(zone){
 
-      if (!days.includes(date.toFormat("cccc"))) continue;
+  if(!zone){
+    return false;
+  }
 
-      let occurrence = date.set({
-        hour: parts.hour,
-        minute: parts.minute,
-        second: parts.second,
-        millisecond: 0
-      });
+  try{
 
-      return occurrence;
-    }
-
-    return null;
-  };
-
-  const getNextOccurrence = (schedule, timezone) => {
-    if (!DateTime || !timezone) return null;
-
-    const now = DateTime.now().setZone(timezone);
-
-    const days = normalizeDays(schedule.class_days)
-      .map(normalizeDay);
-
-    const parts = timeParts(schedule.class_time);
-    if (!parts || !days.length) return null;
-
-    for (let offset = 0; offset <= 14; offset++) {
-      const date = now.startOf("day").plus({ days: offset });
-
-      if (!days.includes(date.toFormat("cccc"))) continue;
-
-      const occurrence = date.set({
-        hour: parts.hour,
-        minute: parts.minute,
-        second: parts.second,
-        millisecond: 0
-      });
-
-      if (occurrence > now.minus({ minutes: 1 })) {
-        return occurrence;
+    new Intl.DateTimeFormat(
+      "en-US",
+      {
+        timeZone:zone
       }
-    }
+    ).format();
 
-    return null;
-  };
+    return true;
 
-  const displayTime = (schedule, timezone) => {
-    if (!DateTime || !timezone) {
-      return schedule.class_time || "-";
-    }
+  }catch(error){
 
-    const parts = timeParts(schedule.class_time);
-    if (!parts) return schedule.class_time || "-";
+    return false;
 
-    let sourceZone = schedule.schedule_timezone || "Asia/Karachi";
+  }
 
-    try {
-      return DateTime.now()
-        .setZone(sourceZone)
-        .set({
-          hour: parts.hour,
-          minute: parts.minute,
-          second: parts.second,
-          millisecond: 0
-        })
-        .setZone(timezone)
-        .toFormat("hh:mm a");
-    } catch (_) {
-      return schedule.class_time || "-";
-    }
-  };
+}
 
-  const classroomUrl = (code) => {
-    if (!code) return "";
+function safeTimeZone(zone){
 
-    return (
-      "https://haroonibnrasheedonlinequranacadmey.github.io/" +
-      "haroon-quran-classroom/?code=" +
-      encodeURIComponent(code)
+  if(
+    zone &&
+    validTimeZone(zone)
+  ){
+    return zone;
+  }
+
+  return DEFAULT_SCHEDULE_TIMEZONE;
+
+}
+
+function getDateParts(date,timeZone){
+
+  const formatter =
+    new Intl.DateTimeFormat(
+      "en-US",
+      {
+        timeZone:safeTimeZone(timeZone),
+        year:"numeric",
+        month:"2-digit",
+        day:"2-digit",
+        hour:"2-digit",
+        minute:"2-digit",
+        second:"2-digit",
+        hourCycle:"h23"
+      }
     );
+
+  const parts =
+    formatter.formatToParts(date);
+
+  const result = {};
+
+  parts.forEach(
+    part => {
+
+      if(
+        part.type !== "literal"
+      ){
+        result[part.type] =
+          part.value;
+      }
+
+    }
+  );
+
+  return {
+    year:Number(result.year),
+    month:Number(result.month),
+    day:Number(result.day),
+    hour:Number(result.hour),
+    minute:Number(result.minute),
+    second:Number(result.second)
   };
 
-  const actionLinks = (schedule) => {
-    const links = [];
+}
 
-    if (schedule.google_meet_url) {
-      links.push(
-        `<a class="class-link" href="${escapeHtml(schedule.google_meet_url)}" target="_blank" rel="noopener">Google Meet</a>`
-      );
-    }
+function localDateKey(date,timeZone){
 
-    if (schedule.classroom_code) {
-      const url = classroomUrl(schedule.classroom_code);
-      links.push(
-        `<a class="class-link" href="${escapeHtml(url)}" target="_blank" rel="noopener">Classroom</a>`
-      );
-    }
-
-    return links.length ? links.join(" ") : "-";
-  };
-
-  const findTeacherNames = async (schedules) => {
-    const ids = [...new Set(
-      schedules
-        .map(s => s.teacher_id)
-        .filter(Boolean)
-    )];
-
-    if (!ids.length) return {};
-
-    const { data, error } = await db
-      .from("profiles")
-      .select("id,full_name")
-      .in("id", ids);
-
-    if (error) {
-      console.warn("Teacher profile lookup failed:", error);
-      return {};
-    }
-
-    return Object.fromEntries(
-      (data || []).map(row => [
-        row.id,
-        row.full_name || "Teacher"
-      ])
+  const p =
+    getDateParts(
+      date,
+      timeZone
     );
+
+  return [
+    p.year,
+    String(p.month).padStart(2,"0"),
+    String(p.day).padStart(2,"0")
+  ].join("-");
+
+}
+
+function formatLocalTime(date,timeZone){
+
+  try{
+
+    return new Intl.DateTimeFormat(
+      "en-US",
+      {
+        timeZone:safeTimeZone(timeZone),
+        hour:"numeric",
+        minute:"2-digit",
+        hour12:true
+      }
+    ).format(date);
+
+  }catch(error){
+
+    return date.toLocaleTimeString();
+
+  }
+
+}
+
+function formatLocalDate(date,timeZone){
+
+  try{
+
+    return new Intl.DateTimeFormat(
+      "en-US",
+      {
+        timeZone:safeTimeZone(timeZone),
+        weekday:"long",
+        month:"short",
+        day:"numeric"
+      }
+    ).format(date);
+
+  }catch(error){
+
+    return date.toLocaleDateString();
+
+  }
+
+}
+
+function getTimeZoneOffsetMs(date,timeZone){
+
+  const p =
+    getDateParts(
+      date,
+      timeZone
+    );
+
+  const asUTC =
+    Date.UTC(
+      p.year,
+      p.month - 1,
+      p.day,
+      p.hour,
+      p.minute,
+      p.second
+    );
+
+  return asUTC - date.getTime();
+
+}
+
+function zonedDateTimeToUTC(
+  year,
+  month,
+  day,
+  hour,
+  minute,
+  second,
+  timeZone
+){
+
+  let guess =
+    new Date(
+      Date.UTC(
+        year,
+        month - 1,
+        day,
+        hour,
+        minute,
+        second
+      )
+    );
+
+  for(
+    let i=0;
+    i<5;
+    i++
+  ){
+
+    const offset =
+      getTimeZoneOffsetMs(
+        guess,
+        timeZone
+      );
+
+    const next =
+      new Date(
+        Date.UTC(
+          year,
+          month - 1,
+          day,
+          hour,
+          minute,
+          second
+        ) - offset
+      );
+
+    if(
+      Math.abs(
+        next.getTime() -
+        guess.getTime()
+      ) < 1000
+    ){
+
+      guess = next;
+      break;
+
+    }
+
+    guess = next;
+
+  }
+
+  return guess;
+
+}
+
+function addDays(
+  year,
+  month,
+  day,
+  amount
+){
+
+  const date =
+    new Date(
+      Date.UTC(
+        year,
+        month - 1,
+        day
+      )
+    );
+
+  date.setUTCDate(
+    date.getUTCDate() + amount
+  );
+
+  return {
+    year:date.getUTCFullYear(),
+    month:date.getUTCMonth()+1,
+    day:date.getUTCDate()
   };
 
-  const loadStudent = async (uid) => {
+}
+
+function buildOccurrences(
+  schedules,
+  studentTimeZone,
+  daysAround
+){
+
+  const targetZone =
+    safeTimeZone(
+      studentTimeZone
+    );
+
+  const today =
+    getDateParts(
+      new Date(),
+      targetZone
+    );
+
+  const occurrences = [];
+
+  const range =
+    daysAround || 7;
+
+  for(
+    let offset=-range;
+    offset<=range;
+    offset++
+  ){
+
+    const baseDate =
+      addDays(
+        today.year,
+        today.month,
+        today.day,
+        offset
+      );
+
+    const baseDateUTC =
+      new Date(
+        Date.UTC(
+          baseDate.year,
+          baseDate.month-1,
+          baseDate.day
+        )
+      );
+
+    const weekday =
+      baseDateUTC.getUTCDay();
+
+    schedules.forEach(
+      schedule => {
+
+        if(
+          !dayMatches(
+            schedule.class_days,
+            weekday
+          )
+        ){
+          return;
+        }
+
+        if(
+          !schedule.class_time
+        ){
+          return;
+        }
+
+        const timeParts =
+          String(
+            schedule.class_time
+          ).split(":");
+
+        const hour =
+          parseInt(
+            timeParts[0],
+            10
+          ) || 0;
+
+        const minute =
+          parseInt(
+            timeParts[1],
+            10
+          ) || 0;
+
+        const second =
+          parseInt(
+            timeParts[2],
+            10
+          ) || 0;
+
+        const scheduleTimeZone =
+          safeTimeZone(
+            schedule.schedule_timezone ||
+            DEFAULT_SCHEDULE_TIMEZONE
+          );
+
+        const instant =
+          zonedDateTimeToUTC(
+            baseDate.year,
+            baseDate.month,
+            baseDate.day,
+            hour,
+            minute,
+            second,
+            scheduleTimeZone
+          );
+
+        const localParts =
+          getDateParts(
+            instant,
+            targetZone
+          );
+
+        const localDate =
+          new Date(
+            Date.UTC(
+              localParts.year,
+              localParts.month-1,
+              localParts.day
+            )
+          );
+
+        const localDateKeyValue =
+          [
+            localParts.year,
+            String(localParts.month)
+              .padStart(2,"0"),
+            String(localParts.day)
+              .padStart(2,"0")
+          ].join("-");
+
+        occurrences.push({
+
+          schedule:schedule,
+          instant:instant,
+          localParts:localParts,
+          localDate:localDate,
+          localDateKey:localDateKeyValue,
+
+          localTime:
+            formatLocalTime(
+              instant,
+              targetZone
+            )
+
+        });
+
+      }
+    );
+
+  }
+
+  const seen =
+    new Set();
+
+  const unique = [];
+
+  occurrences
+    .sort(
+      (a,b) =>
+        a.instant - b.instant
+    )
+    .forEach(
+      item => {
+
+        const key =
+          String(item.schedule.id) +
+          "|" +
+          item.instant.getTime();
+
+        if(
+          !seen.has(key)
+        ){
+
+          seen.add(key);
+          unique.push(item);
+
+        }
+
+      }
+    );
+
+  return unique;
+
+}
+
+function dateLabel(
+  occurrence,
+  studentTimeZone
+){
+
+  const todayKey =
+    localDateKey(
+      new Date(),
+      studentTimeZone
+    );
+
+  if(
+    occurrence.localDateKey ===
+    todayKey
+  ){
+    return "TODAY";
+  }
+
+  const today =
+    getDateParts(
+      new Date(),
+      studentTimeZone
+    );
+
+  const todayDate =
+    new Date(
+      Date.UTC(
+        today.year,
+        today.month-1,
+        today.day
+      )
+    );
+
+  const difference =
+    Math.round(
+      (
+        occurrence.localDate -
+        todayDate
+      ) / 86400000
+    );
+
+  if(
+    difference === 1
+  ){
+    return "TOMORROW";
+  }
+
+  return occurrence.localDate
+    .toLocaleDateString(
+      "en-US",
+      {
+        weekday:"short",
+        month:"short",
+        day:"numeric",
+        timeZone:"UTC"
+      }
+    )
+    .toUpperCase();
+
+}
+
+function normalizePaymentStatus(value){
+
+  return String(value || "")
+    .toLowerCase()
+    .trim()
+    .replace(/[\s-]+/g,"_");
+
+}
+
+function isVerifiedStatus(status){
+
+  return [
+    "verified",
+    "paid",
+    "completed",
+    "complete",
+    "approved",
+    "success",
+    "successful"
+  ].includes(status);
+
+}
+
+function isSubmittedStatus(status){
+
+  return [
+    "submitted",
+    "payment_submitted",
+    "pending",
+    "waiting",
+    "under_review",
+    "processing"
+  ].includes(status);
+
+}
+
+function isRejectedStatus(status){
+
+  return [
+    "rejected",
+    "declined",
+    "failed",
+    "cancelled",
+    "canceled"
+  ].includes(status);
+
+}
+
+function hideFeeNotification(){
+
+  const box =
+    $("feeNotification");
+
+  box.className =
+    "fee-notification";
+
+  box.style.display =
+    "none";
+
+}
+
+function showFeeNotification(
+  type,
+  title,
+  message,
+  buttonText
+){
+
+  const box =
+    $("feeNotification");
+
+  const titleBox =
+    $("feeNotificationTitle");
+
+  const messageBox =
+    $("feeNotificationMessage");
+
+  const button =
+    $("feeNotificationButton");
+
+  box.className =
+    "fee-notification show " +
+    type;
+
+  box.style.display = "";
+
+  titleBox.textContent =
+    title;
+
+  messageBox.textContent =
+    message;
+
+  button.textContent =
+    buttonText ||
+    "Submit Payment";
+
+  button.href =
+    "fees.html";
+
+}
+
+async function loadFeeNotification(
+  db,
+  studentId
+){
+
+  try{
+
+    const result =
+      await db
+        .from("student_payments")
+        .select("*")
+        .eq(
+          "student_id",
+          studentId
+        )
+        .order(
+          "created_at",
+          {
+            ascending:false
+          }
+        )
+        .limit(20);
+
+    if(result.error){
+
+      console.error(
+        "Fee notification error:",
+        result.error
+      );
+
+      hideFeeNotification();
+
+      return false;
+
+    }
+
+    const payments =
+      result.data || [];
+
+    if(!payments.length){
+
+      showFeeNotification(
+        "due",
+        "🔔 Fee Payment Reminder",
+        "Your monthly fee payment is due. Please submit your payment to continue your classes.",
+        "Submit Payment"
+      );
+
+      return true;
+
+    }
+
+    const latest =
+      payments[0];
+
+    const status =
+      normalizePaymentStatus(
+        latest.status
+      );
+
+    if(
+      isVerifiedStatus(status)
+    ){
+
+      hideFeeNotification();
+
+      return false;
+
+    }
+
+    if(
+      isSubmittedStatus(status)
+    ){
+
+      showFeeNotification(
+        "submitted",
+        "⏳ Payment Submitted",
+        "Your payment has been submitted successfully and is waiting for admin verification.",
+        "View Payment"
+      );
+
+      return true;
+
+    }
+
+    if(
+      isRejectedStatus(status)
+    ){
+
+      showFeeNotification(
+        "rejected",
+        "❌ Payment Rejected",
+        "Your previous payment was rejected. Please submit your fee payment again.",
+        "Submit Again"
+      );
+
+      return true;
+
+    }
+
+    showFeeNotification(
+      "due",
+      "🔔 Fee Payment Reminder",
+      "Your fee payment requires attention. Please open Fees to check your payment status.",
+      "Open Fees"
+    );
+
+    return true;
+
+  }catch(error){
+
+    console.error(
+      "Fee notification exception:",
+      error
+    );
+
+    hideFeeNotification();
+
+    return false;
+
+  }
+
+}
+
+async function loadDashboard(){
+
+  try{
+
+    const db =
+      window.academyDB;
+
+    if(!db){
+
+      console.error(
+        "academyDB not available"
+      );
+
+      $("todayClass").innerHTML = `
+        <div class="no-class">
+          Dashboard connection is not ready.
+        </div>
+      `;
+
+      return;
+
+    }
+
+    const authResult =
+      await db.auth.getSession();
+
+    const session =
+      authResult?.data?.session;
+
+    if(!session){
+
+      window.location.href =
+        "../portal-login.html";
+
+      return;
+
+    }
+
+    const uid =
+      session.user.id;
+
     /*
       IMPORTANT:
-      Do not select "teacher".
-      The current student table uses teacher_id.
+      students.teacher does NOT exist.
+      We use only real student columns here.
     */
-    const result = await db
-      .from("students")
-      .select(`
-        id,
-        user_id,
-        full_name,
-        status,
-        course,
-        teacher_id,
-        timezone
-      `)
-      .eq("user_id", uid)
-      .maybeSingle();
 
-    if (result.error) throw result.error;
-    if (!result.data) {
-      throw new Error(
-        "No student record was found for this account. Please ask the Admin to check the student's user_id."
-      );
-    }
-
-    return result.data;
-  };
-
-  const loadSchedules = async (studentId) => {
-    const result = await db
-      .from("class_schedules")
-      .select(`
-        id,
-        teacher_id,
-        student_id,
-        course,
-        class_days,
-        class_time,
-        duration_minutes,
-        google_meet_url,
-        classroom_code,
-        active,
-        schedule_timezone
-      `)
-      .eq("student_id", studentId)
-      .eq("active", true)
-      .order("class_time", { ascending: true });
-
-    if (result.error) throw result.error;
-
-    return result.data || [];
-  };
-
-  const loadPayments = async (studentId) => {
-    const result = await db
-      .from("student_payments")
-      .select("*")
-      .eq("student_id", studentId)
-      .order("created_at", { ascending: false })
-      .limit(10);
-
-    if (result.error) {
-      console.warn("Payments could not be loaded:", result.error);
-      return [];
-    }
-
-    return result.data || [];
-  };
-
-  const loadNotifications = async (uid) => {
-    const result = await db
-      .from("notifications")
-      .select("*")
-      .eq("user_id", uid)
-      .order("created_at", { ascending: false })
-      .limit(10);
-
-    if (result.error) {
-      console.warn("Notifications could not be loaded:", result.error);
-      return [];
-    }
-
-    return result.data || [];
-  };
-
-  const renderToday = (schedule, teacherNames, timezone) => {
-    const box = $("todayClass");
-
-    if (!box) return;
-
-    if (!schedule) {
-      box.innerHTML =
-        `<div class="empty-state">No class scheduled for today.</div>`;
-      return;
-    }
-
-    const teacher =
-      teacherNames[schedule.teacher_id] ||
-      "Teacher";
-
-    const occurrence =
-      scheduleOccurrence(schedule, timezone);
-
-    const status = occurrence
-      ? (
-          DateTime.now().setZone(timezone) < occurrence
-            ? "Upcoming"
-            : DateTime.now().setZone(timezone) <
-              occurrence.plus({
-                minutes: Number(schedule.duration_minutes || 30)
-              })
-              ? "Active"
-              : "Completed"
+    const studentResult =
+      await db
+        .from("students")
+        .select(`
+          id,
+          user_id,
+          full_name,
+          status,
+          course,
+          timezone
+        `)
+        .eq(
+          "user_id",
+          uid
         )
-      : "Scheduled";
+        .maybeSingle();
 
-    box.innerHTML = `
-      <div class="student-card">
-        <h3>${escapeHtml(schedule.course || "Quran Class")}</h3>
-        <p><strong>Teacher:</strong> ${escapeHtml(teacher)}</p>
-        <p><strong>Time:</strong> ${escapeHtml(displayTime(schedule, timezone))}</p>
-        <p><strong>Duration:</strong> ${escapeHtml(schedule.duration_minutes || 30)} minutes</p>
-        <p><strong>Status:</strong> ${escapeHtml(status)}</p>
-        <p><strong>Timezone:</strong> ${escapeHtml(timezone)}</p>
-        <div>${actionLinks(schedule)}</div>
-      </div>
-    `;
-  };
+    if(studentResult.error){
 
-  const renderUpcoming = (schedules, teacherNames, timezone) => {
-    const tbody = $("upcomingClasses");
-    if (!tbody) return;
+      console.error(
+        "Student lookup error:",
+        studentResult.error
+      );
 
-    const now = DateTime.now().setZone(timezone);
+      $("studentName").textContent =
+        "Student";
 
-    const items = schedules
-      .map(schedule => ({
-        schedule,
-        occurrence: getNextOccurrence(schedule, timezone)
-      }))
-      .filter(x => x.occurrence && x.occurrence > now)
-      .sort((a,b) => a.occurrence.toMillis() - b.occurrence.toMillis())
-      .slice(0, 10);
+      $("todayClass").innerHTML = `
+        <div class="no-class">
+          Student information could not be loaded.
+        </div>
+      `;
 
-    if (!items.length) {
-      tbody.innerHTML =
-        `<tr><td colspan="6" class="empty-state">No upcoming classes.</td></tr>`;
+      $("upcomingClasses").innerHTML = `
+        <div class="empty">
+          Please refresh the dashboard.
+        </div>
+      `;
+
       return;
+
     }
 
-    tbody.innerHTML = items.map(({schedule, occurrence}) => `
-      <tr>
-        <td>${escapeHtml(occurrence.toFormat("dd MMM yyyy"))}</td>
-        <td>${escapeHtml(occurrence.toFormat("hh:mm a"))}</td>
-        <td>${escapeHtml(schedule.course || "-")}</td>
-        <td>${escapeHtml(teacherNames[schedule.teacher_id] || "Teacher")}</td>
-        <td>${escapeHtml(schedule.duration_minutes || 30)} min</td>
-        <td>${actionLinks(schedule)}</td>
-      </tr>
-    `).join("");
-  };
+    const student =
+      studentResult.data;
 
-  const renderCourses = async (student, schedules) => {
-    const box = $("courseCards");
-    if (!box) return;
+    if(!student){
 
-    const courseNames = [
-      ...new Set(
-        schedules
-          .map(x => x.course)
-          .filter(Boolean)
-      )
-    ];
+      $("studentName").textContent =
+        "Student";
 
-    if (student.course && !courseNames.includes(student.course)) {
-      courseNames.unshift(student.course);
-    }
+      $("todayClass").innerHTML = `
+        <div class="no-class">
+          Student account is not linked yet.
+        </div>
+      `;
 
-    if (!courseNames.length) {
-      box.innerHTML =
-        `<div class="empty-state">No course information available.</div>`;
+      hideFeeNotification();
+
       return;
+
     }
 
-    box.innerHTML = courseNames.map(course => `
-      <div class="student-card">
-        <h3>${escapeHtml(course)}</h3>
-        <p>Active Quran Academy course</p>
-      </div>
-    `).join("");
-  };
+    $("studentName").textContent =
+      student.full_name ||
+      "Student";
 
-  const renderPayments = (payments) => {
-    const tbody = $("paymentRows");
-    if (!tbody) return;
+    const studentId =
+      student.id;
 
-    if (!payments.length) {
-      tbody.innerHTML =
-        `<tr><td colspan="4" class="empty-state">No payment records found.</td></tr>`;
-      return;
+    const studentTimeZone =
+      safeTimeZone(
+        student.timezone ||
+        DEFAULT_SCHEDULE_TIMEZONE
+      );
+
+    $("studentTimezoneInfo").textContent =
+      "🕐 Your local timezone: " +
+      studentTimeZone;
+
+    $("todayDate").textContent =
+      new Intl.DateTimeFormat(
+        "en-US",
+        {
+          timeZone:studentTimeZone,
+          weekday:"long",
+          month:"long",
+          day:"numeric",
+          year:"numeric"
+        }
+      ).format(
+        new Date()
+      );
+
+    const feeNotificationVisible =
+      await loadFeeNotification(
+        db,
+        studentId
+      );
+
+    /* =========================
+       COURSES
+    ========================= */
+
+    try{
+
+      const courseResult =
+        await db
+          .from("courses")
+          .select(`
+            id,
+            title,
+            description,
+            image_url,
+            course_url,
+            status,
+            created_at
+          `)
+          .eq(
+            "status",
+            "active"
+          )
+          .order(
+            "created_at",
+            {
+              ascending:false
+            }
+          );
+
+      if(courseResult.error){
+
+        console.error(
+          "Course error:",
+          courseResult.error
+        );
+
+        $("courseCount").textContent =
+          "0";
+
+        $("courseCards").innerHTML = `
+          <div class="empty">
+            Courses could not be loaded.
+          </div>
+        `;
+
+      }else{
+
+        const courses =
+          courseResult.data || [];
+
+        $("courseCount").textContent =
+          courses.length;
+
+        if(!courses.length){
+
+          $("courseCards").innerHTML = `
+            <div class="empty">
+              No courses available yet.
+            </div>
+          `;
+
+        }else{
+
+          $("courseCards").innerHTML = `
+            <div class="course-mini-grid">
+
+              ${
+                courses
+                  .slice(0,6)
+                  .map(
+                    course => {
+
+                      const title =
+                        course.title ||
+                        "Course";
+
+                      return `
+                        <div class="course-mini">
+
+                          <div
+                            class="course-mini-title"
+                            title="${escapeHTML(title)}"
+                          >
+                            ${escapeHTML(title)}
+                          </div>
+
+                          <span class="course-mini-status">
+                            ${escapeHTML(
+                              course.status ||
+                              "Active"
+                            )}
+                          </span>
+
+                        </div>
+                      `;
+
+                    }
+                  )
+                  .join("")
+              }
+
+            </div>
+          `;
+
+        }
+
+      }
+
+    }catch(error){
+
+      console.error(
+        "Course exception:",
+        error
+      );
+
+      $("courseCards").innerHTML = `
+        <div class="empty">
+          Courses could not be loaded.
+        </div>
+      `;
+
     }
 
-    tbody.innerHTML = payments.map(payment => {
-      const date =
-        payment.payment_date ||
-        payment.created_at ||
-        payment.date;
+    /* =========================
+       SCHEDULE
+    ========================= */
 
-      const amount =
-        payment.amount ??
-        payment.paid_amount ??
-        payment.total ??
-        "-";
+    try{
 
-      const currency =
-        payment.currency ||
-        payment.currency_code ||
-        "-";
+      const scheduleResult =
+        await db
+          .from("class_schedules")
+          .select(`
+            id,
+            teacher_id,
+            student_id,
+            course,
+            class_days,
+            class_time,
+            duration_minutes,
+            google_meet_url,
+            classroom_code,
+            active,
+            schedule_timezone
+          `)
+          .eq(
+            "student_id",
+            studentId
+          )
+          .eq(
+            "active",
+            true
+          )
+          .order(
+            "class_time",
+            {
+              ascending:true
+            }
+          );
 
-      const status =
-        payment.status ||
-        "Recorded";
+      if(scheduleResult.error){
 
-      return `
+        console.error(
+          "Schedule error:",
+          scheduleResult.error
+        );
+
+        $("todayClass").innerHTML = `
+          <div class="no-class">
+            No class schedule available for today.
+          </div>
+        `;
+
+        $("upcomingClasses").innerHTML = `
+          <div class="empty">
+            No upcoming classes available.
+          </div>
+        `;
+
+      }else{
+
+        const schedules =
+          scheduleResult.data || [];
+
+        const teacherIds =
+          [
+            ...new Set(
+              schedules
+                .map(
+                  item =>
+                    item.teacher_id
+                )
+                .filter(Boolean)
+            )
+          ];
+
+        let teacherMap = {};
+
+        if(
+          teacherIds.length
+        ){
+
+          const teacherResult =
+            await db
+              .from("profiles")
+              .select(
+                "id,full_name"
+              )
+              .in(
+                "id",
+                teacherIds
+              );
+
+          if(
+            !teacherResult.error
+          ){
+
+            (
+              teacherResult.data ||
+              []
+            ).forEach(
+              teacher => {
+
+                teacherMap[
+                  teacher.id
+                ] =
+                  teacher.full_name ||
+                  "Teacher";
+
+              }
+            );
+
+          }
+
+        }
+
+        const occurrences =
+          buildOccurrences(
+            schedules,
+            studentTimeZone,
+            7
+          );
+
+        const now =
+          new Date();
+
+        const todayKey =
+          localDateKey(
+            now,
+            studentTimeZone
+          );
+
+        const todayClasses =
+          occurrences.filter(
+            item =>
+              item.localDateKey ===
+              todayKey
+          );
+
+        if(
+          !todayClasses.length
+        ){
+
+          $("todayClass").innerHTML = `
+            <div class="no-class">
+
+              <strong>
+                No class scheduled for today
+              </strong>
+
+              <div style="
+                margin-top:6px;
+                font-size:12px;
+              ">
+                Your next class will appear on its scheduled day.
+              </div>
+
+            </div>
+          `;
+
+        }else{
+
+          $("todayClass").innerHTML =
+            todayClasses
+              .map(
+                item => {
+
+                  const schedule =
+                    item.schedule;
+
+                  const duration =
+                    schedule.duration_minutes ||
+                    30;
+
+                  const teacherName =
+                    teacherMap[
+                      schedule.teacher_id
+                    ] ||
+                    "Teacher";
+
+                  const classroomUrl =
+                    schedule.classroom_url ||
+                    schedule.classroom_link ||
+                    (
+                      schedule.classroom_code
+                      ?
+                      ACADEMY_CLASSROOM_URL +
+                      "?code=" +
+                      encodeURIComponent(
+                        schedule.classroom_code
+                      )
+                      :
+                      ACADEMY_CLASSROOM_URL
+                    );
+
+                  return `
+                    <div class="today-class">
+
+                      <div class="today-label">
+                        Today's Class
+                      </div>
+
+                      <div class="today-course">
+                        ${escapeHTML(
+                          schedule.course ||
+                          "Quran Class"
+                        )}
+                      </div>
+
+                      <div class="today-meta">
+
+                        <strong>
+                          Local Time:
+                        </strong>
+
+                        ${escapeHTML(
+                          item.localTime
+                        )}
+
+                        <br>
+
+                        <strong>
+                          Date:
+                        </strong>
+
+                        ${escapeHTML(
+                          formatLocalDate(
+                            item.instant,
+                            studentTimeZone
+                          )
+                        )}
+
+                        <br>
+
+                        <strong>
+                          Teacher:
+                        </strong>
+
+                        ${escapeHTML(
+                          teacherName
+                        )}
+
+                        <br>
+
+                        <strong>
+                          Duration:
+                        </strong>
+
+                        ${escapeHTML(
+                          duration
+                        )}
+                        minutes
+
+                      </div>
+
+                      <div>
+
+                        <a
+                          class="join-btn classroom-btn"
+                          href="${escapeHTML(
+                            classroomUrl
+                          )}"
+                          target="_blank"
+                          rel="noopener"
+                        >
+                          🏫 Join My Classroom
+                        </a>
+
+                        ${
+                          schedule.google_meet_url
+                          ?
+                          `
+                            <a
+                              class="join-btn"
+                              href="${escapeHTML(
+                                schedule.google_meet_url
+                              )}"
+                              target="_blank"
+                              rel="noopener"
+                            >
+                              🎥 Join Google Meet
+                            </a>
+                          `
+                          :
+                          ""
+                        }
+
+                      </div>
+
+                    </div>
+                  `;
+
+                }
+              )
+              .join("");
+
+        }
+
+        const futureClasses =
+          occurrences
+            .filter(
+              item =>
+                item.instant >
+                now
+            )
+            .sort(
+              (a,b) =>
+                a.instant -
+                b.instant
+            )
+            .slice(
+              0,
+              7
+            );
+
+        $("classCount").textContent =
+          futureClasses.length;
+
+        if(
+          !futureClasses.length
+        ){
+
+          $("upcomingClasses").innerHTML = `
+            <div class="empty">
+              No upcoming classes available.
+            </div>
+          `;
+
+        }else{
+
+          $("upcomingClasses").innerHTML =
+            futureClasses
+              .map(
+                item => {
+
+                  const schedule =
+                    item.schedule;
+
+                  const teacherName =
+                    teacherMap[
+                      schedule.teacher_id
+                    ] ||
+                    "Teacher";
+
+                  return `
+                    <div class="upcoming-item">
+
+                      <div class="day-badge">
+
+                        ${escapeHTML(
+                          dateLabel(
+                            item,
+                            studentTimeZone
+                          )
+                        )}
+
+                        <br>
+
+                        <span style="
+                          font-weight:normal;
+                          font-size:10px;
+                        ">
+                          ${escapeHTML(
+                            formatLocalDate(
+                              item.instant,
+                              studentTimeZone
+                            )
+                          )}
+                        </span>
+
+                      </div>
+
+                      <div class="upcoming-info">
+
+                        <strong>
+                          ${escapeHTML(
+                            schedule.course ||
+                            "Quran Class"
+                          )}
+                        </strong>
+
+                        <span>
+
+                          ${escapeHTML(
+                            item.localTime
+                          )}
+
+                          ·
+
+                          ${escapeHTML(
+                            teacherName
+                          )}
+
+                        </span>
+
+                      </div>
+
+                    </div>
+                  `;
+
+                }
+              )
+              .join("");
+
+        }
+
+      }
+
+    }catch(error){
+
+      console.error(
+        "Schedule exception:",
+        error
+      );
+
+      $("todayClass").innerHTML = `
+        <div class="no-class">
+          No class schedule available for today.
+        </div>
+      `;
+
+      $("upcomingClasses").innerHTML = `
+        <div class="empty">
+          No upcoming classes available.
+        </div>
+      `;
+
+    }
+
+    /* =========================
+       PAYMENTS
+    ========================= */
+
+    try{
+
+      const paymentResult =
+        await db
+          .from("student_payments")
+          .select("*")
+          .eq(
+            "student_id",
+            studentId
+          )
+          .order(
+            "created_at",
+            {
+              ascending:false
+            }
+          )
+          .limit(5);
+
+      if(paymentResult.error){
+
+        console.error(
+          "Payment error:",
+          paymentResult.error
+        );
+
+        $("paymentRows").innerHTML = `
+          <tr>
+            <td
+              colspan="3"
+              class="empty"
+            >
+              Payments could not be loaded.
+            </td>
+          </tr>
+        `;
+
+      }else{
+
+        const payments =
+          paymentResult.data || [];
+
+        if(!payments.length){
+
+          $("paymentRows").innerHTML = `
+            <tr>
+              <td
+                colspan="3"
+                class="empty"
+              >
+                No payment records yet.
+              </td>
+            </tr>
+          `;
+
+        }else{
+
+          $("paymentRows").innerHTML =
+            payments
+              .map(
+                payment => {
+
+                  const date =
+                    payment.paid_at ||
+                    payment.created_at;
+
+                  return `
+                    <tr>
+
+                      <td>
+
+                        ${escapeHTML(
+                          payment.amount ??
+                          "—"
+                        )}
+
+                        ${escapeHTML(
+                          payment.currency ||
+                          ""
+                        )}
+
+                      </td>
+
+                      <td>
+
+                        <span class="status">
+
+                          ${escapeHTML(
+                            payment.status ||
+                            "Pending"
+                          )}
+
+                        </span>
+
+                      </td>
+
+                      <td>
+
+                        ${
+                          date
+                          ?
+                          new Date(date)
+                            .toLocaleDateString()
+                          :
+                          "—"
+                        }
+
+                      </td>
+
+                    </tr>
+                  `;
+
+                }
+              )
+              .join("");
+
+        }
+
+      }
+
+    }catch(error){
+
+      console.error(
+        "Payment exception:",
+        error
+      );
+
+      $("paymentRows").innerHTML = `
         <tr>
-          <td>${escapeHtml(date ? new Date(date).toLocaleDateString() : "-")}</td>
-          <td>${escapeHtml(amount)}</td>
-          <td>${escapeHtml(currency)}</td>
-          <td>${escapeHtml(status)}</td>
+          <td
+            colspan="3"
+            class="empty"
+          >
+            Payments could not be loaded.
+          </td>
         </tr>
       `;
-    }).join("");
-  };
 
-  const renderNotifications = (notifications) => {
-    const box = $("notificationRows");
-    if (!box) return;
-
-    setText("notificationCount", notifications.length);
-
-    if (!notifications.length) {
-      box.innerHTML =
-        `<div class="empty-state">No notifications.</div>`;
-      return;
     }
 
-    box.innerHTML = notifications.map(n => `
-      <div class="student-card">
-        <h3>${escapeHtml(n.title || "Notification")}</h3>
-        <p>${escapeHtml(n.message || n.body || "")}</p>
-        <small>${escapeHtml(
-          n.created_at
-            ? new Date(n.created_at).toLocaleString()
-            : ""
-        )}</small>
-      </div>
-    `).join("");
-  };
+    /* =========================
+       NOTIFICATIONS
+    ========================= */
 
-  const loadAttendance = async (studentId) => {
-    /*
-      Attendance schema may vary between installations.
-      We therefore do not allow an attendance-query error to break
-      the complete dashboard.
-    */
-    const el = $("attendanceValue");
-    if (!el) return;
+    let generalNotificationCount =
+      0;
 
-    try {
-      const result = await db
-        .from("teacher_class_sessions")
-        .select("status")
-        .eq("student_id", studentId);
+    try{
 
-      if (result.error) {
-        el.textContent = "—";
-        return;
-      }
-
-      const rows = result.data || [];
-
-      if (!rows.length) {
-        el.textContent = "—";
-        return;
-      }
-
-      const completed = rows.filter(x =>
-        String(x.status || "").toLowerCase() === "completed"
-      ).length;
-
-      const total = rows.length;
-
-      el.textContent =
-        `${completed}/${total} completed`;
-    } catch (_) {
-      el.textContent = "—";
-    }
-  };
-
-  const loadDashboard = async () => {
-    if (!db) {
-      throw new Error(
-        "Supabase could not be initialized. Check config.js."
-      );
-    }
-
-    const user = await getSessionUser();
-    const student = await loadStudent(user.id);
-
-    const timezone =
-      student.timezone ||
-      Intl.DateTimeFormat().resolvedOptions().timeZone ||
-      "Asia/Karachi";
-
-    setText("studentName", student.full_name || user.email || "Student");
-    setText("studentTimezone", timezone);
-    setText("studentCourse", student.course || "—");
-
-    const schedules = await loadSchedules(student.id);
-    const teacherNames = await findTeacherNames(schedules);
-
-    const todayName =
-      DateTime
-        .now()
-        .setZone(timezone)
-        .toFormat("cccc");
-
-    const todaySchedules = schedules.filter(schedule => {
-      const days = normalizeDays(schedule.class_days)
-        .map(normalizeDay);
-
-      return days.includes(todayName);
-    });
-
-    setText("todayClassesCount", todaySchedules.length);
-
-    const upcoming = schedules
-      .map(schedule => getNextOccurrence(schedule, timezone))
-      .filter(Boolean)
-      .filter(dt => dt > DateTime.now().setZone(timezone))
-      .length;
-
-    setText("upcomingClassesCount", upcoming);
-
-    let todayClass = null;
-
-    if (todaySchedules.length) {
-      const now = DateTime.now().setZone(timezone);
-
-      todayClass =
-        todaySchedules
-          .map(schedule => ({
-            schedule,
-            occurrence: scheduleOccurrence(schedule, timezone)
-          }))
-          .sort((a,b) =>
-            (a.occurrence?.toMillis() || 0) -
-            (b.occurrence?.toMillis() || 0)
+      const notificationResult =
+        await db
+          .from("notifications")
+          .select("*")
+          .eq(
+            "user_id",
+            uid
           )
-          .map(x => x.schedule)
-          .find(schedule => {
-            const occurrence =
-              scheduleOccurrence(schedule, timezone);
+          .order(
+            "created_at",
+            {
+              ascending:false
+            }
+          )
+          .limit(5);
 
-            return occurrence &&
-              occurrence.plus({
-                minutes: Number(schedule.duration_minutes || 30)
-              }) > now;
-          }) ||
-        todaySchedules[0];
-    }
+      if(
+        notificationResult.error
+      ){
 
-    renderToday(todayClass, teacherNames, timezone);
-    renderUpcoming(schedules, teacherNames, timezone);
-    await renderCourses(student, schedules);
+        console.error(
+          "Notification error:",
+          notificationResult.error
+        );
 
-    const [payments, notifications] = await Promise.all([
-      loadPayments(student.id),
-      loadNotifications(user.id)
-    ]);
+        $("notificationRows").innerHTML = `
+          <div class="empty">
+            No general notifications yet.
+          </div>
+        `;
 
-    renderPayments(payments);
-    renderNotifications(notifications);
-    await loadAttendance(student.id);
-  };
+      }else{
 
-  document.addEventListener("DOMContentLoaded", async () => {
-    try {
-      await loadDashboard();
-    } catch (error) {
-      console.error("Student Dashboard error:", error);
+        const notifications =
+          notificationResult.data ||
+          [];
 
-      showError(
-        "Student Dashboard could not load: " +
-        (error?.message || "Unknown error")
+        generalNotificationCount =
+          notifications.length;
+
+        if(
+          !notifications.length
+        ){
+
+          $("notificationRows").innerHTML = `
+            <div class="empty">
+              No notifications yet.
+            </div>
+          `;
+
+        }else{
+
+          $("notificationRows").innerHTML =
+            notifications
+              .map(
+                item => {
+
+                  return `
+                    <div class="notification">
+
+                      <strong>
+                        ${escapeHTML(
+                          item.title ||
+                          "Notification"
+                        )}
+                      </strong>
+
+                      <p>
+                        ${escapeHTML(
+                          item.body ||
+                          item.message ||
+                          ""
+                        )}
+                      </p>
+
+                    </div>
+                  `;
+
+                }
+              )
+              .join("");
+
+        }
+
+      }
+
+    }catch(error){
+
+      console.error(
+        "Notification exception:",
+        error
       );
 
-      setText("studentName", "Unable to load");
-      setText("todayClassesCount", "—");
-      setText("upcomingClassesCount", "—");
-      setText("studentCourse", "—");
-      setText("studentTimezone", "—");
-      setText("notificationCount", "—");
-      setText("attendanceValue", "—");
+      $("notificationRows").innerHTML = `
+        <div class="empty">
+          No general notifications yet.
+        </div>
+      `;
 
-      const today = $("todayClass");
-      if (today) {
-        today.innerHTML =
-          `<div class="empty-state">Dashboard data could not be loaded.</div>`;
-      }
-
-      const upcoming = $("upcomingClasses");
-      if (upcoming) {
-        upcoming.innerHTML =
-          `<tr><td colspan="6" class="empty-state">Dashboard data could not be loaded.</td></tr>`;
-      }
     }
-  });
+
+    $("notificationCount").textContent =
+      generalNotificationCount +
+      (
+        feeNotificationVisible
+        ? 1
+        : 0
+      );
+
+    $("attendanceRate").textContent =
+      "—";
+
+  }catch(error){
+
+    console.error(
+      "STUDENT DASHBOARD FATAL ERROR:",
+      error
+    );
+
+    $("studentName").textContent =
+      "Student";
+
+    $("todayClass").innerHTML = `
+      <div class="no-class">
+        Dashboard could not load. Please refresh the page.
+      </div>
+    `;
+
+    $("upcomingClasses").innerHTML = `
+      <div class="empty">
+        Please refresh the dashboard.
+      </div>
+    `;
+
+  }
+
+}
+
+document.addEventListener(
+  "DOMContentLoaded",
+  loadDashboard
+);
 
 })();
+
 </script>
 
 </body>
