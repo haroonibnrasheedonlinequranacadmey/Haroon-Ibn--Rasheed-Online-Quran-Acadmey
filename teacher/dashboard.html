@@ -40,6 +40,11 @@
   font-weight:700;
 }
 
+.action-group button:hover,
+.action-group a:hover{
+  opacity:.9;
+}
+
 .action-group button:disabled{
   background:#d8e3e6;
   color:#58717a;
@@ -55,6 +60,27 @@
   background:#4d9ed8;
   color:#fff;
 }
+
+.action-group .reschedule-action{
+  background:#7bb9d9;
+  color:#fff;
+}
+
+.action-group .lesson-action{
+  background:#0b9fbb;
+  color:#fff;
+}
+
+.action-group .join-meeting{
+  background:#0b9fbb;
+  color:#fff;
+}
+
+.action-group .join-classroom{
+  background:#4d83d8;
+  color:#fff;
+}
+
 
 /* =====================================================
    CLASS ROW COLORS
@@ -89,15 +115,23 @@
   background:#eeeeee;
 }
 
-/* Keep cells transparent */
-
 .class-row td{
   background:transparent !important;
 }
 
+
 /* =====================================================
    STATUS PILLS
 ===================================================== */
+
+.status-pill{
+  display:inline-block;
+  padding:5px 8px;
+  border-radius:6px;
+  font-size:11px;
+  font-weight:700;
+  white-space:nowrap;
+}
 
 .status-upcoming{
   background:#ffffff;
@@ -363,6 +397,24 @@
   color:#173d47;
 }
 
+.lesson-resource-links{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:15px;
+}
+
+.lesson-resource-links a{
+  display:inline-block;
+  padding:8px 12px;
+  border-radius:7px;
+  background:#0b9fbb;
+  color:#fff;
+  text-decoration:none;
+  font-size:12px;
+  font-weight:700;
+}
+
 
 /* =====================================================
    MOBILE
@@ -618,10 +670,6 @@ Loading...
 
 <!-- =====================================================
      LESSON FORM MODAL
-     
-     Used by:
-     1. End Class
-     2. Take an Offline
 ===================================================== -->
 
 <div
@@ -688,10 +736,7 @@ Class:
 >
 
 
-<!-- JUZ + PAGE -->
-
 <div class="lesson-row">
-
 
 <div class="lesson-field">
 
@@ -732,8 +777,6 @@ Page Number
 </div>
 
 
-<!-- DESCRIPTION -->
-
 <div class="lesson-field">
 
 <label for="lessonDescription">
@@ -748,8 +791,6 @@ Description
 
 </div>
 
-
-<!-- LESSON / SUBJECT -->
 
 <div class="lesson-field">
 
@@ -768,8 +809,6 @@ Lesson / Subject Name
 </div>
 
 
-<!-- LESSON DETAILS -->
-
 <div class="lesson-field">
 
 <label for="lessonDetails">
@@ -784,8 +823,6 @@ Lesson Details
 
 </div>
 
-
-<!-- PERFORMANCE -->
 
 <div class="lesson-field">
 
@@ -865,8 +902,6 @@ Very Good
 </div>
 
 
-<!-- SUBMIT -->
-
 <div class="lesson-submit-row">
 
 <button
@@ -897,7 +932,7 @@ Submit Lesson
 
 
 <!-- =====================================================
-     OPEN PREVIOUS LESSON MODAL
+     OPEN LESSON MODAL
 ===================================================== -->
 
 <div
@@ -971,6 +1006,1806 @@ Close
 <script>
 
 /* =====================================================
+   SUPABASE
+===================================================== */
+
+(function(){
+
+"use strict";
+
+
+const cfg =
+  window.SUPABASE_CONFIG || {};
+
+
+const db =
+  window.supabase?.createClient(
+    cfg.url,
+    cfg.anonKey
+  );
+
+
+window.academyDB =
+  db;
+
+
+const BASE_TIMEZONE =
+  "Asia/Karachi";
+
+
+/* =====================================================
+   HELPERS
+===================================================== */
+
+function escapeHTML(value){
+
+  return String(
+    value ?? ""
+  ).replace(
+    /[&<>"']/g,
+    function(char){
+
+      return {
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#39;"
+
+      }[char];
+
+    }
+  );
+
+}
+
+
+function getTeacherTimezone(){
+
+  return (
+    window.currentTeacherTimezone ||
+    window.teacherTimezone ||
+    localStorage.getItem(
+      "teacher_timezone"
+    ) ||
+    BASE_TIMEZONE
+  );
+
+}
+
+
+function getTeacherNow(){
+
+  return luxon.DateTime.now()
+    .setZone(
+      getTeacherTimezone()
+    );
+
+}
+
+
+function todayISO(){
+
+  return getTeacherNow()
+    .toFormat(
+      "yyyy-MM-dd"
+    );
+
+}
+
+
+function todayName(){
+
+  return getTeacherNow()
+    .toFormat(
+      "cccc"
+    );
+
+}
+
+
+function normalizeDay(value){
+
+  return String(
+    value || ""
+  )
+  .trim()
+  .toLowerCase();
+
+}
+
+
+function dayMatches(
+  classDays,
+  currentDay
+){
+
+  if(Array.isArray(classDays)){
+
+    return classDays.some(
+      function(day){
+
+        return normalizeDay(day) ===
+          normalizeDay(currentDay);
+
+      }
+    );
+
+  }
+
+
+  if(typeof classDays === "string"){
+
+    let text =
+      classDays.trim();
+
+
+    try{
+
+      if(
+        text.startsWith("[") &&
+        text.endsWith("]")
+      ){
+
+        const parsed =
+          JSON.parse(text);
+
+
+        if(Array.isArray(parsed)){
+
+          return parsed.some(
+            function(day){
+
+              return normalizeDay(day) ===
+                normalizeDay(currentDay);
+
+            }
+          );
+
+        }
+
+      }
+
+    }catch(error){}
+
+
+    return text
+      .split(",")
+      .some(
+        function(day){
+
+          return normalizeDay(day) ===
+            normalizeDay(currentDay);
+
+        }
+      );
+
+  }
+
+
+  return false;
+
+}
+
+
+function formatTime(
+  classDate,
+  classTime,
+  scheduleTimezone
+){
+
+  try{
+
+    const source =
+      luxon.DateTime.fromISO(
+        classDate +
+        "T" +
+        String(classTime)
+          .slice(0,8),
+        {
+          zone:
+            scheduleTimezone ||
+            BASE_TIMEZONE
+        }
+      );
+
+
+    if(!source.isValid)
+      return classTime || "—";
+
+
+    return source
+      .setZone(
+        getTeacherTimezone()
+      )
+      .toFormat(
+        "h:mm a"
+      );
+
+  }catch(error){
+
+    return classTime || "—";
+
+  }
+
+}
+
+
+function getScheduleDateTime(
+  classDate,
+  classTime,
+  scheduleTimezone
+){
+
+  return luxon.DateTime.fromISO(
+    classDate +
+    "T" +
+    String(classTime)
+      .slice(0,8),
+    {
+      zone:
+        scheduleTimezone ||
+        BASE_TIMEZONE
+    }
+  );
+
+}
+
+
+function getEndDateTime(
+  classDate,
+  classTime,
+  duration,
+  scheduleTimezone
+){
+
+  return getScheduleDateTime(
+    classDate,
+    classTime,
+    scheduleTimezone
+  ).plus({
+    minutes:
+      Number(duration || 30)
+  });
+
+}
+
+
+function safeURL(url){
+
+  if(!url)
+    return "";
+
+
+  try{
+
+    const parsed =
+      new URL(url);
+
+
+    if(
+      parsed.protocol !== "http:" &&
+      parsed.protocol !== "https:"
+    ){
+
+      return "";
+
+    }
+
+
+    return parsed.href;
+
+  }catch(error){
+
+    return "";
+
+  }
+
+}
+
+
+function getClassroomURL(
+  classroomCode
+){
+
+  if(!classroomCode)
+    return "";
+
+
+  const value =
+    String(classroomCode)
+      .trim();
+
+
+  if(
+    value.startsWith("http://") ||
+    value.startsWith("https://")
+  ){
+
+    return safeURL(value);
+
+  }
+
+
+  return (
+    "https://haroonibnrasheedonlinequranacadmey.github.io/" +
+    "haroon-quran-classroom/?code=" +
+    encodeURIComponent(value)
+  );
+
+}
+
+
+/* =====================================================
+   SESSION STATUS
+===================================================== */
+
+function normalizeSessionStatus(
+  value
+){
+
+  return String(
+    value || ""
+  )
+  .trim()
+  .toLowerCase()
+  .replace(/\s+/g,"_");
+
+}
+
+
+function calculateStatus(
+  schedule,
+  session
+){
+
+  const saved =
+    normalizeSessionStatus(
+      session?.status
+    );
+
+
+  if(
+    saved === "completed" ||
+    saved === "complete" ||
+    saved === "ended"
+  ){
+
+    return "completed";
+
+  }
+
+
+  if(
+    saved === "absent"
+  ){
+
+    return "absent";
+
+  }
+
+
+  if(
+    saved === "on_leave" ||
+    saved === "leave"
+  ){
+
+    return "on_leave";
+
+  }
+
+
+  if(
+    saved === "cancelled" ||
+    saved === "canceled"
+  ){
+
+    return "cancelled";
+
+  }
+
+
+  if(
+    saved === "student_joined" ||
+    saved === "both_joined" ||
+    saved === "joined"
+  ){
+
+    return "student_joined";
+
+  }
+
+
+  if(
+    saved === "active" ||
+    saved === "in_progress" ||
+    saved === "teacher_active"
+  ){
+
+    return "active";
+
+  }
+
+
+  return "upcoming";
+
+}
+
+
+function statusText(
+  status
+){
+
+  const map = {
+
+    upcoming:
+      "Not Active",
+
+    active:
+      "Active",
+
+    student_joined:
+      "Student Joined",
+
+    completed:
+      "Completed",
+
+    absent:
+      "Absent",
+
+    on_leave:
+      "On Leave",
+
+    cancelled:
+      "Cancelled",
+
+    late:
+      "Late"
+
+  };
+
+
+  return (
+    map[status] ||
+    "Not Active"
+  );
+
+}
+
+
+/* =====================================================
+   GET TODAY SCHEDULES
+===================================================== */
+
+async function loadTeacherToday(){
+
+  if(!db)
+    return;
+
+
+  const rows =
+    document.getElementById(
+      "todayClassRows"
+    );
+
+
+  if(!rows)
+    return;
+
+
+  rows.innerHTML = `
+    <tr>
+      <td colspan="6" class="today-empty">
+        Loading...
+      </td>
+    </tr>
+  `;
+
+
+  const {
+    data:{
+      user
+    } = {},
+    error:authError
+  } =
+    await db.auth.getUser();
+
+
+  if(authError || !user){
+
+    rows.innerHTML = `
+      <tr>
+        <td colspan="6" class="today-empty">
+          Teacher login required.
+        </td>
+      </tr>
+    `;
+
+    return;
+
+  }
+
+
+  const uid =
+    user.id;
+
+
+  /* ===================================================
+     LOAD TEACHER SCHEDULES
+  =================================================== */
+
+  const scheduleResult =
+    await db
+      .from("class_schedules")
+      .select(`
+        id,
+        teacher_id,
+        student_id,
+        course,
+        class_days,
+        class_time,
+        duration_minutes,
+        google_meet_url,
+        classroom_code,
+        active,
+        schedule_timezone
+      `)
+      .eq(
+        "teacher_id",
+        uid
+      )
+      .eq(
+        "active",
+        true
+      )
+      .order(
+        "class_time",
+        {
+          ascending:true
+        }
+      );
+
+
+  if(scheduleResult.error){
+
+    console.error(
+      "Teacher schedule error:",
+      scheduleResult.error
+    );
+
+
+    rows.innerHTML = `
+      <tr>
+        <td colspan="6" class="today-empty">
+          Unable to load today's classes.
+        </td>
+      </tr>
+    `;
+
+    return;
+
+  }
+
+
+  const allSchedules =
+    scheduleResult.data || [];
+
+
+  const currentDay =
+    todayName();
+
+
+  const todayDate =
+    todayISO();
+
+
+  const todaySchedules =
+    allSchedules.filter(
+      function(schedule){
+
+        return dayMatches(
+          schedule.class_days,
+          currentDay
+        );
+
+      }
+    );
+
+
+  /* ===================================================
+     STUDENTS
+  =================================================== */
+
+  const studentIds =
+    todaySchedules
+      .map(
+        function(item){
+
+          return item.student_id;
+
+        }
+      )
+      .filter(Boolean);
+
+
+  let students = [];
+
+
+  if(studentIds.length){
+
+    const studentResult =
+      await db
+        .from("students")
+        .select(`
+          id,
+          user_id,
+          full_name,
+          timezone,
+          status,
+          course
+        `)
+        .in(
+          "id",
+          studentIds
+        );
+
+
+    if(!studentResult.error){
+
+      students =
+        studentResult.data || [];
+
+    }
+
+  }
+
+
+  const studentMap =
+    new Map();
+
+
+  students.forEach(
+    function(student){
+
+      studentMap.set(
+        student.id,
+        student
+      );
+
+    }
+  );
+
+
+  /* ===================================================
+     TODAY SESSIONS
+  =================================================== */
+
+  const scheduleIds =
+    todaySchedules
+      .map(
+        function(item){
+
+          return item.id;
+
+        }
+      );
+
+
+  let sessions = [];
+
+
+  if(scheduleIds.length){
+
+    const sessionResult =
+      await db
+        .from("teacher_class_sessions")
+        .select(`
+          id,
+          schedule_id,
+          student_id,
+          class_date,
+          status,
+          started_at,
+          completed_at
+        `)
+        .in(
+          "schedule_id",
+          scheduleIds
+        )
+        .eq(
+          "class_date",
+          todayDate
+        );
+
+
+    if(!sessionResult.error){
+
+      sessions =
+        sessionResult.data || [];
+
+    }
+
+  }
+
+
+  const sessionMap =
+    new Map();
+
+
+  sessions.forEach(
+    function(session){
+
+      sessionMap.set(
+        session.schedule_id,
+        session
+      );
+
+    }
+  );
+
+
+  /* ===================================================
+     SUMMARY
+  =================================================== */
+
+  let lateCount = 0;
+
+  let completedCount = 0;
+
+  let leftCount = 0;
+
+
+  const nowTeacher =
+    getTeacherNow();
+
+
+  todaySchedules.forEach(
+    function(schedule){
+
+      const session =
+        sessionMap.get(
+          schedule.id
+        );
+
+
+      let status =
+        calculateStatus(
+          schedule,
+          session
+        );
+
+
+      if(
+        status === "completed"
+      ){
+
+        completedCount++;
+
+        return;
+
+      }
+
+
+      if(
+        status === "absent" ||
+        status === "on_leave" ||
+        status === "cancelled"
+      ){
+
+        return;
+
+      }
+
+
+      const start =
+        getScheduleDateTime(
+          todayDate,
+          schedule.class_time,
+          schedule.schedule_timezone
+        );
+
+
+      const end =
+        getEndDateTime(
+          todayDate,
+          schedule.class_time,
+          schedule.duration_minutes,
+          schedule.schedule_timezone
+        );
+
+
+      const teacherStart =
+        start.setZone(
+          getTeacherTimezone()
+        );
+
+
+      const teacherEnd =
+        end.setZone(
+          getTeacherTimezone()
+        );
+
+
+      if(
+        status === "upcoming" &&
+        nowTeacher > teacherEnd
+      ){
+
+        lateCount++;
+
+      }
+
+
+      if(
+        status === "upcoming"
+      ){
+
+        leftCount++;
+
+      }
+
+    }
+  );
+
+
+  const totalEl =
+    document.getElementById(
+      "totalClasses"
+    );
+
+
+  const lateEl =
+    document.getElementById(
+      "lateClasses"
+    );
+
+
+  const leftEl =
+    document.getElementById(
+      "leftClasses"
+    );
+
+
+  const rateEl =
+    document.getElementById(
+      "classRate"
+    );
+
+
+  if(totalEl)
+    totalEl.textContent =
+      todaySchedules.length;
+
+
+  if(lateEl)
+    lateEl.textContent =
+      lateCount;
+
+
+  if(leftEl)
+    leftEl.textContent =
+      leftCount;
+
+
+  if(rateEl){
+
+    const rate =
+      todaySchedules.length
+        ? Math.round(
+            (
+              completedCount /
+              todaySchedules.length
+            ) * 100
+          )
+        : 0;
+
+
+    rateEl.textContent =
+      rate + "%";
+
+  }
+
+
+  const summary =
+    document.getElementById(
+      "todaySummary"
+    );
+
+
+  if(summary){
+
+    summary.textContent =
+      todaySchedules.length +
+      " class" +
+      (
+        todaySchedules.length === 1
+          ? ""
+          : "es"
+      ) +
+      " scheduled for today.";
+
+  }
+
+
+  /* ===================================================
+     NO CLASSES
+  =================================================== */
+
+  if(!todaySchedules.length){
+
+    rows.innerHTML = `
+      <tr>
+        <td colspan="6" class="today-empty">
+          No classes scheduled for today.
+        </td>
+      </tr>
+    `;
+
+    return;
+
+  }
+
+
+  /* ===================================================
+     RENDER
+  =================================================== */
+
+  rows.innerHTML =
+    todaySchedules.map(
+      function(schedule){
+
+        const student =
+          studentMap.get(
+            schedule.student_id
+          ) || {};
+
+
+        const session =
+          sessionMap.get(
+            schedule.id
+          );
+
+
+        let status =
+          calculateStatus(
+            schedule,
+            session
+          );
+
+
+        const start =
+          getScheduleDateTime(
+            todayDate,
+            schedule.class_time,
+            schedule.schedule_timezone
+          );
+
+
+        const end =
+          getEndDateTime(
+            todayDate,
+            schedule.class_time,
+            schedule.duration_minutes,
+            schedule.schedule_timezone
+          );
+
+
+        const now =
+          getTeacherNow();
+
+
+        /*
+          If teacher has not activated the class,
+          it stays Not Active. When its scheduled
+          time passes, show Late but keep the
+          Activate/Reschedule actions.
+        */
+
+        if(
+          status === "upcoming" &&
+          now > end.setZone(
+            getTeacherTimezone()
+          )
+        ){
+
+          status = "late";
+
+        }
+
+
+        const studentName =
+          student.full_name ||
+          "Student";
+
+
+        const course =
+          schedule.course ||
+          student.course ||
+          "—";
+
+
+        const duration =
+          Number(
+            schedule.duration_minutes ||
+            30
+          );
+
+
+        const teacherTime =
+          formatTime(
+            todayDate,
+            schedule.class_time,
+            schedule.schedule_timezone
+          );
+
+
+        const rowClass =
+          "class-row status-" +
+          status;
+
+
+        let actionHTML =
+          "";
+
+
+        /* =============================================
+           NOT ACTIVE / LATE
+           ONLY Activate + Reschedule
+        ============================================= */
+
+        if(
+          status === "upcoming" ||
+          status === "late"
+        ){
+
+          actionHTML = `
+
+            <div class="action-group">
+
+              <button
+                type="button"
+                onclick="teacherActivateClass('${escapeHTML(schedule.id)}')"
+              >
+                Activate
+              </button>
+
+              <button
+                type="button"
+                class="reschedule-action"
+                onclick="teacherRescheduleClass('${escapeHTML(schedule.id)}')"
+              >
+                Reschedule
+              </button>
+
+            </div>
+
+          `;
+
+        }
+
+
+        /* =============================================
+           TEACHER ACTIVE / PINK
+           End Class + Join Meeting + Join Classroom
+           + Open Lesson
+        ============================================= */
+
+        else if(
+          status === "active"
+        ){
+
+          const meet =
+            safeURL(
+              schedule.google_meet_url
+            );
+
+
+          const classroom =
+            getClassroomURL(
+              schedule.classroom_code
+            );
+
+
+          actionHTML = `
+
+            <div class="action-group">
+
+              <button
+                type="button"
+                class="danger-action"
+                onclick="teacherEndClass('${escapeHTML(schedule.id)}','${escapeHTML(studentName)}','${escapeHTML(course + ' • ' + teacherTime)}')"
+              >
+                End Class
+              </button>
+
+              ${
+                meet
+                  ? `
+                    <a
+                      href="${escapeHTML(meet)}"
+                      target="_blank"
+                      rel="noopener"
+                      class="join-meeting"
+                    >
+                      Join Meeting
+                    </a>
+                  `
+                  : ""
+              }
+
+              ${
+                classroom
+                  ? `
+                    <a
+                      href="${escapeHTML(classroom)}"
+                      target="_blank"
+                      rel="noopener"
+                      class="join-classroom"
+                    >
+                      Join Classroom
+                    </a>
+                  `
+                  : ""
+              }
+
+              <button
+                type="button"
+                class="lesson-action"
+                onclick="showOpenLessonModal('${escapeHTML(schedule.id)}','${escapeHTML(studentName)}')"
+              >
+                Open Lesson
+              </button>
+
+            </div>
+
+          `;
+
+        }
+
+
+        /* =============================================
+           STUDENT JOINED / YELLOW
+           End Class + Open Lesson
+           + Join Meeting + Join Classroom
+        ============================================= */
+
+        else if(
+          status === "student_joined"
+        ){
+
+          const meet =
+            safeURL(
+              schedule.google_meet_url
+            );
+
+
+          const classroom =
+            getClassroomURL(
+              schedule.classroom_code
+            );
+
+
+          actionHTML = `
+
+            <div class="action-group">
+
+              <button
+                type="button"
+                class="danger-action"
+                onclick="teacherEndClass('${escapeHTML(schedule.id)}','${escapeHTML(studentName)}','${escapeHTML(course + ' • ' + teacherTime)}')"
+              >
+                End Class
+              </button>
+
+              ${
+                meet
+                  ? `
+                    <a
+                      href="${escapeHTML(meet)}"
+                      target="_blank"
+                      rel="noopener"
+                      class="join-meeting"
+                    >
+                      Join Meeting
+                    </a>
+                  `
+                  : ""
+              }
+
+              ${
+                classroom
+                  ? `
+                    <a
+                      href="${escapeHTML(classroom)}"
+                      target="_blank"
+                      rel="noopener"
+                      class="join-classroom"
+                    >
+                      Join Classroom
+                    </a>
+                  `
+                  : ""
+              }
+
+              <button
+                type="button"
+                class="lesson-action"
+                onclick="showOpenLessonModal('${escapeHTML(schedule.id)}','${escapeHTML(studentName)}')"
+              >
+                Open Lesson
+              </button>
+
+            </div>
+
+          `;
+
+        }
+
+
+        /* =============================================
+           COMPLETED / GREEN
+           NO JOIN LINKS
+        ============================================= */
+
+        else if(
+          status === "completed"
+        ){
+
+          actionHTML = `
+
+            <div class="action-group">
+
+              <button
+                type="button"
+                class="lesson-action"
+                onclick="showOpenLessonModal('${escapeHTML(schedule.id)}','${escapeHTML(studentName)}')"
+              >
+                Open Lesson
+              </button>
+
+            </div>
+
+          `;
+
+        }
+
+
+        /* =============================================
+           ABSENT
+        ============================================= */
+
+        else if(
+          status === "absent"
+        ){
+
+          actionHTML = `
+
+            <div class="action-group">
+
+              <span class="action-absent">
+                Absent
+              </span>
+
+            </div>
+
+          `;
+
+        }
+
+
+        /* =============================================
+           LEAVE / CANCELLED
+        ============================================= */
+
+        else if(
+          status === "on_leave" ||
+          status === "cancelled"
+        ){
+
+          actionHTML = `
+
+            <div class="action-group">
+
+              <span class="action-done">
+                ${
+                  status === "on_leave"
+                    ? "On Leave"
+                    : "Cancelled"
+                }
+              </span>
+
+            </div>
+
+          `;
+
+        }
+
+
+        return `
+
+          <tr
+            class="${rowClass}"
+            data-schedule-id="${escapeHTML(schedule.id)}"
+          >
+
+            <td>
+              ${escapeHTML(teacherTime)}
+            </td>
+
+            <td>
+              <strong>
+                ${escapeHTML(studentName)}
+              </strong>
+            </td>
+
+            <td>
+              ${escapeHTML(course)}
+            </td>
+
+            <td>
+              ${escapeHTML(duration + " min")}
+            </td>
+
+            <td>
+
+              <span
+                class="status-pill status-${escapeHTML(status)}"
+              >
+                ${escapeHTML(statusText(status))}
+              </span>
+
+            </td>
+
+            <td>
+              ${actionHTML}
+            </td>
+
+          </tr>
+
+        `;
+
+      }
+    ).join("");
+
+
+}
+
+
+/* =====================================================
+   ACTIVATE CLASS
+===================================================== */
+
+window.teacherActivateClass =
+async function(scheduleId){
+
+  if(!db)
+    return;
+
+
+  const {
+    data:{
+      user
+    } = {}
+  } =
+    await db.auth.getUser();
+
+
+  if(!user){
+
+    alert(
+      "Teacher login required."
+    );
+
+    return;
+
+  }
+
+
+  const today =
+    todayISO();
+
+
+  const scheduleResult =
+    await db
+      .from("class_schedules")
+      .select(`
+        id,
+        teacher_id,
+        student_id,
+        class_time,
+        duration_minutes
+      `)
+      .eq(
+        "id",
+        scheduleId
+      )
+      .eq(
+        "teacher_id",
+        user.id
+      )
+      .maybeSingle();
+
+
+  if(scheduleResult.error){
+
+    alert(
+      scheduleResult.error.message
+    );
+
+    return;
+
+  }
+
+
+  if(!scheduleResult.data){
+
+    alert(
+      "Class schedule not found."
+    );
+
+    return;
+
+  }
+
+
+  const result =
+    await db
+      .from("teacher_class_sessions")
+      .upsert(
+        {
+          schedule_id:
+            scheduleId,
+
+          student_id:
+            scheduleResult.data.student_id,
+
+          class_date:
+            today,
+
+          status:
+            "active",
+
+          started_at:
+            new Date().toISOString()
+
+        },
+        {
+          onConflict:
+            "schedule_id,class_date"
+        }
+      );
+
+
+  if(result.error){
+
+    console.error(
+      result.error
+    );
+
+
+    alert(
+      "Unable to activate class: " +
+      result.error.message
+    );
+
+    return;
+
+  }
+
+
+  await loadTeacherToday();
+
+};
+
+
+/* =====================================================
+   END CLASS
+===================================================== */
+
+window.teacherEndClass =
+function(
+  scheduleId,
+  studentName,
+  classInfo
+){
+
+  openLessonModal(
+    scheduleId,
+    studentName,
+    classInfo,
+    "end"
+  );
+
+};
+
+
+/* =====================================================
+   RESCHEDULE
+===================================================== */
+
+window.teacherRescheduleClass =
+function(scheduleId){
+
+  /*
+    Existing Leave/Schedule system can handle
+    the actual reschedule operation.
+
+    Do not change the existing database design
+    from this dashboard.
+  */
+
+  if(
+    typeof window.openRescheduleClass ===
+    "function"
+  ){
+
+    window.openRescheduleClass(
+      scheduleId
+    );
+
+    return;
+
+  }
+
+
+  alert(
+    "Please use the Schedule page to reschedule this class."
+  );
+
+};
+
+
+/* =====================================================
+   AUTO REFRESH
+===================================================== */
+
+let dashboardRefreshTimer = null;
+
+
+function startDashboardRefresh(){
+
+  if(dashboardRefreshTimer){
+
+    clearInterval(
+      dashboardRefreshTimer
+    );
+
+  }
+
+
+  dashboardRefreshTimer =
+    setInterval(
+      function(){
+
+        loadTeacherToday();
+
+      },
+      30000
+    );
+
+}
+
+
+document.addEventListener(
+  "teacherTimezoneReady",
+  function(){
+
+    loadTeacherToday();
+
+  }
+);
+
+
+/*
+  Wait until portal authentication has
+  completed before loading dashboard data.
+*/
+
+document.addEventListener(
+  "DOMContentLoaded",
+  function(){
+
+    setTimeout(
+      function(){
+
+        loadTeacherToday();
+
+        startDashboardRefresh();
+
+      },
+      500
+    );
+
+  }
+);
+
+
+/* =====================================================
+   EXPOSE LOADER
+===================================================== */
+
+window.loadTeacherTodayClasses =
+  loadTeacherToday;
+
+
+/* =====================================================
+   TEACHER TIMEZONE DISPLAY
+===================================================== */
+
+window.convertScheduleForTeacher =
+function(
+  classDate,
+  classTime,
+  scheduleTimezone
+){
+
+  try{
+
+    const source =
+      luxon.DateTime.fromISO(
+        classDate +
+        "T" +
+        String(classTime)
+          .slice(0,8),
+        {
+          zone:
+            scheduleTimezone ||
+            BASE_TIMEZONE
+        }
+      );
+
+
+    if(!source.isValid)
+      return null;
+
+
+    return source.setZone(
+      getTeacherTimezone()
+    );
+
+  }catch(error){
+
+    console.error(
+      "Teacher timezone conversion error:",
+      error
+    );
+
+    return null;
+
+  }
+
+};
+
+
+window.formatTeacherClassTime =
+function(
+  classDate,
+  classTime,
+  scheduleTimezone
+){
+
+  const converted =
+    window.convertScheduleForTeacher(
+      classDate,
+      classTime,
+      scheduleTimezone
+    );
+
+
+  if(!converted)
+    return classTime || "—";
+
+
+  return converted.toFormat(
+    "h:mm a"
+  );
+
+};
+
+
+window.formatTeacherClassDate =
+function(
+  classDate,
+  classTime,
+  scheduleTimezone
+){
+
+  const converted =
+    window.convertScheduleForTeacher(
+      classDate,
+      classTime,
+      scheduleTimezone
+    );
+
+
+  if(!converted)
+    return classDate || "—";
+
+
+  return converted.toFormat(
+    "EEE, dd LLL yyyy"
+  );
+
+};
+
+
+window.teacherTodayISO =
+function(){
+
+  return todayISO();
+
+};
+
+
+window.teacherTodayName =
+function(){
+
+  return todayName();
+
+};
+
+
+window.setTeacherTimezone =
+function(timezone){
+
+  if(!timezone)
+    return;
+
+
+  window.currentTeacherTimezone =
+    timezone;
+
+
+  window.teacherTimezone =
+    timezone;
+
+
+  localStorage.setItem(
+    "teacher_timezone",
+    timezone
+  );
+
+
+  const dateEl =
+    document.getElementById(
+      "dashboardDate"
+    );
+
+
+  if(dateEl){
+
+    dateEl.textContent =
+      getTeacherNow().toFormat(
+        "EEEE, dd LLLL yyyy"
+      );
+
+  }
+
+
+  loadTeacherToday();
+
+};
+
+
+const dateEl =
+  document.getElementById(
+    "dashboardDate"
+  );
+
+
+if(dateEl){
+
+  dateEl.textContent =
+    getTeacherNow().toFormat(
+      "EEEE, dd LLLL yyyy"
+    );
+
+}
+
+})();
+
+
+/* =====================================================
    LESSON MODAL CONTROLS
 ===================================================== */
 
@@ -983,8 +2818,9 @@ window.openLessonModal = function(
 
   const modal =
     document.getElementById(
-      'lessonModal'
+      "lessonModal"
     );
+
 
   if(!modal)
     return;
@@ -992,114 +2828,113 @@ window.openLessonModal = function(
 
   const id =
     document.getElementById(
-      'lessonScheduleId'
+      "lessonScheduleId"
     );
+
 
   const student =
     document.getElementById(
-      'lessonStudentName'
+      "lessonStudentName"
     );
+
 
   const info =
     document.getElementById(
-      'lessonClassInfo'
+      "lessonClassInfo"
     );
+
 
   const lessonMode =
     document.getElementById(
-      'lessonMode'
+      "lessonMode"
     );
+
 
   const title =
     document.getElementById(
-      'lessonModalTitle'
+      "lessonModalTitle"
     );
 
 
   if(id)
     id.value =
-      scheduleId || '';
+      scheduleId || "";
 
 
   if(student)
     student.textContent =
-      studentName || 'Student';
+      studentName || "Student";
 
 
   if(info)
     info.textContent =
-      classInfo || 'Today';
+      classInfo || "Today";
 
 
   if(lessonMode)
     lessonMode.value =
-      mode || 'end';
+      mode || "end";
 
 
   if(title){
 
     title.textContent =
-      mode === 'offline'
-        ? 'Take an Offline - Add Lesson'
-        : 'End Class - Add Lesson';
+      mode === "offline"
+        ? "Take an Offline - Add Lesson"
+        : "End Class - Add Lesson";
 
   }
 
 
-  modal.classList.add('show');
+  modal.classList.add(
+    "show"
+  );
+
 
   modal.setAttribute(
-    'aria-hidden',
-    'false'
+    "aria-hidden",
+    "false"
   );
 
 };
 
 
-window.closeLessonModal = function(){
+window.closeLessonModal =
+function(){
 
   const modal =
     document.getElementById(
-      'lessonModal'
+      "lessonModal"
     );
+
 
   if(!modal)
     return;
 
-  modal.classList.remove('show');
+
+  modal.classList.remove(
+    "show"
+  );
+
 
   modal.setAttribute(
-    'aria-hidden',
-    'true'
+    "aria-hidden",
+    "true"
   );
 
 };
 
 
-/*
-  This function will be connected to
-  Supabase in js/portal.js.
-
-  For now it prevents an accidental
-  page refresh if portal.js has not
-  yet connected the lesson system.
-*/
-
-window.submitTeacherLesson = function(event){
+window.submitTeacherLesson =
+function(event){
 
   if(event)
     event.preventDefault();
 
 
-  /*
-    Actual lesson save + automatic
-    End Class will be implemented
-    in js/portal.js.
-  */
-
   if(
     typeof window.saveTeacherLesson ===
-    'function'
+    "function"
   ){
 
     return window.saveTeacherLesson(
@@ -1110,8 +2945,9 @@ window.submitTeacherLesson = function(event){
 
 
   alert(
-    'Lesson system is being connected. Please update js/portal.js next.'
+    "Lesson system is being connected. Please update js/portal.js next."
   );
+
 
   return false;
 
@@ -1119,18 +2955,20 @@ window.submitTeacherLesson = function(event){
 
 
 /* =====================================================
-   OPEN LESSON VIEW
+   OPEN PREVIOUS LESSON
 ===================================================== */
 
-window.showOpenLessonModal = function(
+window.showOpenLessonModal =
+function(
   scheduleId,
   studentName
 ){
 
   const modal =
     document.getElementById(
-      'openLessonModal'
+      "openLessonModal"
     );
+
 
   if(!modal)
     return;
@@ -1138,18 +2976,18 @@ window.showOpenLessonModal = function(
 
   const student =
     document.getElementById(
-      'openLessonStudentName'
+      "openLessonStudentName"
     );
 
 
   if(student)
     student.textContent =
-      studentName || 'Student';
+      studentName || "Student";
 
 
   const content =
     document.getElementById(
-      'openLessonContent'
+      "openLessonContent"
     );
 
 
@@ -1165,25 +3003,23 @@ window.showOpenLessonModal = function(
 
 
   modal.dataset.scheduleId =
-    scheduleId || '';
+    scheduleId || "";
 
 
-  modal.classList.add('show');
-
-  modal.setAttribute(
-    'aria-hidden',
-    'false'
+  modal.classList.add(
+    "show"
   );
 
 
-  /*
-    Actual previous lesson loading
-    will be connected from portal.js.
-  */
+  modal.setAttribute(
+    "aria-hidden",
+    "false"
+  );
+
 
   if(
     typeof window.loadPreviousTeacherLesson ===
-    'function'
+    "function"
   ){
 
     window.loadPreviousTeacherLesson(
@@ -1195,38 +3031,44 @@ window.showOpenLessonModal = function(
 };
 
 
-window.closeOpenLessonModal = function(){
+window.closeOpenLessonModal =
+function(){
 
   const modal =
     document.getElementById(
-      'openLessonModal'
+      "openLessonModal"
     );
+
 
   if(!modal)
     return;
 
-  modal.classList.remove('show');
+
+  modal.classList.remove(
+    "show"
+  );
+
 
   modal.setAttribute(
-    'aria-hidden',
-    'true'
+    "aria-hidden",
+    "true"
   );
 
 };
 
 
 /* =====================================================
-   CLOSE MODALS WHEN CLICKING BACKGROUND
+   MODAL BACKGROUND CLOSE
 ===================================================== */
 
 document.addEventListener(
-  'click',
+  "click",
   function(event){
 
     if(
       event.target &&
       event.target.id ===
-      'lessonModal'
+      "lessonModal"
     ){
 
       closeLessonModal();
@@ -1237,7 +3079,7 @@ document.addEventListener(
     if(
       event.target &&
       event.target.id ===
-      'openLessonModal'
+      "openLessonModal"
     ){
 
       closeOpenLessonModal();
@@ -1253,10 +3095,10 @@ document.addEventListener(
 ===================================================== */
 
 document.addEventListener(
-  'keydown',
+  "keydown",
   function(event){
 
-    if(event.key !== 'Escape')
+    if(event.key !== "Escape")
       return;
 
 
@@ -1266,241 +3108,6 @@ document.addEventListener(
 
   }
 );
-
-
-/* =====================================================
-   TEACHER DASHBOARD TIMEZONE DISPLAY
-===================================================== */
-
-(function(){
-
-  const BASE_TIMEZONE =
-    "Asia/Karachi";
-
-
-  function getTeacherTimezone(){
-
-    const value =
-      window.currentTeacherTimezone ||
-      window.teacherTimezone ||
-      localStorage.getItem(
-        "teacher_timezone"
-      );
-
-    return value ||
-      BASE_TIMEZONE;
-
-  }
-
-
-  function getTeacherNow(){
-
-    return luxon.DateTime.now()
-      .setZone(
-        getTeacherTimezone()
-      );
-
-  }
-
-
-  function formatTeacherDate(){
-
-    const dt =
-      getTeacherNow();
-
-    return dt.toFormat(
-      "EEEE, dd LLLL yyyy"
-    );
-
-  }
-
-
-  function updateDashboardDate(){
-
-    const el =
-      document.getElementById(
-        "dashboardDate"
-      );
-
-    if(!el)
-      return;
-
-    el.textContent =
-      formatTeacherDate();
-
-  }
-
-
-  window.convertScheduleForTeacher =
-  function(
-    classDate,
-    classTime,
-    scheduleTimezone
-  ){
-
-    try{
-
-      const baseZone =
-        scheduleTimezone ||
-        BASE_TIMEZONE;
-
-      const teacherZone =
-        getTeacherTimezone();
-
-
-      const source =
-        luxon.DateTime.fromISO(
-          classDate +
-          "T" +
-          classTime,
-          {
-            zone:baseZone
-          }
-        );
-
-
-      if(!source.isValid)
-        return null;
-
-
-      return source.setZone(
-        teacherZone
-      );
-
-
-    }catch(error){
-
-      console.error(
-        "Teacher timezone conversion error:",
-        error
-      );
-
-      return null;
-
-    }
-
-  };
-
-
-  window.formatTeacherClassTime =
-  function(
-    classDate,
-    classTime,
-    scheduleTimezone
-  ){
-
-    const converted =
-      window.convertScheduleForTeacher(
-        classDate,
-        classTime,
-        scheduleTimezone
-      );
-
-
-    if(!converted)
-      return classTime || "—";
-
-
-    return converted.toFormat(
-      "h:mm a"
-    );
-
-  };
-
-
-  window.formatTeacherClassDate =
-  function(
-    classDate,
-    classTime,
-    scheduleTimezone
-  ){
-
-    const converted =
-      window.convertScheduleForTeacher(
-        classDate,
-        classTime,
-        scheduleTimezone
-      );
-
-
-    if(!converted)
-      return classDate || "—";
-
-
-    return converted.toFormat(
-      "EEE, dd LLL yyyy"
-    );
-
-  };
-
-
-  window.teacherTodayISO =
-  function(){
-
-    return getTeacherNow()
-      .toFormat(
-        "yyyy-MM-dd"
-      );
-
-  };
-
-
-  window.teacherTodayName =
-  function(){
-
-    return getTeacherNow()
-      .toFormat(
-        "cccc"
-      );
-
-  };
-
-
-  window.setTeacherTimezone =
-  function(timezone){
-
-    if(!timezone)
-      return;
-
-
-    window.currentTeacherTimezone =
-      timezone;
-
-
-    localStorage.setItem(
-      "teacher_timezone",
-      timezone
-    );
-
-
-    updateDashboardDate();
-
-  };
-
-
-  updateDashboardDate();
-
-
-  document.addEventListener(
-    "teacherTimezoneReady",
-    function(event){
-
-      if(
-        event &&
-        event.detail &&
-        event.detail.timezone
-      ){
-
-        window.setTeacherTimezone(
-          event.detail.timezone
-        );
-
-      }
-
-    }
-  );
-
-})();
 
 </script>
 
