@@ -17,95 +17,23 @@
   );
 
 
-  /* =====================================================
-     SAFE HTML ESCAPE
-  ===================================================== */
-
   function esc(value){
 
     return String(value ?? '').replace(
       /[&<>"']/g,
-
       function(c){
 
         return {
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          '"': '&quot;',
-          "'": '&#39;'
+          '&':'&amp;',
+          '<':'&lt;',
+          '>':'&gt;',
+          '"':'&quot;',
+          "'":'&#39;'
 
         }[c];
 
       }
     );
-
-  }
-
-
-  /* =====================================================
-     YOUTUBE VIDEO ID
-  ===================================================== */
-
-  function getYouTubeId(url){
-
-    if(!url) return '';
-
-    try{
-
-      const parsed = new URL(url);
-
-      if(
-        parsed.hostname.includes('youtube.com') &&
-        parsed.pathname === '/watch'
-      ){
-
-        return parsed.searchParams.get('v') || '';
-
-      }
-
-      if(
-        parsed.hostname.includes('youtu.be')
-      ){
-
-        return parsed.pathname
-          .replace('/', '')
-          .split('?')[0];
-
-      }
-
-      if(
-        parsed.hostname.includes('youtube.com') &&
-        parsed.pathname.startsWith('/shorts/')
-      ){
-
-        return parsed.pathname
-          .split('/shorts/')[1]
-          .split('/')[0];
-
-      }
-
-      if(
-        parsed.hostname.includes('youtube.com') &&
-        parsed.pathname.startsWith('/embed/')
-      ){
-
-        return parsed.pathname
-          .split('/embed/')[1]
-          .split('/')[0];
-
-      }
-
-    }catch(error){
-
-      console.error(
-        'Invalid YouTube URL:',
-        error
-      );
-
-    }
-
-    return '';
 
   }
 
@@ -151,6 +79,7 @@
           return;
         }
 
+
         if(!data || !data.length){
 
           articlesPublic.innerHTML = `
@@ -167,6 +96,7 @@
 
           return;
         }
+
 
         articlesPublic.innerHTML =
           data.map(function(article){
@@ -224,7 +154,7 @@
 
 
   /* =====================================================
-     TESTIMONIALS / REVIEWS
+     REVIEWS
   ===================================================== */
 
   const testimonialsPublic =
@@ -264,6 +194,7 @@
           return;
         }
 
+
         if(!data || !data.length){
 
           testimonialsPublic.innerHTML = `
@@ -281,6 +212,7 @@
           return;
         }
 
+
         testimonialsPublic.innerHTML =
           data.map(function(item){
 
@@ -291,6 +223,7 @@
                 Number(item.rating || 5)
               )
             );
+
 
             return `
 
@@ -333,7 +266,7 @@
 
 
   /* =====================================================
-     BLOG VIDEOS
+     VIDEOS
   ===================================================== */
 
   const videosPublic =
@@ -357,6 +290,7 @@
         const data = result.data;
         const error = result.error;
 
+
         if(error){
 
           console.error(
@@ -368,13 +302,16 @@
             <div class="card">
               <div class="card-body">
                 <h3>Videos unavailable</h3>
-                <p>Please try again later.</p>
+                <p>
+                  Please try again later.
+                </p>
               </div>
             </div>
           `;
 
           return;
         }
+
 
         if(!data || !data.length){
 
@@ -422,62 +359,33 @@
               );
 
 
-            const youtubeId =
-              getYouTubeId(
-                video.video_url
-              );
+            const slug =
+              video.slug
+              ? String(video.slug)
+              : '';
 
 
-            /* ---------------------------------------------
-               YOUTUBE PLAYER
-            --------------------------------------------- */
+            const websitePath =
+              slug
+              ? 'video.html?slug=' +
+                encodeURIComponent(slug)
+              : '';
 
-            const player =
-              youtubeId
+
+            const thumbnail =
+              video.thumbnail_url
 
               ? `
-                <div
-                  style="
-                    position:relative;
-                    width:100%;
-                    padding-bottom:56.25%;
-                    height:0;
-                    overflow:hidden;
-                    border-radius:12px;
-                    background:#000;
-                  "
+                <img
+                  src="${esc(video.thumbnail_url)}"
+                  alt="${title}"
+                  loading="lazy"
                 >
-
-                  <iframe
-                    src="https://www.youtube.com/embed/${esc(youtubeId)}"
-                    title="${title}"
-                    style="
-                      position:absolute;
-                      top:0;
-                      left:0;
-                      width:100%;
-                      height:100%;
-                      border:0;
-                    "
-                    loading="lazy"
-                    allow="
-                      accelerometer;
-                      autoplay;
-                      clipboard-write;
-                      encrypted-media;
-                      gyroscope;
-                      picture-in-picture;
-                      web-share
-                    "
-                    allowfullscreen>
-                  </iframe>
-
-                </div>
               `
 
               : `
                 <div class="video-placeholder">
-                  ▶ Video unavailable
+                  ▶
                 </div>
               `;
 
@@ -519,9 +427,19 @@
 
                 <div class="video-public-thumbnail">
 
-                  ${player}
+                  ${thumbnail}
 
                   ${featured}
+
+                  ${
+                    duration
+                    ? `
+                      <span class="video-duration">
+                        ${duration}
+                      </span>
+                    `
+                    : ''
+                  }
 
                 </div>
 
@@ -535,71 +453,58 @@
 
                   ${
                     meta
-
                     ? `
                       <div class="video-meta">
                         ${meta}
                       </div>
                     `
-
                     : ''
                   }
 
 
                   ${
                     description
-
                     ? `
                       <p>
                         ${description}
                       </p>
                     `
-
                     : ''
                   }
 
 
                   ${
-                    video.video_url
-
+                    websitePath
                     ? `
 
-                      <div
-                        style="
-                          display:flex;
-                          gap:10px;
-                          flex-wrap:wrap;
-                          margin-top:15px;
-                        "
+                      <a
+                        href="${esc(websitePath)}"
+                        class="video-watch-btn"
                       >
-
-                        <button
-                          type="button"
-                          onclick="copyVideoLink('${esc(
-                            video.video_url
-                          )}')"
-                          class="video-watch-btn"
-                        >
-                          🔗 Copy Video Link
-                        </button>
+                        ▶ Watch Video
+                      </a>
 
 
-                        <button
-                          type="button"
-                          onclick="shareVideo('${esc(
-                            video.video_url
-                          )}','${esc(
-                            video.title
-                          )}')"
-                          class="video-watch-btn"
-                        >
-                          📤 Share
-                        </button>
+                      <button
+                        type="button"
+                        class="video-watch-btn"
+                        style="margin-left:8px;"
+                        onclick="shareAcademyVideo('${esc(websitePath)}','${title}')"
+                      >
+                        📤 Share
+                      </button>
 
-                      </div>
+
+                      <button
+                        type="button"
+                        class="video-watch-btn"
+                        style="margin-left:8px;"
+                        onclick="copyAcademyVideo('${esc(websitePath)}')"
+                      >
+                        🔗 Copy Link
+                      </button>
 
                     `
-
                     : ''
                   }
 
@@ -626,51 +531,81 @@
 
 
   /* =====================================================
-     COPY VIDEO LINK
+     WEBSITE VIDEO LINK
   ===================================================== */
 
-  window.copyVideoLink =
-    function(url){
+  function absoluteVideoUrl(path){
 
-      if(!url){
+    return new URL(
+      path,
+      window.location.href
+    ).href;
 
-        return;
+  }
+
+
+  /* =====================================================
+     COPY LINK
+  ===================================================== */
+
+  window.copyAcademyVideo =
+    function(path){
+
+      const url =
+        absoluteVideoUrl(path);
+
+
+      if(
+        navigator.clipboard &&
+        navigator.clipboard.writeText
+      ){
+
+        navigator.clipboard
+          .writeText(url)
+
+          .then(function(){
+
+            alert(
+              'Website video link copied!'
+            );
+
+          })
+
+          .catch(function(){
+
+            prompt(
+              'Copy this website video link:',
+              url
+            );
+
+          });
 
       }
 
-      navigator.clipboard
-        .writeText(url)
+      else{
 
-        .then(function(){
+        prompt(
+          'Copy this website video link:',
+          url
+        );
 
-          alert(
-            'Video link copied successfully!'
-          );
-
-        })
-
-        .catch(function(){
-
-          prompt(
-            'Copy this video link:',
-            url
-          );
-
-        });
+      }
 
     };
 
 
   /* =====================================================
-     SHARE VIDEO
+     SHARE
   ===================================================== */
 
-  window.shareVideo =
-    function(url,title){
+  window.shareAcademyVideo =
+    function(path,title){
 
-      if(
-        navigator.share
-      ){
+      const url =
+        absoluteVideoUrl(path);
+
+
+      if(navigator.share){
 
         navigator.share({
 
@@ -678,16 +613,20 @@
             title ||
             'Quran Video',
 
-          url:url
+          text:
+            'Watch this video on Haroon Ibn Rasheed Online Quran Academy:',
+
+          url: url
 
         })
+
         .catch(function(){});
 
       }
 
       else{
 
-        window.copyVideoLink(url);
+        window.copyAcademyVideo(path);
 
       }
 
