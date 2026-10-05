@@ -4,42 +4,266 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Blog / Articles | Admin</title>
+
 <link rel="stylesheet" href="../css/admin.css">
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../js/config.js"></script>
 <script src="../js/admin.js"></script>
 
 <style>
-.article-editor{display:grid;grid-template-columns:minmax(0,2fr) minmax(280px,1fr);gap:20px}
-.article-section{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:20px;margin-bottom:20px}
-.article-section h2{margin:0 0 16px;font-size:18px;color:#07394a}
-.field{margin-bottom:16px}.field:last-child{margin-bottom:0}
-.field label{display:block;margin-bottom:7px;font-weight:600;color:#07394a}
-.field input,.field textarea,.field select{width:100%;box-sizing:border-box;border:1px solid #d8e1e5;border-radius:9px;padding:11px 12px;font:inherit;background:#fff}
-.field textarea{min-height:130px;resize:vertical}.field textarea.article-body{min-height:380px}
-.field small{display:block;margin-top:6px;color:#6b7280;font-size:12px;line-height:1.5}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
-.check-row{display:flex;align-items:center;gap:9px;margin-bottom:13px}
-.check-row input{width:18px;height:18px}.check-row label{margin:0;font-weight:600}
-.media-preview{margin-top:10px;border:1px dashed #cbd5da;border-radius:10px;padding:12px;background:#f8fbfc}
-.media-preview img{max-width:100%;max-height:220px;display:block;margin:auto;border-radius:9px}
-.video-preview{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:10px;background:#07394a}
-.video-preview iframe,.video-preview video{width:100%;height:100%;border:0}
-.article-help{color:#52636a;font-size:13px;line-height:1.6}
-.form-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
-.btn-main{border:0;border-radius:9px;padding:11px 18px;cursor:pointer;font-weight:700;background:#0b9fbb;color:#fff}
-.btn-secondary{border:1px solid #d8e1e5;border-radius:9px;padding:11px 18px;cursor:pointer;font-weight:600;background:#fff;color:#07394a}
-.status-box{border-radius:10px;padding:12px;background:#eef9fb;color:#07394a;margin-bottom:15px;line-height:1.5}
-@media(max-width:850px){.article-editor,.two-col,.three-col{grid-template-columns:1fr}}
+.article-editor{
+  display:grid;
+  grid-template-columns:minmax(0,2fr) minmax(280px,1fr);
+  gap:20px;
+}
+
+.article-section{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:14px;
+  padding:20px;
+  margin-bottom:20px;
+}
+
+.article-section h2{
+  margin:0 0 16px;
+  font-size:18px;
+  color:#07394a;
+}
+
+.field{
+  margin-bottom:16px;
+}
+
+.field:last-child{
+  margin-bottom:0;
+}
+
+.field label{
+  display:block;
+  margin-bottom:7px;
+  font-weight:600;
+  color:#07394a;
+}
+
+.field input,
+.field textarea,
+.field select{
+  width:100%;
+  box-sizing:border-box;
+  border:1px solid #d8e1e5;
+  border-radius:9px;
+  padding:11px 12px;
+  font:inherit;
+  background:#fff;
+}
+
+.field textarea{
+  min-height:130px;
+  resize:vertical;
+}
+
+.field textarea.article-body{
+  min-height:380px;
+}
+
+.field small{
+  display:block;
+  margin-top:6px;
+  color:#6b7280;
+  font-size:12px;
+  line-height:1.5;
+}
+
+.two-col{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+
+.check-row{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  margin-bottom:13px;
+}
+
+.check-row input{
+  width:18px;
+  height:18px;
+}
+
+.check-row label{
+  margin:0;
+  font-weight:600;
+}
+
+.media-preview{
+  margin-top:10px;
+  border:1px dashed #cbd5da;
+  border-radius:10px;
+  padding:12px;
+  background:#f8fbfc;
+  min-height:40px;
+}
+
+.media-preview img{
+  max-width:100%;
+  max-height:220px;
+  display:block;
+  margin:auto;
+  border-radius:9px;
+}
+
+.article-help{
+  color:#52636a;
+  font-size:13px;
+  line-height:1.6;
+}
+
+.form-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:18px;
+}
+
+.btn-main{
+  border:0;
+  border-radius:9px;
+  padding:11px 18px;
+  cursor:pointer;
+  font-weight:700;
+  background:#0b9fbb;
+  color:#fff;
+}
+
+.btn-secondary{
+  border:1px solid #d8e1e5;
+  border-radius:9px;
+  padding:11px 18px;
+  cursor:pointer;
+  font-weight:600;
+  background:#fff;
+  color:#07394a;
+}
+
+.status-box{
+  border-radius:10px;
+  padding:12px;
+  background:#eef9fb;
+  color:#07394a;
+  margin-bottom:15px;
+  line-height:1.5;
+}
+
+.article-table-wrap{
+  overflow-x:auto;
+}
+
+.article-table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:850px;
+}
+
+.article-table th,
+.article-table td{
+  padding:11px 10px;
+  border-bottom:1px solid #e5e7eb;
+  text-align:left;
+  vertical-align:top;
+}
+
+.article-table th{
+  color:#07394a;
+  font-weight:700;
+  background:#f8fbfc;
+}
+
+.article-cover-small{
+  width:60px;
+  height:45px;
+  object-fit:cover;
+  border-radius:7px;
+  display:block;
+}
+
+.badge{
+  display:inline-block;
+  padding:4px 8px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:700;
+}
+
+.badge-published{
+  background:#e7f7ed;
+  color:#18733b;
+}
+
+.badge-draft{
+  background:#f3f4f6;
+  color:#59636b;
+}
+
+.badge-featured{
+  background:#fff3df;
+  color:#9a6500;
+}
+
+.row-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+
+.row-btn{
+  border:1px solid #d8e1e5;
+  background:#fff;
+  color:#07394a;
+  border-radius:7px;
+  padding:7px 10px;
+  cursor:pointer;
+  font-weight:600;
+}
+
+.row-btn.delete{
+  color:#b42318;
+  border-color:#f0c7c3;
+}
+
+.empty-row{
+  text-align:center !important;
+  color:#6b7280;
+  padding:25px !important;
+}
+
+@media(max-width:850px){
+  .article-editor,
+  .two-col{
+    grid-template-columns:1fr;
+  }
+
+  .article-section{
+    padding:16px;
+  }
+}
 </style>
 </head>
 
 <body>
+
 <div class="admin-layout">
 
 <aside class="sidebar">
-<div class="brand">HR Admin<span>Haroon Ibn Rasheed Online Quran Academy</span></div>
+
+<div class="brand">
+HR Admin
+<span>Haroon Ibn Rasheed Online Quran Academy</span>
+</div>
+
 <nav class="nav">
 <a href="dashboard.html">Dashboard</a>
 <a href="admissions.html">Admissions / Leads</a>
@@ -66,317 +290,1145 @@
 <a href="../index.html">View Website</a>
 <a href="#" onclick="logout();return false">Logout</a>
 </nav>
+
 </aside>
 
+
 <main class="main">
-<div class="top"><h1>Blog / Articles</h1></div>
+
+<div class="top">
+<h1 id="pageTitle">Blog / Articles</h1>
+</div>
+
 <div id="msg" class="msg"></div>
 
+
 <div id="formBox" class="card">
-<form id="form" class="form-grid">
+
+<form id="articleForm">
 
 <div class="article-editor">
+
+
+<!-- LEFT -->
 
 <div>
 
 <div class="article-section">
+
 <h2>Article Information</h2>
 
+
 <div class="field">
-<label for="articleTitle">Article Title *</label>
-<input id="articleTitle" name="title" type="text" placeholder="Enter article title" autocomplete="off">
-<small>Use a clear, useful title for visitors and search engines.</small>
+
+<label for="articleTitle">
+Article Title *
+</label>
+
+<input
+id="articleTitle"
+type="text"
+placeholder="Enter article title"
+autocomplete="off"
+required
+>
+
+<small>
+Use a clear, useful title for visitors and search engines.
+</small>
+
 </div>
+
 
 <div class="two-col">
-<div class="field">
-<label for="articleSlug">Slug / URL</label>
-<input id="articleSlug" name="slug" type="text" placeholder="example-quran-learning-guide">
-<small>Example: yoursite.com/blog/example-quran-learning-guide</small>
-</div>
 
 <div class="field">
-<label for="articleCategory">Category</label>
-<select id="articleCategory" name="category">
+
+<label for="articleSlug">
+Slug / URL
+</label>
+
+<input
+id="articleSlug"
+type="text"
+placeholder="example-quran-learning-guide"
+>
+
+<small>
+Example: /blog/example-quran-learning-guide
+</small>
+
+</div>
+
+
+<div class="field">
+
+<label for="articleCategory">
+Category
+</label>
+
+<select id="articleCategory">
+
 <option value="">Select category</option>
 <option value="Quran Learning">Quran Learning</option>
 <option value="Tajweed">Tajweed</option>
 <option value="Nazra Quran">Nazra Quran</option>
 <option value="Hifz Quran">Hifz Quran</option>
 <option value="Qirat">Qirat</option>
-<option value="Translation">Quran Translation</option>
+<option value="Quran Translation">Quran Translation</option>
 <option value="Tafseer">Tafseer</option>
 <option value="Islamic Studies">Islamic Studies</option>
 <option value="Parents Guide">Parents Guide</option>
-<option value="Online Quran">Online Quran Classes</option>
+<option value="Online Quran Classes">Online Quran Classes</option>
 <option value="Ramadan">Ramadan</option>
 <option value="General">General</option>
+
 </select>
+
 </div>
+
 </div>
+
 
 <div class="two-col">
-<div class="field">
-<label for="articleAuthor">Author</label>
-<input id="articleAuthor" name="author" type="text" placeholder="Haroon Ibn Rasheed">
-</div>
-<div class="field">
-<label for="readingTime">Reading Time</label>
-<input id="readingTime" name="reading_time" type="text" placeholder="5 min read">
-</div>
-</div>
 
 <div class="field">
-<label for="articleTags">Tags</label>
-<input id="articleTags" name="tags" type="text" placeholder="Quran, Tajweed, Online Quran, Children">
-<small>Separate tags with commas.</small>
+
+<label for="articleAuthor">
+Author
+</label>
+
+<input
+id="articleAuthor"
+type="text"
+placeholder="Haroon Ibn Rasheed"
+>
+
 </div>
+
 
 <div class="field">
-<label for="articleExcerpt">Short Description / Excerpt</label>
-<textarea id="articleExcerpt" name="excerpt" placeholder="Write a short description for the Blog card..."></textarea>
+
+<label for="readingTime">
+Reading Time
+</label>
+
+<input
+id="readingTime"
+type="text"
+placeholder="5 min read"
+>
+
 </div>
+
+</div>
+
 
 <div class="field">
-<label for="articleBody">Full Article Content *</label>
-<textarea id="articleBody" name="body" class="article-body" placeholder="Write the complete article content here..."></textarea>
-<small>Full article text shown on the public article page.</small>
+
+<label for="articleTags">
+Tags
+</label>
+
+<input
+id="articleTags"
+type="text"
+placeholder="Quran, Tajweed, Online Quran, Children"
+>
+
+<small>
+Separate tags with commas.
+</small>
+
+</div>
+
+
+<div class="field">
+
+<label for="articleExcerpt">
+Short Description / Excerpt
+</label>
+
+<textarea
+id="articleExcerpt"
+placeholder="Write a short description for the Blog card..."
+></textarea>
+
+</div>
+
+
+<div class="field">
+
+<label for="articleBody">
+Full Article Content *
+</label>
+
+<textarea
+id="articleBody"
+class="article-body"
+placeholder="Write the complete article content here..."
+required
+></textarea>
+
+<small>
+This is the full content shown on the public article page.
+</small>
+
 </div>
 
 </div>
+
+
+<!-- SEO -->
 
 <div class="article-section">
-<h2>Article Video</h2>
 
-<div class="field">
-<label for="videoTitle">Video Title</label>
-<input id="videoTitle" name="video_title" type="text" placeholder="Example: Learn Quran with Tajweed">
-</div>
-
-<div class="field">
-<label for="videoUrl">Video URL</label>
-<input id="videoUrl" name="video_url" type="url" placeholder="https://www.youtube.com/watch?v=...">
-<small>YouTube URL or a direct video URL. Actual upload/storage will be connected in the next file.</small>
-</div>
-
-<div class="field">
-<label for="videoThumbnail">Video Thumbnail URL</label>
-<input id="videoThumbnail" name="video_thumbnail" type="url" placeholder="https://...">
-</div>
-
-<div class="field">
-<label for="videoDescription">Video Description</label>
-<textarea id="videoDescription" name="video_description" placeholder="Brief description of the video..."></textarea>
-</div>
-
-<div id="videoPreview" class="media-preview">
-<div class="article-help">Video preview will appear here.</div>
-</div>
-</div>
-
-<div class="article-section">
 <h2>SEO</h2>
 
-<div class="field">
-<label for="metaTitle">SEO Title</label>
-<input id="metaTitle" name="meta_title" type="text" placeholder="SEO title">
-</div>
 
 <div class="field">
-<label for="metaDescription">Meta Description</label>
-<textarea id="metaDescription" name="meta_description" placeholder="Short search-engine description..."></textarea>
+
+<label for="metaTitle">
+SEO Title
+</label>
+
+<input
+id="metaTitle"
+type="text"
+placeholder="SEO title"
+>
+
 </div>
+
 
 <div class="field">
-<label for="metaKeywords">SEO Keywords</label>
-<input id="metaKeywords" name="meta_keywords" type="text" placeholder="online Quran, Tajweed, Quran classes">
+
+<label for="metaDescription">
+Meta Description
+</label>
+
+<textarea
+id="metaDescription"
+placeholder="Short search-engine description..."
+></textarea>
+
 </div>
+
 
 <div class="field">
-<label for="canonicalUrl">Canonical URL</label>
-<input id="canonicalUrl" name="canonical_url" type="url" placeholder="https://...">
+
+<label for="metaKeywords">
+SEO Keywords
+</label>
+
+<input
+id="metaKeywords"
+type="text"
+placeholder="online Quran, Tajweed, Quran classes"
+>
+
 </div>
+
 
 <div class="field">
-<label for="ogImage">Social / OG Image URL</label>
-<input id="ogImage" name="og_image" type="url" placeholder="https://...">
+
+<label for="canonicalUrl">
+Canonical URL
+</label>
+
+<input
+id="canonicalUrl"
+type="url"
+placeholder="https://..."
+>
+
 </div>
+
+
+<div class="field">
+
+<label for="ogImage">
+Social / OG Image URL
+</label>
+
+<input
+id="ogImage"
+type="url"
+placeholder="https://..."
+>
+
 </div>
 
 </div>
+
+</div>
+
+
+<!-- RIGHT -->
 
 <div>
 
+
 <div class="article-section">
+
 <h2>Cover Image</h2>
 
-<div class="field">
-<label for="imageUrl">Cover Image URL</label>
-<input id="imageUrl" name="image_url" type="url" placeholder="https://...">
-<small>Image upload can be connected to Supabase Storage in the next step.</small>
-</div>
 
 <div class="field">
-<label for="imageAlt">Image Alt Text</label>
-<input id="imageAlt" name="image_alt" type="text" placeholder="Quran learning online">
+
+<label for="imageUrl">
+Cover Image URL
+</label>
+
+<input
+id="imageUrl"
+type="url"
+placeholder="https://..."
+>
+
+<small>
+Enter the public image URL. Image upload/storage can be connected later.
+</small>
+
 </div>
+
+
+<div class="field">
+
+<label for="imageAlt">
+Image Alt Text
+</label>
+
+<input
+id="imageAlt"
+type="text"
+placeholder="Quran learning online"
+>
+
+</div>
+
 
 <div id="imagePreview" class="media-preview">
-<div class="article-help">Cover image preview will appear here.</div>
-</div>
+
+<div class="article-help">
+Cover image preview will appear here.
 </div>
 
+</div>
+
+</div>
+
+
 <div class="article-section">
+
 <h2>Publishing</h2>
 
-<div class="check-row">
-<input id="published" name="published" type="checkbox">
-<label for="published">Publish this article</label>
-</div>
 
 <div class="check-row">
-<input id="featured" name="featured" type="checkbox">
-<label for="featured">Featured article</label>
+
+<input
+id="published"
+type="checkbox"
+>
+
+<label for="published">
+Publish this article
+</label>
+
 </div>
 
+
 <div class="check-row">
-<input id="allowComments" name="allow_comments" type="checkbox">
-<label for="allowComments">Allow comments</label>
+
+<input
+id="featured"
+type="checkbox"
+>
+
+<label for="featured">
+Featured article
+</label>
+
 </div>
+
+
+<div class="check-row">
+
+<input
+id="allowComments"
+type="checkbox"
+>
+
+<label for="allowComments">
+Allow comments
+</label>
+
+</div>
+
 
 <div class="field">
-<label for="publishDate">Publish Date</label>
-<input id="publishDate" name="published_at" type="datetime-local">
+
+<label for="publishDate">
+Publish Date
+</label>
+
+<input
+id="publishDate"
+type="datetime-local"
+>
+
 </div>
+
 
 <div class="status-box">
+
 <strong>Public Website</strong><br>
-Published articles can appear in the public Blog. Featured articles can be highlighted when the public Blog is configured for them.
+
+Published articles can appear in the public Blog.
+Featured articles can be highlighted on the public website.
+
 </div>
+
 
 <div class="form-actions">
-<button type="submit" class="btn-main">Save Article</button>
-<button type="button" class="btn-secondary" onclick="resetForm()">Clear Form</button>
+
+<button
+type="submit"
+class="btn-main"
+id="saveBtn"
+>
+Save Article
+</button>
+
+<button
+type="button"
+class="btn-secondary"
+id="clearBtn"
+>
+Clear Form
+</button>
+
 </div>
+
 </div>
+
 
 <div class="article-section">
+
 <h2>Recommended Blog Content</h2>
+
 <div class="article-help">
+
 <strong>Quran Learning</strong><br>
 Quran learning tips, Nazra, Tajweed and Hifz guidance.
+
 <br><br>
+
 <strong>Parents Guide</strong><br>
 Helpful guidance for parents supporting children in Quran learning.
+
 <br><br>
+
 <strong>Islamic Knowledge</strong><br>
 Educational Islamic articles, Quran and Hadith related topics.
+
 <br><br>
+
 <strong>Online Quran</strong><br>
 Benefits and guidance about learning Quran online.
+
 <br><br>
+
 <strong>Ramadan</strong><br>
 Quran, Ramadan preparation and Islamic reminders.
-</div>
+
 </div>
 
 </div>
+
 </div>
+
+</div>
+
 </form>
+
 </div>
+
+
+<!-- ARTICLES LIST -->
 
 <div class="card">
-<div class="table-wrap">
-<table class="table">
-<thead><tr id="head"></tr></thead>
-<tbody id="rows"></tbody>
+
+<div class="top" style="margin-bottom:15px">
+
+<h2 style="margin:0;color:#07394a">
+Articles
+</h2>
+
+</div>
+
+<div class="article-table-wrap">
+
+<table class="article-table">
+
+<thead>
+
+<tr>
+
+<th>Cover</th>
+<th>Title</th>
+<th>Category</th>
+<th>Status</th>
+<th>Featured</th>
+<th>Created</th>
+<th>Actions</th>
+
+</tr>
+
+</thead>
+
+<tbody id="articleRows">
+
+<tr>
+<td colspan="7" class="empty-row">
+Loading articles...
+</td>
+</tr>
+
+</tbody>
+
 </table>
+
 </div>
+
 </div>
+
 
 </main>
+
 </div>
 
-<script src="../js/manage.js"></script>
 
 <script>
-kind='articles';
-def=defs[kind];
-document.getElementById('title').textContent=def.title;
-resetForm();
-init();
 
-const imageUrlInput=document.getElementById('imageUrl');
-const imagePreview=document.getElementById('imagePreview');
+const articleState = {
+  records: [],
+  editId: null
+};
+
+
+const $ = id => document.getElementById(id);
+
+
+function showArticleMessage(message,type){
+
+  const box = $('msg');
+
+  if(!box) return;
+
+  box.textContent = message;
+
+  box.className = 'msg ' + (type || '');
+
+  box.style.display = 'block';
+
+  setTimeout(()=>{
+    box.style.display='none';
+  },5000);
+}
+
+
+function escapeHtml(value){
+
+  return String(value ?? '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;');
+
+}
+
+
+function makeSlug(value){
+
+  return String(value || '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g,'')
+    .replace(/\s+/g,'-')
+    .replace(/-+/g,'-');
+
+}
+
+
+function getLocalDateTime(){
+
+  const now = new Date();
+
+  const local = new Date(
+    now.getTime() -
+    now.getTimezoneOffset() * 60000
+  );
+
+  return local.toISOString().slice(0,16);
+
+}
+
 
 function updateImagePreview(){
-  const url=imageUrlInput.value.trim();
-  if(!url){
-    imagePreview.innerHTML='<div class="article-help">Cover image preview will appear here.</div>';
-    return;
-  }
-  imagePreview.innerHTML='<img src="'+url.replace(/"/g,'&quot;')+'" alt="Article cover image" onerror="this.parentElement.innerHTML=\'<div class=&quot;article-help&quot;>Unable to load this image.</div>\'">';
-}
-imageUrlInput.addEventListener('input',updateImagePreview);
 
-const videoUrlInput=document.getElementById('videoUrl');
-const videoPreview=document.getElementById('videoPreview');
+  const url = $('imageUrl').value.trim();
 
-function getYouTubeId(url){
-  try{
-    const parsed=new URL(url);
-    if(parsed.hostname.includes('youtube.com')) return parsed.searchParams.get('v');
-    if(parsed.hostname==='youtu.be') return parsed.pathname.substring(1);
-  }catch(error){}
-  return null;
-}
-
-function updateVideoPreview(){
-  const url=videoUrlInput.value.trim();
+  const preview = $('imagePreview');
 
   if(!url){
-    videoPreview.innerHTML='<div class="article-help">Video preview will appear here.</div>';
+
+    preview.innerHTML =
+      '<div class="article-help">Cover image preview will appear here.</div>';
+
     return;
+
   }
 
-  const youtubeId=getYouTubeId(url);
 
-  if(youtubeId){
-    videoPreview.innerHTML='<div class="video-preview"><iframe src="https://www.youtube.com/embed/'+encodeURIComponent(youtubeId)+'" title="Article video" allowfullscreen></iframe></div>';
-    return;
-  }
+  preview.innerHTML =
+    '<img src="' +
+    escapeHtml(url) +
+    '" alt="Article cover image" onerror="this.style.display=\'none\';this.parentElement.insertAdjacentHTML(\'beforeend\',\'<div class=&quot;article-help&quot;>Unable to load this image.</div>\')">';
 
-  videoPreview.innerHTML='<div class="article-help">Video URL entered. Direct video preview/upload will be connected in the next step.</div>';
 }
 
-videoUrlInput.addEventListener('input',updateVideoPreview);
 
-const titleInput=document.getElementById('articleTitle');
-const slugInput=document.getElementById('articleSlug');
+function resetArticleForm(){
 
-titleInput.addEventListener('input',()=>{
-  if(!slugInput.dataset.manual){
-    slugInput.value=titleInput.value
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9\s-]/g,'')
-      .replace(/\s+/g,'-')
-      .replace(/-+/g,'-');
-  }
-});
+  articleState.editId = null;
 
-slugInput.addEventListener('input',()=>{
-  slugInput.dataset.manual='true';
-});
+  $('articleForm').reset();
 
-const publishDate=document.getElementById('publishDate');
+  $('publishDate').value = getLocalDateTime();
 
-if(publishDate && !publishDate.value){
-  const now=new Date();
-  const local=new Date(now.getTime()-now.getTimezoneOffset()*60000)
-    .toISOString().slice(0,16);
-  publishDate.value=local;
+  $('published').checked = false;
+
+  $('featured').checked = false;
+
+  $('allowComments').checked = false;
+
+  $('saveBtn').textContent = 'Save Article';
+
+  $('imagePreview').innerHTML =
+    '<div class="article-help">Cover image preview will appear here.</div>';
+
+  $('articleSlug').dataset.manual = '';
+
 }
+
+
+function fillArticleForm(article){
+
+  articleState.editId = article.id;
+
+  $('articleTitle').value = article.title || '';
+
+  $('articleSlug').value = article.slug || '';
+
+  $('articleCategory').value = article.category || '';
+
+  $('articleAuthor').value = article.author || '';
+
+  $('readingTime').value = article.reading_time || '';
+
+  $('articleTags').value = article.tags || '';
+
+  $('articleExcerpt').value = article.excerpt || '';
+
+  $('articleBody').value = article.body || '';
+
+  $('imageUrl').value = article.image_url || '';
+
+  $('imageAlt').value = article.image_alt || '';
+
+  $('metaTitle').value = article.meta_title || '';
+
+  $('metaDescription').value = article.meta_description || '';
+
+  $('metaKeywords').value = article.meta_keywords || '';
+
+  $('canonicalUrl').value = article.canonical_url || '';
+
+  $('ogImage').value = article.og_image || '';
+
+  $('published').checked =
+    article.is_published === true ||
+    article.published === true;
+
+  $('featured').checked = article.featured === true;
+
+  $('allowComments').checked = article.allow_comments === true;
+
+
+  if(article.published_at){
+
+    const d = new Date(article.published_at);
+
+    const local = new Date(
+      d.getTime() -
+      d.getTimezoneOffset() * 60000
+    );
+
+    $('publishDate').value =
+      local.toISOString().slice(0,16);
+
+  }else{
+
+    $('publishDate').value = getLocalDateTime();
+
+  }
+
+
+  $('saveBtn').textContent = 'Update Article';
+
+  $('articleSlug').dataset.manual = 'true';
+
+  updateImagePreview();
+
+  $('formBox').scrollIntoView({
+    behavior:'smooth',
+    block:'start'
+  });
+
+}
+
+
+function renderArticles(){
+
+  const rows = $('articleRows');
+
+  if(!rows) return;
+
+
+  if(!articleState.records.length){
+
+    rows.innerHTML =
+      '<tr><td colspan="7" class="empty-row">No articles found.</td></tr>';
+
+    return;
+
+  }
+
+
+  rows.innerHTML = articleState.records.map(article=>{
+
+    const published =
+      article.is_published === true ||
+      article.published === true;
+
+
+    const cover = article.image_url
+      ? '<img class="article-cover-small" src="' +
+        escapeHtml(article.image_url) +
+        '" alt="">'
+      : '—';
+
+
+    const status = published
+      ? '<span class="badge badge-published">Published</span>'
+      : '<span class="badge badge-draft">Draft</span>';
+
+
+    const featured = article.featured === true
+      ? '<span class="badge badge-featured">Featured</span>'
+      : '—';
+
+
+    const created = article.created_at
+      ? new Date(article.created_at).toLocaleDateString()
+      : '—';
+
+
+    return `
+      <tr>
+
+        <td>${cover}</td>
+
+        <td>
+          <strong>${escapeHtml(article.title)}</strong>
+          ${
+            article.slug
+            ? '<div style="font-size:12px;color:#6b7280;margin-top:4px;">/' +
+              escapeHtml(article.slug) +
+              '</div>'
+            : ''
+          }
+        </td>
+
+        <td>${escapeHtml(article.category || '—')}</td>
+
+        <td>${status}</td>
+
+        <td>${featured}</td>
+
+        <td>${escapeHtml(created)}</td>
+
+        <td>
+
+          <div class="row-actions">
+
+            <button
+              type="button"
+              class="row-btn"
+              onclick="editArticle('${article.id}')"
+            >
+              Edit
+            </button>
+
+            <button
+              type="button"
+              class="row-btn delete"
+              onclick="deleteArticle('${article.id}')"
+            >
+              Delete
+            </button>
+
+          </div>
+
+        </td>
+
+      </tr>
+    `;
+
+  }).join('');
+
+}
+
+
+async function loadArticles(){
+
+  if(!window.db){
+
+    location.href='login.html';
+
+    return;
+
+  }
+
+
+  const result = await db
+    .from('articles')
+    .select('*')
+    .order('created_at',{ascending:false});
+
+
+  if(result.error){
+
+    showArticleMessage(
+      result.error.message,
+      'error'
+    );
+
+    $('articleRows').innerHTML =
+      '<tr><td colspan="7" class="empty-row">Unable to load articles.</td></tr>';
+
+    return;
+
+  }
+
+
+  articleState.records = result.data || [];
+
+  renderArticles();
+
+}
+
+
+async function saveArticle(event){
+
+  event.preventDefault();
+
+
+  const title = $('articleTitle').value.trim();
+
+  const body = $('articleBody').value.trim();
+
+
+  if(!title){
+
+    showArticleMessage(
+      'Article title is required.',
+      'error'
+    );
+
+    return;
+
+  }
+
+
+  if(!body){
+
+    showArticleMessage(
+      'Full article content is required.',
+      'error'
+    );
+
+    return;
+
+  }
+
+
+  let slug = $('articleSlug').value.trim();
+
+  if(!slug){
+
+    slug = makeSlug(title);
+
+  }
+
+
+  const isPublished = $('published').checked;
+
+  const publishDateValue = $('publishDate').value;
+
+
+  const payload = {
+
+    title: title,
+
+    slug: slug || null,
+
+    category: $('articleCategory').value.trim() || null,
+
+    author: $('articleAuthor').value.trim() || null,
+
+    reading_time: $('readingTime').value.trim() || null,
+
+    tags: $('articleTags').value.trim() || null,
+
+    excerpt: $('articleExcerpt').value.trim() || null,
+
+    body: body,
+
+    image_url: $('imageUrl').value.trim() || null,
+
+    image_alt: $('imageAlt').value.trim() || null,
+
+    meta_title: $('metaTitle').value.trim() || null,
+
+    meta_description: $('metaDescription').value.trim() || null,
+
+    meta_keywords: $('metaKeywords').value.trim() || null,
+
+    canonical_url: $('canonicalUrl').value.trim() || null,
+
+    og_image: $('ogImage').value.trim() || null,
+
+    published: isPublished,
+
+    is_published: isPublished,
+
+    featured: $('featured').checked,
+
+    allow_comments: $('allowComments').checked,
+
+    published_at:
+      isPublished && publishDateValue
+      ? new Date(publishDateValue).toISOString()
+      : null
+
+  };
+
+
+  $('saveBtn').disabled = true;
+
+  $('saveBtn').textContent =
+    articleState.editId
+    ? 'Updating...'
+    : 'Saving...';
+
+
+  let result;
+
+
+  if(articleState.editId){
+
+    result = await db
+      .from('articles')
+      .update(payload)
+      .eq('id',articleState.editId);
+
+  }else{
+
+    result = await db
+      .from('articles')
+      .insert(payload);
+
+  }
+
+
+  $('saveBtn').disabled = false;
+
+
+  if(result.error){
+
+    $('saveBtn').textContent =
+      articleState.editId
+      ? 'Update Article'
+      : 'Save Article';
+
+
+    showArticleMessage(
+      result.error.message,
+      'error'
+    );
+
+    return;
+
+  }
+
+
+  showArticleMessage(
+    articleState.editId
+    ? 'Article updated successfully.'
+    : 'Article added successfully.',
+    'ok'
+  );
+
+
+  resetArticleForm();
+
+  await loadArticles();
+
+}
+
+
+function editArticle(id){
+
+  const article =
+    articleState.records.find(x=>x.id===id);
+
+  if(!article) return;
+
+  fillArticleForm(article);
+
+}
+
+
+async function deleteArticle(id){
+
+  const article =
+    articleState.records.find(x=>x.id===id);
+
+
+  const title =
+    article?.title || 'this article';
+
+
+  if(!confirm(
+    'Delete "' + title + '"? This cannot be undone.'
+  )) return;
+
+
+  const result = await db
+    .from('articles')
+    .delete()
+    .eq('id',id);
+
+
+  if(result.error){
+
+    showArticleMessage(
+      result.error.message,
+      'error'
+    );
+
+    return;
+
+  }
+
+
+  showArticleMessage(
+    'Article deleted successfully.',
+    'ok'
+  );
+
+
+  if(articleState.editId === id){
+
+    resetArticleForm();
+
+  }
+
+
+  await loadArticles();
+
+}
+
+
+$('articleTitle').addEventListener('input',()=>{
+
+  const slug = $('articleSlug');
+
+  if(slug.dataset.manual === 'true') return;
+
+  slug.value =
+    makeSlug($('articleTitle').value);
+
+});
+
+
+$('articleSlug').addEventListener('input',()=>{
+
+  $('articleSlug').dataset.manual='true';
+
+});
+
+
+$('imageUrl').addEventListener(
+  'input',
+  updateImagePreview
+);
+
+
+$('articleForm').addEventListener(
+  'submit',
+  saveArticle
+);
+
+
+$('clearBtn').addEventListener(
+  'click',
+  resetArticleForm
+);
+
+
+async function startArticlesPage(){
+
+  if(!window.db){
+
+    location.href='login.html';
+
+    return;
+
+  }
+
+
+  if(typeof adminGuard === 'function'){
+
+    const allowed = await adminGuard();
+
+    if(!allowed) return;
+
+  }
+
+
+  resetArticleForm();
+
+  await loadArticles();
+
+}
+
+
+startArticlesPage();
+
 </script>
 
 </body>
