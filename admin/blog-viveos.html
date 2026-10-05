@@ -1,0 +1,872 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Blog Videos | Haroon Ibn Rasheed Online Quran Academy</title>
+
+<link rel="stylesheet" href="../css/admin.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script src="../js/admin.js"></script>
+
+<style>
+.video-layout{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(320px,420px);
+  gap:20px;
+}
+
+.video-card{
+  background:#fff;
+  border:1px solid #e5eef1;
+  border-radius:14px;
+  padding:20px;
+  box-shadow:0 4px 16px rgba(0,0,0,.05);
+}
+
+.video-card h2{
+  margin:0 0 18px;
+}
+
+.field{
+  margin-bottom:15px;
+}
+
+.field label{
+  display:block;
+  margin-bottom:6px;
+  font-weight:600;
+}
+
+.input{
+  width:100%;
+  box-sizing:border-box;
+  padding:11px 12px;
+  border:1px solid #d7e3e7;
+  border-radius:9px;
+  background:#fff;
+  font:inherit;
+}
+
+textarea.input{
+  resize:vertical;
+}
+
+.checkbox-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:18px;
+  margin:10px 0 18px;
+}
+
+.checkbox-row label{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  font-weight:500;
+}
+
+.actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.btn{
+  border:0;
+  border-radius:9px;
+  padding:10px 16px;
+  cursor:pointer;
+  font-weight:600;
+}
+
+.btn.primary{
+  background:#0b9fbb;
+  color:#fff;
+}
+
+.btn.secondary{
+  background:#eef9fb;
+  color:#07394a;
+}
+
+.btn.danger{
+  background:#dc3545;
+  color:#fff;
+}
+
+.msg{
+  margin-bottom:15px;
+  padding:11px 13px;
+  border-radius:8px;
+  display:none;
+}
+
+.msg.show{
+  display:block;
+}
+
+.msg.ok{
+  background:#e9f8ef;
+  color:#176b36;
+}
+
+.msg.error{
+  background:#fdecec;
+  color:#a52222;
+}
+
+.preview-box{
+  border:1px solid #e5eef1;
+  border-radius:12px;
+  overflow:hidden;
+  background:#f7fbfc;
+}
+
+.preview-thumb{
+  width:100%;
+  aspect-ratio:16/9;
+  object-fit:cover;
+  display:block;
+  background:#eef9fb;
+}
+
+.preview-info{
+  padding:14px;
+}
+
+.preview-title{
+  font-size:18px;
+  font-weight:700;
+  color:#07394a;
+  margin-bottom:6px;
+}
+
+.preview-description{
+  color:#587078;
+  line-height:1.5;
+  white-space:pre-wrap;
+}
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:900px;
+}
+
+th,td{
+  padding:11px 10px;
+  border-bottom:1px solid #e8eef0;
+  text-align:left;
+  vertical-align:middle;
+}
+
+th{
+  background:#f5fafb;
+  color:#07394a;
+  font-weight:700;
+}
+
+.video-mini{
+  width:100px;
+  height:58px;
+  object-fit:cover;
+  border-radius:7px;
+  background:#eef9fb;
+}
+
+.status{
+  display:inline-block;
+  padding:4px 8px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:700;
+}
+
+.status.published{
+  background:#e8f7ed;
+  color:#19733b;
+}
+
+.status.draft{
+  background:#fff4df;
+  color:#9a6510;
+}
+
+.status.featured{
+  background:#fdeceb;
+  color:#a0443d;
+}
+
+.empty{
+  text-align:center;
+  padding:30px;
+  color:#687c83;
+}
+
+@media(max-width:900px){
+  .video-layout{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:600px){
+  .video-card{
+    padding:15px;
+  }
+
+  .actions .btn{
+    width:100%;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+  <aside class="sidebar">
+
+    <div class="brand">
+      <div class="brand-title">Haroon Ibn Rasheed</div>
+      <div class="brand-subtitle">Online Quran Academy</div>
+    </div>
+
+    <nav>
+
+      <a href="dashboard.html">Dashboard</a>
+      <a href="admissions.html">Admissions</a>
+      <a href="users.html">Users</a>
+      <a href="students.html">Students</a>
+      <a href="enrollments.html">Enrollments</a>
+      <a href="teachers.html">Teachers</a>
+      <a href="schedule.html">Schedule</a>
+      <a href="classes.html">Classes</a>
+      <a href="attendance.html">Attendance</a>
+      <a href="payments.html">Payments</a>
+      <a href="leaves.html">Leaves</a>
+      <a href="salaries.html">Salaries</a>
+      <a href="courses.html">Courses</a>
+      <a href="fees.html">Fees</a>
+      <a href="payment-methods.html">Payment Methods</a>
+      <a href="messages.html">Messages</a>
+      <a href="testimonials.html">Testimonials</a>
+
+      <a href="articles.html">Blog / Articles</a>
+      <a href="blog-videos.html" class="active">Blog / Videos</a>
+
+      <a href="notifications.html">Notifications</a>
+      <a href="faqs.html">FAQs</a>
+      <a href="content.html">Content</a>
+      <a href="settings.html">Settings</a>
+
+      <a href="../index.html" target="_blank">View Website</a>
+
+      <a href="#" onclick="logout();return false;">Logout</a>
+
+    </nav>
+  </aside>
+
+  <main class="main">
+
+    <header class="page-header">
+      <div>
+        <h1>Blog Videos</h1>
+        <p>Manage website videos separately from Blog Articles.</p>
+      </div>
+    </header>
+
+    <div id="msg" class="msg"></div>
+
+    <div class="video-layout">
+
+      <!-- FORM -->
+      <section class="video-card" id="formBox">
+
+        <h2 id="formTitle">Add Video</h2>
+
+        <form id="videoForm">
+
+          <div class="field">
+            <label for="title">Video Title *</label>
+            <input
+              class="input"
+              id="title"
+              type="text"
+              required
+              placeholder="Enter video title">
+          </div>
+
+          <div class="field">
+            <label for="video_url">Video URL *</label>
+            <input
+              class="input"
+              id="video_url"
+              type="url"
+              required
+              placeholder="https://www.youtube.com/watch?v=...">
+          </div>
+
+          <div class="field">
+            <label for="thumbnail_url">Thumbnail URL</label>
+            <input
+              class="input"
+              id="thumbnail_url"
+              type="url"
+              placeholder="https://example.com/thumbnail.jpg">
+          </div>
+
+          <div class="field">
+            <label for="description">Description</label>
+            <textarea
+              class="input"
+              id="description"
+              rows="5"
+              placeholder="Write a short description..."></textarea>
+          </div>
+
+          <div class="field">
+            <label for="category">Category</label>
+            <input
+              class="input"
+              id="category"
+              type="text"
+              placeholder="Quran, Tajweed, Islamic Studies...">
+          </div>
+
+          <div class="field">
+            <label for="author">Author</label>
+            <input
+              class="input"
+              id="author"
+              type="text"
+              placeholder="Author name">
+          </div>
+
+          <div class="field">
+            <label for="duration">Duration</label>
+            <input
+              class="input"
+              id="duration"
+              type="text"
+              placeholder="10:25">
+          </div>
+
+          <div class="checkbox-row">
+
+            <label>
+              <input type="checkbox" id="featured">
+              Featured
+            </label>
+
+            <label>
+              <input type="checkbox" id="is_published">
+              Published
+            </label>
+
+          </div>
+
+          <div class="actions">
+
+            <button
+              type="submit"
+              class="btn primary"
+              id="saveBtn">
+              Add Video
+            </button>
+
+            <button
+              type="button"
+              class="btn secondary"
+              id="cancelBtn"
+              style="display:none;">
+              Cancel
+            </button>
+
+          </div>
+
+        </form>
+
+      </section>
+
+
+      <!-- PREVIEW -->
+      <section class="video-card">
+
+        <h2>Preview</h2>
+
+        <div class="preview-box">
+
+          <img
+            id="previewImage"
+            class="preview-thumb"
+            src=""
+            alt="Video thumbnail"
+            style="display:none;">
+
+          <div class="preview-info">
+
+            <div
+              id="previewTitle"
+              class="preview-title">
+              Video title will appear here
+            </div>
+
+            <div
+              id="previewDescription"
+              class="preview-description">
+              Video description will appear here.
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+
+
+    <!-- LIST -->
+    <section class="video-card" style="margin-top:20px;">
+
+      <h2>All Videos</h2>
+
+      <div class="table-wrap">
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>Thumbnail</th>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Author</th>
+              <th>Duration</th>
+              <th>Status</th>
+              <th>Featured</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody id="rows">
+            <tr>
+              <td colspan="9" class="empty">
+                Loading...
+              </td>
+            </tr>
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+
+<script>
+
+let records = [];
+let editId = null;
+
+const $ = id => document.getElementById(id);
+
+
+function escapeHtml(value){
+
+  return String(value ?? '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;');
+
+}
+
+
+function showMsg(message,type){
+
+  const box = $('msg');
+
+  box.textContent = message;
+  box.className = 'msg show ' + type;
+
+  setTimeout(()=>{
+    box.className = 'msg';
+  },4000);
+
+}
+
+
+async function init(){
+
+  if(!window.db){
+
+    location.href='login.html';
+    return;
+
+  }
+
+  if(!(await adminGuard())) return;
+
+  await load();
+
+}
+
+
+async function load(){
+
+  const result = await db
+    .from('blog_videos')
+    .select('*')
+    .order('created_at',{ascending:false});
+
+  if(result.error){
+
+    showMsg(result.error.message,'error');
+    return;
+
+  }
+
+  records = result.data || [];
+
+  render();
+
+}
+
+
+function render(){
+
+  const rows = $('rows');
+
+  if(!records.length){
+
+    rows.innerHTML = `
+      <tr>
+        <td colspan="9" class="empty">
+          No videos added yet.
+        </td>
+      </tr>
+    `;
+
+    return;
+
+  }
+
+
+  rows.innerHTML = records.map(video => {
+
+    const thumb = video.thumbnail_url
+      ? `<img
+          src="${escapeHtml(video.thumbnail_url)}"
+          class="video-mini"
+          alt="">`
+      : `<div class="video-mini"></div>`;
+
+
+    const status = video.is_published
+      ? `<span class="status published">Published</span>`
+      : `<span class="status draft">Draft</span>`;
+
+
+    const featured = video.featured
+      ? `<span class="status featured">Featured</span>`
+      : '—';
+
+
+    const created = video.created_at
+      ? new Date(video.created_at).toLocaleDateString()
+      : '—';
+
+
+    return `
+      <tr>
+
+        <td>${thumb}</td>
+
+        <td>
+          <strong>${escapeHtml(video.title)}</strong>
+        </td>
+
+        <td>
+          ${escapeHtml(video.category || '—')}
+        </td>
+
+        <td>
+          ${escapeHtml(video.author || '—')}
+        </td>
+
+        <td>
+          ${escapeHtml(video.duration || '—')}
+        </td>
+
+        <td>
+          ${status}
+        </td>
+
+        <td>
+          ${featured}
+        </td>
+
+        <td>
+          ${escapeHtml(created)}
+        </td>
+
+        <td>
+
+          <button
+            class="btn secondary"
+            onclick="editVideo('${video.id}')">
+            Edit
+          </button>
+
+          <button
+            class="btn danger"
+            onclick="deleteVideo('${video.id}')">
+            Delete
+          </button>
+
+        </td>
+
+      </tr>
+    `;
+
+  }).join('');
+
+}
+
+
+function editVideo(id){
+
+  const video = records.find(x => x.id === id);
+
+  if(!video) return;
+
+  editId = id;
+
+  $('formTitle').textContent = 'Edit Video';
+  $('saveBtn').textContent = 'Update Video';
+  $('cancelBtn').style.display = 'inline-block';
+
+  $('title').value = video.title || '';
+  $('video_url').value = video.video_url || '';
+  $('thumbnail_url').value = video.thumbnail_url || '';
+  $('description').value = video.description || '';
+  $('category').value = video.category || '';
+  $('author').value = video.author || '';
+  $('duration').value = video.duration || '';
+  $('featured').checked = !!video.featured;
+  $('is_published').checked = !!video.is_published;
+
+  updatePreview();
+
+  $('formBox').scrollIntoView({
+    behavior:'smooth',
+    block:'start'
+  });
+
+}
+
+
+function resetForm(){
+
+  editId = null;
+
+  $('videoForm').reset();
+
+  $('formTitle').textContent = 'Add Video';
+  $('saveBtn').textContent = 'Add Video';
+  $('cancelBtn').style.display = 'none';
+
+  updatePreview();
+
+}
+
+
+async function deleteVideo(id){
+
+  const video = records.find(x => x.id === id);
+
+  if(!video) return;
+
+
+  if(!confirm(
+    'Delete this video?\n\n' +
+    (video.title || '')
+  )) return;
+
+
+  const result = await db
+    .from('blog_videos')
+    .delete()
+    .eq('id',id);
+
+
+  if(result.error){
+
+    showMsg(result.error.message,'error');
+    return;
+
+  }
+
+
+  showMsg('Video deleted successfully.','ok');
+
+  await load();
+
+}
+
+
+$('videoForm').addEventListener('submit',async e => {
+
+  e.preventDefault();
+
+
+  const payload = {
+
+    title: $('title').value.trim(),
+
+    video_url: $('video_url').value.trim(),
+
+    thumbnail_url: $('thumbnail_url').value.trim() || null,
+
+    description: $('description').value.trim() || null,
+
+    category: $('category').value.trim() || null,
+
+    author: $('author').value.trim() || null,
+
+    duration: $('duration').value.trim() || null,
+
+    featured: $('featured').checked,
+
+    is_published: $('is_published').checked,
+
+    published_at: $('is_published').checked
+      ? new Date().toISOString()
+      : null
+
+  };
+
+
+  if(!payload.title){
+
+    showMsg('Please enter a video title.','error');
+    return;
+
+  }
+
+
+  if(!payload.video_url){
+
+    showMsg('Please enter the video URL.','error');
+    return;
+
+  }
+
+
+  let result;
+
+
+  if(editId){
+
+    result = await db
+      .from('blog_videos')
+      .update(payload)
+      .eq('id',editId);
+
+  }else{
+
+    result = await db
+      .from('blog_videos')
+      .insert(payload);
+
+  }
+
+
+  if(result.error){
+
+    showMsg(result.error.message,'error');
+    return;
+
+  }
+
+
+  showMsg(
+    editId
+      ? 'Video updated successfully.'
+      : 'Video added successfully.',
+    'ok'
+  );
+
+
+  resetForm();
+
+  await load();
+
+});
+
+
+$('cancelBtn').addEventListener('click',resetForm);
+
+
+function updatePreview(){
+
+  const title =
+    $('title').value.trim() ||
+    'Video title will appear here';
+
+  const description =
+    $('description').value.trim() ||
+    'Video description will appear here.';
+
+  const thumbnail =
+    $('thumbnail_url').value.trim();
+
+
+  $('previewTitle').textContent = title;
+
+  $('previewDescription').textContent = description;
+
+
+  if(thumbnail){
+
+    $('previewImage').src = thumbnail;
+    $('previewImage').style.display = 'block';
+
+  }else{
+
+    $('previewImage').style.display = 'none';
+    $('previewImage').removeAttribute('src');
+
+  }
+
+}
+
+
+['title','description','thumbnail_url'].forEach(id => {
+
+  $(id).addEventListener('input',updatePreview);
+
+});
+
+
+init();
+
+</script>
+
+</body>
+</html>
