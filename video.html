@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Video | Haroon Ibn Rasheed Online Quran Academy</title>
+<meta name="description" content="Quran and Islamic educational video from Haroon Ibn Rasheed Online Quran Academy.">
+<style>
+:root{--green:#0b9fbb;--dark:#07394a;--light:#eef9fb;--gray:#58717a}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--dark);background:#fff}
+.header{padding:18px 5%;border-bottom:1px solid #e6eef0;position:sticky;top:0;background:#fff;z-index:5}
+.header-inner{max-width:1100px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:15px}
+.brand{font-weight:800;text-decoration:none;color:var(--dark)}
+.back,.btn{background:var(--green);color:#fff;border:0;border-radius:8px;padding:11px 16px;font-weight:700;text-decoration:none;cursor:pointer}
+.container{width:90%;max-width:1050px;margin:auto}
+main{padding:45px 0 70px}
+.loading,.message{padding:45px 20px;text-align:center;background:var(--light);border-radius:14px}
+#videoPage{display:none}
+h1{font-size:32px;line-height:1.25;margin:0 0 12px}
+.meta{color:var(--gray);margin-bottom:22px}
+.player{position:relative;width:100%;padding-bottom:56.25%;height:0;background:#000;border-radius:14px;overflow:hidden}
+.player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}
+.description{padding:22px;background:var(--light);border-radius:14px;line-height:1.7}
+.notice{margin-top:18px;color:var(--gray);font-size:13px}
+@media(max-width:650px){.header-inner{flex-direction:column;align-items:flex-start}h1{font-size:25px}}
+</style>
+</head>
+<body>
+<header class="header">
+<div class="header-inner">
+<a class="brand" href="index.html">Haroon Ibn Rasheed Online Quran Academy</a>
+<a class="back" href="index.html">← Back to Website</a>
+</div>
+</header>
+
+<main>
+<div class="container">
+<div id="loading" class="loading">Loading video...</div>
+
+<div id="notFound" class="message" style="display:none">
+<h2>Video not found</h2>
+<p>This video may have been removed or is not published.</p>
+<a class="back" href="index.html">Go to Website</a>
+</div>
+
+<article id="videoPage">
+<h1 id="title"></h1>
+<div id="meta" class="meta"></div>
+
+<div class="player">
+<div id="youtubePlayer"></div>
+</div>
+
+<div class="actions">
+<button id="shareBtn" class="btn">📤 Share Video</button>
+<button id="copyBtn" class="btn" style="background:var(--dark)">🔗 Copy Link</button>
+</div>
+
+<div id="description" class="description" style="display:none"></div>
+<div class="notice">You are watching this video on the Haroon Ibn Rasheed Online Quran Academy website.</div>
+</article>
+</div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script>
+(function(){
+const cfg=window.SUPABASE_CONFIG||{};
+const loading=document.getElementById('loading');
+const page=document.getElementById('videoPage');
+const notFound=document.getElementById('notFound');
+
+function fail(){
+ loading.style.display='none';
+ notFound.style.display='block';
+}
+
+if(!window.supabase||!cfg.url||!cfg.anonKey){fail();return;}
+
+const db=window.supabase.createClient(cfg.url,cfg.anonKey);
+const params=new URLSearchParams(location.search);
+const slug=params.get('slug');
+
+if(!slug){fail();return;}
+
+function youtubeId(url){
+ if(!url)return '';
+ try{
+  const u=new URL(url);
+  if(u.hostname.includes('youtube.com')&&u.pathname==='/watch')return u.searchParams.get('v')||'';
+  if(u.hostname.includes('youtu.be'))return u.pathname.replace('/','').split('?')[0];
+  if(u.pathname.startsWith('/shorts/'))return u.pathname.split('/shorts/')[1].split('/')[0];
+  if(u.pathname.startsWith('/embed/'))return u.pathname.split('/embed/')[1].split('/')[0];
+ }catch(e){}
+ return '';
+}
+
+db.from('blog_videos')
+.select('*')
+.eq('slug',slug)
+.eq('is_published',true)
+.maybeSingle()
+.then(function(r){
+ if(r.error||!r.data){fail();return;}
+ const v=r.data;
+ loading.style.display='none';
+ page.style.display='block';
+
+ document.getElementById('title').textContent=v.title||'Quran Video';
+ document.title=(v.title||'Video')+' | Haroon Ibn Rasheed Online Quran Academy';
+
+ const meta=[v.category,v.author,v.duration].filter(Boolean);
+ document.getElementById('meta').textContent=meta.join(' • ');
+
+ const id=youtubeId(v.video_url);
+ if(id){
+  document.getElementById('youtubePlayer').innerHTML=
+  '<iframe src="https://www.youtube.com/embed/'+encodeURIComponent(id)+'" title="'
+  +String(v.title||'Quran Video').replace(/"/g,'&quot;')
+  +'" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
+ }
+
+ if(v.description){
+  const d=document.getElementById('description');
+  d.style.display='block';
+  d.textContent=v.description;
+ }
+
+ const websiteUrl=location.href;
+
+ document.getElementById('copyBtn').onclick=function(){
+  if(navigator.clipboard){
+   navigator.clipboard.writeText(websiteUrl).then(function(){alert('Website video link copied!');});
+  }else{
+   prompt('Copy this website video link:',websiteUrl);
+  }
+ };
+
+ document.getElementById('shareBtn').onclick=function(){
+  if(navigator.share){
+   navigator.share({title:v.title||'Quran Video',text:'Watch this video on Haroon Ibn Rasheed Online Quran Academy:',url:websiteUrl}).catch(function(){});
+  }else if(navigator.clipboard){
+   navigator.clipboard.writeText(websiteUrl).then(function(){alert('Website video link copied!');});
+  }else{
+   prompt('Copy this website video link:',websiteUrl);
+  }
+ };
+})
+.catch(fail);
+})();
+</script>
+</body>
+</html>
