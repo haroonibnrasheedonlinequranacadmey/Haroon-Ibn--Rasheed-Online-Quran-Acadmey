@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Blog Videos | Haroon Ibn Rasheed Online Quran Academy</title>
+<title>Blog / Videos | Admin</title>
 
 <link rel="stylesheet" href="../css/admin.css">
 
@@ -53,6 +53,14 @@
 
 textarea.input{
   resize:vertical;
+}
+
+.help-text{
+  display:block;
+  margin-top:5px;
+  color:#687c83;
+  font-size:12px;
+  line-height:1.4;
 }
 
 .checkbox-row{
@@ -158,7 +166,7 @@ textarea.input{
 table{
   width:100%;
   border-collapse:collapse;
-  min-width:900px;
+  min-width:1000px;
 }
 
 th,td{
@@ -209,6 +217,17 @@ th{
   text-align:center;
   padding:30px;
   color:#687c83;
+}
+
+.slug-preview{
+  display:block;
+  margin-top:6px;
+  padding:8px 10px;
+  border-radius:7px;
+  background:#f5fafb;
+  color:#587078;
+  font-size:12px;
+  word-break:break-all;
 }
 
 @media(max-width:900px){
@@ -279,8 +298,8 @@ th{
 
     <header class="page-header">
       <div>
-        <h1>Blog Videos</h1>
-        <p>Manage website videos separately from Blog Articles.</p>
+        <h1>Blog / Videos</h1>
+        <p>Manage website videos separately from Blog / Articles.</p>
       </div>
     </header>
 
@@ -297,82 +316,141 @@ th{
 
           <div class="field">
             <label for="title">Video Title *</label>
+
             <input
               class="input"
               id="title"
               type="text"
               required
               placeholder="Enter video title">
+
           </div>
 
+
           <div class="field">
-            <label for="video_url">Video URL *</label>
+
+            <label for="slug">Video Slug</label>
+
+            <input
+              class="input"
+              id="slug"
+              type="text"
+              placeholder="video-title-slug">
+
+            <span class="help-text">
+              This creates your own website video link. It is generated automatically from the title.
+            </span>
+
+            <span
+              id="slugPreview"
+              class="slug-preview">
+              Your video URL slug will appear here.
+            </span>
+
+          </div>
+
+
+          <div class="field">
+
+            <label for="video_url">YouTube / Video URL *</label>
+
             <input
               class="input"
               id="video_url"
               type="url"
               required
               placeholder="https://www.youtube.com/watch?v=...">
+
+            <span class="help-text">
+              The YouTube URL is stored privately for the video player. The public share link will use your website URL.
+            </span>
+
           </div>
 
+
           <div class="field">
+
             <label for="thumbnail_url">Thumbnail URL</label>
+
             <input
               class="input"
               id="thumbnail_url"
               type="url"
               placeholder="https://example.com/thumbnail.jpg">
+
           </div>
 
+
           <div class="field">
+
             <label for="description">Description</label>
+
             <textarea
               class="input"
               id="description"
               rows="5"
               placeholder="Write a short description..."></textarea>
+
           </div>
 
+
           <div class="field">
+
             <label for="category">Category</label>
+
             <input
               class="input"
               id="category"
               type="text"
               placeholder="Quran, Tajweed, Islamic Studies...">
+
           </div>
 
+
           <div class="field">
+
             <label for="author">Author</label>
+
             <input
               class="input"
               id="author"
               type="text"
               placeholder="Author name">
+
           </div>
 
+
           <div class="field">
+
             <label for="duration">Duration</label>
+
             <input
               class="input"
               id="duration"
               type="text"
               placeholder="10:25">
+
           </div>
+
 
           <div class="checkbox-row">
 
             <label>
-              <input type="checkbox" id="featured">
+              <input
+                type="checkbox"
+                id="featured">
               Featured
             </label>
 
             <label>
-              <input type="checkbox" id="is_published">
+              <input
+                type="checkbox"
+                id="is_published">
               Published
             </label>
 
           </div>
+
 
           <div class="actions">
 
@@ -445,9 +523,11 @@ th{
         <table>
 
           <thead>
+
             <tr>
               <th>Thumbnail</th>
               <th>Title</th>
+              <th>Slug</th>
               <th>Category</th>
               <th>Author</th>
               <th>Duration</th>
@@ -456,14 +536,17 @@ th{
               <th>Created</th>
               <th>Actions</th>
             </tr>
+
           </thead>
 
           <tbody id="rows">
+
             <tr>
-              <td colspan="9" class="empty">
+              <td colspan="10" class="empty">
                 Loading...
               </td>
             </tr>
+
           </tbody>
 
         </table>
@@ -485,6 +568,10 @@ let editId = null;
 const $ = id => document.getElementById(id);
 
 
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
 function escapeHtml(value){
 
   return String(value ?? '')
@@ -497,6 +584,28 @@ function escapeHtml(value){
 }
 
 
+/* =====================================================
+   SLUG GENERATOR
+===================================================== */
+
+function makeSlug(value){
+
+  return String(value || '')
+    .toLowerCase()
+    .trim()
+    .replace(/['’]/g,'')
+    .replace(/[^a-z0-9\s-]/g,'')
+    .replace(/\s+/g,'-')
+    .replace(/-+/g,'-')
+    .replace(/^-+|-+$/g,'');
+
+}
+
+
+/* =====================================================
+   SHOW MESSAGE
+===================================================== */
+
 function showMsg(message,type){
 
   const box = $('msg');
@@ -505,11 +614,17 @@ function showMsg(message,type){
   box.className = 'msg show ' + type;
 
   setTimeout(()=>{
+
     box.className = 'msg';
+
   },4000);
 
 }
 
+
+/* =====================================================
+   INIT
+===================================================== */
 
 async function init(){
 
@@ -527,12 +642,17 @@ async function init(){
 }
 
 
+/* =====================================================
+   LOAD VIDEOS
+===================================================== */
+
 async function load(){
 
   const result = await db
     .from('blog_videos')
     .select('*')
     .order('created_at',{ascending:false});
+
 
   if(result.error){
 
@@ -541,6 +661,7 @@ async function load(){
 
   }
 
+
   records = result.data || [];
 
   render();
@@ -548,15 +669,20 @@ async function load(){
 }
 
 
+/* =====================================================
+   RENDER
+===================================================== */
+
 function render(){
 
   const rows = $('rows');
+
 
   if(!records.length){
 
     rows.innerHTML = `
       <tr>
-        <td colspan="9" class="empty">
+        <td colspan="10" class="empty">
           No videos added yet.
         </td>
       </tr>
@@ -570,25 +696,33 @@ function render(){
   rows.innerHTML = records.map(video => {
 
     const thumb = video.thumbnail_url
+
       ? `<img
           src="${escapeHtml(video.thumbnail_url)}"
           class="video-mini"
           alt="">`
+
       : `<div class="video-mini"></div>`;
 
 
     const status = video.is_published
+
       ? `<span class="status published">Published</span>`
+
       : `<span class="status draft">Draft</span>`;
 
 
     const featured = video.featured
+
       ? `<span class="status featured">Featured</span>`
+
       : '—';
 
 
     const created = video.created_at
+
       ? new Date(video.created_at).toLocaleDateString()
+
       : '—';
 
 
@@ -599,6 +733,10 @@ function render(){
 
         <td>
           <strong>${escapeHtml(video.title)}</strong>
+        </td>
+
+        <td>
+          ${escapeHtml(video.slug || '—')}
         </td>
 
         <td>
@@ -649,37 +787,66 @@ function render(){
 }
 
 
+/* =====================================================
+   EDIT VIDEO
+===================================================== */
+
 function editVideo(id){
 
   const video = records.find(x => x.id === id);
 
   if(!video) return;
 
+
   editId = id;
 
+
   $('formTitle').textContent = 'Edit Video';
+
   $('saveBtn').textContent = 'Update Video';
+
   $('cancelBtn').style.display = 'inline-block';
 
+
   $('title').value = video.title || '';
+
+  $('slug').value = video.slug || makeSlug(video.title || '');
+
   $('video_url').value = video.video_url || '';
+
   $('thumbnail_url').value = video.thumbnail_url || '';
+
   $('description').value = video.description || '';
+
   $('category').value = video.category || '';
+
   $('author').value = video.author || '';
+
   $('duration').value = video.duration || '';
+
   $('featured').checked = !!video.featured;
+
   $('is_published').checked = !!video.is_published;
+
 
   updatePreview();
 
+  updateSlugPreview();
+
+
   $('formBox').scrollIntoView({
+
     behavior:'smooth',
     block:'start'
+
   });
 
 }
 
+
+/* =====================================================
+   RESET FORM
+===================================================== */
 
 function resetForm(){
 
@@ -687,14 +854,24 @@ function resetForm(){
 
   $('videoForm').reset();
 
+
   $('formTitle').textContent = 'Add Video';
+
   $('saveBtn').textContent = 'Add Video';
+
   $('cancelBtn').style.display = 'none';
+
 
   updatePreview();
 
+  updateSlugPreview();
+
 }
 
+
+/* =====================================================
+   DELETE VIDEO
+===================================================== */
 
 async function deleteVideo(id){
 
@@ -704,78 +881,150 @@ async function deleteVideo(id){
 
 
   if(!confirm(
+
     'Delete this video?\n\n' +
+
     (video.title || '')
+
   )) return;
 
 
   const result = await db
+
     .from('blog_videos')
+
     .delete()
+
     .eq('id',id);
 
 
   if(result.error){
 
     showMsg(result.error.message,'error');
+
     return;
 
   }
 
 
-  showMsg('Video deleted successfully.','ok');
+  showMsg(
+    'Video deleted successfully.',
+    'ok'
+  );
+
 
   await load();
 
 }
 
 
+/* =====================================================
+   SAVE VIDEO
+===================================================== */
+
 $('videoForm').addEventListener('submit',async e => {
 
   e.preventDefault();
 
 
+  const title =
+    $('title').value.trim();
+
+
+  const videoUrl =
+    $('video_url').value.trim();
+
+
+  let slug =
+    $('slug').value.trim();
+
+
+  if(!title){
+
+    showMsg(
+      'Please enter a video title.',
+      'error'
+    );
+
+    return;
+
+  }
+
+
+  if(!videoUrl){
+
+    showMsg(
+      'Please enter the video URL.',
+      'error'
+    );
+
+    return;
+
+  }
+
+
+  /*
+    If slug is empty, automatically create it
+    from the video title.
+  */
+
+  if(!slug){
+
+    slug = makeSlug(title);
+
+  }
+
+
+  slug = makeSlug(slug);
+
+
+  if(!slug){
+
+    showMsg(
+      'Please enter a valid video slug.',
+      'error'
+    );
+
+    return;
+
+  }
+
+
   const payload = {
 
-    title: $('title').value.trim(),
+    title: title,
 
-    video_url: $('video_url').value.trim(),
+    slug: slug,
 
-    thumbnail_url: $('thumbnail_url').value.trim() || null,
+    video_url: videoUrl,
 
-    description: $('description').value.trim() || null,
+    thumbnail_url:
+      $('thumbnail_url').value.trim() || null,
 
-    category: $('category').value.trim() || null,
+    description:
+      $('description').value.trim() || null,
 
-    author: $('author').value.trim() || null,
+    category:
+      $('category').value.trim() || null,
 
-    duration: $('duration').value.trim() || null,
+    author:
+      $('author').value.trim() || null,
 
-    featured: $('featured').checked,
+    duration:
+      $('duration').value.trim() || null,
 
-    is_published: $('is_published').checked,
+    featured:
+      $('featured').checked,
 
-    published_at: $('is_published').checked
-      ? new Date().toISOString()
-      : null
+    is_published:
+      $('is_published').checked,
+
+    published_at:
+      $('is_published').checked
+        ? new Date().toISOString()
+        : null
 
   };
-
-
-  if(!payload.title){
-
-    showMsg('Please enter a video title.','error');
-    return;
-
-  }
-
-
-  if(!payload.video_url){
-
-    showMsg('Please enter the video URL.','error');
-    return;
-
-  }
 
 
   let result;
@@ -784,14 +1033,19 @@ $('videoForm').addEventListener('submit',async e => {
   if(editId){
 
     result = await db
+
       .from('blog_videos')
+
       .update(payload)
+
       .eq('id',editId);
 
   }else{
 
     result = await db
+
       .from('blog_videos')
+
       .insert(payload);
 
   }
@@ -799,17 +1053,42 @@ $('videoForm').addEventListener('submit',async e => {
 
   if(result.error){
 
-    showMsg(result.error.message,'error');
+    /*
+      PostgreSQL unique violation
+      for duplicate slug.
+    */
+
+    if(result.error.code === '23505'){
+
+      showMsg(
+        'This video slug already exists. Please use a different slug.',
+        'error'
+      );
+
+    }else{
+
+      showMsg(
+        result.error.message,
+        'error'
+      );
+
+    }
+
     return;
 
   }
 
 
   showMsg(
+
     editId
+
       ? 'Video updated successfully.'
+
       : 'Video added successfully.',
+
     'ok'
+
   );
 
 
@@ -820,49 +1099,190 @@ $('videoForm').addEventListener('submit',async e => {
 });
 
 
-$('cancelBtn').addEventListener('click',resetForm);
+/* =====================================================
+   CANCEL
+===================================================== */
 
+$('cancelBtn').addEventListener(
+  'click',
+  resetForm
+);
+
+
+/* =====================================================
+   PREVIEW
+===================================================== */
 
 function updatePreview(){
 
   const title =
+
     $('title').value.trim() ||
+
     'Video title will appear here';
 
+
   const description =
+
     $('description').value.trim() ||
+
     'Video description will appear here.';
 
+
   const thumbnail =
+
     $('thumbnail_url').value.trim();
 
 
-  $('previewTitle').textContent = title;
+  $('previewTitle').textContent =
+    title;
 
-  $('previewDescription').textContent = description;
+
+  $('previewDescription').textContent =
+    description;
 
 
   if(thumbnail){
 
-    $('previewImage').src = thumbnail;
-    $('previewImage').style.display = 'block';
+    $('previewImage').src =
+      thumbnail;
+
+    $('previewImage').style.display =
+      'block';
 
   }else{
 
-    $('previewImage').style.display = 'none';
-    $('previewImage').removeAttribute('src');
+    $('previewImage').style.display =
+      'none';
+
+    $('previewImage').removeAttribute(
+      'src'
+    );
 
   }
 
 }
 
 
-['title','description','thumbnail_url'].forEach(id => {
+/* =====================================================
+   SLUG PREVIEW
+===================================================== */
 
-  $(id).addEventListener('input',updatePreview);
+function updateSlugPreview(){
 
-});
+  const slug =
 
+    $('slug').value.trim() ||
+
+    makeSlug($('title').value.trim());
+
+
+  const preview = $('slugPreview');
+
+
+  if(!slug){
+
+    preview.textContent =
+      'Your video URL slug will appear here.';
+
+    return;
+
+  }
+
+
+  preview.textContent =
+    'Slug: ' + slug;
+
+}
+
+
+/* =====================================================
+   AUTO SLUG FROM TITLE
+===================================================== */
+
+let slugManuallyEdited = false;
+
+
+$('slug').addEventListener(
+  'input',
+  () => {
+
+    slugManuallyEdited = true;
+
+    updateSlugPreview();
+
+  }
+);
+
+
+$('title').addEventListener(
+  'input',
+  () => {
+
+    updatePreview();
+
+
+    if(!slugManuallyEdited){
+
+      $('slug').value =
+        makeSlug($('title').value);
+
+    }
+
+
+    updateSlugPreview();
+
+  }
+);
+
+
+$('description').addEventListener(
+  'input',
+  updatePreview
+);
+
+
+$('thumbnail_url').addEventListener(
+  'input',
+  updatePreview
+);
+
+
+/* =====================================================
+   RESET SLUG AUTO MODE WHEN FORM IS RESET
+===================================================== */
+
+const originalResetForm = resetForm;
+
+function resetForm(){
+
+  editId = null;
+
+  slugManuallyEdited = false;
+
+  $('videoForm').reset();
+
+
+  $('formTitle').textContent =
+    'Add Video';
+
+  $('saveBtn').textContent =
+    'Add Video';
+
+  $('cancelBtn').style.display =
+    'none';
+
+
+  updatePreview();
+
+  updateSlugPreview();
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
 
 init();
 
