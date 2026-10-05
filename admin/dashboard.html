@@ -13,12 +13,6 @@
 <script src="../js/admin.js"></script>
 
 <style>
-/* =========================
-   DASHBOARD ONLY
-   Existing admin.css/design
-   remains untouched.
-========================= */
-
 .dashboard-grid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
@@ -211,10 +205,6 @@
 
 <div class="admin-layout">
 
-<!-- =========================
-     SIDEBAR
-========================= -->
-
 <aside class="sidebar">
 
 <div class="brand">
@@ -296,6 +286,11 @@ Testimonials
 Blog / Articles
 </a>
 
+<!-- NEW VIDEO OPTION -->
+<a href="blog-videos.html">
+Blog / Videos
+</a>
+
 <a href="notifications.html">
 Notifications
 </a>
@@ -329,13 +324,7 @@ Logout
 </aside>
 
 
-<!-- =========================
-     MAIN
-========================= -->
-
 <main class="main">
-
-<!-- TOP -->
 
 <div class="top">
 
@@ -365,30 +354,16 @@ Welcome, <b data-admin-name>Admin</b>
 </div>
 
 
-<!-- =========================
-     MAIN STAT CARDS
-========================= -->
-
 <div class="dashboard-grid">
-
-
-<!-- LEADS -->
 
 <div class="card stat">
 
 <div class="stat-title">
-
 <small>Total Leads</small>
-
-<div class="stat-icon">
-📩
+<div class="stat-icon">📩</div>
 </div>
 
-</div>
-
-<div class="stat-value" id="totalLeads">
-0
-</div>
+<div class="stat-value" id="totalLeads">0</div>
 
 <span class="stat-sub">
 All admission enquiries
@@ -397,23 +372,14 @@ All admission enquiries
 </div>
 
 
-<!-- NEW LEADS -->
-
 <div class="card stat">
 
 <div class="stat-title">
-
 <small>New Leads</small>
-
-<div class="stat-icon">
-🆕
+<div class="stat-icon">🆕</div>
 </div>
 
-</div>
-
-<div class="stat-value" id="newLeads">
-0
-</div>
+<div class="stat-value" id="newLeads">0</div>
 
 <span class="stat-sub">
 New admissions
@@ -422,23 +388,14 @@ New admissions
 </div>
 
 
-<!-- STUDENTS -->
-
 <div class="card stat">
 
 <div class="stat-title">
-
 <small>Total Students</small>
-
-<div class="stat-icon">
-👨‍🎓
+<div class="stat-icon">👨‍🎓</div>
 </div>
 
-</div>
-
-<div class="stat-value" id="totalStudents">
-0
-</div>
+<div class="stat-value" id="totalStudents">0</div>
 
 <span class="stat-sub">
 Active students
@@ -447,23 +404,14 @@ Active students
 </div>
 
 
-<!-- TEACHERS -->
-
 <div class="card stat">
 
 <div class="stat-title">
-
 <small>Total Teachers</small>
-
-<div class="stat-icon">
-👨‍🏫
+<div class="stat-icon">👨‍🏫</div>
 </div>
 
-</div>
-
-<div class="stat-value" id="totalTeachers">
-0
-</div>
+<div class="stat-value" id="totalTeachers">0</div>
 
 <span class="stat-sub">
 Active teachers
@@ -472,23 +420,14 @@ Active teachers
 </div>
 
 
-<!-- COURSES -->
-
 <div class="card stat">
 
 <div class="stat-title">
-
 <small>Total Courses</small>
-
-<div class="stat-icon">
-📚
+<div class="stat-icon">📚</div>
 </div>
 
-</div>
-
-<div class="stat-value" id="totalCourses">
-0
-</div>
+<div class="stat-value" id="totalCourses">0</div>
 
 <span class="stat-sub">
 Active courses
@@ -497,23 +436,14 @@ Active courses
 </div>
 
 
-<!-- TODAY CLASSES -->
-
 <div class="card stat">
 
 <div class="stat-title">
-
 <small>Today's Classes</small>
-
-<div class="stat-icon">
-🗓️
+<div class="stat-icon">🗓️</div>
 </div>
 
-</div>
-
-<div class="stat-value" id="todayClasses">
-0
-</div>
+<div class="stat-value" id="todayClasses">0</div>
 
 <span class="stat-sub">
 Classes scheduled today
@@ -522,23 +452,14 @@ Classes scheduled today
 </div>
 
 
-<!-- PENDING PAYMENTS -->
-
 <div class="card stat">
 
 <div class="stat-title">
-
 <small>Pending Payments</small>
-
-<div class="stat-icon">
-💰
+<div class="stat-icon">💰</div>
 </div>
 
-</div>
-
-<div class="stat-value" id="pendingPayments">
-0
-</div>
+<div class="stat-value" id="pendingPayments">0</div>
 
 <span class="stat-sub">
 Student payments
@@ -547,23 +468,14 @@ Student payments
 </div>
 
 
-<!-- PENDING SALARY -->
-
 <div class="card stat">
 
 <div class="stat-title">
-
 <small>Pending Salary</small>
-
-<div class="stat-icon">
-💵
+<div class="stat-icon">💵</div>
 </div>
 
-</div>
-
-<div class="stat-value" id="pendingSalary">
-0
-</div>
+<div class="stat-value" id="pendingSalary">0</div>
 
 <span class="stat-sub">
 Teacher salary records
@@ -573,10 +485,6 @@ Teacher salary records
 
 </div>
 
-
-<!-- =========================
-     TODAY CLASSES
-========================= -->
 
 <div class="card">
 
@@ -597,14 +505,12 @@ Teacher salary records
 <thead>
 
 <tr>
-
 <th>Student</th>
 <th>Teacher</th>
 <th>Course</th>
 <th>Time</th>
 <th>Duration</th>
 <th>Status</th>
-
 </tr>
 
 </thead>
@@ -626,14 +532,8 @@ Loading today's classes...
 </div>
 
 
-<!-- =========================
-     TWO COLUMNS
-========================= -->
-
 <div class="dashboard-two">
 
-
-<!-- RECENT ADMISSIONS -->
 
 <div class="card">
 
@@ -654,13 +554,11 @@ View All
 <thead>
 
 <tr>
-
 <th>Student</th>
 <th>Course</th>
 <th>WhatsApp</th>
 <th>Status</th>
 <th>Date</th>
-
 </tr>
 
 </thead>
@@ -681,8 +579,6 @@ Loading...
 
 </div>
 
-
-<!-- QUICK ACTIONS -->
 
 <div class="card">
 
@@ -726,16 +622,20 @@ Loading...
 🏦 Payment Methods
 </a>
 
-</div>
+<a class="quick-btn" href="articles.html">
+📝 Blog / Articles
+</a>
+
+<a class="quick-btn" href="blog-videos.html">
+🎬 Blog / Videos
+</a>
 
 </div>
 
 </div>
 
+</div>
 
-<!-- =========================
-     FINANCE SUMMARY
-========================= -->
 
 <div class="dashboard-two">
 
@@ -759,11 +659,9 @@ Manage
 <thead>
 
 <tr>
-
 <th>Status</th>
 <th>Records</th>
 <th>Amount</th>
-
 </tr>
 
 </thead>
@@ -778,13 +676,9 @@ Paid
 </span>
 </td>
 
-<td id="paidPaymentCount">
-0
-</td>
+<td id="paidPaymentCount">0</td>
 
-<td class="money" id="paidPaymentAmount">
-0
-</td>
+<td class="money" id="paidPaymentAmount">0</td>
 
 </tr>
 
@@ -796,13 +690,9 @@ Pending
 </span>
 </td>
 
-<td id="pendingPaymentCount">
-0
-</td>
+<td id="pendingPaymentCount">0</td>
 
-<td class="money" id="pendingPaymentAmount">
-0
-</td>
+<td class="money" id="pendingPaymentAmount">0</td>
 
 </tr>
 
@@ -834,11 +724,9 @@ Manage
 <thead>
 
 <tr>
-
 <th>Status</th>
 <th>Records</th>
 <th>Amount</th>
-
 </tr>
 
 </thead>
@@ -853,13 +741,9 @@ Paid
 </span>
 </td>
 
-<td id="paidSalaryCount">
-0
-</td>
+<td id="paidSalaryCount">0</td>
 
-<td class="money" id="paidSalaryAmount">
-0
-</td>
+<td class="money" id="paidSalaryAmount">0</td>
 
 </tr>
 
@@ -871,13 +755,9 @@ Pending
 </span>
 </td>
 
-<td id="pendingSalaryCount">
-0
-</td>
+<td id="pendingSalaryCount">0</td>
 
-<td class="money" id="pendingSalaryAmount">
-0
-</td>
+<td class="money" id="pendingSalaryAmount">0</td>
 
 </tr>
 
@@ -891,10 +771,6 @@ Pending
 
 </div>
 
-
-<!-- =========================
-     SYSTEM ACTIVITY
-========================= -->
 
 <div class="card">
 
@@ -911,11 +787,9 @@ Pending
 <thead>
 
 <tr>
-
 <th>Item</th>
 <th>Current Count</th>
 <th>Action</th>
-
 </tr>
 
 </thead>
@@ -952,6 +826,12 @@ Pending
 <td><a class="btn" href="notifications.html">Open</a></td>
 </tr>
 
+<tr>
+<td>Blog Videos</td>
+<td>—</td>
+<td><a class="btn" href="blog-videos.html">Open</a></td>
+</tr>
+
 </tbody>
 
 </table>
@@ -966,19 +846,10 @@ Pending
 
 
 <script>
-/* =========================================================
-   ADMIN DASHBOARD
-   Supabase connection comes from ../js/admin.js
-========================================================= */
 
 (async()=>{
 
 "use strict";
-
-
-/* -----------------------------------------
-   Helpers
------------------------------------------ */
 
 const $ = id => document.getElementById(id);
 
@@ -1070,10 +941,6 @@ const formatTime = value => {
 };
 
 
-/* -----------------------------------------
-   Parse class_days safely
------------------------------------------ */
-
 const parseDays = value => {
 
   if(Array.isArray(value)) return value;
@@ -1127,10 +994,6 @@ const isTodaySchedule = schedule => {
 };
 
 
-/* -----------------------------------------
-   Determine class status
------------------------------------------ */
-
 const getClassStatus = schedule => {
 
   const time = String(schedule.class_time || "");
@@ -1173,10 +1036,6 @@ const getClassStatus = schedule => {
 };
 
 
-/* -----------------------------------------
-   Database
------------------------------------------ */
-
 if(!window.db){
 
   location.href="login.html";
@@ -1201,10 +1060,6 @@ $("todayText").textContent =
   }).format(new Date());
 
 
-/* -----------------------------------------
-   Main loader
------------------------------------------ */
-
 async function loadDashboard(){
 
   $("refreshBtn").disabled = true;
@@ -1212,11 +1067,6 @@ async function loadDashboard(){
 
 
   try{
-
-
-    /* =====================================
-       BASIC COUNTS
-    ===================================== */
 
     const [
 
@@ -1230,41 +1080,34 @@ async function loadDashboard(){
 
     ] = await Promise.all([
 
-
       db
       .from("admissions")
       .select("id",{count:"exact",head:true}),
-
 
       db
       .from("admissions")
       .select("id",{count:"exact",head:true})
       .eq("status","new"),
 
-
       db
       .from("students")
       .select("id",{count:"exact",head:true})
       .eq("status","active"),
-
 
       db
       .from("teachers")
       .select("id",{count:"exact",head:true})
       .eq("active",true),
 
-
       db
       .from("courses")
       .select("id",{count:"exact",head:true})
       .or("active.eq.true,is_active.eq.true"),
 
-
       db
       .from("class_schedules")
       .select("id",{count:"exact",head:true})
       .eq("active",true),
-
 
       db
       .from("notifications")
@@ -1274,60 +1117,18 @@ async function loadDashboard(){
     ]);
 
 
-    setText(
-      "totalLeads",
-      admissionsCount.count || 0
-    );
+    setText("totalLeads",admissionsCount.count || 0);
+    setText("newLeads",newAdmissionsCount.count || 0);
+    setText("totalStudents",studentsCount.count || 0);
+    setText("totalTeachers",teachersCount.count || 0);
+    setText("totalCourses",coursesCount.count || 0);
 
-    setText(
-      "newLeads",
-      newAdmissionsCount.count || 0
-    );
+    setText("overviewStudents",studentsCount.count || 0);
+    setText("overviewTeachers",teachersCount.count || 0);
+    setText("overviewCourses",coursesCount.count || 0);
+    setText("overviewSchedules",schedulesCount.count || 0);
+    setText("overviewNotifications",notificationsCount.count || 0);
 
-    setText(
-      "totalStudents",
-      studentsCount.count || 0
-    );
-
-    setText(
-      "totalTeachers",
-      teachersCount.count || 0
-    );
-
-    setText(
-      "totalCourses",
-      coursesCount.count || 0
-    );
-
-    setText(
-      "overviewStudents",
-      studentsCount.count || 0
-    );
-
-    setText(
-      "overviewTeachers",
-      teachersCount.count || 0
-    );
-
-    setText(
-      "overviewCourses",
-      coursesCount.count || 0
-    );
-
-    setText(
-      "overviewSchedules",
-      schedulesCount.count || 0
-    );
-
-    setText(
-      "overviewNotifications",
-      notificationsCount.count || 0
-    );
-
-
-    /* =====================================
-       TODAY'S CLASSES
-    ===================================== */
 
     const scheduleResult = await db
       .from("class_schedules")
@@ -1349,10 +1150,7 @@ async function loadDashboard(){
 
     if(scheduleResult.error){
 
-      console.error(
-        "Schedule error:",
-        scheduleResult.error
-      );
+      console.error("Schedule error:",scheduleResult.error);
 
       $("todayClassRows").innerHTML = `
         <tr>
@@ -1369,18 +1167,13 @@ async function loadDashboard(){
         .filter(isTodaySchedule);
 
 
-      setText(
-        "todayClasses",
-        todaySchedules.length
-      );
+      setText("todayClasses",todaySchedules.length);
 
       setText(
         "classCountText",
         `${todaySchedules.length} class${todaySchedules.length === 1 ? "" : "es"}`
       );
 
-
-      /* Get students */
 
       const studentIds = [
         ...new Set(
@@ -1414,9 +1207,7 @@ async function loadDashboard(){
         if(!r.error){
 
           (r.data || []).forEach(student=>{
-
             studentMap[student.id] = student;
-
           });
 
         }
@@ -1434,9 +1225,7 @@ async function loadDashboard(){
         if(!r.error){
 
           (r.data || []).forEach(teacher=>{
-
             teacherMap[teacher.id] = teacher;
-
           });
 
         }
@@ -1523,10 +1312,6 @@ async function loadDashboard(){
 
     }
 
-
-    /* =====================================
-       RECENT ADMISSIONS
-    ===================================== */
 
     const admissionsResult = await db
       .from("admissions")
@@ -1627,10 +1412,6 @@ async function loadDashboard(){
     }
 
 
-    /* =====================================
-       STUDENT PAYMENTS
-    ===================================== */
-
     const paymentsResult = await db
       .from("student_payments")
       .select("id,amount,currency,status");
@@ -1638,10 +1419,8 @@ async function loadDashboard(){
 
     let paidPaymentCount = 0;
     let pendingPaymentCount = 0;
-
     let paidPaymentAmount = 0;
     let pendingPaymentAmount = 0;
-
     let paymentCurrency = "";
 
 
@@ -1679,15 +1458,8 @@ async function loadDashboard(){
     }
 
 
-    setText(
-      "paidPaymentCount",
-      paidPaymentCount
-    );
-
-    setText(
-      "pendingPaymentCount",
-      pendingPaymentCount
-    );
+    setText("paidPaymentCount",paidPaymentCount);
+    setText("pendingPaymentCount",pendingPaymentCount);
 
     setText(
       "paidPaymentAmount",
@@ -1705,15 +1477,8 @@ async function loadDashboard(){
       )
     );
 
-    setText(
-      "pendingPayments",
-      pendingPaymentCount
-    );
+    setText("pendingPayments",pendingPaymentCount);
 
-
-    /* =====================================
-       TEACHER SALARIES
-    ===================================== */
 
     const salariesResult = await db
       .from("teacher_salaries")
@@ -1722,10 +1487,8 @@ async function loadDashboard(){
 
     let paidSalaryCount = 0;
     let pendingSalaryCount = 0;
-
     let paidSalaryAmount = 0;
     let pendingSalaryAmount = 0;
-
     let salaryCurrency = "";
 
 
@@ -1763,15 +1526,8 @@ async function loadDashboard(){
     }
 
 
-    setText(
-      "paidSalaryCount",
-      paidSalaryCount
-    );
-
-    setText(
-      "pendingSalaryCount",
-      pendingSalaryCount
-    );
+    setText("paidSalaryCount",paidSalaryCount);
+    setText("pendingSalaryCount",pendingSalaryCount);
 
     setText(
       "paidSalaryAmount",
@@ -1789,15 +1545,8 @@ async function loadDashboard(){
       )
     );
 
-    setText(
-      "pendingSalary",
-      pendingSalaryCount
-    );
+    setText("pendingSalary",pendingSalaryCount);
 
-
-    /* =====================================
-       SUCCESS MESSAGE
-    ===================================== */
 
     showMsg(
       "dashboardMsg",
@@ -1826,19 +1575,11 @@ async function loadDashboard(){
 }
 
 
-/* =========================================
-   REFRESH BUTTON
-========================================= */
-
 $("refreshBtn").addEventListener(
   "click",
   loadDashboard
 );
 
-
-/* =========================================
-   START
-========================================= */
 
 await loadDashboard();
 
