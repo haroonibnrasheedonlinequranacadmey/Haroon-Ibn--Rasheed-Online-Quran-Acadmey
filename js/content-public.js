@@ -44,6 +44,73 @@
 
 
   /* =====================================================
+     YOUTUBE VIDEO ID
+  ===================================================== */
+
+  function getYouTubeId(url){
+
+    if(!url) return '';
+
+    try{
+
+      const parsed = new URL(url);
+
+      if(
+        parsed.hostname.includes('youtube.com') &&
+        parsed.pathname === '/watch'
+      ){
+
+        return parsed.searchParams.get('v') || '';
+
+      }
+
+      if(
+        parsed.hostname.includes('youtu.be')
+      ){
+
+        return parsed.pathname
+          .replace('/', '')
+          .split('?')[0];
+
+      }
+
+      if(
+        parsed.hostname.includes('youtube.com') &&
+        parsed.pathname.startsWith('/shorts/')
+      ){
+
+        return parsed.pathname
+          .split('/shorts/')[1]
+          .split('/')[0];
+
+      }
+
+      if(
+        parsed.hostname.includes('youtube.com') &&
+        parsed.pathname.startsWith('/embed/')
+      ){
+
+        return parsed.pathname
+          .split('/embed/')[1]
+          .split('/')[0];
+
+      }
+
+    }catch(error){
+
+      console.error(
+        'Invalid YouTube URL:',
+        error
+      );
+
+    }
+
+    return '';
+
+  }
+
+
+  /* =====================================================
      ARTICLES
   ===================================================== */
 
@@ -65,7 +132,6 @@
         const data = result.data;
         const error = result.error;
 
-
         if(error){
 
           console.error(
@@ -85,14 +151,12 @@
           return;
         }
 
-
         if(!data || !data.length){
 
           articlesPublic.innerHTML = `
             <div class="card">
               <div class="card-body">
                 <h3>Articles coming soon</h3>
-
                 <p>
                   The academy will publish useful Quran
                   learning articles here.
@@ -104,46 +168,46 @@
           return;
         }
 
+        articlesPublic.innerHTML =
+          data.map(function(article){
 
-        articlesPublic.innerHTML = data.map(function(article){
+            return `
 
-          return `
+              <article class="card">
 
-            <article class="card">
+                ${
+                  article.image_url
+                  ? `
+                    <img
+                      src="${esc(article.image_url)}"
+                      alt="${esc(article.title)}"
+                      loading="lazy"
+                    >
+                  `
+                  : ''
+                }
 
-              ${
-                article.image_url
-                ? `
-                  <img
-                    src="${esc(article.image_url)}"
-                    alt="${esc(article.title)}"
-                    loading="lazy"
-                  >
-                `
-                : ''
-              }
+                <div class="card-body">
 
-              <div class="card-body">
+                  <h3>
+                    ${esc(article.title)}
+                  </h3>
 
-                <h3>
-                  ${esc(article.title)}
-                </h3>
+                  <p>
+                    ${esc(
+                      article.excerpt ||
+                      article.body ||
+                      ''
+                    )}
+                  </p>
 
-                <p>
-                  ${esc(
-                    article.excerpt ||
-                    article.body ||
-                    ''
-                  )}
-                </p>
+                </div>
 
-              </div>
+              </article>
 
-            </article>
+            `;
 
-          `;
-
-        }).join('');
+          }).join('');
 
       })
 
@@ -181,7 +245,6 @@
         const data = result.data;
         const error = result.error;
 
-
         if(error){
 
           console.error(
@@ -201,14 +264,12 @@
           return;
         }
 
-
         if(!data || !data.length){
 
           testimonialsPublic.innerHTML = `
             <div class="card">
               <div class="card-body">
                 <h3>Reviews coming soon</h3>
-
                 <p>
                   Student and family reviews will
                   appear here.
@@ -220,7 +281,6 @@
           return;
         }
 
-
         testimonialsPublic.innerHTML =
           data.map(function(item){
 
@@ -231,7 +291,6 @@
                 Number(item.rating || 5)
               )
             );
-
 
             return `
 
@@ -298,7 +357,6 @@
         const data = result.data;
         const error = result.error;
 
-
         if(error){
 
           console.error(
@@ -310,10 +368,7 @@
             <div class="card">
               <div class="card-body">
                 <h3>Videos unavailable</h3>
-
-                <p>
-                  Please try again later.
-                </p>
+                <p>Please try again later.</p>
               </div>
             </div>
           `;
@@ -321,14 +376,12 @@
           return;
         }
 
-
         if(!data || !data.length){
 
           videosPublic.innerHTML = `
             <div class="card">
               <div class="card-body">
                 <h3>Videos coming soon</h3>
-
                 <p>
                   Quran learning videos and
                   Islamic educational content
@@ -369,20 +422,62 @@
               );
 
 
-            const thumbnail =
-              video.thumbnail_url
+            const youtubeId =
+              getYouTubeId(
+                video.video_url
+              );
+
+
+            /* ---------------------------------------------
+               YOUTUBE PLAYER
+            --------------------------------------------- */
+
+            const player =
+              youtubeId
 
               ? `
-                <img
-                  src="${esc(video.thumbnail_url)}"
-                  alt="${title}"
-                  loading="lazy"
+                <div
+                  style="
+                    position:relative;
+                    width:100%;
+                    padding-bottom:56.25%;
+                    height:0;
+                    overflow:hidden;
+                    border-radius:12px;
+                    background:#000;
+                  "
                 >
+
+                  <iframe
+                    src="https://www.youtube.com/embed/${esc(youtubeId)}"
+                    title="${title}"
+                    style="
+                      position:absolute;
+                      top:0;
+                      left:0;
+                      width:100%;
+                      height:100%;
+                      border:0;
+                    "
+                    loading="lazy"
+                    allow="
+                      accelerometer;
+                      autoplay;
+                      clipboard-write;
+                      encrypted-media;
+                      gyroscope;
+                      picture-in-picture;
+                      web-share
+                    "
+                    allowfullscreen>
+                  </iframe>
+
+                </div>
               `
 
               : `
                 <div class="video-placeholder">
-                  ▶
+                  ▶ Video unavailable
                 </div>
               `;
 
@@ -424,19 +519,9 @@
 
                 <div class="video-public-thumbnail">
 
-                  ${thumbnail}
+                  ${player}
 
                   ${featured}
-
-                  ${
-                    duration
-                    ? `
-                      <span class="video-duration">
-                        ${duration}
-                      </span>
-                    `
-                    : ''
-                  }
 
                 </div>
 
@@ -478,15 +563,41 @@
                     video.video_url
 
                     ? `
-                      <a
-                        href="${esc(video.video_url)}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="video-watch-btn">
 
-                        ▶ Watch Video
+                      <div
+                        style="
+                          display:flex;
+                          gap:10px;
+                          flex-wrap:wrap;
+                          margin-top:15px;
+                        "
+                      >
 
-                      </a>
+                        <button
+                          type="button"
+                          onclick="copyVideoLink('${esc(
+                            video.video_url
+                          )}')"
+                          class="video-watch-btn"
+                        >
+                          🔗 Copy Video Link
+                        </button>
+
+
+                        <button
+                          type="button"
+                          onclick="shareVideo('${esc(
+                            video.video_url
+                          )}','${esc(
+                            video.title
+                          )}')"
+                          class="video-watch-btn"
+                        >
+                          📤 Share
+                        </button>
+
+                      </div>
+
                     `
 
                     : ''
@@ -512,6 +623,75 @@
       });
 
   }
+
+
+  /* =====================================================
+     COPY VIDEO LINK
+  ===================================================== */
+
+  window.copyVideoLink =
+    function(url){
+
+      if(!url){
+
+        return;
+
+      }
+
+      navigator.clipboard
+        .writeText(url)
+
+        .then(function(){
+
+          alert(
+            'Video link copied successfully!'
+          );
+
+        })
+
+        .catch(function(){
+
+          prompt(
+            'Copy this video link:',
+            url
+          );
+
+        });
+
+    };
+
+
+  /* =====================================================
+     SHARE VIDEO
+  ===================================================== */
+
+  window.shareVideo =
+    function(url,title){
+
+      if(
+        navigator.share
+      ){
+
+        navigator.share({
+
+          title:
+            title ||
+            'Quran Video',
+
+          url:url
+
+        })
+        .catch(function(){});
+
+      }
+
+      else{
+
+        window.copyVideoLink(url);
+
+      }
+
+    };
 
 
 })();
