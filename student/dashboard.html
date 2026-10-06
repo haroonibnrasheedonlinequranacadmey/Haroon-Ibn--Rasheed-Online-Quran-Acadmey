@@ -1842,6 +1842,7 @@ async function loadDashboard(){
 
     const studentTimeZone =
       safeTimeZone(
+        student.timezone ||
         DEFAULT_SCHEDULE_TIMEZONE
       );
 
@@ -1883,13 +1884,13 @@ async function loadDashboard(){
             title,
             description,
             image_url,
-            course_url,
-            status,
+            link_url,
+            active,
             created_at
           `)
           .eq(
-            "status",
-            "active"
+            "active",
+            true
           )
           .order(
             "created_at",
@@ -1956,10 +1957,7 @@ async function loadDashboard(){
                           </div>
 
                           <span class="course-mini-status">
-                            ${escapeHTML(
-                              course.status ||
-                              "Active"
-                            )}
+                            ${course.active ? "Active" : "Inactive"}
                           </span>
 
                         </div>
