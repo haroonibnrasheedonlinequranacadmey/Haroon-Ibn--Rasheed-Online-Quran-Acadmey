@@ -1776,13 +1776,14 @@ async function loadDashboard(){
         .from("students")
         .select(`
           id,
-          account_id,
+          user_id,
           full_name,
           status,
-          course
+          course,
+          timezone
         `)
         .eq(
-          "account_id",
+          "user_id",
           uid
         )
         .maybeSingle();
@@ -1884,13 +1885,13 @@ async function loadDashboard(){
             title,
             description,
             image_url,
-            link_url,
-            active,
+            course_url,
+            status,
             created_at
           `)
           .eq(
-            "active",
-            true
+            "status",
+            "active"
           )
           .order(
             "created_at",
@@ -1957,7 +1958,10 @@ async function loadDashboard(){
                           </div>
 
                           <span class="course-mini-status">
-                            ${course.active ? "Active" : "Inactive"}
+                            ${escapeHTML(
+                              course.status ||
+                              "Active"
+                            )}
                           </span>
 
                         </div>
