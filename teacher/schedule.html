@@ -966,57 +966,6 @@ function renderSchedules(){
           let actions = "";
 
 
-          /*
-            Google Meet
-          */
-
-          if(
-            schedule.google_meet_url
-          ){
-
-            actions += `
-              <a
-                href="${safeHtml(schedule.google_meet_url)}"
-                target="_blank"
-                rel="noopener">
-
-                Meet
-
-              </a>
-            `;
-
-          }
-
-
-          /*
-            Existing Classroom
-          */
-
-          if(
-            schedule.classroom_code
-          ){
-
-            const classroomUrl =
-              "https://haroonibnrasheedonlinequranacadmey.github.io/haroon-quran-classroom/?code="
-              +
-              encodeURIComponent(
-                schedule.classroom_code
-              );
-
-
-            actions += `
-              <a
-                href="${classroomUrl}"
-                target="_blank"
-                rel="noopener">
-
-                Classroom
-
-              </a>
-            `;
-
-          }
-
 
           cell.innerHTML += `
 
@@ -1247,6 +1196,7 @@ async function loadTeacherSchedule(){
           .from("students")
           .select(`
             id,
+            user_id,
             full_name
           `)
           .in(
@@ -1266,19 +1216,40 @@ async function loadTeacherSchedule(){
 
         const studentMap = {};
 
+        (students || []).forEach(student => {
+          const name = String(student.full_name || "").trim();
 
-        (
-          students || []
-        ).forEach(
-          student => {
+          studentMap[String(student.id)] = name;
 
-            studentMap[
-              student.id
-            ] =
-              student.full_name;
-
+          if(student.user_id){
+            studentMap[String(student.user_id)] = name;
           }
-        );
+        });
+
+        /* If students.full_name is empty, use the linked profile name. */
+        const missingProfileIds = (students || [])
+          .filter(student =>
+            !String(student.full_name || "").trim() &&
+            student.user_id
+          )
+          .map(student => String(student.user_id));
+
+        if(missingProfileIds.length){
+          const { data:profiles, error:profileError } =
+            await db
+              .from("profiles")
+              .select("id,full_name")
+              .in("id", [...new Set(missingProfileIds)]);
+
+          if(!profileError){
+            (profiles || []).forEach(profile => {
+              const name = String(profile.full_name || "").trim();
+              if(name){
+                studentMap[String(profile.id)] = name;
+              }
+            });
+          }
+        }
 
 
         schedules =
