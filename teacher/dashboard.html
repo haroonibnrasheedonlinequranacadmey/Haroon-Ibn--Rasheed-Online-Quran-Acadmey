@@ -1171,19 +1171,14 @@ teacher_id
 .eq("id",studentId)
 .maybeSingle();
 
-/* Keep the student row even when full_name is empty.
-   It lets us safely use the linked profile name below. */
-const studentById =
-(!result.error && result.data)
-? result.data
-: null;
 
 if(
-studentById &&
-String(studentById.full_name || "").trim()
+!result.error &&
+result.data &&
+String(result.data.full_name || "").trim()
 ){
 
-return studentById;
+return result.data;
 
 }
 
@@ -1214,6 +1209,27 @@ String(result.data.full_name || "").trim()
 
 return result.data;
 
+}
+
+
+/* PROFILE FALLBACK: use the linked auth/profile name
+   only when the student row has no usable full_name. */
+if(!result.error && result.data && result.data.user_id){
+
+  const profileResult = await db
+    .from("profiles")
+    .select("id,full_name")
+    .eq("id", result.data.user_id)
+    .maybeSingle();
+
+  if(
+    !profileResult.error &&
+    String(profileResult.data?.full_name || "").trim()
+  ){
+    result.data.full_name =
+      String(profileResult.data.full_name).trim();
+    return result.data;
+  }
 }
 
 
@@ -1263,19 +1279,7 @@ return found;
 }
 
 
-/* FOURTH: linked profile */
-
-/* If the student row was found by students.id, use its
-   user_id for the profile lookup. This fixes cases where
-   students.full_name is empty but profiles.full_name exists. */
-const profileIds = [];
-
-if(studentById?.user_id)
-profileIds.push(String(studentById.user_id));
-
-profileIds.push(String(studentId));
-
-for(const profileId of [...new Set(profileIds)]){
+/* FOURTH: profiles */
 
 result =
 await db
@@ -1285,8 +1289,9 @@ id,
 full_name,
 role
 `)
-.eq("id",profileId)
+.eq("id",studentId)
 .maybeSingle();
+
 
 if(
 !result.error &&
@@ -1296,17 +1301,15 @@ String(result.data.full_name || "").trim()
 
 return {
 
-id:studentById?.id || result.data.id,
-user_id:studentById?.user_id || result.data.id,
+id:result.data.id,
+user_id:result.data.id,
 full_name:result.data.full_name,
-course:studentById?.course || "",
-status:studentById?.status || "",
-timezone:studentById?.timezone || BASE_TIMEZONE,
-teacher_id:studentById?.teacher_id || teacherId || null
+course:"",
+status:"",
+timezone:BASE_TIMEZONE,
+teacher_id:teacherId || null
 
 };
-
-}
 
 }
 
@@ -1423,6 +1426,32 @@ currentDay
 );
 
 });
+
+
+/* =====================================================
+   STUDENT NAME HELPER
+===================================================== */
+
+async function getStudentDisplayName(student){
+
+  const directName = String(student?.full_name || "").trim();
+  if(directName) return directName;
+
+  if(student?.user_id){
+    const profileResult = await db
+      .from("profiles")
+      .select("full_name")
+      .eq("id", student.user_id)
+      .maybeSingle();
+
+    if(!profileResult.error){
+      const profileName = String(profileResult.data?.full_name || "").trim();
+      if(profileName) return profileName;
+    }
+  }
+
+  return "Student";
+}
 
 
 /* =====================================================
@@ -1562,7 +1591,7 @@ student_joined_at,
 class,
 test,
 session,
-timezone
+session_timezone
 `)
 .in("schedule_id",scheduleIds)
 .eq("class_date",todayDate);
@@ -1744,6 +1773,17 @@ return;
    RENDER
 ===================================================== */
 
+const displayNames = new Map();
+
+for(const schedule of todaySchedules){
+  const student = studentMap.get(String(schedule.student_id || "")) || null;
+  displayNames.set(
+    String(schedule.id),
+    await getStudentDisplayName(student)
+  );
+}
+
+
 rows.innerHTML =
 todaySchedules.map(function(schedule){
 
@@ -1853,12 +1893,8 @@ status = "late";
 */
 
 const studentName =
-student &&
-String(student.full_name || "").trim()
-?
-String(student.full_name).trim()
-:
-"Student";
+ displayNames.get(String(schedule.id)) ||
+ "Student";
 
 
 const course =
@@ -2311,7 +2347,7 @@ status:"active",
 started_at:
 new Date().toISOString(),
 
-timezone:
+session_timezone:
 getTeacherTimezone()
 
 },
