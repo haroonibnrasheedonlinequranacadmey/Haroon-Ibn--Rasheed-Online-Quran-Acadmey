@@ -1776,14 +1776,13 @@ async function loadDashboard(){
         .from("students")
         .select(`
           id,
-          user_id,
+          account_id,
           full_name,
           status,
-          course,
-          timezone
+          course
         `)
         .eq(
-          "user_id",
+          "account_id",
           uid
         )
         .maybeSingle();
@@ -1843,7 +1842,6 @@ async function loadDashboard(){
 
     const studentTimeZone =
       safeTimeZone(
-        student.timezone ||
         DEFAULT_SCHEDULE_TIMEZONE
       );
 
