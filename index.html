@@ -511,6 +511,139 @@ box-sizing:border-box;
 .academy-chat-form{padding:14px}.academy-chat-form input,.academy-chat-form textarea{width:100%;padding:10px;margin:5px 0;border:1px solid #cfe4e9;border-radius:8px;font:inherit;box-sizing:border-box}.academy-chat-form button{width:100%;padding:11px;border:0;border-radius:9px;background:#0b9fbb;color:#fff;font-weight:700}.academy-chat-form #chatStatus{font-size:12px;margin-top:7px}
 @media(max-width:600px){.academy-chat-fab{right:16px;bottom:16px;width:58px;height:58px}.academy-chat-panel{right:16px;bottom:86px}}
 </style>
+
+<style id="single-page-blog-style">
+/* =====================================================
+   SINGLE-PAGE BLOG / ARTICLE / VIDEO VIEWER
+   Everything opens inside index.html
+===================================================== */
+.blog-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:15px;
+  align-items:center;
+}
+.blog-actions .btn,
+.blog-actions button{
+  margin:0 !important;
+  min-width:0;
+  white-space:nowrap;
+}
+.blog-action-share,
+.blog-action-copy{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+.article-detail-overlay,
+.video-detail-overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:20000;
+  background:rgba(3,28,38,.78);
+  padding:25px 15px;
+  overflow:auto;
+}
+.article-detail-overlay.open,
+.video-detail-overlay.open{display:block}
+.single-detail-box{
+  width:100%;
+  max-width:950px;
+  margin:20px auto;
+  background:#fff;
+  border-radius:20px;
+  box-shadow:0 20px 70px rgba(0,0,0,.35);
+  overflow:hidden;
+}
+.single-detail-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  padding:16px 20px;
+  border-bottom:1px solid #d9edf1;
+  background:#fff;
+  position:sticky;
+  top:0;
+  z-index:2;
+}
+.single-detail-head strong{color:var(--dark);font-size:18px}
+.single-detail-close{
+  border:0;
+  background:#e7f7fa;
+  color:var(--dark);
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  font-size:25px;
+  line-height:1;
+  cursor:pointer;
+}
+.single-detail-content{padding:25px}
+.single-detail-content h2{
+  color:var(--dark);
+  font-size:34px;
+  line-height:1.25;
+  margin-bottom:10px;
+}
+.single-detail-meta{color:var(--gray);margin-bottom:20px}
+.single-detail-image{
+  width:100%;
+  max-height:520px;
+  object-fit:cover;
+  border-radius:14px;
+  margin-bottom:22px;
+}
+.single-detail-body{
+  color:var(--dark);
+  line-height:1.85;
+  white-space:pre-wrap;
+  word-break:break-word;
+}
+.single-video-player{
+  position:relative;
+  width:100%;
+  padding-bottom:56.25%;
+  height:0;
+  background:#000;
+  border-radius:14px;
+  overflow:hidden;
+  margin:20px 0;
+}
+.single-video-player iframe{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  border:0;
+}
+.single-video-description{
+  color:var(--dark);
+  line-height:1.8;
+  white-space:pre-wrap;
+  word-break:break-word;
+  padding:18px;
+  background:var(--light);
+  border-radius:14px;
+}
+.single-view-message{
+  padding:25px;
+  text-align:center;
+  color:var(--gray);
+}
+@media(max-width:680px){
+  .blog-actions{display:grid;grid-template-columns:1fr;gap:9px}
+  .blog-actions .btn,.blog-actions button{width:100%;display:flex}
+  .single-detail-overlay,.video-detail-overlay{padding:8px}
+  .single-detail-box{margin:8px auto;border-radius:14px}
+  .single-detail-head{padding:12px 14px}
+  .single-detail-content{padding:18px 15px}
+  .single-detail-content h2{font-size:27px}
+}
+</style>
+
 </head>
 
 <body>
@@ -2492,7 +2625,363 @@ Online Quran Academy
 <script src="js/public.js"></script>
 <script src="js/chat.js"></script>
 <script src="js/payments-public.js"></script>
-<script src="js/content-public.js"></script>
+<!-- =====================================================
+     SINGLE-PAGE PUBLIC CONTENT SYSTEM
+     Articles, Videos and Reviews all work inside index.html
+===================================================== -->
+<script>
+(function(){
+  'use strict';
+
+  const cfg = window.SUPABASE_CONFIG || {};
+
+  if(!window.supabase || !cfg.url || !cfg.anonKey){
+    console.error('Supabase configuration not found.');
+    return;
+  }
+
+  const db = window.supabase.createClient(cfg.url, cfg.anonKey);
+
+  function esc(value){
+    return String(value ?? '').replace(/[&<>"']/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  function youtubeId(url){
+    if(!url) return '';
+    try{
+      const u=new URL(url);
+      const host=u.hostname.toLowerCase();
+      if(host.includes('youtube.com')){
+        if(u.pathname==='/watch') return u.searchParams.get('v') || '';
+        if(u.pathname.startsWith('/shorts/')) return u.pathname.split('/shorts/')[1].split('/')[0];
+        if(u.pathname.startsWith('/embed/')) return u.pathname.split('/embed/')[1].split('/')[0];
+      }
+      if(host.includes('youtu.be')) return u.pathname.replace(/^\//,'').split('/')[0];
+    }catch(e){}
+    return '';
+  }
+
+  function absoluteUrl(value){
+    return new URL(value,window.location.href).href;
+  }
+
+  function copyText(value,successText){
+    const done=function(){ alert(successText || 'Link copied!'); };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(value).then(done).catch(function(){prompt('Copy this link:',value);});
+    }else{
+      prompt('Copy this link:',value);
+    }
+  }
+
+  window.copyAcademyVideo=function(path){
+    copyText(absoluteUrl(path),'Website video link copied!');
+  };
+
+  window.shareAcademyVideo=function(path,title){
+    const url=absoluteUrl(path);
+    if(navigator.share){
+      navigator.share({title:title || 'Quran Video',text:'Watch this video on Haroon Ibn Rasheed Online Quran Academy:',url:url}).catch(function(){});
+    }else{
+      copyText(url,'Website video link copied!');
+    }
+  };
+
+  /* -------------------------
+     DETAIL VIEWERS
+  ------------------------- */
+  function ensureViewers(){
+    if(!document.getElementById('articleDetailOverlay')){
+      const wrap=document.createElement('div');
+      wrap.id='articleDetailOverlay';
+      wrap.className='article-detail-overlay';
+      wrap.innerHTML=`
+        <div class="single-detail-box" role="dialog" aria-modal="true" aria-labelledby="articleDetailTitle">
+          <div class="single-detail-head">
+            <strong>Article Details</strong>
+            <button class="single-detail-close" type="button" onclick="closeArticleDetail()" aria-label="Close">×</button>
+          </div>
+          <div class="single-detail-content">
+            <h2 id="articleDetailTitle"></h2>
+            <div id="articleDetailMeta" class="single-detail-meta"></div>
+            <img id="articleDetailImage" class="single-detail-image" style="display:none" alt="">
+            <div id="articleDetailBody" class="single-detail-body"></div>
+          </div>
+        </div>`;
+      document.body.appendChild(wrap);
+      wrap.addEventListener('click',function(e){if(e.target===wrap) closeArticleDetail();});
+    }
+
+    if(!document.getElementById('videoDetailOverlay')){
+      const wrap=document.createElement('div');
+      wrap.id='videoDetailOverlay';
+      wrap.className='video-detail-overlay';
+      wrap.innerHTML=`
+        <div class="single-detail-box" role="dialog" aria-modal="true" aria-labelledby="videoDetailTitle">
+          <div class="single-detail-head">
+            <strong>Video</strong>
+            <button class="single-detail-close" type="button" onclick="closeVideoDetail()" aria-label="Close">×</button>
+          </div>
+          <div class="single-detail-content">
+            <h2 id="videoDetailTitle"></h2>
+            <div id="videoDetailMeta" class="single-detail-meta"></div>
+            <div id="videoDetailPlayer" class="single-video-player"></div>
+            <div id="videoDetailActions" class="blog-actions"></div>
+            <div id="videoDetailDescription" class="single-video-description" style="display:none"></div>
+          </div>
+        </div>`;
+      document.body.appendChild(wrap);
+      wrap.addEventListener('click',function(e){if(e.target===wrap) closeVideoDetail();});
+    }
+  }
+
+  window.closeArticleDetail=function(){
+    const el=document.getElementById('articleDetailOverlay');
+    if(el) el.classList.remove('open');
+    document.body.style.overflow='';
+  };
+
+  window.closeVideoDetail=function(){
+    const el=document.getElementById('videoDetailOverlay');
+    if(el) el.classList.remove('open');
+    const player=document.getElementById('videoDetailPlayer');
+    if(player) player.innerHTML='';
+    document.body.style.overflow='';
+  };
+
+  window.openArticleDetail=function(id){
+    ensureViewers();
+    const overlay=document.getElementById('articleDetailOverlay');
+    const title=document.getElementById('articleDetailTitle');
+    const meta=document.getElementById('articleDetailMeta');
+    const img=document.getElementById('articleDetailImage');
+    const body=document.getElementById('articleDetailBody');
+
+    overlay.classList.add('open');
+    document.body.style.overflow='hidden';
+    title.textContent='Loading article...';
+    meta.textContent='';
+    body.textContent='';
+    img.style.display='none';
+
+    db.from('articles').select('*').eq('id',id).eq('published',true).maybeSingle().then(function(r){
+      if(r.error || !r.data){
+        title.textContent='Article not found';
+        body.textContent='This article may have been removed or is not published.';
+        return;
+      }
+      const a=r.data;
+      title.textContent=a.title || 'Article';
+      document.title=(a.title || 'Article')+' | Haroon Ibn Rasheed Online Quran Academy';
+      if(a.created_at){
+        const d=new Date(a.created_at);
+        meta.textContent=isNaN(d.getTime())?'':d.toLocaleDateString();
+      }
+      if(a.image_url){
+        img.src=a.image_url;
+        img.alt=a.title || 'Article';
+        img.style.display='block';
+      }
+      body.textContent=a.body || a.excerpt || '';
+    }).catch(function(){
+      title.textContent='Article unavailable';
+      body.textContent='Please try again later.';
+    });
+  };
+
+  window.openVideoDetail=function(id){
+    ensureViewers();
+    const overlay=document.getElementById('videoDetailOverlay');
+    const title=document.getElementById('videoDetailTitle');
+    const meta=document.getElementById('videoDetailMeta');
+    const player=document.getElementById('videoDetailPlayer');
+    const actions=document.getElementById('videoDetailActions');
+    const description=document.getElementById('videoDetailDescription');
+
+    overlay.classList.add('open');
+    document.body.style.overflow='hidden';
+    title.textContent='Loading video...';
+    meta.textContent='';
+    player.innerHTML='<div style="color:#fff;position:absolute;inset:0;display:flex;align-items:center;justify-content:center">Loading...</div>';
+    actions.innerHTML='';
+    description.style.display='none';
+    description.textContent='';
+
+    db.from('blog_videos').select('*').eq('id',id).eq('is_published',true).maybeSingle().then(function(r){
+      if(r.error || !r.data){
+        title.textContent='Video not found';
+        player.innerHTML='<div style="color:#fff;position:absolute;inset:0;display:flex;align-items:center;justify-content:center">This video may have been removed or is not published.</div>';
+        return;
+      }
+      const v=r.data;
+      title.textContent=v.title || 'Quran Video';
+      const metaParts=[v.category,v.author,v.duration].filter(Boolean);
+      meta.textContent=metaParts.join(' • ');
+
+      const id=youtubeId(v.video_url);
+      if(id){
+        const safeTitle=String(v.title || 'Quran Video').replace(/"/g,'&quot;');
+        player.innerHTML='<iframe src="https://www.youtube.com/embed/'+encodeURIComponent(id)+'" title="'+safeTitle+'" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
+      }else{
+        player.innerHTML='<div style="color:#fff;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;text-align:center">Video source is not available.</div>';
+      }
+
+      const slug=v.slug ? String(v.slug) : '';
+      const websitePath=slug ? '#blog/video/'+encodeURIComponent(slug) : '#blog';
+      actions.innerHTML='';
+
+      const share=document.createElement('button');
+      share.type='button';
+      share.className='btn blog-action-share';
+      share.textContent='📤 Share Video';
+      share.onclick=function(){
+        const url=absoluteUrl(websitePath);
+        if(navigator.share){
+          navigator.share({title:v.title || 'Quran Video',text:'Watch this video on Haroon Ibn Rasheed Online Quran Academy:',url:url}).catch(function(){});
+        }else copyText(url,'Website video link copied!');
+      };
+
+      const copy=document.createElement('button');
+      copy.type='button';
+      copy.className='btn gold blog-action-copy';
+      copy.textContent='🔗 Copy Link';
+      copy.onclick=function(){copyText(absoluteUrl(websitePath),'Website video link copied!');};
+
+      actions.appendChild(share);
+      actions.appendChild(copy);
+
+      if(v.description){
+        description.style.display='block';
+        description.textContent=v.description;
+      }
+    }).catch(function(){
+      title.textContent='Video unavailable';
+      player.innerHTML='<div style="color:#fff;position:absolute;inset:0;display:flex;align-items:center;justify-content:center">Please try again later.</div>';
+    });
+  };
+
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){
+      closeArticleDetail();
+      closeVideoDetail();
+    }
+  });
+
+  /* -------------------------
+     ARTICLES LIST
+  ------------------------- */
+  const articlesPublic=document.getElementById('articlesPublic');
+  if(articlesPublic){
+    db.from('articles').select('*').eq('published',true).order('created_at',{ascending:false}).then(function(result){
+      const data=result.data, error=result.error;
+      if(error){
+        console.error('Articles loading error:',error);
+        articlesPublic.innerHTML='<div class="card"><div class="card-body"><h3>Articles unavailable</h3><p>Please try again later.</p></div></div>';
+        return;
+      }
+      if(!data || !data.length){
+        articlesPublic.innerHTML='<div class="card"><div class="card-body"><h3>Articles coming soon</h3><p>The academy will publish useful Quran learning articles here.</p></div></div>';
+        return;
+      }
+      articlesPublic.innerHTML=data.map(function(a){
+        const excerpt=a.excerpt || a.body || '';
+        return '<article class="card">'+
+          (a.image_url ? '<img src="'+esc(a.image_url)+'" alt="'+esc(a.title)+'" loading="lazy">' : '')+
+          '<div class="card-body">'+
+          '<h3>'+esc(a.title)+'</h3>'+
+          '<p>'+esc(excerpt.length>220 ? excerpt.slice(0,220)+'…' : excerpt)+'</p>'+
+          '<div class="blog-actions"><button type="button" class="btn" onclick="openArticleDetail(\''+String(a.id).replace(/'/g,"\\'")+'\')">📖 Read More</button></div>'+
+          '</div></article>';
+      }).join('');
+    }).catch(function(error){console.error('Articles unexpected error:',error);});
+  }
+
+  /* -------------------------
+     VIDEOS LIST
+  ------------------------- */
+  const videosPublic=document.getElementById('videosPublic');
+  if(videosPublic){
+    db.from('blog_videos').select('*').eq('is_published',true).order('featured',{ascending:false}).order('created_at',{ascending:false}).then(function(result){
+      const data=result.data, error=result.error;
+      if(error){
+        console.error('Videos loading error:',error);
+        videosPublic.innerHTML='<div class="card"><div class="card-body"><h3>Videos unavailable</h3><p>Please try again later.</p></div></div>';
+        return;
+      }
+      if(!data || !data.length){
+        videosPublic.innerHTML='<div class="card"><div class="card-body"><h3>Videos coming soon</h3><p>Quran learning videos and Islamic educational content will appear here.</p></div></div>';
+        return;
+      }
+      videosPublic.innerHTML=data.map(function(v){
+        const title=esc(v.title || 'Quran Video');
+        const description=esc(v.description || '');
+        const category=esc(v.category || '');
+        const author=esc(v.author || '');
+        const duration=esc(v.duration || '');
+        const thumb=v.thumbnail_url ? '<img src="'+esc(v.thumbnail_url)+'" alt="'+title+'" loading="lazy">' : '<div style="height:205px;background:#07394a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:50px">▶</div>';
+        const meta=[category,author,duration].filter(Boolean).map(function(x){return '<span>'+x+'</span>';}).join('');
+        return '<article class="card video-public-card">'+
+          '<div class="video-public-thumbnail">'+thumb+(v.featured?'<span class="video-featured">Featured</span>':'')+(duration?'<span class="video-duration">'+duration+'</span>':'')+'</div>'+
+          '<div class="card-body">'+
+          '<h3>'+title+'</h3>'+
+          (meta?'<div class="video-meta">'+meta+'</div>':'')+
+          (description?'<p>'+description+'</p>':'')+
+          '<div class="blog-actions"><button type="button" class="btn" onclick="openVideoDetail(\''+String(v.id).replace(/'/g,"\\'")+'\')">▶ Watch Video</button></div>'+
+          '</div></article>';
+      }).join('');
+    }).catch(function(error){console.error('Videos unexpected error:',error);});
+  }
+
+  /* -------------------------
+     PUBLIC REVIEW SUBMISSION
+  ------------------------- */
+  const publicReviewForm=document.getElementById('publicReviewForm');
+  if(publicReviewForm){
+    publicReviewForm.addEventListener('submit',async function(e){
+      e.preventDefault();
+      const name=document.getElementById('reviewStudentName').value.trim();
+      const rating=Number(document.getElementById('reviewRating').value);
+      const review=document.getElementById('reviewText').value.trim();
+      const message=document.getElementById('publicReviewMessage');
+      if(!name || !review){message.innerHTML='<p>Please enter your name and review.</p>';return;}
+      if(rating<1 || rating>5){message.innerHTML='<p>Please select a valid rating.</p>';return;}
+      message.innerHTML='<p>Submitting your review...</p>';
+      try{
+        const result=await db.from('testimonials').insert({student_name:name,review:review,rating:rating,active:false});
+        if(result.error){console.error('Review submission error:',result.error);message.innerHTML='<p>Sorry, your review could not be submitted. Please try again.</p>';return;}
+        publicReviewForm.reset();
+        message.innerHTML='<p>✅ Thank you! Your review has been submitted and is awaiting approval.</p>';
+      }catch(error){console.error('Review submission error:',error);message.innerHTML='<p>Something went wrong. Please try again.</p>';}
+    });
+  }
+
+  /* -------------------------
+     APPROVED REVIEWS
+  ------------------------- */
+  const testimonialsPublic=document.getElementById('testimonialsPublic');
+  if(testimonialsPublic){
+    db.from('testimonials').select('*').eq('active',true).order('created_at',{ascending:false}).then(function(result){
+      const data=result.data,error=result.error;
+      if(error){
+        console.error('Reviews loading error:',error);
+        testimonialsPublic.innerHTML='<div class="card"><div class="card-body"><h3>Reviews unavailable</h3><p>Please try again later.</p></div></div>';
+        return;
+      }
+      if(!data || !data.length){
+        testimonialsPublic.innerHTML='<div class="card"><div class="card-body"><h3>Reviews coming soon</h3><p>Student and family reviews will appear here.</p></div></div>';
+        return;
+      }
+      testimonialsPublic.innerHTML=data.map(function(item){
+        const rating=Math.max(0,Math.min(5,Number(item.rating || 5)));
+        return '<article class="card"><div class="card-body"><h3>'+('★'.repeat(rating))+'</h3><p>'+esc(item.review)+'</p><strong>'+esc(item.student_name)+'</strong></div></article>';
+      }).join('');
+    }).catch(function(error){console.error('Reviews unexpected error:',error);});
+  }
+
+})();
+</script>
 
 </body>
 </html>
