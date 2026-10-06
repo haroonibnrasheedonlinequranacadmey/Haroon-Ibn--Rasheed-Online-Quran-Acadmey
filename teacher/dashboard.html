@@ -1171,14 +1171,19 @@ teacher_id
 .eq("id",studentId)
 .maybeSingle();
 
+/* Keep the student row even when full_name is empty.
+   It lets us safely use the linked profile name below. */
+const studentById =
+(!result.error && result.data)
+? result.data
+: null;
 
 if(
-!result.error &&
-result.data &&
-String(result.data.full_name || "").trim()
+studentById &&
+String(studentById.full_name || "").trim()
 ){
 
-return result.data;
+return studentById;
 
 }
 
@@ -1258,7 +1263,19 @@ return found;
 }
 
 
-/* FOURTH: profiles */
+/* FOURTH: linked profile */
+
+/* If the student row was found by students.id, use its
+   user_id for the profile lookup. This fixes cases where
+   students.full_name is empty but profiles.full_name exists. */
+const profileIds = [];
+
+if(studentById?.user_id)
+profileIds.push(String(studentById.user_id));
+
+profileIds.push(String(studentId));
+
+for(const profileId of [...new Set(profileIds)]){
 
 result =
 await db
@@ -1268,9 +1285,8 @@ id,
 full_name,
 role
 `)
-.eq("id",studentId)
+.eq("id",profileId)
 .maybeSingle();
-
 
 if(
 !result.error &&
@@ -1280,15 +1296,17 @@ String(result.data.full_name || "").trim()
 
 return {
 
-id:result.data.id,
-user_id:result.data.id,
+id:studentById?.id || result.data.id,
+user_id:studentById?.user_id || result.data.id,
 full_name:result.data.full_name,
-course:"",
-status:"",
-timezone:BASE_TIMEZONE,
-teacher_id:teacherId || null
+course:studentById?.course || "",
+status:studentById?.status || "",
+timezone:studentById?.timezone || BASE_TIMEZONE,
+teacher_id:studentById?.teacher_id || teacherId || null
 
 };
+
+}
 
 }
 
