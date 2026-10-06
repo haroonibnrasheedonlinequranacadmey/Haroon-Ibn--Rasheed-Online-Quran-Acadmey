@@ -17,23 +17,18 @@
   );
 
 
+  /* =====================================================
+     ESCAPE HTML
+  ===================================================== */
+
   function esc(value){
 
-    return String(value ?? '').replace(
-      /[&<>"']/g,
-      function(c){
-
-        return {
-          '&':'&amp;',
-          '<':'&lt;',
-          '>':'&gt;',
-          '"':'&quot;',
-          "'":'&#39;'
-
-        }[c];
-
-      }
-    );
+    return String(value ?? '')
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;')
+      .replace(/'/g,'&#039;');
 
   }
 
@@ -50,10 +45,8 @@
     db
       .from('articles')
       .select('*')
-      .eq('published', true)
-      .order('created_at', {
-        ascending: false
-      })
+      .eq('published',true)
+      .order('created_at',{ascending:false})
 
       .then(function(result){
 
@@ -63,78 +56,37 @@
         if(error){
 
           console.error(
-            'Articles loading error:',
+            'Articles load error:',
             error
           );
 
-          articlesPublic.innerHTML = `
-            <div class="card">
-              <div class="card-body">
-                <h3>Articles unavailable</h3>
-                <p>Please try again later.</p>
-              </div>
-            </div>
-          `;
+          articlesPublic.innerHTML =
+            '<p>Unable to load articles.</p>';
 
           return;
         }
-
 
         if(!data || !data.length){
 
-          articlesPublic.innerHTML = `
-            <div class="card">
-              <div class="card-body">
-                <h3>Articles coming soon</h3>
-                <p>
-                  The academy will publish useful Quran
-                  learning articles here.
-                </p>
-              </div>
-            </div>
-          `;
+          articlesPublic.innerHTML =
+            '<p>No articles available yet.</p>';
 
           return;
         }
-
 
         articlesPublic.innerHTML =
           data.map(function(article){
 
             return `
-
               <article class="card">
-
-                ${
-                  article.image_url
-                  ? `
-                    <img
-                      src="${esc(article.image_url)}"
-                      alt="${esc(article.title)}"
-                      loading="lazy"
-                    >
-                  `
-                  : ''
-                }
-
                 <div class="card-body">
-
-                  <h3>
-                    ${esc(article.title)}
-                  </h3>
-
-                  <p>
-                    ${esc(
-                      article.excerpt ||
-                      article.body ||
-                      ''
-                    )}
-                  </p>
-
+                  <h3>${esc(article.title)}</h3>
+                  <p>${esc(article.excerpt || article.description || '')}</p>
+                  <a href="${esc(article.url || '#')}" class="btn">
+                    Read More
+                  </a>
                 </div>
-
               </article>
-
             `;
 
           }).join('');
@@ -148,13 +100,16 @@
           error
         );
 
+        articlesPublic.innerHTML =
+          '<p>Unable to load articles.</p>';
+
       });
 
   }
 
 
   /* =====================================================
-     REVIEWS
+     REVIEWS / TESTIMONIALS
   ===================================================== */
 
   const testimonialsPublic =
@@ -165,10 +120,8 @@
     db
       .from('testimonials')
       .select('*')
-      .eq('active', true)
-      .order('created_at', {
-        ascending: false
-      })
+      .eq('active',true)
+      .order('created_at',{ascending:false})
 
       .then(function(result){
 
@@ -178,75 +131,56 @@
         if(error){
 
           console.error(
-            'Reviews loading error:',
+            'Testimonials load error:',
             error
           );
 
-          testimonialsPublic.innerHTML = `
-            <div class="card">
-              <div class="card-body">
-                <h3>Reviews unavailable</h3>
-                <p>Please try again later.</p>
-              </div>
-            </div>
-          `;
+          testimonialsPublic.innerHTML =
+            '<p>Unable to load reviews.</p>';
 
           return;
         }
-
 
         if(!data || !data.length){
 
-          testimonialsPublic.innerHTML = `
-            <div class="card">
-              <div class="card-body">
-                <h3>Reviews coming soon</h3>
-                <p>
-                  Student and family reviews will
-                  appear here.
-                </p>
-              </div>
-            </div>
-          `;
+          testimonialsPublic.innerHTML =
+            '<p>No reviews available yet.</p>';
 
           return;
         }
-
 
         testimonialsPublic.innerHTML =
           data.map(function(item){
 
-            const rating = Math.max(
-              0,
-              Math.min(
-                5,
-                Number(item.rating || 5)
-              )
-            );
+            const rating =
+              Math.max(
+                0,
+                Math.min(
+                  5,
+                  Number(item.rating) || 0
+                )
+              );
 
+            const stars =
+              '★'.repeat(rating) +
+              '☆'.repeat(5 - rating);
 
             return `
-
-              <article class="card">
-
+              <div class="card testimonial-card">
                 <div class="card-body">
-
-                  <h3>
-                    ${'★'.repeat(rating)}
-                  </h3>
+                  <div class="stars" aria-label="${rating} out of 5">
+                    ${stars}
+                  </div>
 
                   <p>
-                    ${esc(item.review)}
+                    “${esc(item.review || '')}”
                   </p>
 
                   <strong>
-                    ${esc(item.student_name)}
+                    ${esc(item.student_name || 'Student')}
                   </strong>
-
                 </div>
-
-              </article>
-
+              </div>
             `;
 
           }).join('');
@@ -256,11 +190,125 @@
       .catch(function(error){
 
         console.error(
-          'Reviews unexpected error:',
+          'Testimonials unexpected error:',
           error
         );
 
+        testimonialsPublic.innerHTML =
+          '<p>Unable to load reviews.</p>';
+
       });
+
+  }
+
+
+  /* =====================================================
+     PUBLIC REVIEW SUBMISSION
+  ===================================================== */
+
+  const publicReviewForm =
+    document.getElementById('publicReviewForm');
+
+  if(publicReviewForm){
+
+    publicReviewForm.addEventListener(
+      'submit',
+      function(e){
+
+        e.preventDefault();
+
+        const name =
+          document
+            .getElementById('reviewStudentName')
+            .value
+            .trim();
+
+        const rating =
+          Number(
+            document
+              .getElementById('reviewRating')
+              .value
+          );
+
+        const review =
+          document
+            .getElementById('reviewText')
+            .value
+            .trim();
+
+        const message =
+          document.getElementById(
+            'publicReviewMessage'
+          );
+
+        if(!name || !review){
+
+          message.innerHTML =
+            '<p>Please enter your name and review.</p>';
+
+          return;
+        }
+
+        if(rating < 1 || rating > 5){
+
+          message.innerHTML =
+            '<p>Please select a valid rating.</p>';
+
+          return;
+        }
+
+        message.innerHTML =
+          '<p>Submitting your review...</p>';
+
+        db
+          .from('testimonials')
+          .insert({
+
+            student_name: name,
+            review: review,
+            rating: rating,
+            active: false
+
+          })
+
+          .then(function(result){
+
+            const error = result.error;
+
+            if(error){
+
+              console.error(
+                'Review submission error:',
+                error
+              );
+
+              message.innerHTML =
+                '<p>Sorry, your review could not be submitted. Please try again.</p>';
+
+              return;
+            }
+
+            publicReviewForm.reset();
+
+            message.innerHTML =
+              '<p>✅ Thank you! Your review has been submitted and is awaiting approval.</p>';
+
+          })
+
+          .catch(function(error){
+
+            console.error(
+              'Review submission unexpected error:',
+              error
+            );
+
+            message.innerHTML =
+              '<p>Something went wrong. Please try again.</p>';
+
+          });
+
+      }
+    );
 
   }
 
@@ -272,246 +320,216 @@
   const videosPublic =
     document.getElementById('videosPublic');
 
+  function absoluteVideoUrl(path){
+
+    if(!path){
+      return '';
+    }
+
+    if(
+      path.startsWith('http://') ||
+      path.startsWith('https://')
+    ){
+      return path;
+    }
+
+    return new URL(
+      path,
+      window.location.href
+    ).href;
+
+  }
+
+  window.copyAcademyVideo =
+    function(url){
+
+      if(!url){
+        return;
+      }
+
+      navigator.clipboard
+        .writeText(url)
+        .then(function(){
+
+          alert('Video link copied.');
+
+        })
+        .catch(function(){
+
+          prompt(
+            'Copy this video link:',
+            url
+          );
+
+        });
+
+    };
+
+
+  window.shareAcademyVideo =
+    function(url,title){
+
+      if(
+        navigator.share
+      ){
+
+        navigator.share({
+
+          title:
+            title ||
+            'Haroon Ibn Rasheed Online Quran Academy',
+
+          url:url
+
+        }).catch(function(){});
+
+        return;
+      }
+
+      window.copyAcademyVideo(url);
+
+    };
+
+
   if(videosPublic){
 
     db
       .from('blog_videos')
       .select('*')
-      .eq('is_published', true)
-      .order('featured', {
-        ascending: false
-      })
-      .order('created_at', {
-        ascending: false
-      })
+      .eq('is_published',true)
+      .order('featured',{ascending:false})
+      .order('created_at',{ascending:false})
 
       .then(function(result){
 
         const data = result.data;
         const error = result.error;
 
-
         if(error){
 
           console.error(
-            'Videos loading error:',
+            'Videos load error:',
             error
           );
 
-          videosPublic.innerHTML = `
-            <div class="card">
-              <div class="card-body">
-                <h3>Videos unavailable</h3>
-                <p>
-                  Please try again later.
-                </p>
-              </div>
-            </div>
-          `;
+          videosPublic.innerHTML =
+            '<p>Unable to load videos.</p>';
 
           return;
         }
-
 
         if(!data || !data.length){
 
-          videosPublic.innerHTML = `
-            <div class="card">
-              <div class="card-body">
-                <h3>Videos coming soon</h3>
-                <p>
-                  Quran learning videos and
-                  Islamic educational content
-                  will appear here.
-                </p>
-              </div>
-            </div>
-          `;
+          videosPublic.innerHTML =
+            '<p>No videos available yet.</p>';
 
           return;
         }
-
 
         videosPublic.innerHTML =
           data.map(function(video){
 
-            const title =
-              esc(video.title);
-
-            const description =
-              esc(
-                video.description || ''
+            const videoUrl =
+              absoluteVideoUrl(
+                video.video_url ||
+                video.url ||
+                video.path ||
+                ''
               );
-
-            const category =
-              esc(
-                video.category || ''
-              );
-
-            const author =
-              esc(
-                video.author || ''
-              );
-
-            const duration =
-              esc(
-                video.duration || ''
-              );
-
-
-            const slug =
-              video.slug
-              ? String(video.slug)
-              : '';
-
-
-            const websitePath =
-              slug
-              ? 'video.html?slug=' +
-                encodeURIComponent(slug)
-              : '';
-
 
             const thumbnail =
-              video.thumbnail_url
-
-              ? `
-                <img
-                  src="${esc(video.thumbnail_url)}"
-                  alt="${title}"
-                  loading="lazy"
-                >
-              `
-
-              : `
-                <div class="video-placeholder">
-                  ▶
-                </div>
-              `;
-
-
-            const featured =
-              video.featured
-
-              ? `
-                <span class="video-featured">
-                  Featured
-                </span>
-              `
-
-              : '';
-
-
-            const meta = [
-
-              category
-                ? `<span>${category}</span>`
-                : '',
-
-              author
-                ? `<span>${author}</span>`
-                : '',
-
-              duration
-                ? `<span>${duration}</span>`
-                : ''
-
-            ]
-            .filter(Boolean)
-            .join('');
-
+              video.thumbnail_url ||
+              video.thumbnail ||
+              '';
 
             return `
+              <article class="card video-card">
 
-              <article class="card video-public-card">
-
-                <div class="video-public-thumbnail">
-
-                  ${thumbnail}
-
-                  ${featured}
-
-                  ${
-                    duration
-                    ? `
-                      <span class="video-duration">
-                        ${duration}
-                      </span>
-                    `
-                    : ''
-                  }
-
-                </div>
-
+                ${
+                  thumbnail
+                  ?
+                  `<img
+                    src="${esc(thumbnail)}"
+                    alt="${esc(video.title || 'Quran Academy Video')}"
+                    loading="lazy"
+                  >`
+                  :
+                  ''
+                }
 
                 <div class="card-body">
 
                   <h3>
-                    ${title}
+                    ${esc(
+                      video.title ||
+                      'Quran Academy Video'
+                    )}
                   </h3>
 
-
                   ${
-                    meta
-                    ? `
-                      <div class="video-meta">
-                        ${meta}
-                      </div>
-                    `
-                    : ''
+                    video.category
+                    ?
+                    `<p>${esc(video.category)}</p>`
+                    :
+                    ''
                   }
 
-
                   ${
-                    description
-                    ? `
-                      <p>
-                        ${description}
-                      </p>
-                    `
-                    : ''
+                    video.author
+                    ?
+                    `<p>${esc(video.author)}</p>`
+                    :
+                    ''
                   }
 
+                  ${
+                    video.duration
+                    ?
+                    `<p>${esc(video.duration)}</p>`
+                    :
+                    ''
+                  }
 
                   ${
-                    websitePath
-                    ? `
+                    videoUrl
+                    ?
+                    `
+                    <div class="video-actions">
 
                       <a
-                        href="${esc(websitePath)}"
-                        class="video-watch-btn"
+                        href="${esc(videoUrl)}"
+                        class="btn"
+                        target="_blank"
+                        rel="noopener"
                       >
-                        ▶ Watch Video
+                        Watch Video
                       </a>
 
+                      <button
+                        type="button"
+                        class="btn"
+                        onclick="shareAcademyVideo('${esc(videoUrl)}','${esc(video.title || '')}')"
+                      >
+                        Share
+                      </button>
 
                       <button
                         type="button"
-                        class="video-watch-btn"
-                        style="margin-left:8px;"
-                        onclick="shareAcademyVideo('${esc(websitePath)}','${title}')"
+                        class="btn"
+                        onclick="copyAcademyVideo('${esc(videoUrl)}')"
                       >
-                        📤 Share
+                        Copy Link
                       </button>
 
-
-                      <button
-                        type="button"
-                        class="video-watch-btn"
-                        style="margin-left:8px;"
-                        onclick="copyAcademyVideo('${esc(websitePath)}')"
-                      >
-                        🔗 Copy Link
-                      </button>
-
+                    </div>
                     `
-                    : ''
+                    :
+                    ''
                   }
 
                 </div>
 
               </article>
-
             `;
 
           }).join('');
@@ -525,112 +543,12 @@
           error
         );
 
+        videosPublic.innerHTML =
+          '<p>Unable to load videos.</p>';
+
       });
 
   }
-
-
-  /* =====================================================
-     WEBSITE VIDEO LINK
-  ===================================================== */
-
-  function absoluteVideoUrl(path){
-
-    return new URL(
-      path,
-      window.location.href
-    ).href;
-
-  }
-
-
-  /* =====================================================
-     COPY LINK
-  ===================================================== */
-
-  window.copyAcademyVideo =
-    function(path){
-
-      const url =
-        absoluteVideoUrl(path);
-
-
-      if(
-        navigator.clipboard &&
-        navigator.clipboard.writeText
-      ){
-
-        navigator.clipboard
-          .writeText(url)
-
-          .then(function(){
-
-            alert(
-              'Website video link copied!'
-            );
-
-          })
-
-          .catch(function(){
-
-            prompt(
-              'Copy this website video link:',
-              url
-            );
-
-          });
-
-      }
-
-      else{
-
-        prompt(
-          'Copy this website video link:',
-          url
-        );
-
-      }
-
-    };
-
-
-  /* =====================================================
-     SHARE
-  ===================================================== */
-
-  window.shareAcademyVideo =
-    function(path,title){
-
-      const url =
-        absoluteVideoUrl(path);
-
-
-      if(navigator.share){
-
-        navigator.share({
-
-          title:
-            title ||
-            'Quran Video',
-
-          text:
-            'Watch this video on Haroon Ibn Rasheed Online Quran Academy:',
-
-          url: url
-
-        })
-
-        .catch(function(){});
-
-      }
-
-      else{
-
-        window.copyAcademyVideo(path);
-
-      }
-
-    };
 
 
 })();
