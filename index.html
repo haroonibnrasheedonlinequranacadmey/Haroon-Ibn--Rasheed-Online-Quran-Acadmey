@@ -2829,8 +2829,15 @@ Online Quran Academy
       }
 
       const slug=v.slug ? String(v.slug) : '';
-      const websitePath=slug ? '#blog/video/'+encodeURIComponent(slug) : '#blog';
+      /* Every video gets its own WEBSITE link. It never uses the YouTube URL.
+         The hash keeps the link on this same index.html page and identifies the video. */
+      const websitePath=slug ? '#video/'+encodeURIComponent(slug) : '#blog';
       actions.innerHTML='';
+
+      /* Keep the browser URL on the academy website while this video is open. */
+      if(slug){
+        try{ history.replaceState(null,'',websitePath); }catch(e){}
+      }
 
       const share=document.createElement('button');
       share.type='button';
@@ -2862,12 +2869,26 @@ Online Quran Academy
     });
   };
 
+  /* Open a specific academy video automatically when its WEBSITE link is opened. */
+  function openVideoFromWebsiteLink(){
+    const hash=window.location.hash || '';
+    const match=hash.match(/^#video\/(.+)$/);
+    if(!match) return;
+    const slug=decodeURIComponent(match[1]);
+    db.from('blog_videos').select('id').eq('slug',slug).eq('is_published',true).maybeSingle().then(function(r){
+      if(r.data && r.data.id) openVideoDetail(r.data.id);
+    });
+  }
+  window.addEventListener('hashchange',openVideoFromWebsiteLink);
+
   document.addEventListener('keydown',function(e){
     if(e.key==='Escape'){
       closeArticleDetail();
       closeVideoDetail();
     }
   });
+
+  setTimeout(openVideoFromWebsiteLink,500);
 
   /* -------------------------
      ARTICLES LIST
