@@ -642,9 +642,7 @@ box-sizing:border-box;
   .single-detail-content{padding:18px 15px}
   .single-detail-content h2{font-size:27px}
 }
-</style>
-
-</head>
+\n<style id="video-engagement-style">\n.video-engagement{margin-top:18px}\n.video-reaction-row{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:12px}\n.video-reaction-btn{border:1px solid #d9edf1;background:#fff;color:var(--dark);border-radius:22px;padding:9px 14px;font-weight:700;cursor:pointer}\n.video-reaction-btn:hover,.video-reaction-btn.active{background:#e7f7fa;border-color:var(--green);color:var(--green)}\n.video-comments-toggle{border:1px solid #d9edf1;background:#f7fcfd;color:var(--dark);border-radius:22px;padding:9px 14px;font-weight:700;cursor:pointer}\n.video-comments-panel{display:none;margin-top:12px;padding:16px;background:#f7fcfd;border:1px solid #d9edf1;border-radius:14px}\n.video-comments-panel.open{display:block}\n.video-comment-list{max-height:320px;overflow:auto;margin-bottom:14px}\n.video-comment-item{background:#fff;border:1px solid #e1eef1;border-radius:12px;padding:11px 13px;margin:8px 0}\n.video-comment-name{font-weight:700;color:var(--dark)}\n.video-comment-date{font-size:11px;color:var(--gray);margin-left:6px}\n.video-comment-text{margin-top:4px;color:#294f5b;white-space:pre-wrap;word-break:break-word}\n.video-comment-form{display:grid;gap:8px}\n.video-comment-form input,.video-comment-form textarea{width:100%;box-sizing:border-box;border:1px solid #cfe4e9;border-radius:9px;padding:10px;font:inherit;background:#fff}\n.video-comment-form button{border:0;border-radius:9px;padding:10px;background:var(--green);color:#fff;font-weight:700;cursor:pointer}\n.video-comment-status{font-size:12px;color:var(--gray);min-height:18px}\n@media(max-width:680px){.video-reaction-row{display:grid;grid-template-columns:1fr 1fr}.video-reaction-btn,.video-comments-toggle{width:100%}}\n</style>\n\n</head>
 
 <body>
 
@@ -2729,6 +2727,7 @@ Online Quran Academy
             <div id="videoDetailMeta" class="single-detail-meta"></div>
             <div id="videoDetailPlayer" class="single-video-player"></div>
             <div id="videoDetailActions" class="blog-actions"></div>
+            <div id="videoDetailEngagement" class="video-engagement"></div>
             <div id="videoDetailDescription" class="single-video-description" style="display:none"></div>
           </div>
         </div>`;
@@ -2791,6 +2790,167 @@ Online Quran Academy
     });
   };
 
+  function videoVisitorKey(){
+    const keyName='haroon_video_visitor_key';
+    let key='';
+    try{ key=localStorage.getItem(keyName)||''; }catch(e){}
+    if(!key){
+      key='v_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2)+'_'+Math.random().toString(36).slice(2);
+      try{ localStorage.setItem(keyName,key); }catch(e){}
+    }
+    return key;
+  }
+
+  function videoSource(url){
+    if(!url) return {type:'none'};
+    const raw=String(url).trim();
+    try{
+      const u=new URL(raw);
+      const host=u.hostname.toLowerCase();
+      const path=u.pathname;
+      const yt=youtubeId(raw);
+      if(yt) return {type:'youtube',id:yt};
+
+      if(host.includes('drive.google.com')){
+        const m=path.match(/\/file\/d\/([^/]+)/i);
+        const id=m ? m[1] : u.searchParams.get('id');
+        if(id) return {type:'drive',id:id};
+      }
+
+      if(host.includes('facebook.com') || host.includes('fb.watch')){
+        return {type:'facebook',url:raw};
+      }
+
+      if(host.includes('instagram.com')){
+        const m=path.match(/\/(?:p|reel|reels|tv)\/([^/?#]+)/i);
+        if(m) return {type:'instagram',id:m[1],kind:(path.toLowerCase().includes('/reel')?'reel':'p')};
+        return {type:'instagram',url:raw};
+      }
+
+      if(host.includes('tiktok.com')){
+        const m=path.match(/\/video\/(\d+)/i);
+        if(m) return {type:'tiktok',id:m[1]};
+      }
+      if(host.includes('vm.tiktok.com') || host.includes('vt.tiktok.com')) return {type:'tiktok',url:raw};
+
+      return {type:'generic',url:raw};
+    }catch(e){ return {type:'generic',url:raw}; }
+  }
+
+  function renderVideoSource(url,title){
+    const src=videoSource(url);
+    const safeTitle=esc(title || 'Quran Video');
+    if(src.type==='youtube'){
+      return '<iframe src="https://www.youtube.com/embed/'+encodeURIComponent(src.id)+'" title="'+safeTitle+'" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
+    }
+    if(src.type==='drive'){
+      return '<iframe src="https://drive.google.com/file/'+encodeURIComponent(src.id)+'/preview" title="'+safeTitle+'" allow="autoplay; fullscreen" allowfullscreen></iframe>';
+    }
+    if(src.type==='facebook'){
+      return '<iframe src="https://www.facebook.com/plugins/video.php?href='+encodeURIComponent(src.url)+'&show_text=false&width=900" title="'+safeTitle+'" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" allowfullscreen></iframe>';
+    }
+    if(src.type==='instagram'){
+      const embedUrl=src.id ? ('https://www.instagram.com/'+src.kind+'/'+encodeURIComponent(src.id)+'/embed') : src.url;
+      return '<iframe src="'+esc(embedUrl)+'" title="'+safeTitle+'" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" allowfullscreen></iframe>';
+    }
+    if(src.type==='tiktok' && src.id){
+      return '<iframe src="https://www.tiktok.com/player/v1/'+encodeURIComponent(src.id)+'" title="'+safeTitle+'" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>';
+    }
+    if(src.type==='generic'){
+      return '<iframe src="'+esc(src.url)+'" title="'+safeTitle+'" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>';
+    }
+    return '<div style="color:#fff;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;text-align:center">Video source is not available.</div>';
+  }
+
+  function renderVideoEngagement(videoId,engagement){
+    const wrap=document.getElementById('videoDetailEngagement');
+    if(!wrap) return;
+    const counts=engagement.counts || {likes:0,dislikes:0};
+    const mine=engagement.mine || null;
+    const comments=engagement.comments || [];
+    const commentCount=comments.length;
+    wrap.innerHTML=''+
+      '<div class="video-reaction-row">'+
+        '<button type="button" class="video-reaction-btn '+(mine==='like'?'active':'')+'" id="videoLikeBtn">👍 Like <span id="videoLikeCount">'+counts.likes+'</span></button>'+
+        '<button type="button" class="video-reaction-btn '+(mine==='dislike'?'active':'')+'" id="videoDislikeBtn">👎 Dislike <span id="videoDislikeCount">'+counts.dislikes+'</span></button>'+
+        '<button type="button" class="video-comments-toggle" id="videoCommentsToggle">💬 Comments <span id="videoCommentCount">'+commentCount+'</span></button>'+
+      '</div>'+
+      '<div class="video-comments-panel" id="videoCommentsPanel">'+
+        '<div class="video-comment-list" id="videoCommentList"></div>'+
+        '<form class="video-comment-form" id="videoCommentForm">'+
+          '<input id="videoCommentName" maxlength="100" required placeholder="Your Name">'+
+          '<textarea id="videoCommentText" maxlength="2000" rows="3" required placeholder="Write your comment..."></textarea>'+
+          '<button type="submit">Post Comment</button>'+
+          '<div class="video-comment-status" id="videoCommentStatus"></div>'+
+        '</form>'+
+      '</div>';
+
+    const list=document.getElementById('videoCommentList');
+    list.innerHTML=comments.length ? comments.map(function(c){
+      const date=c.created_at ? new Date(c.created_at).toLocaleDateString() : '';
+      return '<div class="video-comment-item"><div class="video-comment-name">'+esc(c.name)+(date?'<span class="video-comment-date">'+esc(date)+'</span>':'')+'</div><div class="video-comment-text">'+esc(c.comment)+'</div></div>';
+    }).join('') : '<div style="color:var(--gray);font-size:14px">No comments yet. Be the first to comment.</div>';
+
+    document.getElementById('videoCommentsToggle').onclick=function(){
+      document.getElementById('videoCommentsPanel').classList.toggle('open');
+    };
+
+    async function react(kind){
+      const key=videoVisitorKey();
+      const status=engagement.mine;
+      try{
+        if(status===kind){
+          const del=await db.from('video_reactions').delete().eq('video_id',videoId).eq('visitor_key',key);
+          if(del.error) throw del.error;
+        }else if(status){
+          const upd=await db.from('video_reactions').update({reaction:kind,updated_at:new Date().toISOString()}).eq('video_id',videoId).eq('visitor_key',key);
+          if(upd.error) throw upd.error;
+        }else{
+          const ins=await db.from('video_reactions').insert({video_id:videoId,visitor_key:key,reaction:kind});
+          if(ins.error) throw ins.error;
+        }
+        await loadVideoEngagement(videoId);
+      }catch(e){console.error('Video reaction error:',e);alert('Sorry, your reaction could not be saved.');}
+    }
+    document.getElementById('videoLikeBtn').onclick=function(){react('like');};
+    document.getElementById('videoDislikeBtn').onclick=function(){react('dislike');};
+
+    document.getElementById('videoCommentForm').onsubmit=async function(e){
+      e.preventDefault();
+      const name=document.getElementById('videoCommentName').value.trim();
+      const comment=document.getElementById('videoCommentText').value.trim();
+      const status=document.getElementById('videoCommentStatus');
+      if(!name || !comment){status.textContent='Please enter your name and comment.';return;}
+      status.textContent='Posting...';
+      const result=await db.from('video_comments').insert({video_id:videoId,name:name,comment:comment,is_approved:true});
+      if(result.error){console.error('Video comment error:',result.error);status.textContent='Sorry, comment could not be posted.';return;}
+      document.getElementById('videoCommentText').value='';
+      status.textContent='Comment posted.';
+      await loadVideoEngagement(videoId);
+      document.getElementById('videoCommentsPanel').classList.add('open');
+    };
+  }
+
+  async function loadVideoEngagement(videoId){
+    const key=videoVisitorKey();
+    try{
+      const [reactions,mine,comments]=await Promise.all([
+        db.from('video_reactions').select('reaction').eq('video_id',videoId),
+        db.from('video_reactions').select('reaction').eq('video_id',videoId).eq('visitor_key',key).maybeSingle(),
+        db.from('video_comments').select('id,name,comment,created_at').eq('video_id',videoId).eq('is_approved',true).order('created_at',{ascending:false})
+      ]);
+      if(reactions.error) throw reactions.error;
+      if(mine.error && mine.error.code!=='PGRST116') throw mine.error;
+      if(comments.error) throw comments.error;
+      const rows=reactions.data||[];
+      const counts={likes:rows.filter(x=>x.reaction==='like').length,dislikes:rows.filter(x=>x.reaction==='dislike').length};
+      renderVideoEngagement(videoId,{counts:counts,mine:mine.data ? mine.data.reaction : null,comments:comments.data||[]});
+    }catch(e){
+      console.error('Video engagement load error:',e);
+      renderVideoEngagement(videoId,{counts:{likes:0,dislikes:0},mine:null,comments:[]});
+    }
+  }
+
   window.openVideoDetail=function(id){
     ensureViewers();
     const overlay=document.getElementById('videoDetailOverlay');
@@ -2798,6 +2958,7 @@ Online Quran Academy
     const meta=document.getElementById('videoDetailMeta');
     const player=document.getElementById('videoDetailPlayer');
     const actions=document.getElementById('videoDetailActions');
+    const engagement=document.getElementById('videoDetailEngagement');
     const description=document.getElementById('videoDetailDescription');
 
     overlay.classList.add('open');
@@ -2806,10 +2967,11 @@ Online Quran Academy
     meta.textContent='';
     player.innerHTML='<div style="color:#fff;position:absolute;inset:0;display:flex;align-items:center;justify-content:center">Loading...</div>';
     actions.innerHTML='';
+    engagement.innerHTML='';
     description.style.display='none';
     description.textContent='';
 
-    db.from('blog_videos').select('*').eq('id',id).eq('is_published',true).maybeSingle().then(function(r){
+    db.from('blog_videos').select('*').eq('id',id).eq('is_published',true).maybeSingle().then(async function(r){
       if(r.error || !r.data){
         title.textContent='Video not found';
         player.innerHTML='<div style="color:#fff;position:absolute;inset:0;display:flex;align-items:center;justify-content:center">This video may have been removed or is not published.</div>';
@@ -2819,25 +2981,12 @@ Online Quran Academy
       title.textContent=v.title || 'Quran Video';
       const metaParts=[v.category,v.author,v.duration].filter(Boolean);
       meta.textContent=metaParts.join(' • ');
+      player.innerHTML=renderVideoSource(v.video_url,v.title || 'Quran Video');
 
-      const id=youtubeId(v.video_url);
-      if(id){
-        const safeTitle=String(v.title || 'Quran Video').replace(/"/g,'&quot;');
-        player.innerHTML='<iframe src="https://www.youtube.com/embed/'+encodeURIComponent(id)+'" title="'+safeTitle+'" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
-      }else{
-        player.innerHTML='<div style="color:#fff;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;text-align:center">Video source is not available.</div>';
-      }
-
-      const slug=v.slug ? String(v.slug) : '';
-      /* Every video gets its own WEBSITE link. It never uses the YouTube URL.
-         The hash keeps the link on this same index.html page and identifies the video. */
-      const websitePath=slug ? '#video/'+encodeURIComponent(slug) : '#blog';
+      const slug=v.slug ? String(v.slug) : String(v.id);
+      const websitePath='#video/'+encodeURIComponent(slug);
       actions.innerHTML='';
-
-      /* Keep the browser URL on the academy website while this video is open. */
-      if(slug){
-        try{ history.replaceState(null,'',websitePath); }catch(e){}
-      }
+      try{ history.replaceState(null,'',websitePath); }catch(e){}
 
       const share=document.createElement('button');
       share.type='button';
@@ -2855,7 +3004,6 @@ Online Quran Academy
       copy.className='btn gold blog-action-copy';
       copy.textContent='🔗 Copy Link';
       copy.onclick=function(){copyText(absoluteUrl(websitePath),'Website video link copied!');};
-
       actions.appendChild(share);
       actions.appendChild(copy);
 
@@ -2863,6 +3011,7 @@ Online Quran Academy
         description.style.display='block';
         description.textContent=v.description;
       }
+      await loadVideoEngagement(v.id);
     }).catch(function(){
       title.textContent='Video unavailable';
       player.innerHTML='<div style="color:#fff;position:absolute;inset:0;display:flex;align-items:center;justify-content:center">Please try again later.</div>';
