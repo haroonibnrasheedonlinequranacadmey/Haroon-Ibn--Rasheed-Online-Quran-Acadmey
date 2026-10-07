@@ -166,7 +166,7 @@ textarea.input{
 table{
   width:100%;
   border-collapse:collapse;
-  min-width:1000px;
+  min-width:1100px;
 }
 
 th,td{
@@ -211,6 +211,11 @@ th{
 .status.featured{
   background:#fdeceb;
   color:#a0443d;
+}
+
+.status.platform{
+  background:#eef9fb;
+  color:#07394a;
 }
 
 .empty{
@@ -286,7 +291,9 @@ th{
       <a href="../index.html">View Website</a>
       <a href="#" onclick="logout();return false">Logout</a>
     </nav>
+
   </aside>
+
 
   <main class="main">
 
@@ -297,19 +304,28 @@ th{
       </div>
     </header>
 
+
     <div id="msg" class="msg"></div>
+
 
     <div class="video-layout">
 
+
       <!-- FORM -->
+
       <section class="video-card" id="formBox">
 
         <h2 id="formTitle">Add Video</h2>
 
+
         <form id="videoForm">
 
+
           <div class="field">
-            <label for="title">Video Title *</label>
+
+            <label for="title">
+              Video Title *
+            </label>
 
             <input
               class="input"
@@ -323,7 +339,9 @@ th{
 
           <div class="field">
 
-            <label for="slug">Video Slug</label>
+            <label for="slug">
+              Video Slug
+            </label>
 
             <input
               class="input"
@@ -332,7 +350,8 @@ th{
               placeholder="video-title-slug">
 
             <span class="help-text">
-              This creates your own website video link. It is generated automatically from the title.
+              This creates your own website video link.
+              It is generated automatically from the title.
             </span>
 
             <span
@@ -344,9 +363,60 @@ th{
           </div>
 
 
+          <!-- VIDEO PLATFORM -->
+
           <div class="field">
 
-            <label for="video_url">YouTube / Video URL *</label>
+            <label for="platform">
+              Video Platform *
+            </label>
+
+            <select
+              class="input"
+              id="platform"
+              required>
+
+              <option value="youtube">
+                YouTube
+              </option>
+
+              <option value="google_drive">
+                Google Drive
+              </option>
+
+              <option value="facebook">
+                Facebook
+              </option>
+
+              <option value="instagram">
+                Instagram
+              </option>
+
+              <option value="tiktok">
+                TikTok
+              </option>
+
+              <option value="other">
+                Other
+              </option>
+
+            </select>
+
+            <span class="help-text">
+              Select where the video is hosted.
+              The source URL is stored in the existing video URL field.
+            </span>
+
+          </div>
+
+
+          <!-- VIDEO URL -->
+
+          <div class="field">
+
+            <label for="video_url">
+              Video URL *
+            </label>
 
             <input
               class="input"
@@ -355,8 +425,10 @@ th{
               required
               placeholder="https://www.youtube.com/watch?v=...">
 
-            <span class="help-text">
-              The YouTube URL is stored privately for the video player. The public share link will use your website URL.
+            <span
+              id="urlHelp"
+              class="help-text">
+              Enter the YouTube video URL.
             </span>
 
           </div>
@@ -364,7 +436,9 @@ th{
 
           <div class="field">
 
-            <label for="thumbnail_url">Thumbnail URL</label>
+            <label for="thumbnail_url">
+              Thumbnail URL
+            </label>
 
             <input
               class="input"
@@ -377,7 +451,9 @@ th{
 
           <div class="field">
 
-            <label for="description">Description</label>
+            <label for="description">
+              Description
+            </label>
 
             <textarea
               class="input"
@@ -390,7 +466,9 @@ th{
 
           <div class="field">
 
-            <label for="category">Category</label>
+            <label for="category">
+              Category
+            </label>
 
             <input
               class="input"
@@ -403,7 +481,9 @@ th{
 
           <div class="field">
 
-            <label for="author">Author</label>
+            <label for="author">
+              Author
+            </label>
 
             <input
               class="input"
@@ -416,7 +496,9 @@ th{
 
           <div class="field">
 
-            <label for="duration">Duration</label>
+            <label for="duration">
+              Duration
+            </label>
 
             <input
               class="input"
@@ -465,12 +547,14 @@ th{
 
           </div>
 
+
         </form>
 
       </section>
 
 
       <!-- PREVIEW -->
+
       <section class="video-card">
 
         <h2>Preview</h2>
@@ -504,13 +588,18 @@ th{
 
       </section>
 
+
     </div>
 
 
     <!-- LIST -->
-    <section class="video-card" style="margin-top:20px;">
+
+    <section
+      class="video-card"
+      style="margin-top:20px;">
 
       <h2>All Videos</h2>
+
 
       <div class="table-wrap">
 
@@ -519,8 +608,10 @@ th{
           <thead>
 
             <tr>
+
               <th>Thumbnail</th>
               <th>Title</th>
+              <th>Platform</th>
               <th>Slug</th>
               <th>Category</th>
               <th>Author</th>
@@ -529,16 +620,22 @@ th{
               <th>Featured</th>
               <th>Created</th>
               <th>Actions</th>
+
             </tr>
 
           </thead>
 
+
           <tbody id="rows">
 
             <tr>
-              <td colspan="10" class="empty">
+
+              <td
+                colspan="11"
+                class="empty">
                 Loading...
               </td>
+
             </tr>
 
           </tbody>
@@ -549,6 +646,7 @@ th{
 
     </section>
 
+
   </main>
 
 </div>
@@ -558,6 +656,7 @@ th{
 
 let records = [];
 let editId = null;
+let slugManuallyEdited = false;
 
 const $ = id => document.getElementById(id);
 
@@ -597,6 +696,123 @@ function makeSlug(value){
 
 
 /* =====================================================
+   PLATFORM NAME
+===================================================== */
+
+function platformName(value){
+
+  const names = {
+
+    youtube:'YouTube',
+
+    google_drive:'Google Drive',
+
+    facebook:'Facebook',
+
+    instagram:'Instagram',
+
+    tiktok:'TikTok',
+
+    other:'Other'
+
+  };
+
+  return names[value] || 'Other';
+
+}
+
+
+/* =====================================================
+   PLATFORM URL HELP
+===================================================== */
+
+function updateUrlHelp(){
+
+  const platform =
+    $('platform').value;
+
+  const input =
+    $('video_url');
+
+  const help =
+    $('urlHelp');
+
+
+  if(platform === 'youtube'){
+
+    input.placeholder =
+      'https://www.youtube.com/watch?v=...';
+
+    help.textContent =
+      'Enter the YouTube video URL.';
+
+    return;
+
+  }
+
+
+  if(platform === 'google_drive'){
+
+    input.placeholder =
+      'https://drive.google.com/file/d/.../view';
+
+    help.textContent =
+      'Enter the Google Drive video file URL. Make sure the Drive file is accessible to viewers.';
+
+    return;
+
+  }
+
+
+  if(platform === 'facebook'){
+
+    input.placeholder =
+      'https://www.facebook.com/...';
+
+    help.textContent =
+      'Enter the Facebook video URL.';
+
+    return;
+
+  }
+
+
+  if(platform === 'instagram'){
+
+    input.placeholder =
+      'https://www.instagram.com/reel/...';
+
+    help.textContent =
+      'Enter the Instagram Reel/Post video URL.';
+
+    return;
+
+  }
+
+
+  if(platform === 'tiktok'){
+
+    input.placeholder =
+      'https://www.tiktok.com/@user/video/...';
+
+    help.textContent =
+      'Enter the TikTok video URL.';
+
+    return;
+
+  }
+
+
+  input.placeholder =
+    'https://example.com/video';
+
+  help.textContent =
+    'Enter the video source URL.';
+
+}
+
+
+/* =====================================================
    SHOW MESSAGE
 ===================================================== */
 
@@ -605,11 +821,15 @@ function showMsg(message,type){
   const box = $('msg');
 
   box.textContent = message;
-  box.className = 'msg show ' + type;
 
-  setTimeout(()=>{
+  box.className =
+    'msg show ' + type;
 
-    box.className = 'msg';
+
+  setTimeout(function(){
+
+    box.className =
+      'msg';
 
   },4000);
 
@@ -624,12 +844,22 @@ async function init(){
 
   if(!window.db){
 
-    location.href='login.html';
+    location.href =
+      'login.html';
+
     return;
 
   }
 
-  if(!(await adminGuard())) return;
+
+  if(!(await adminGuard())){
+
+    return;
+
+  }
+
+
+  updateUrlHelp();
 
   await load();
 
@@ -642,21 +872,31 @@ async function init(){
 
 async function load(){
 
-  const result = await db
-    .from('blog_videos')
-    .select('*')
-    .order('created_at',{ascending:false});
+  const result =
+    await db
+      .from('blog_videos')
+      .select('*')
+      .order(
+        'created_at',
+        {ascending:false}
+      );
 
 
   if(result.error){
 
-    showMsg(result.error.message,'error');
+    showMsg(
+      result.error.message,
+      'error'
+    );
+
     return;
 
   }
 
 
-  records = result.data || [];
+  records =
+    result.data || [];
+
 
   render();
 
@@ -669,14 +909,17 @@ async function load(){
 
 function render(){
 
-  const rows = $('rows');
+  const rows =
+    $('rows');
 
 
   if(!records.length){
 
     rows.innerHTML = `
       <tr>
-        <td colspan="10" class="empty">
+        <td
+          colspan="11"
+          class="empty">
           No videos added yet.
         </td>
       </tr>
@@ -687,96 +930,184 @@ function render(){
   }
 
 
-  rows.innerHTML = records.map(video => {
+  rows.innerHTML =
+    records.map(function(video){
 
-    const thumb = video.thumbnail_url
+      const thumb =
+        video.thumbnail_url
 
-      ? `<img
-          src="${escapeHtml(video.thumbnail_url)}"
-          class="video-mini"
-          alt="">`
+        ?
 
-      : `<div class="video-mini"></div>`;
+        `
+          <img
+            src="${escapeHtml(video.thumbnail_url)}"
+            class="video-mini"
+            alt="">
+        `
 
+        :
 
-    const status = video.is_published
-
-      ? `<span class="status published">Published</span>`
-
-      : `<span class="status draft">Draft</span>`;
-
-
-    const featured = video.featured
-
-      ? `<span class="status featured">Featured</span>`
-
-      : '—';
+        `
+          <div
+            class="video-mini">
+          </div>
+        `;
 
 
-    const created = video.created_at
+      const status =
+        video.is_published
 
-      ? new Date(video.created_at).toLocaleDateString()
+        ?
 
-      : '—';
+        `
+          <span
+            class="status published">
+            Published
+          </span>
+        `
+
+        :
+
+        `
+          <span
+            class="status draft">
+            Draft
+          </span>
+        `;
 
 
-    return `
-      <tr>
+      const featured =
+        video.featured
 
-        <td>${thumb}</td>
+        ?
 
-        <td>
-          <strong>${escapeHtml(video.title)}</strong>
-        </td>
+        `
+          <span
+            class="status featured">
+            Featured
+          </span>
+        `
 
-        <td>
-          ${escapeHtml(video.slug || '—')}
-        </td>
+        :
 
-        <td>
-          ${escapeHtml(video.category || '—')}
-        </td>
+        '—';
 
-        <td>
-          ${escapeHtml(video.author || '—')}
-        </td>
 
-        <td>
-          ${escapeHtml(video.duration || '—')}
-        </td>
+      const platform =
+        `
+          <span
+            class="status platform">
+            ${escapeHtml(
+              platformName(
+                video.platform
+              )
+            )}
+          </span>
+        `;
 
-        <td>
-          ${status}
-        </td>
 
-        <td>
-          ${featured}
-        </td>
+      const created =
+        video.created_at
 
-        <td>
-          ${escapeHtml(created)}
-        </td>
+        ?
 
-        <td>
+        new Date(
+          video.created_at
+        ).toLocaleDateString()
 
-          <button
-            class="btn secondary"
-            onclick="editVideo('${video.id}')">
-            Edit
-          </button>
+        :
 
-          <button
-            class="btn danger"
-            onclick="deleteVideo('${video.id}')">
-            Delete
-          </button>
+        '—';
 
-        </td>
 
-      </tr>
-    `;
+      return `
+        <tr>
 
-  }).join('');
+          <td>
+            ${thumb}
+          </td>
+
+
+          <td>
+            <strong>
+              ${escapeHtml(
+                video.title
+              )}
+            </strong>
+          </td>
+
+
+          <td>
+            ${platform}
+          </td>
+
+
+          <td>
+            ${escapeHtml(
+              video.slug || '—'
+            )}
+          </td>
+
+
+          <td>
+            ${escapeHtml(
+              video.category || '—'
+            )}
+          </td>
+
+
+          <td>
+            ${escapeHtml(
+              video.author || '—'
+            )}
+          </td>
+
+
+          <td>
+            ${escapeHtml(
+              video.duration || '—'
+            )}
+          </td>
+
+
+          <td>
+            ${status}
+          </td>
+
+
+          <td>
+            ${featured}
+          </td>
+
+
+          <td>
+            ${escapeHtml(
+              created
+            )}
+          </td>
+
+
+          <td>
+
+            <button
+              class="btn secondary"
+              onclick="editVideo('${escapeHtml(video.id)}')">
+              Edit
+            </button>
+
+
+            <button
+              class="btn danger"
+              onclick="deleteVideo('${escapeHtml(video.id)}')">
+              Delete
+            </button>
+
+          </td>
+
+        </tr>
+      `;
+
+    }).join('');
 
 }
 
@@ -787,41 +1118,92 @@ function render(){
 
 function editVideo(id){
 
-  const video = records.find(x => x.id === id);
+  const video =
+    records.find(function(x){
 
-  if(!video) return;
+      return x.id === id;
 
-
-  editId = id;
-
-
-  $('formTitle').textContent = 'Edit Video';
-
-  $('saveBtn').textContent = 'Update Video';
-
-  $('cancelBtn').style.display = 'inline-block';
+    });
 
 
-  $('title').value = video.title || '';
+  if(!video){
 
-  $('slug').value = video.slug || makeSlug(video.title || '');
+    return;
 
-  $('video_url').value = video.video_url || '';
+  }
 
-  $('thumbnail_url').value = video.thumbnail_url || '';
 
-  $('description').value = video.description || '';
+  editId =
+    id;
 
-  $('category').value = video.category || '';
 
-  $('author').value = video.author || '';
+  slugManuallyEdited =
+    true;
 
-  $('duration').value = video.duration || '';
 
-  $('featured').checked = !!video.featured;
+  $('formTitle').textContent =
+    'Edit Video';
 
-  $('is_published').checked = !!video.is_published;
 
+  $('saveBtn').textContent =
+    'Update Video';
+
+
+  $('cancelBtn').style.display =
+    'inline-block';
+
+
+  $('title').value =
+    video.title || '';
+
+
+  $('slug').value =
+    video.slug ||
+    makeSlug(
+      video.title || ''
+    );
+
+
+  $('platform').value =
+    video.platform ||
+    detectPlatform(
+      video.video_url || ''
+    );
+
+
+  $('video_url').value =
+    video.video_url || '';
+
+
+  $('thumbnail_url').value =
+    video.thumbnail_url || '';
+
+
+  $('description').value =
+    video.description || '';
+
+
+  $('category').value =
+    video.category || '';
+
+
+  $('author').value =
+    video.author || '';
+
+
+  $('duration').value =
+    video.duration || '';
+
+
+  $('featured').checked =
+    !!video.featured;
+
+
+  $('is_published').checked =
+    !!video.is_published;
+
+
+  updateUrlHelp();
 
   updatePreview();
 
@@ -831,9 +1213,73 @@ function editVideo(id){
   $('formBox').scrollIntoView({
 
     behavior:'smooth',
+
     block:'start'
 
   });
+
+}
+
+
+/* =====================================================
+   DETECT OLD VIDEOS
+===================================================== */
+
+function detectPlatform(url){
+
+  const value =
+    String(url || '')
+      .toLowerCase();
+
+
+  if(
+    value.includes('youtube.com') ||
+    value.includes('youtu.be')
+  ){
+
+    return 'youtube';
+
+  }
+
+
+  if(
+    value.includes('drive.google.com')
+  ){
+
+    return 'google_drive';
+
+  }
+
+
+  if(
+    value.includes('facebook.com') ||
+    value.includes('fb.watch')
+  ){
+
+    return 'facebook';
+
+  }
+
+
+  if(
+    value.includes('instagram.com')
+  ){
+
+    return 'instagram';
+
+  }
+
+
+  if(
+    value.includes('tiktok.com')
+  ){
+
+    return 'tiktok';
+
+  }
+
+
+  return 'other';
 
 }
 
@@ -844,17 +1290,34 @@ function editVideo(id){
 
 function resetForm(){
 
-  editId = null;
+  editId =
+    null;
+
+
+  slugManuallyEdited =
+    false;
+
 
   $('videoForm').reset();
 
 
-  $('formTitle').textContent = 'Add Video';
+  $('platform').value =
+    'youtube';
 
-  $('saveBtn').textContent = 'Add Video';
 
-  $('cancelBtn').style.display = 'none';
+  $('formTitle').textContent =
+    'Add Video';
 
+
+  $('saveBtn').textContent =
+    'Add Video';
+
+
+  $('cancelBtn').style.display =
+    'none';
+
+
+  updateUrlHelp();
 
   updatePreview();
 
@@ -869,32 +1332,46 @@ function resetForm(){
 
 async function deleteVideo(id){
 
-  const video = records.find(x => x.id === id);
+  const video =
+    records.find(function(x){
 
-  if(!video) return;
+      return x.id === id;
 
-
-  if(!confirm(
-
-    'Delete this video?\n\n' +
-
-    (video.title || '')
-
-  )) return;
+    });
 
 
-  const result = await db
+  if(!video){
 
-    .from('blog_videos')
+    return;
 
-    .delete()
+  }
 
-    .eq('id',id);
+
+  if(
+    !confirm(
+      'Delete this video?\n\n' +
+      (video.title || '')
+    )
+  ){
+
+    return;
+
+  }
+
+
+  const result =
+    await db
+      .from('blog_videos')
+      .delete()
+      .eq('id',id);
 
 
   if(result.error){
 
-    showMsg(result.error.message,'error');
+    showMsg(
+      result.error.message,
+      'error'
+    );
 
     return;
 
@@ -916,181 +1393,271 @@ async function deleteVideo(id){
    SAVE VIDEO
 ===================================================== */
 
-$('videoForm').addEventListener('submit',async e => {
+$('videoForm').addEventListener(
+  'submit',
+  async function(e){
 
-  e.preventDefault();
-
-
-  const title =
-    $('title').value.trim();
+    e.preventDefault();
 
 
-  const videoUrl =
-    $('video_url').value.trim();
+    const title =
+      $('title')
+        .value
+        .trim();
 
 
-  let slug =
-    $('slug').value.trim();
+    const platform =
+      $('platform')
+        .value;
 
 
-  if(!title){
-
-    showMsg(
-      'Please enter a video title.',
-      'error'
-    );
-
-    return;
-
-  }
+    const videoUrl =
+      $('video_url')
+        .value
+        .trim();
 
 
-  if(!videoUrl){
-
-    showMsg(
-      'Please enter the video URL.',
-      'error'
-    );
-
-    return;
-
-  }
+    let slug =
+      $('slug')
+        .value
+        .trim();
 
 
-  /*
-    If slug is empty, automatically create it
-    from the video title.
-  */
-
-  if(!slug){
-
-    slug = makeSlug(title);
-
-  }
-
-
-  slug = makeSlug(slug);
-
-
-  if(!slug){
-
-    showMsg(
-      'Please enter a valid video slug.',
-      'error'
-    );
-
-    return;
-
-  }
-
-
-  const payload = {
-
-    title: title,
-
-    slug: slug,
-
-    video_url: videoUrl,
-
-    thumbnail_url:
-      $('thumbnail_url').value.trim() || null,
-
-    description:
-      $('description').value.trim() || null,
-
-    category:
-      $('category').value.trim() || null,
-
-    author:
-      $('author').value.trim() || null,
-
-    duration:
-      $('duration').value.trim() || null,
-
-    featured:
-      $('featured').checked,
-
-    is_published:
-      $('is_published').checked,
-
-    published_at:
-      $('is_published').checked
-        ? new Date().toISOString()
-        : null
-
-  };
-
-
-  let result;
-
-
-  if(editId){
-
-    result = await db
-
-      .from('blog_videos')
-
-      .update(payload)
-
-      .eq('id',editId);
-
-  }else{
-
-    result = await db
-
-      .from('blog_videos')
-
-      .insert(payload);
-
-  }
-
-
-  if(result.error){
-
-    /*
-      PostgreSQL unique violation
-      for duplicate slug.
-    */
-
-    if(result.error.code === '23505'){
+    if(!title){
 
       showMsg(
-        'This video slug already exists. Please use a different slug.',
+        'Please enter a video title.',
         'error'
       );
 
-    }else{
-
-      showMsg(
-        result.error.message,
-        'error'
-      );
+      return;
 
     }
 
-    return;
+
+    if(!videoUrl){
+
+      showMsg(
+        'Please enter the video URL.',
+        'error'
+      );
+
+      return;
+
+    }
+
+
+    if(!slug){
+
+      slug =
+        makeSlug(title);
+
+    }
+
+
+    slug =
+      makeSlug(slug);
+
+
+    if(!slug){
+
+      showMsg(
+        'Please enter a valid video slug.',
+        'error'
+      );
+
+      return;
+
+    }
+
+
+    /*
+       The existing database uses video_url.
+       Platform is stored only when the database
+       already has a platform column.
+    */
+
+
+    const basePayload = {
+
+      title:title,
+
+      slug:slug,
+
+      video_url:videoUrl,
+
+      thumbnail_url:
+        $('thumbnail_url')
+          .value
+          .trim() || null,
+
+      description:
+        $('description')
+          .value
+          .trim() || null,
+
+      category:
+        $('category')
+          .value
+          .trim() || null,
+
+      author:
+        $('author')
+          .value
+          .trim() || null,
+
+      duration:
+        $('duration')
+          .value
+          .trim() || null,
+
+      featured:
+        $('featured')
+          .checked,
+
+      is_published:
+        $('is_published')
+          .checked,
+
+      published_at:
+        $('is_published').checked
+          ? new Date().toISOString()
+          : null
+
+    };
+
+
+    /*
+       First try with platform.
+       If the existing database does not yet
+       contain that column, automatically retry
+       using the original database structure.
+    */
+
+    const payloadWithPlatform =
+      Object.assign(
+        {},
+        basePayload,
+        {
+          platform:platform
+        }
+      );
+
+
+    let result;
+
+
+    if(editId){
+
+      result =
+        await db
+          .from('blog_videos')
+          .update(
+            payloadWithPlatform
+          )
+          .eq('id',editId);
+
+    }else{
+
+      result =
+        await db
+          .from('blog_videos')
+          .insert(
+            payloadWithPlatform
+          );
+
+    }
+
+
+    /*
+       If platform column does not exist,
+       save everything else exactly as before.
+    */
+
+    if(
+      result.error &&
+      (
+        String(
+          result.error.message || ''
+        )
+        .toLowerCase()
+        .includes('platform')
+      )
+    ){
+
+      if(editId){
+
+        result =
+          await db
+            .from('blog_videos')
+            .update(
+              basePayload
+            )
+            .eq('id',editId);
+
+      }else{
+
+        result =
+          await db
+            .from('blog_videos')
+            .insert(
+              basePayload
+            );
+
+      }
+
+    }
+
+
+    if(result.error){
+
+      if(
+        result.error.code ===
+        '23505'
+      ){
+
+        showMsg(
+          'This video slug already exists. Please use a different slug.',
+          'error'
+        );
+
+      }else{
+
+        showMsg(
+          result.error.message,
+          'error'
+        );
+
+      }
+
+      return;
+
+    }
+
+
+    showMsg(
+
+      editId
+
+        ?
+
+        'Video updated successfully.'
+
+        :
+
+        'Video added successfully.',
+
+      'ok'
+
+    );
+
+
+    resetForm();
+
+    await load();
 
   }
-
-
-  showMsg(
-
-    editId
-
-      ? 'Video updated successfully.'
-
-      : 'Video added successfully.',
-
-    'ok'
-
-  );
-
-
-  resetForm();
-
-  await load();
-
-});
+);
 
 
 /* =====================================================
@@ -1110,22 +1677,25 @@ $('cancelBtn').addEventListener(
 function updatePreview(){
 
   const title =
-
-    $('title').value.trim() ||
+    $('title')
+      .value
+      .trim() ||
 
     'Video title will appear here';
 
 
   const description =
+    $('description')
+      .value
+      .trim() ||
 
-    $('description').value.trim() ||
-
-    'Video description will appear here.';
+    'Video description will appear here';
 
 
   const thumbnail =
-
-    $('thumbnail_url').value.trim();
+    $('thumbnail_url')
+      .value
+      .trim();
 
 
   $('previewTitle').textContent =
@@ -1141,6 +1711,7 @@ function updatePreview(){
     $('previewImage').src =
       thumbnail;
 
+
     $('previewImage').style.display =
       'block';
 
@@ -1148,6 +1719,7 @@ function updatePreview(){
 
     $('previewImage').style.display =
       'none';
+
 
     $('previewImage').removeAttribute(
       'src'
@@ -1165,13 +1737,19 @@ function updatePreview(){
 function updateSlugPreview(){
 
   const slug =
+    $('slug')
+      .value
+      .trim() ||
 
-    $('slug').value.trim() ||
+    makeSlug(
+      $('title')
+        .value
+        .trim()
+    );
 
-    makeSlug($('title').value.trim());
 
-
-  const preview = $('slugPreview');
+  const preview =
+    $('slugPreview');
 
 
   if(!slug){
@@ -1191,17 +1769,21 @@ function updateSlugPreview(){
 
 
 /* =====================================================
-   AUTO SLUG FROM TITLE
+   EVENTS
 ===================================================== */
 
-let slugManuallyEdited = false;
+$('platform').addEventListener(
+  'change',
+  updateUrlHelp
+);
 
 
 $('slug').addEventListener(
   'input',
-  () => {
+  function(){
 
-    slugManuallyEdited = true;
+    slugManuallyEdited =
+      true;
 
     updateSlugPreview();
 
@@ -1211,7 +1793,7 @@ $('slug').addEventListener(
 
 $('title').addEventListener(
   'input',
-  () => {
+  function(){
 
     updatePreview();
 
@@ -1219,7 +1801,9 @@ $('title').addEventListener(
     if(!slugManuallyEdited){
 
       $('slug').value =
-        makeSlug($('title').value);
+        makeSlug(
+          $('title').value
+        );
 
     }
 
@@ -1240,38 +1824,6 @@ $('thumbnail_url').addEventListener(
   'input',
   updatePreview
 );
-
-
-/* =====================================================
-   RESET SLUG AUTO MODE WHEN FORM IS RESET
-===================================================== */
-
-const originalResetForm = resetForm;
-
-function resetForm(){
-
-  editId = null;
-
-  slugManuallyEdited = false;
-
-  $('videoForm').reset();
-
-
-  $('formTitle').textContent =
-    'Add Video';
-
-  $('saveBtn').textContent =
-    'Add Video';
-
-  $('cancelBtn').style.display =
-    'none';
-
-
-  updatePreview();
-
-  updateSlugPreview();
-
-}
 
 
 /* =====================================================
