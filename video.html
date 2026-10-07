@@ -5,152 +5,1321 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Video | Haroon Ibn Rasheed Online Quran Academy</title>
 <meta name="description" content="Quran and Islamic educational video from Haroon Ibn Rasheed Online Quran Academy.">
+
 <style>
-:root{--green:#0b9fbb;--dark:#07394a;--light:#eef9fb;--gray:#58717a}
+:root{
+--green:#0b9fbb;
+--dark:#07394a;
+--light:#eef9fb;
+--gray:#58717a;
+}
+
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--dark);background:#fff}
-.header{padding:18px 5%;border-bottom:1px solid #e6eef0;position:sticky;top:0;background:#fff;z-index:5}
-.header-inner{max-width:1100px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:15px}
-.brand{font-weight:800;text-decoration:none;color:var(--dark)}
-.back,.btn{background:var(--green);color:#fff;border:0;border-radius:8px;padding:11px 16px;font-weight:700;text-decoration:none;cursor:pointer}
-.container{width:90%;max-width:1050px;margin:auto}
-main{padding:45px 0 70px}
-.loading,.message{padding:45px 20px;text-align:center;background:var(--light);border-radius:14px}
-#videoPage{display:none}
-h1{font-size:32px;line-height:1.25;margin:0 0 12px}
-.meta{color:var(--gray);margin-bottom:22px}
-.player{position:relative;width:100%;padding-bottom:56.25%;height:0;background:#000;border-radius:14px;overflow:hidden}
-.player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}
-.description{padding:22px;background:var(--light);border-radius:14px;line-height:1.7}
-.notice{margin-top:18px;color:var(--gray);font-size:13px}
-@media(max-width:650px){.header-inner{flex-direction:column;align-items:flex-start}h1{font-size:25px}}
+
+body{
+margin:0;
+font-family:Arial,Helvetica,sans-serif;
+color:var(--dark);
+background:#fff;
+}
+
+.header{
+padding:18px 5%;
+border-bottom:1px solid #e6eef0;
+position:sticky;
+top:0;
+background:#fff;
+z-index:5;
+}
+
+.header-inner{
+max-width:1100px;
+margin:auto;
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:15px;
+}
+
+.brand{
+font-weight:800;
+text-decoration:none;
+color:var(--dark);
+}
+
+.back,.btn{
+background:var(--green);
+color:#fff;
+border:0;
+border-radius:8px;
+padding:11px 16px;
+font-weight:700;
+text-decoration:none;
+cursor:pointer;
+}
+
+.container{
+width:90%;
+max-width:1050px;
+margin:auto;
+}
+
+main{
+padding:45px 0 70px;
+}
+
+.loading,.message{
+padding:45px 20px;
+text-align:center;
+background:var(--light);
+border-radius:14px;
+}
+
+#videoPage{
+display:none;
+}
+
+h1{
+font-size:32px;
+line-height:1.25;
+margin:0 0 12px;
+}
+
+.meta{
+color:var(--gray);
+margin-bottom:22px;
+}
+
+.player{
+position:relative;
+width:100%;
+padding-bottom:56.25%;
+height:0;
+background:#000;
+border-radius:14px;
+overflow:hidden;
+}
+
+.player iframe{
+position:absolute;
+inset:0;
+width:100%;
+height:100%;
+border:0;
+}
+
+.actions{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin:20px 0;
+}
+
+.action-btn{
+border:0;
+border-radius:9px;
+padding:11px 15px;
+font-weight:700;
+cursor:pointer;
+background:#eef9fb;
+color:#07394a;
+}
+
+.action-btn.active{
+background:#0b9fbb;
+color:#fff;
+}
+
+.description{
+padding:22px;
+background:var(--light);
+border-radius:14px;
+line-height:1.7;
+}
+
+.notice{
+margin-top:18px;
+color:var(--gray);
+font-size:13px;
+}
+
+.comments-box{
+margin-top:25px;
+border-top:1px solid #e6eef0;
+padding-top:20px;
+}
+
+.comments-toggle{
+width:100%;
+text-align:left;
+background:#eef9fb;
+border:0;
+padding:15px;
+border-radius:10px;
+font-size:16px;
+font-weight:700;
+color:var(--dark);
+cursor:pointer;
+}
+
+.comments-content{
+display:none;
+margin-top:15px;
+}
+
+.comment-form{
+background:#f8fcfd;
+padding:18px;
+border-radius:12px;
+}
+
+.comment-form input,
+.comment-form textarea{
+width:100%;
+padding:12px;
+margin-bottom:10px;
+border:1px solid #d7e7eb;
+border-radius:8px;
+font-family:inherit;
+box-sizing:border-box;
+}
+
+.comment-form textarea{
+min-height:100px;
+resize:vertical;
+}
+
+.comment-form button{
+background:var(--green);
+color:white;
+border:0;
+border-radius:8px;
+padding:11px 18px;
+font-weight:700;
+cursor:pointer;
+}
+
+.comment{
+padding:15px 0;
+border-bottom:1px solid #e6eef0;
+}
+
+.comment-name{
+font-weight:700;
+margin-bottom:4px;
+}
+
+.comment-date{
+font-size:12px;
+color:var(--gray);
+margin-bottom:7px;
+}
+
+.comment-text{
+white-space:pre-wrap;
+word-break:break-word;
+}
+
+.no-comments{
+padding:15px 0;
+color:var(--gray);
+}
+
+@media(max-width:650px){
+
+.header-inner{
+flex-direction:column;
+align-items:flex-start;
+}
+
+h1{
+font-size:25px;
+}
+
+.actions{
+gap:7px;
+}
+
+.action-btn,
+.btn{
+padding:10px 12px;
+font-size:14px;
+}
+}
 </style>
 </head>
+
 <body>
+
 <header class="header">
 <div class="header-inner">
-<a class="brand" href="index.html">Haroon Ibn Rasheed Online Quran Academy</a>
-<a class="back" href="index.html">← Back to Website</a>
+
+<a class="brand" href="index.html">
+Haroon Ibn Rasheed Online Quran Academy
+</a>
+
+<a class="back" href="index.html">
+← Back to Website
+</a>
+
 </div>
 </header>
 
 <main>
+
 <div class="container">
-<div id="loading" class="loading">Loading video...</div>
+
+<div id="loading" class="loading">
+Loading video...
+</div>
 
 <div id="notFound" class="message" style="display:none">
+
 <h2>Video not found</h2>
-<p>This video may have been removed or is not published.</p>
-<a class="back" href="index.html">Go to Website</a>
+
+<p>
+This video may have been removed or is not published.
+</p>
+
+<a class="back" href="index.html">
+Go to Website
+</a>
+
 </div>
+
 
 <article id="videoPage">
+
 <h1 id="title"></h1>
+
 <div id="meta" class="meta"></div>
 
+
 <div class="player">
-<div id="youtubePlayer"></div>
+
+<div id="videoPlayer"></div>
+
 </div>
+
 
 <div class="actions">
-<button id="shareBtn" class="btn">📤 Share Video</button>
-<button id="copyBtn" class="btn" style="background:var(--dark)">🔗 Copy Link</button>
+
+<button id="likeBtn" class="action-btn">
+👍 Like <span id="likeCount">0</span>
+</button>
+
+<button id="dislikeBtn" class="action-btn">
+👎 Dislike <span id="dislikeCount">0</span>
+</button>
+
+<button id="commentsBtn" class="action-btn">
+💬 Comments <span id="commentCount">0</span>
+</button>
+
+<button id="shareBtn" class="action-btn">
+📤 Share
+</button>
+
+<button id="copyBtn" class="action-btn">
+🔗 Copy Link
+</button>
+
 </div>
 
-<div id="description" class="description" style="display:none"></div>
-<div class="notice">You are watching this video on the Haroon Ibn Rasheed Online Quran Academy website.</div>
-</article>
+
+<div id="description"
+class="description"
+style="display:none">
 </div>
+
+
+<div id="commentsBox" class="comments-box">
+
+<button id="commentsToggle"
+class="comments-toggle">
+💬 Show Comments
+</button>
+
+<div id="commentsContent"
+class="comments-content">
+
+
+<div class="comment-form">
+
+<input
+id="commentName"
+type="text"
+maxlength="100"
+placeholder="Your Name"
+>
+
+<textarea
+id="commentText"
+maxlength="2000"
+placeholder="Write your comment..."
+></textarea>
+
+<button id="submitComment">
+Post Comment
+</button>
+
+</div>
+
+
+<div id="commentsList"></div>
+
+</div>
+
+</div>
+
+
+<div class="notice">
+You are watching this video on the Haroon Ibn Rasheed Online Quran Academy website.
+</div>
+
+</article>
+
+</div>
+
 </main>
 
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="js/config.js"></script>
+
+
 <script>
+
 (function(){
+
 const cfg=window.SUPABASE_CONFIG||{};
+
 const loading=document.getElementById('loading');
+
 const page=document.getElementById('videoPage');
+
 const notFound=document.getElementById('notFound');
 
+
 function fail(){
- loading.style.display='none';
- notFound.style.display='block';
+
+loading.style.display='none';
+
+notFound.style.display='block';
+
 }
 
-if(!window.supabase||!cfg.url||!cfg.anonKey){fail();return;}
 
-const db=window.supabase.createClient(cfg.url,cfg.anonKey);
-const params=new URLSearchParams(location.search);
+if(
+!window.supabase ||
+!cfg.url ||
+!cfg.anonKey
+){
+
+fail();
+
+return;
+
+}
+
+
+const db=window.supabase.createClient(
+cfg.url,
+cfg.anonKey
+);
+
+
+const params=new URLSearchParams(
+location.search
+);
+
 const slug=params.get('slug');
 
-if(!slug){fail();return;}
 
-function youtubeId(url){
- if(!url)return '';
- try{
-  const u=new URL(url);
-  if(u.hostname.includes('youtube.com')&&u.pathname==='/watch')return u.searchParams.get('v')||'';
-  if(u.hostname.includes('youtu.be'))return u.pathname.replace('/','').split('?')[0];
-  if(u.pathname.startsWith('/shorts/'))return u.pathname.split('/shorts/')[1].split('/')[0];
-  if(u.pathname.startsWith('/embed/'))return u.pathname.split('/embed/')[1].split('/')[0];
- }catch(e){}
- return '';
+if(!slug){
+
+fail();
+
+return;
+
 }
 
+
+/* =========================
+   PLATFORM HELPERS
+========================= */
+
+
+function youtubeId(url){
+
+if(!url)return '';
+
+try{
+
+const u=new URL(url);
+
+if(
+u.hostname.includes('youtube.com') &&
+u.pathname==='/watch'
+)
+return u.searchParams.get('v')||'';
+
+if(
+u.hostname.includes('youtu.be')
+)
+return u.pathname.replace('/','')
+.split('?')[0];
+
+if(
+u.pathname.startsWith('/shorts/')
+)
+return u.pathname
+.split('/shorts/')[1]
+.split('/')[0];
+
+if(
+u.pathname.startsWith('/embed/')
+)
+return u.pathname
+.split('/embed/')[1]
+.split('/')[0];
+
+}catch(e){}
+
+return '';
+
+}
+
+
+function googleDriveId(url){
+
+if(!url)return '';
+
+try{
+
+const u=new URL(url);
+
+const m=u.pathname.match(
+/\/file\/d\/([^\/]+)/
+);
+
+if(m)return m[1];
+
+const id=u.searchParams.get('id');
+
+if(id)return id;
+
+}catch(e){}
+
+return '';
+
+}
+
+
+function facebookUrl(url){
+
+if(!url)return '';
+
+try{
+
+const u=new URL(url);
+
+if(
+u.hostname.includes('facebook.com') ||
+u.hostname.includes('fb.watch')
+){
+
+return url;
+
+}
+
+}catch(e){}
+
+return '';
+
+}
+
+
+function instagramUrl(url){
+
+if(!url)return '';
+
+try{
+
+const u=new URL(url);
+
+if(
+u.hostname.includes('instagram.com')
+){
+
+return url;
+
+}
+
+}catch(e){}
+
+return '';
+
+}
+
+
+function tiktokId(url){
+
+if(!url)return '';
+
+try{
+
+const u=new URL(url);
+
+const parts=u.pathname
+.split('/')
+.filter(Boolean);
+
+const videoIndex=parts.indexOf('video');
+
+if(
+videoIndex!==-1 &&
+parts[videoIndex+1]
+){
+
+return parts[videoIndex+1];
+
+}
+
+}catch(e){}
+
+return '';
+
+}
+
+
+/* =========================
+   VISITOR KEY
+========================= */
+
+
+function getVisitorKey(){
+
+let key=localStorage.getItem(
+'hr_video_visitor_key'
+);
+
+if(!key){
+
+key=
+'visitor_' +
+crypto.randomUUID();
+
+localStorage.setItem(
+'hr_video_visitor_key',
+key
+);
+
+}
+
+return key;
+
+}
+
+
+const visitorKey=getVisitorKey();
+
+
+let currentVideo=null;
+
+
+/* =========================
+   LOAD VIDEO
+========================= */
+
+
 db.from('blog_videos')
+
 .select('*')
+
 .eq('slug',slug)
+
 .eq('is_published',true)
+
 .maybeSingle()
-.then(function(r){
- if(r.error||!r.data){fail();return;}
- const v=r.data;
- loading.style.display='none';
- page.style.display='block';
 
- document.getElementById('title').textContent=v.title||'Quran Video';
- document.title=(v.title||'Video')+' | Haroon Ibn Rasheed Online Quran Academy';
+.then(async function(r){
 
- const meta=[v.category,v.author,v.duration].filter(Boolean);
- document.getElementById('meta').textContent=meta.join(' • ');
+if(r.error || !r.data){
 
- const id=youtubeId(v.video_url);
- if(id){
-  document.getElementById('youtubePlayer').innerHTML=
-  '<iframe src="https://www.youtube.com/embed/'+encodeURIComponent(id)+'" title="'
-  +String(v.title||'Quran Video').replace(/"/g,'&quot;')
-  +'" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
- }
+fail();
 
- if(v.description){
-  const d=document.getElementById('description');
-  d.style.display='block';
-  d.textContent=v.description;
- }
+return;
 
- const websiteUrl=location.href;
+}
 
- document.getElementById('copyBtn').onclick=function(){
-  if(navigator.clipboard){
-   navigator.clipboard.writeText(websiteUrl).then(function(){alert('Website video link copied!');});
-  }else{
-   prompt('Copy this website video link:',websiteUrl);
-  }
- };
 
- document.getElementById('shareBtn').onclick=function(){
-  if(navigator.share){
-   navigator.share({title:v.title||'Quran Video',text:'Watch this video on Haroon Ibn Rasheed Online Quran Academy:',url:websiteUrl}).catch(function(){});
-  }else if(navigator.clipboard){
-   navigator.clipboard.writeText(websiteUrl).then(function(){alert('Website video link copied!');});
-  }else{
-   prompt('Copy this website video link:',websiteUrl);
-  }
- };
-})
-.catch(fail);
+const v=r.data;
+
+currentVideo=v;
+
+
+loading.style.display='none';
+
+page.style.display='block';
+
+
+document.getElementById('title')
+.textContent=
+v.title || 'Quran Video';
+
+
+document.title=
+(v.title || 'Video') +
+' | Haroon Ibn Rasheed Online Quran Academy';
+
+
+const meta=[
+v.category,
+v.author,
+v.duration
+].filter(Boolean);
+
+
+document.getElementById('meta')
+.textContent=
+meta.join(' • ');
+
+
+/* =========================
+   PLAYER
+========================= */
+
+
+const player=
+document.getElementById('videoPlayer');
+
+
+const url=v.video_url || '';
+
+const ytId=youtubeId(url);
+
+const driveId=googleDriveId(url);
+
+const fbUrl=facebookUrl(url);
+
+const igUrl=instagramUrl(url);
+
+const ttId=tiktokId(url);
+
+
+if(ytId){
+
+player.innerHTML=
+'<iframe src="https://www.youtube.com/embed/'
++
+encodeURIComponent(ytId)
++
+'?rel=0&modestbranding=1" '
++
+'title="Quran Video" '
++
+'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" '
++
+'allowfullscreen></iframe>';
+
+}
+
+
+else if(driveId){
+
+player.innerHTML=
+'<iframe src="https://drive.google.com/file/d/'
++
+encodeURIComponent(driveId)
++
+'/preview" '
++
+'allow="autoplay" '
++
+'allowfullscreen></iframe>';
+
+}
+
+
+else if(fbUrl){
+
+player.innerHTML=
+'<iframe src="https://www.facebook.com/plugins/video.php?href='
++
+encodeURIComponent(fbUrl)
++
+'&show_text=false" '
++
+'allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" '
++
+'allowfullscreen></iframe>';
+
+}
+
+
+else if(igUrl){
+
+player.innerHTML=
+'<iframe src="'
++
+igUrl.replace(/\/$/,'')
++
+'/embed" '
++
+'allowfullscreen></iframe>';
+
+}
+
+
+else if(ttId){
+
+player.innerHTML=
+'<iframe src="https://www.tiktok.com/player/v1/'
++
+encodeURIComponent(ttId)
++
+'" '
++
+'allow="fullscreen"></iframe>';
+
+}
+
+
+else{
+
+player.innerHTML=
+'<div style="height:100%;display:flex;align-items:center;justify-content:center;color:#fff;text-align:center;padding:20px">'
++
+'Video format is not supported.'
++
+'</div>';
+
+}
+
+
+/* DESCRIPTION */
+
+if(v.description){
+
+const d=
+document.getElementById(
+'description'
+);
+
+d.style.display='block';
+
+d.textContent=v.description;
+
+}
+
+
+/* LOAD COUNTS */
+
+await loadReactionCounts();
+
+await loadCommentCount();
+
+});
+
+
+/* =========================
+   REACTION COUNTS
+========================= */
+
+
+async function loadReactionCounts(){
+
+if(!currentVideo)return;
+
+
+const result=
+await db.rpc(
+'get_video_reaction_counts',
+{
+p_video_id:currentVideo.id
+}
+);
+
+
+if(result.error){
+
+console.error(result.error);
+
+return;
+
+}
+
+
+const row=
+result.data && result.data[0];
+
+
+if(row){
+
+document.getElementById(
+'likeCount'
+).textContent=
+row.likes || 0;
+
+
+document.getElementById(
+'dislikeCount'
+).textContent=
+row.dislikes || 0;
+
+}
+
+}
+
+
+/* =========================
+   LIKE
+========================= */
+
+
+document.getElementById(
+'likeBtn'
+).onclick=async function(){
+
+if(!currentVideo)return;
+
+
+const result=
+await db.from('video_reactions')
+.upsert(
+{
+video_id:currentVideo.id,
+visitor_key:visitorKey,
+reaction:'like'
+},
+{
+onConflict:'video_id,visitor_key'
+}
+);
+
+
+if(result.error){
+
+console.error(result.error);
+
+alert('Unable to save Like.');
+
+return;
+
+}
+
+
+await loadReactionCounts();
+
+};
+
+
+/* =========================
+   DISLIKE
+========================= */
+
+
+document.getElementById(
+'dislikeBtn'
+).onclick=async function(){
+
+if(!currentVideo)return;
+
+
+const result=
+await db.from('video_reactions')
+.upsert(
+{
+video_id:currentVideo.id,
+visitor_key:visitorKey,
+reaction:'dislike'
+},
+{
+onConflict:'video_id,visitor_key'
+}
+);
+
+
+if(result.error){
+
+console.error(result.error);
+
+alert('Unable to save Dislike.');
+
+return;
+
+}
+
+
+await loadReactionCounts();
+
+};
+
+
+/* =========================
+   COMMENTS TOGGLE
+========================= */
+
+
+document.getElementById(
+'commentsToggle'
+).onclick=function(){
+
+const content=
+document.getElementById(
+'commentsContent'
+);
+
+const open=
+content.style.display==='block';
+
+
+if(open){
+
+content.style.display='none';
+
+this.textContent=
+'💬 Show Comments';
+
+}else{
+
+content.style.display='block';
+
+this.textContent=
+'💬 Hide Comments';
+
+loadComments();
+
+}
+
+};
+
+
+/* =========================
+   COMMENT COUNT
+========================= */
+
+
+async function loadCommentCount(){
+
+if(!currentVideo)return;
+
+
+const result=
+await db.from('video_comments')
+.select('id',{count:'exact',head:true})
+.eq('video_id',currentVideo.id)
+.eq('is_approved',true);
+
+
+if(!result.error){
+
+document.getElementById(
+'commentCount'
+).textContent=
+result.count || 0;
+
+}
+
+}
+
+
+/* =========================
+   LOAD COMMENTS
+========================= */
+
+
+async function loadComments(){
+
+if(!currentVideo)return;
+
+
+const list=
+document.getElementById(
+'commentsList'
+);
+
+
+list.innerHTML=
+'<div class="no-comments">Loading comments...</div>';
+
+
+const result=
+await db.from('video_comments')
+.select('id,name,comment,created_at')
+.eq('video_id',currentVideo.id)
+.eq('is_approved',true)
+.order('created_at',{
+ascending:false
+});
+
+
+if(result.error){
+
+list.innerHTML=
+'<div class="no-comments">Unable to load comments.</div>';
+
+return;
+
+}
+
+
+if(!result.data || !result.data.length){
+
+list.innerHTML=
+'<div class="no-comments">No comments yet. Be the first to comment.</div>';
+
+return;
+
+}
+
+
+list.innerHTML='';
+
+
+result.data.forEach(function(c){
+
+const div=
+document.createElement('div');
+
+div.className='comment';
+
+
+const name=
+document.createElement('div');
+
+name.className='comment-name';
+
+name.textContent=
+c.name || 'Visitor';
+
+
+const date=
+document.createElement('div');
+
+date.className='comment-date';
+
+date.textContent=
+new Date(c.created_at)
+.toLocaleString();
+
+
+const text=
+document.createElement('div');
+
+text.className='comment-text';
+
+text.textContent=
+c.comment || '';
+
+
+div.appendChild(name);
+
+div.appendChild(date);
+
+div.appendChild(text);
+
+list.appendChild(div);
+
+});
+
+}
+
+
+/* =========================
+   POST COMMENT
+========================= */
+
+
+document.getElementById(
+'submitComment'
+).onclick=async function(){
+
+if(!currentVideo)return;
+
+
+const name=
+document.getElementById(
+'commentName'
+).value.trim();
+
+
+const comment=
+document.getElementById(
+'commentText'
+).value.trim();
+
+
+if(!name){
+
+alert('Please enter your name.');
+
+return;
+
+}
+
+
+if(!comment){
+
+alert('Please write a comment.');
+
+return;
+
+}
+
+
+const button=
+document.getElementById(
+'submitComment'
+);
+
+
+button.disabled=true;
+
+button.textContent=
+'Posting...';
+
+
+const result=
+await db.from('video_comments')
+.insert(
+{
+video_id:currentVideo.id,
+name:name,
+comment:comment,
+is_approved:true
+}
+);
+
+
+button.disabled=false;
+
+button.textContent=
+'Post Comment';
+
+
+if(result.error){
+
+console.error(result.error);
+
+alert('Unable to post comment.');
+
+return;
+
+}
+
+
+document.getElementById(
+'commentName'
+).value='';
+
+
+document.getElementById(
+'commentText'
+).value='';
+
+
+await loadCommentCount();
+
+await loadComments();
+
+};
+
+
+/* =========================
+   WEBSITE SHARE LINK
+========================= */
+
+
+const websiteUrl=
+window.location.href;
+
+
+/* COPY */
+
+document.getElementById(
+'copyBtn'
+).onclick=function(){
+
+if(navigator.clipboard){
+
+navigator.clipboard
+.writeText(websiteUrl)
+.then(function(){
+
+alert(
+'Website video link copied!'
+);
+
+});
+
+}else{
+
+prompt(
+'Copy this website video link:',
+websiteUrl
+);
+
+}
+
+};
+
+
+/* SHARE */
+
+document.getElementById(
+'shareBtn'
+).onclick=function(){
+
+if(navigator.share){
+
+navigator.share({
+
+title:
+currentVideo
+? currentVideo.title
+: 'Quran Video',
+
+text:
+'Watch this video on Haroon Ibn Rasheed Online Quran Academy:',
+
+url:websiteUrl
+
+}).catch(function(){});
+
+}
+
+else if(navigator.clipboard){
+
+navigator.clipboard
+.writeText(websiteUrl)
+.then(function(){
+
+alert(
+'Website video link copied!'
+);
+
+});
+
+}
+
+else{
+
+prompt(
+'Copy this website video link:',
+websiteUrl
+);
+
+}
+
+};
+
+
 })();
+
 </script>
+
 </body>
 </html>
