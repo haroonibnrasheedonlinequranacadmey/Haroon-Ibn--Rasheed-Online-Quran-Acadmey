@@ -81,8 +81,19 @@
               <article class="card">
                 <div class="card-body">
                   <h3>${esc(article.title)}</h3>
-                  <p>${esc(article.excerpt || article.description || '')}</p>
-                  <a href="${esc(article.url || '#')}" class="btn">
+
+                  <p>
+                    ${esc(
+                      article.excerpt ||
+                      article.description ||
+                      ''
+                    )}
+                  </p>
+
+                  <a
+                    href="${esc(article.url || '#')}"
+                    class="btn"
+                  >
                     Read More
                   </a>
                 </div>
@@ -167,8 +178,13 @@
 
             return `
               <div class="card testimonial-card">
+
                 <div class="card-body">
-                  <div class="stars" aria-label="${rating} out of 5">
+
+                  <div
+                    class="stars"
+                    aria-label="${rating} out of 5"
+                  >
                     ${stars}
                   </div>
 
@@ -177,9 +193,14 @@
                   </p>
 
                   <strong>
-                    ${esc(item.student_name || 'Student')}
+                    ${esc(
+                      item.student_name ||
+                      'Student'
+                    )}
                   </strong>
+
                 </div>
+
               </div>
             `;
 
@@ -264,10 +285,10 @@
           .from('testimonials')
           .insert({
 
-            student_name: name,
-            review: review,
-            rating: rating,
-            active: false
+            student_name:name,
+            review:review,
+            rating:rating,
+            active:false
 
           })
 
@@ -314,11 +335,19 @@
 
 
   /* =====================================================
-     VIDEOS
+     VIDEO HELPERS
   ===================================================== */
 
   const videosPublic =
     document.getElementById('videosPublic');
+
+
+  /*
+     Convert relative URL to absolute URL.
+     External video URLs are kept only as the
+     actual source. Share/Copy buttons below
+     use the website URL instead.
+  */
 
   function absoluteVideoUrl(path){
 
@@ -333,12 +362,65 @@
       return path;
     }
 
-    return new URL(
-      path,
-      window.location.href
-    ).href;
+    try{
+
+      return new URL(
+        path,
+        window.location.href
+      ).href;
+
+    }catch(error){
+
+      return path;
+
+    }
 
   }
+
+
+  /* =====================================================
+     CREATE WEBSITE VIDEO URL
+  ===================================================== */
+
+  function websiteVideoUrl(video){
+
+    if(!video){
+      return window.location.href;
+    }
+
+    const slug =
+      video.slug
+        ? String(video.slug).trim()
+        : '';
+
+    /*
+       Same website video URL.
+       This does NOT expose Google Drive,
+       YouTube, Facebook, Instagram or TikTok
+       source URLs.
+    */
+
+    if(slug){
+
+      const base =
+        window.location.href.split('#')[0];
+
+      return (
+        base +
+        '#video/' +
+        encodeURIComponent(slug)
+      );
+
+    }
+
+    return window.location.href;
+
+  }
+
+
+  /* =====================================================
+     COPY WEBSITE VIDEO LINK
+  ===================================================== */
 
   window.copyAcademyVideo =
     function(url){
@@ -347,24 +429,44 @@
         return;
       }
 
-      navigator.clipboard
-        .writeText(url)
-        .then(function(){
+      if(
+        navigator.clipboard &&
+        navigator.clipboard.writeText
+      ){
 
-          alert('Video link copied.');
+        navigator.clipboard
+          .writeText(url)
+          .then(function(){
 
-        })
-        .catch(function(){
+            alert(
+              'Website video link copied.'
+            );
 
-          prompt(
-            'Copy this video link:',
-            url
-          );
+          })
+          .catch(function(){
 
-        });
+            prompt(
+              'Copy this website video link:',
+              url
+            );
+
+          });
+
+        return;
+
+      }
+
+      prompt(
+        'Copy this website video link:',
+        url
+      );
 
     };
 
+
+  /* =====================================================
+     SHARE WEBSITE VIDEO LINK
+  ===================================================== */
 
   window.shareAcademyVideo =
     function(url,title){
@@ -379,6 +481,10 @@
             title ||
             'Haroon Ibn Rasheed Online Quran Academy',
 
+          text:
+            title ||
+            'Quran Video',
+
           url:url
 
         }).catch(function(){});
@@ -390,6 +496,34 @@
 
     };
 
+
+  /* =====================================================
+     OPEN VIDEO
+  ===================================================== */
+
+  window.openAcademyVideo =
+    function(videoId){
+
+      if(
+        typeof window.openVideoDetail === 'function'
+      ){
+
+        window.openVideoDetail(videoId);
+
+        return;
+
+      }
+
+      console.error(
+        'openVideoDetail() is not available in index.html'
+      );
+
+    };
+
+
+  /* =====================================================
+     LOAD PUBLIC VIDEOS
+  ===================================================== */
 
   if(videosPublic){
 
@@ -426,10 +560,11 @@
           return;
         }
 
+
         videosPublic.innerHTML =
           data.map(function(video){
 
-            const videoUrl =
+            const sourceUrl =
               absoluteVideoUrl(
                 video.video_url ||
                 video.url ||
@@ -442,90 +577,121 @@
               video.thumbnail ||
               '';
 
+            const title =
+              video.title ||
+              'Quran Academy Video';
+
+            const websiteUrl =
+              websiteVideoUrl(video);
+
+
             return `
-              <article class="card video-card">
+              <article
+                class="card video-card"
+                data-video-id="${esc(video.id || '')}"
+              >
 
                 ${
                   thumbnail
                   ?
-                  `<img
-                    src="${esc(thumbnail)}"
-                    alt="${esc(video.title || 'Quran Academy Video')}"
-                    loading="lazy"
-                  >`
+                  `
+                    <img
+                      src="${esc(thumbnail)}"
+                      alt="${esc(title)}"
+                      loading="lazy"
+                    >
+                  `
                   :
                   ''
                 }
 
+
                 <div class="card-body">
 
                   <h3>
-                    ${esc(
-                      video.title ||
-                      'Quran Academy Video'
-                    )}
+                    ${esc(title)}
                   </h3>
+
 
                   ${
                     video.category
                     ?
-                    `<p>${esc(video.category)}</p>`
+                    `
+                      <p>
+                        ${esc(video.category)}
+                      </p>
+                    `
                     :
                     ''
                   }
+
 
                   ${
                     video.author
                     ?
-                    `<p>${esc(video.author)}</p>`
+                    `
+                      <p>
+                        ${esc(video.author)}
+                      </p>
+                    `
                     :
                     ''
                   }
+
 
                   ${
                     video.duration
                     ?
-                    `<p>${esc(video.duration)}</p>`
+                    `
+                      <p>
+                        ${esc(video.duration)}
+                      </p>
+                    `
                     :
                     ''
                   }
+
 
                   ${
-                    videoUrl
+                    sourceUrl
                     ?
                     `
-                    <div class="video-actions">
+                      <div class="video-actions">
 
-                      <a
-                        href="${esc(videoUrl)}"
-                        class="btn"
-                        target="_blank"
-                        rel="noopener"
-                      >
-                        Watch Video
-                      </a>
 
-                      <button
-                        type="button"
-                        class="btn"
-                        onclick="shareAcademyVideo('${esc(videoUrl)}','${esc(video.title || '')}')"
-                      >
-                        Share
-                      </button>
+                        <button
+                          type="button"
+                          class="btn"
+                          onclick="openAcademyVideo('${esc(video.id || '')}')"
+                        >
+                          Watch Video
+                        </button>
 
-                      <button
-                        type="button"
-                        class="btn"
-                        onclick="copyAcademyVideo('${esc(videoUrl)}')"
-                      >
-                        Copy Link
-                      </button>
 
-                    </div>
+                        <button
+                          type="button"
+                          class="btn"
+                          onclick="shareAcademyVideo('${esc(websiteUrl)}','${esc(title)}')"
+                        >
+                          Share
+                        </button>
+
+
+                        <button
+                          type="button"
+                          class="btn"
+                          onclick="copyAcademyVideo('${esc(websiteUrl)}')"
+                        >
+                          Copy Link
+                        </button>
+
+
+                      </div>
                     `
                     :
                     ''
                   }
+
 
                 </div>
 
