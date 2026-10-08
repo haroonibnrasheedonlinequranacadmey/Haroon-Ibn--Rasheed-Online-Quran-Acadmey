@@ -1197,6 +1197,7 @@ async function loadTeacherSchedule(){
           .select(`
             id,
             user_id,
+            account_id,
             full_name
           `)
           .in(
@@ -1224,15 +1225,19 @@ async function loadTeacherSchedule(){
           if(student.user_id){
             studentMap[String(student.user_id)] = name;
           }
+
+          if(student.account_id){
+            studentMap[String(student.account_id)] = name;
+          }
         });
 
         /* If students.full_name is empty, use the linked profile name. */
         const missingProfileIds = (students || [])
           .filter(student =>
             !String(student.full_name || "").trim() &&
-            student.user_id
+            (student.user_id || student.account_id)
           )
-          .map(student => String(student.user_id));
+          .map(student => String(student.user_id || student.account_id));
 
         if(missingProfileIds.length){
           const { data:profiles, error:profileError } =
@@ -1251,22 +1256,55 @@ async function loadTeacherSchedule(){
           }
         }
 
+      }
 
-        schedules =
-          schedules.map(
-            schedule => ({
+      /*
+        IMPORTANT FALLBACK:
+        In the current portal schema, class schedules can store the
+        student's linked Auth/Profile UUID in student_id. Teachers are
+        allowed to read the matching profile, while students themselves
+        are protected by RLS. This lookup therefore works even when the
+        direct students-table query is blocked by RLS.
+      */
+      const unresolvedIds = [
+        ...new Set(
+          schedules
+            .map(schedule => String(schedule.student_id || ""))
+            .filter(id => id && !studentMap[id])
+        )
+      ];
 
-              ...schedule,
+      if(unresolvedIds.length){
 
-              student_name:
-                studentMap[
-                  schedule.student_id
-                ]
-                ||
-                "Student"
+        const { data:profiles, error:profileError } =
+          await db
+            .from("profiles")
+            .select("id,full_name")
+            .in("id", unresolvedIds);
 
-            })
-          );
+        if(!profileError){
+          (profiles || []).forEach(profile => {
+            const name = String(profile.full_name || "").trim();
+            if(name){
+              studentMap[String(profile.id)] = name;
+            }
+          });
+        }
+      }
+
+      schedules =
+        schedules.map(
+          schedule => ({
+
+            ...schedule,
+
+            student_name:
+              studentMap[String(schedule.student_id || "")]
+              ||
+              "Student"
+
+          })
+        );
 
       }
 
