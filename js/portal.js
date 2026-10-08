@@ -976,59 +976,20 @@ function getAutomaticStatus(
   viewerTimezone
 ){
 
+  /*
+    Teacher classes are no longer automatically
+    changed to Active/late based on the clock.
+
+    If an existing session has a saved status,
+    keep that status. Otherwise the class remains
+    Upcoming until an explicit teacher action
+    creates/updates a session.
+  */
+
   if(savedStatus)
     return savedStatus;
 
-
-  const timezone =
-    safeTimezone(
-      viewerTimezone ||
-      schedule.teacher_timezone ||
-      DEFAULT_TIMEZONE
-    );
-
-
-  const occurrence =
-    getTodayOccurrence(
-      schedule,
-      timezone
-    );
-
-
-  if(!occurrence)
-    return 'upcoming';
-
-
-  const now =
-    viewerNow(timezone);
-
-
-  const start =
-    occurrence.viewerDateTime;
-
-
-  const end =
-    start.plus({
-      minutes:
-        +schedule.duration_minutes ||
-        30
-    });
-
-
-  if(
-    now <
-    start.minus({
-      minutes:5
-    })
-  )
-    return 'upcoming';
-
-
-  if(now < end)
-    return 'upcoming';
-
-
-  return 'late';
+  return 'upcoming';
 }
 
 
@@ -1154,92 +1115,17 @@ async function ensureTodaySession(
   teacherTimezone
 ){
 
-  const occurrence =
-    getTodayOccurrence(
-      schedule,
-      teacherTimezone
-    );
-
-
-  if(!occurrence)
-    return null;
-
-
-  const baseDate =
-    occurrence.baseDate;
-
-
-  const existing =
-    await db
-      .from('teacher_class_sessions')
-      .select('*')
-      .eq(
-        'schedule_id',
-        schedule.id
-      )
-      .eq(
-        'teacher_id',
-        teacherId
-      )
-      .eq(
-        'class_date',
-        baseDate
-      )
-      .maybeSingle();
-
-
-  if(existing.data)
-    return existing.data;
-
-
-  const initial =
-    getAutomaticStatus(
-      schedule,
-      null,
-      teacherTimezone
-    );
-
-
   /*
-    scheduled_at is stored as an absolute
-    timestamp when the column exists.
+    IMPORTANT:
+    Do not automatically create a teacher
+    session when the dashboard loads.
+
+    Existing sessions are still read by the
+    dashboard, but a new session must only be
+    created by an explicit teacher action.
   */
 
-  const scheduledAt =
-    occurrence
-      .baseDateTime
-      .toUTC()
-      .toISO();
-
-
-  const insert =
-    await db
-      .from('teacher_class_sessions')
-      .insert({
-
-        schedule_id:
-          schedule.id,
-
-        teacher_id:
-          teacherId,
-
-        student_id:
-          schedule.student_id,
-
-        class_date:
-          baseDate,
-
-        status:
-          initial,
-
-        session_timezone:
-          teacherTimezone,
-      })
-      .select()
-      .single();
-
-
-  return insert.data || null;
+  return null;
 }
 
 
@@ -1398,13 +1284,12 @@ async function loadTeacherDashboard(g){
       await db
         .from('students')
         .select(
-          'id,full_name,teacher_id,status,timezone'
+          'id,user_id,full_name,teacher_id,status,timezone'
         )
         .in(
           'id',
           studentIds
         );
-
 
     if(!sr.error)
       students =
@@ -1414,10 +1299,57 @@ async function loadTeacherDashboard(g){
 
   const studentMap = {};
 
-
   students.forEach(s=>{
-    studentMap[s.id] = s;
+    studentMap[String(s.id)] = s;
   });
+
+
+  /*
+    If the student's full_name is empty, use the
+    linked profile name. This is also useful when
+    the student record is linked through user_id.
+  */
+
+  const missingProfileIds =
+    students
+      .filter(s =>
+        !String(s.full_name || '').trim() &&
+        s.user_id
+      )
+      .map(s => String(s.user_id));
+
+  if(missingProfileIds.length){
+
+    const pr =
+      await db
+        .from('profiles')
+        .select('id,full_name')
+        .in(
+          'id',
+          [...new Set(missingProfileIds)]
+        );
+
+    if(!pr.error){
+
+      (pr.data || []).forEach(profile=>{
+
+        const name =
+          String(profile.full_name || '').trim();
+
+        if(!name)
+          return;
+
+        students
+          .filter(s =>
+            String(s.user_id) ===
+            String(profile.id)
+          )
+          .forEach(s=>{
+            s.full_name = name;
+          });
+      });
+    }
+  }
 
 
   /* =========================
@@ -1434,36 +1366,51 @@ async function loadTeacherDashboard(g){
     );
 
 
-  const todaySessions = [];
+  /*
+    Read existing teacher sessions only.
+    Do NOT create/activate a session just because
+    the teacher dashboard was opened.
+  */
 
+  const todaySessions = [];
+  const sessionMap = {};
 
   for(
     const schedule
     of todaySchedules
   ){
 
-    const s =
-      await ensureTodaySession(
+    const occurrence =
+      getTodayOccurrence(
         schedule,
-        uid,
         teacherTimezone
       );
 
+    if(!occurrence)
+      continue;
 
-    if(s)
-      todaySessions.push(s);
+    const sessionResult =
+      await db
+        .from('teacher_class_sessions')
+        .select('*')
+        .eq('schedule_id', schedule.id)
+        .eq('teacher_id', uid)
+        .eq('class_date', occurrence.baseDate)
+        .maybeSingle();
 
-  }
+    if(
+      !sessionResult.error &&
+      sessionResult.data
+    ){
+      todaySessions.push(
+        sessionResult.data
+      );
 
-  const sessionMap = {};
-
-  todaySessions.forEach(
-    s=>{
       sessionMap[
-        s.schedule_id
-      ] = s;
+        schedule.id
+      ] = sessionResult.data;
     }
-  );
+  }
 
 
   /* =========================
