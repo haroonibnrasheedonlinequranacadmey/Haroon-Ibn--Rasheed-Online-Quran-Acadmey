@@ -1162,6 +1162,7 @@ await db
 .select(`
 id,
 user_id,
+account_id,
 full_name,
 status,
 course,
@@ -1191,6 +1192,7 @@ await db
 .select(`
 id,
 user_id,
+account_id,
 full_name,
 status,
 course,
@@ -1211,6 +1213,34 @@ return result.data;
 
 }
 
+
+/* THIRD: students.account_id
+   Some academy records link the student schedule to account_id. */
+result =
+await db
+.from("students")
+.select(`
+id,
+user_id,
+account_id,
+full_name,
+status,
+course,
+timezone,
+teacher_id
+`)
+.eq("account_id",studentId)
+.maybeSingle();
+
+if(
+!result.error &&
+result.data &&
+String(result.data.full_name || "").trim()
+){
+
+return result.data;
+
+}
 
 /* PROFILE FALLBACK: use the linked auth/profile name
    only when the student row has no usable full_name. */
@@ -1243,6 +1273,7 @@ await db
 .select(`
 id,
 user_id,
+account_id,
 full_name,
 status,
 course,
@@ -1471,6 +1502,7 @@ await db
 .select(`
 id,
 user_id,
+account_id,
 full_name,
 status,
 course,
@@ -1498,6 +1530,15 @@ if(student.user_id){
 
 studentMap.set(
 String(student.user_id),
+student
+);
+
+}
+
+if(student.account_id){
+
+studentMap.set(
+String(student.account_id),
 student
 );
 
@@ -1548,6 +1589,15 @@ if(realStudent.user_id){
 
 studentMap.set(
 String(realStudent.user_id),
+realStudent
+);
+
+}
+
+if(realStudent.account_id){
+
+studentMap.set(
+String(realStudent.account_id),
 realStudent
 );
 
