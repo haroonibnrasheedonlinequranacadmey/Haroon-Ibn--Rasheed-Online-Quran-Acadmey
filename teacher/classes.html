@@ -1,0 +1,51 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>My Classes | Haroon Ibn Rasheed Online Quran Academy</title><link rel="stylesheet" href="../css/portal.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../js/config.js"></script><script src="../js/portal.js" defer></script>
+<style id="teacher-top-header-style">
+/* Professional teacher header: layout/branding only. Existing page content and JS remain untouched. */
+.teacher-top-header{width:100%;background:#fff;border-bottom:1px solid #dbe7ef;box-shadow:0 2px 10px rgba(15,64,90,.08);position:relative;z-index:50;}
+.teacher-brand-row{min-height:76px;display:flex;align-items:center;justify-content:space-between;padding:10px 28px;box-sizing:border-box;gap:20px;}
+.teacher-brand{display:flex;align-items:center;gap:12px;min-width:0;}
+.teacher-brand img{width:54px;height:54px;object-fit:contain;display:block;}
+.teacher-brand-text{display:flex;flex-direction:column;line-height:1.12;}
+.teacher-brand-name{font-size:20px;font-weight:800;color:#155b79;letter-spacing:.1px;white-space:nowrap;}
+.teacher-brand-sub{font-size:12px;font-weight:600;color:#1986a9;margin-top:4px;white-space:nowrap;}
+.teacher-header-actions{display:flex;align-items:center;gap:8px;}
+.teacher-header-icon{width:36px;height:36px;border:1px solid #d8e6ed;background:#fff;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#166c8d;font-size:17px;box-sizing:border-box;}
+.teacher-header-icon:hover{background:#eef9fc;}
+.teacher-profile-btn{height:38px;padding:0 12px;border:1px solid #d8e6ed;background:#fff;border-radius:20px;display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:#24495a;font-size:13px;font-weight:700;}
+.teacher-profile-btn:hover{background:#eef9fc;}
+.teacher-nav-row{background:linear-gradient(90deg,#075b78,#0b7696);display:flex;align-items:center;gap:0;overflow-x:auto;padding:0 20px;scrollbar-width:thin;}
+.teacher-nav-row a{color:#fff!important;text-decoration:none!important;font-size:12px;font-weight:700;white-space:nowrap;padding:14px 13px;display:block;border-bottom:3px solid transparent;opacity:.96;}
+.teacher-nav-row a:hover{background:rgba(255,255,255,.10);opacity:1;}
+.teacher-nav-row a.active{background:rgba(255,255,255,.13);border-bottom-color:#8ee9f7;opacity:1;}
+.teacher-page-title{display:none;}
+body.dashboard .teacher-top-layout{display:block!important;min-height:100vh;}
+body.dashboard .teacher-top-layout>.content{width:100%;box-sizing:border-box;}
+@media(max-width:700px){
+ .teacher-brand-row{padding:9px 14px;min-height:66px;}
+ .teacher-brand img{width:45px;height:45px;}
+ .teacher-brand-name{font-size:16px;}
+ .teacher-brand-sub{font-size:10px;}
+ .teacher-header-icon{width:32px;height:32px;font-size:15px;}
+ .teacher-profile-btn{height:34px;padding:0 9px;font-size:11px;}
+ .teacher-nav-row{padding:0 8px;}
+ .teacher-nav-row a{font-size:10px;padding:12px 9px;}
+}
+</style>
+
+</head><body class="dashboard" data-page="teacher-classes"><header class="teacher-top-header">
+  <div class="teacher-brand-row">
+    <a class="teacher-brand" href="dashboard.html" aria-label="Haroon Ibn Rasheed Online Quran Academy">
+      <img src="../assets/hr-logo.svg" alt="HR">
+      <span class="teacher-brand-text"><span class="teacher-brand-name">Haroon Ibn Rasheed</span><span class="teacher-brand-sub">Online Quran Academy</span></span>
+    </a>
+    <div class="teacher-header-actions">
+      <a class="teacher-header-icon" href="#" aria-label="Notifications" title="Notifications">🔔</a>
+      <a class="teacher-profile-btn" href="profile.html" aria-label="Open teacher profile" title="Profile">👤 <span>Teacher</span></a>
+    </div>
+  </div>
+  <nav class="teacher-nav-row" aria-label="Teacher Portal Navigation"><a href="dashboard.html">Dashboard</a><a href="students.html">My Students</a><a href="classes.html" class="active" aria-current="page">My Classes</a><a href="courses.html">My Courses</a><a href="schedule.html">My Schedule</a><a href="attendance.html">Attendance</a><a href="leaves.html">My Leaves</a><a href="salary.html">My Salary</a><a href="profile.html">My Profile</a></nav>
+</header>
+
+<div class="side-layout teacher-top-layout">
+<main class="content"><section class="card"><h1>My Classes</h1><p>Start or complete classes and record attendance.</p><div class="table-wrap"><table class="table"><thead><tr><th>Date</th><th>Time</th><th>Student</th><th>Course</th><th>Status</th><th>Meeting</th><th>Attendance</th><th>Actions</th></tr></thead><tbody id="classRows"></tbody></table></div></section></main>
+</div></body></html>
