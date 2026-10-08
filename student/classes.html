@@ -657,11 +657,7 @@ async function loadStudentClasses(){
     } = await db
       .from("class_schedules")
       .select(`
-        *,
-        teacher:profiles!class_schedules_teacher_id_fkey(
-          id,
-          full_name
-        )
+        *
       `)
       .eq("student_id", studentId)
       .eq("active", true)
@@ -671,6 +667,66 @@ async function loadStudentClasses(){
       console.error("Classes error:", error);
       throw error;
     }
+
+    /* class_schedules.teacher_id points to teachers.id, not profiles.id.
+       Therefore teacher details are loaded separately instead of using
+       a profiles relationship that does not exist in Supabase. */
+    let teacherMap = {};
+
+    const teacherIds = [...new Set(
+      (data || []).map(x => x.teacher_id).filter(Boolean)
+    )];
+
+    if(teacherIds.length){
+      try{
+        const teacherResult = await db
+          .from("teachers")
+          .select("id,full_name,user_id,account_id")
+          .in("id", teacherIds);
+
+        if(!teacherResult.error){
+          (teacherResult.data || []).forEach(t => {
+            teacherMap[String(t.id)] = t;
+          });
+        }else{
+          console.warn("Teacher lookup skipped:", teacherResult.error.message);
+        }
+      }catch(e){
+        console.warn("Teacher lookup skipped:", e);
+      }
+    }
+
+    /* If a teacher row does not contain a name, try its linked profile. */
+    for(const teacherId of teacherIds){
+      const teacher = teacherMap[String(teacherId)];
+      if(teacher && String(teacher.full_name || "").trim()) continue;
+
+      const profileId = teacher?.user_id || teacher?.account_id;
+      if(!profileId) continue;
+
+      try{
+        const pr = await db
+          .from("profiles")
+          .select("id,full_name")
+          .eq("id", profileId)
+          .maybeSingle();
+
+        if(!pr.error && pr.data){
+          teacherMap[String(teacherId)] = {
+            ...(teacher || {id:teacherId}),
+            full_name: pr.data.full_name || "Teacher"
+          };
+        }
+      }catch(e){
+        console.warn("Teacher profile lookup skipped:", e);
+      }
+    }
+
+    (data || []).forEach(schedule => {
+      const teacher = teacherMap[String(schedule.teacher_id)];
+      schedule.teacher = teacher || null;
+      schedule.teacher_name = teacher?.full_name || "Teacher";
+    });
 
     if(!data || data.length === 0){
       container.innerHTML = `
