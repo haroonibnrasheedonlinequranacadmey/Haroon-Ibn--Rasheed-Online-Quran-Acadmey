@@ -262,6 +262,15 @@ body{
   background:#287f96;
 }
 
+.classroom-button{
+  background:#3a8f62;
+}
+
+.classroom-button:hover{
+  background:#2f7650;
+}
+
+
 .no-meet{
   display:inline-block;
   background:#aab5bb;
@@ -489,62 +498,102 @@ Loading your classes...
 
 <script>
 
-/* =========================================
-   INITIALIZE
-========================================= */
+/* =========================================================
+   STUDENT MY CLASSES
+   Original academy design preserved.
+   This page reads Admin schedules and Teacher sessions.
+========================================================= */
 
-document.addEventListener(
-  "DOMContentLoaded",
-  loadStudentClasses
-);
+document.addEventListener("DOMContentLoaded", loadStudentClasses);
 
-
-/* =========================================
-   LOAD STUDENT CLASSES
-========================================= */
+const CLASSROOM_BASE =
+  "https://haroonibnrasheedonlinequranacadmey.github.io/haroon-quran-classroom/?code=";
 
 async function loadStudentClasses(){
 
-  const container =
-    document.getElementById(
-      "classesList"
-    );
+  const container = document.getElementById("classesList");
 
+  container.innerHTML = `<div class="loading">Loading your classes...</div>`;
 
   try{
+    const auth = await db.auth.getSession();
+    const uid = auth?.data?.session?.user?.id;
 
-    const result =
-      await getCurrentStudent();
-
-
-    if(!result){
-
+    if(!uid){
+      container.innerHTML = `<div class="error-box">Please login again to view your classes.</div>`;
       return;
-
     }
 
+    /* -------------------------------------------------------
+       Find the student's own record.
+       Different versions of the academy used different
+       account-link columns, so we support all existing forms.
+    ------------------------------------------------------- */
+    let student = null;
 
-    const studentId =
-      result.student.id;
+    const byAccount = await db
+      .from("students")
+      .select("*")
+      .eq("account_id", uid)
+      .maybeSingle();
 
+    if(!byAccount.error && byAccount.data)
+      student = byAccount.data;
 
-    /*
-      IMPORTANT:
+    if(!student){
+      const byUser = await db
+        .from("students")
+        .select("*")
+        .eq("user_id", uid)
+        .maybeSingle();
 
-      Classes come directly from
-      class_schedules.
+      if(!byUser.error && byUser.data)
+        student = byUser.data;
+    }
 
-      Admin/Teacher creates the schedule
-      → student sees it automatically.
-    */
+    if(!student){
+      const prof = await db
+        .from("profiles")
+        .select("id,full_name")
+        .eq("id", uid)
+        .maybeSingle();
 
-    const {
-      data,
-      error
-    } = await db
+      if(prof.data?.full_name){
+        const byName = await db
+          .from("students")
+          .select("*")
+          .eq("full_name", prof.data.full_name)
+          .maybeSingle();
 
+        if(!byName.error && byName.data)
+          student = byName.data;
+      }
+    }
+
+    if(!student){
+      container.innerHTML = `
+        <div class="empty-box">
+          <h3>Student account is not linked yet</h3>
+          <p>Your student profile has not been linked to this portal account.</p>
+        </div>`;
+      return;
+    }
+
+    const studentTimezone =
+      student.timezone ||
+      localStorage.getItem("student_timezone") ||
+      "Asia/Karachi";
+
+    window.currentStudentTimezone = studentTimezone;
+    window.studentTimezone = studentTimezone;
+
+    localStorage.setItem("student_timezone", studentTimezone);
+
+    /* -------------------------------------------------------
+       Load the schedules assigned to this student.
+    ------------------------------------------------------- */
+    const scheduleResult = await db
       .from("class_schedules")
-
       .select(`
         *,
         teacher:profiles!class_schedules_teacher_id_fkey(
@@ -552,493 +601,253 @@ async function loadStudentClasses(){
           full_name
         )
       `)
+      .eq("student_id", student.id)
+      .eq("active", true)
+      .order("class_time", {ascending:true});
 
-      .eq(
-        "student_id",
-        studentId
-      )
-
-      .eq(
-        "active",
-        true
-      )
-
-      .order(
-        "class_time",
-        {
-          ascending:true
-        }
-      );
-
-
-    if(error){
-
-      console.error(
-        "Classes error:",
-        error
-      );
-
+    if(scheduleResult.error){
+      console.error("Student classes error:", scheduleResult.error);
       container.innerHTML = `
-
         <div class="error-box">
-
-          Could not load your classes.
-
-          <br><br>
-
-          ${escapeHtml(
-            error.message ||
-            "Unknown error"
-          )}
-
-        </div>
-
-      `;
-
+          Could not load your classes.<br><br>
+          ${escapeHtml(scheduleResult.error.message || "Unknown error")}
+        </div>`;
       return;
-
     }
 
+    const schedules = scheduleResult.data || [];
 
-    if(!data || data.length === 0){
-
+    if(!schedules.length){
       container.innerHTML = `
-
         <div class="empty-box">
-
-          <h3>
-          No Classes Scheduled
-          </h3>
-
-          <p>
-          Your scheduled classes will appear here automatically after the academy assigns them.
-          </p>
-
-        </div>
-
-      `;
-
+          <h3>No Classes Scheduled</h3>
+          <p>Your scheduled classes will appear here automatically after the academy assigns them.</p>
+        </div>`;
       return;
-
     }
 
+    /* -------------------------------------------------------
+       Read teacher sessions for these schedules.
+       If the table/policy is not available, the class remains
+       Scheduled instead of breaking the whole Student Portal.
+    ------------------------------------------------------- */
+    const ids = schedules.map(s => s.id).filter(Boolean);
+    let sessions = [];
 
-    container.innerHTML =
-      data
-        .map(
-          schedule =>
-            createClassCard(
-              schedule
-            )
-        )
-        .join("");
+    if(ids.length){
+      const sr = await db
+        .from("teacher_class_sessions")
+        .select("id,schedule_id,student_id,class_date,status,started_at,completed_at")
+        .in("schedule_id", ids)
+        .eq("student_id", student.id);
 
+      if(!sr.error)
+        sessions = sr.data || [];
+      else
+        console.warn("Teacher sessions could not be read:", sr.error.message);
+    }
+
+    const sessionMap = {};
+    sessions.forEach(s => {
+      const old = sessionMap[s.schedule_id];
+      if(!old || String(s.class_date || "") >= String(old.class_date || ""))
+        sessionMap[s.schedule_id] = s;
+    });
+
+    container.innerHTML = schedules
+      .map(schedule => createClassCard(schedule, sessionMap[schedule.id], studentTimezone))
+      .join("");
 
   }catch(error){
-
-    console.error(
-      "Student classes error:",
-      error
-    );
-
+    console.error("Student classes error:", error);
     container.innerHTML = `
-
       <div class="error-box">
-
         Something went wrong while loading your classes.
-
-      </div>
-
-    `;
-
+        <br><br>${escapeHtml(error?.message || "Unknown error")}
+      </div>`;
   }
-
 }
 
+function createClassCard(schedule, session, studentTimezone){
 
-/* =========================================
-   CREATE CLASS CARD
-========================================= */
+  const course = escapeHtml(schedule.course || "Quran Class");
+  const teacher = escapeHtml(schedule.teacher?.full_name || schedule.teacher_name || "Teacher");
+  const days = escapeHtml(formatDays(schedule.class_days));
+  const time = escapeHtml(formatStudentTime(schedule.class_time, schedule.schedule_timezone, studentTimezone));
+  const duration = schedule.duration_minutes || schedule.duration || schedule.minutes || "-";
 
-function createClassCard(
-  schedule
-){
+  const status = getClassStatus(schedule, session);
+  const statusClass = "status-" + status.toLowerCase().replace(/\s+/g,"-");
 
-  const course =
-    escapeHtml(
-      schedule.course ||
-      "Quran Class"
-    );
-
-
-  const teacher =
-    escapeHtml(
-      schedule.teacher?.full_name ||
-      "Teacher"
-    );
-
-
-  const days =
-    escapeHtml(
-      formatDays(
-        schedule.class_days
-      )
-    );
-
-
-  const time =
-    escapeHtml(
-      formatTime(
-        schedule.class_time
-      )
-    );
-
-
-  const duration =
-    schedule.duration ||
-    schedule.minutes ||
-    "-";
-
-
-  const status =
-    getClassStatus(
-      schedule
-    );
-
-
-  const statusClass =
-    "status-" +
-    status
-      .toLowerCase()
-      .replace(
-        /\s+/g,
-        "-"
-      );
-
-
-  let joinButton = "";
-
+  let actions = "";
 
   if(schedule.google_meet_url){
-
-    const url =
-      safeUrl(
-        schedule.google_meet_url
-      );
-
-
-    if(url !== "#"){
-
-      joinButton = `
-
-        <a
-          class="join-button"
-          href="${url}"
-          target="_blank"
-          rel="noopener noreferrer">
-
-          Join Google Meet
-
-        </a>
-
-      `;
-
-    }else{
-
-      joinButton = `
-
-        <span class="no-meet">
-          Meeting Link Unavailable
-        </span>
-
-      `;
-
-    }
-
+    const url = safeUrl(schedule.google_meet_url);
+    actions += url !== "#"
+      ? `<a class="join-button" href="${url}" target="_blank" rel="noopener noreferrer">Join Google Meet</a>`
+      : `<span class="no-meet">Meeting Link Unavailable</span>`;
   }else{
-
-    joinButton = `
-
-      <span class="no-meet">
-        Meeting Link Not Added
-      </span>
-
-    `;
-
+    actions += `<span class="no-meet">Meeting Link Not Added</span>`;
   }
 
+  if(schedule.classroom_code){
+    const classroomUrl = CLASSROOM_BASE + encodeURIComponent(String(schedule.classroom_code));
+    actions += `
+      <a class="join-button classroom-button" href="${escapeHtml(classroomUrl)}" target="_blank" rel="noopener noreferrer">
+        Open Classroom
+      </a>`;
+  }
+
+  let sessionMessage = "";
+
+  if(status === "Active"){
+    sessionMessage = `
+      <div style="margin:0 0 14px;padding:11px 13px;border-radius:9px;background:#e5f6ea;color:#268044;font-size:13px;font-weight:bold;">
+        🟢 Class is Active Now — Your teacher has started the class.
+      </div>`;
+  }else if(status === "Completed"){
+    sessionMessage = `
+      <div style="margin:0 0 14px;padding:11px 13px;border-radius:9px;background:#e9eef1;color:#60707a;font-size:13px;">
+        ✓ This class session has been completed.
+      </div>`;
+  }
 
   return `
-
     <article class="class-card">
-
-
       <div class="class-top">
-
-
         <div>
-
-          <div class="course-name">
-            ${course}
-          </div>
-
-          <div class="class-date">
-            📅 ${days}
-          </div>
-
+          <div class="course-name">${course}</div>
+          <div class="class-date">📅 ${days}</div>
         </div>
-
-
-        <span
-          class="status ${statusClass}">
-
-          ${escapeHtml(status)}
-
-        </span>
-
-
+        <span class="status ${statusClass}">${escapeHtml(status)}</span>
       </div>
 
+      ${sessionMessage}
 
       <div class="class-details">
-
-
         <div class="detail">
-
-          <span>
-            Teacher
-          </span>
-
-          <strong>
-            👨‍🏫 ${teacher}
-          </strong>
-
+          <span>Teacher</span>
+          <strong>👨‍🏫 ${teacher}</strong>
         </div>
-
-
         <div class="detail">
-
-          <span>
-            Class Time
-          </span>
-
-          <strong>
-            🕐 ${time}
-          </strong>
-
+          <span>Class Time</span>
+          <strong>🕐 ${time}</strong>
         </div>
-
-
         <div class="detail">
-
-          <span>
-            Duration
-          </span>
-
-          <strong>
-            ⏱ ${escapeHtml(
-              String(duration)
-            )}
-          </strong>
-
+          <span>Duration</span>
+          <strong>⏱ ${escapeHtml(String(duration))}${String(duration).match(/minute/i) ? "" : " Minutes"}</strong>
         </div>
-
-
         <div class="detail">
-
-          <span>
-            Days
-          </span>
-
-          <strong>
-            ${days}
-          </strong>
-
+          <span>Days</span>
+          <strong>${days}</strong>
         </div>
-
-
       </div>
 
-
-      ${joinButton}
-
-
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        ${actions}
+      </div>
     </article>
-
   `;
-
 }
 
-
-/* =========================================
-   CLASS STATUS
-========================================= */
-
-function getClassStatus(
-  schedule
-){
-
-  /*
-    class_schedules does not currently
-    have a dedicated class status column.
-
-    Therefore we safely use the active
-    schedule state.
-  */
-
-  if(schedule.active === false){
-
+function getClassStatus(schedule, session){
+  if(schedule.active === false)
     return "Cancelled";
 
-  }
+  const s = String(session?.status || "").toLowerCase();
 
+  if(["active","started","in_progress"].includes(s))
+    return "Active";
+
+  if(["completed","complete","ended"].includes(s))
+    return "Completed";
+
+  if(["cancelled","canceled"].includes(s))
+    return "Cancelled";
 
   return "Scheduled";
-
 }
-
-
-/* =========================================
-   FORMAT DAYS
-========================================= */
 
 function formatDays(days){
-
-  if(!days){
-
-    return "Not scheduled";
-
-  }
-
-
-  if(Array.isArray(days)){
-
-    return days.join(", ");
-
-  }
-
-
-  return String(days)
-    .replace(
-      /[\[\]"]/g,
-      ""
-    );
-
+  if(!days) return "Not scheduled";
+  if(Array.isArray(days)) return days.join(", ");
+  return String(days).replace(/[\[\]"]/g,"");
 }
 
+function formatStudentTime(time, sourceTimezone, targetTimezone){
+  if(!time) return "Not scheduled";
 
-/* =========================================
-   FORMAT TIME
-========================================= */
+  const raw = String(time);
+  const parts = raw.split(":");
+  if(parts.length < 2) return raw;
 
-function formatTime(time){
+  let h = parseInt(parts[0],10);
+  const m = String(parts[1]).padStart(2,"0");
 
-  if(!time){
+  if(!Number.isFinite(h)) return raw;
 
-    return "Not scheduled";
+  /* If no source timezone is configured, preserve the academy's stored time. */
+  if(!sourceTimezone || sourceTimezone === targetTimezone)
+    return to12Hour(h,m);
 
+  try{
+    /* Build a neutral date and calculate the timezone offset difference. */
+    const now = new Date();
+    const src = getPartsInZone(now, sourceTimezone);
+    const tgt = getPartsInZone(now, targetTimezone);
+
+    const sourceMinutes = src.hour*60 + src.minute;
+    const targetMinutes = tgt.hour*60 + tgt.minute;
+    const diff = targetMinutes - sourceMinutes;
+
+    let total = h*60 + parseInt(m,10) + diff;
+    total = ((total % 1440) + 1440) % 1440;
+
+    return to12Hour(Math.floor(total/60), total%60);
+  }catch(e){
+    return to12Hour(h,m);
   }
-
-
-  const parts =
-    String(time).split(":");
-
-
-  if(parts.length < 2){
-
-    return time;
-
-  }
-
-
-  let hour =
-    parseInt(
-      parts[0],
-      10
-    );
-
-
-  const minute =
-    parts[1];
-
-
-  const ampm =
-    hour >= 12
-      ? "PM"
-      : "AM";
-
-
-  hour =
-    hour % 12 || 12;
-
-
-  return `${hour}:${minute} ${ampm}`;
-
 }
 
+function getPartsInZone(date, timezone){
+  const parts = new Intl.DateTimeFormat("en-US",{
+    timeZone: timezone,
+    hour12:false,
+    hour:"2-digit",
+    minute:"2-digit"
+  }).formatToParts(date);
 
-/* =========================================
-   SECURITY HELPERS
-========================================= */
+  const out = {};
+  parts.forEach(p => out[p.type] = p.value);
+
+  return {
+    hour: Number(out.hour) === 24 ? 0 : Number(out.hour),
+    minute: Number(out.minute)
+  };
+}
+
+function to12Hour(hour, minute){
+  const h = Number(hour);
+  const m = String(minute).padStart(2,"0");
+  const ampm = h >= 12 ? "PM" : "AM";
+  const display = h % 12 || 12;
+  return `${display}:${m} ${ampm}`;
+}
 
 function escapeHtml(value){
-
   return String(value)
-
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-
-    .replace(
-      /</g,
-      "&lt;"
-    )
-
-    .replace(
-      />/g,
-      "&gt;"
-    )
-
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-
-    .replace(
-      /'/g,
-      "&#039;"
-    );
-
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 }
 
-
 function safeUrl(url){
-
-  const value =
-    String(url || "")
-      .trim();
-
-
-  if(
-    value.startsWith(
-      "https://"
-    ) ||
-
-    value.startsWith(
-      "http://"
-    )
-  ){
-
-    return escapeHtml(
-      value
-    );
-
-  }
-
-
+  const value = String(url || "").trim();
+  if(value.startsWith("https://") || value.startsWith("http://"))
+    return escapeHtml(value);
   return "#";
-
 }
 
 </script>
