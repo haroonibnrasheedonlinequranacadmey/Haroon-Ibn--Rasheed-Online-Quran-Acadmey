@@ -504,6 +504,10 @@ Loading your classes...
    This page reads Admin schedules and Teacher sessions.
 ========================================================= */
 
+/* portal.js exposes the Supabase client as academyDB.
+   Never rely on an undeclared global named `db` here. */
+const db = window.academyDB;
+
 document.addEventListener("DOMContentLoaded", loadStudentClasses);
 
 const CLASSROOM_BASE =
