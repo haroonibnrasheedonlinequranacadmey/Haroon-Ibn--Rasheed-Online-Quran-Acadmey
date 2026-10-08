@@ -1235,9 +1235,9 @@ async function loadTeacherSchedule(){
         const missingProfileIds = (students || [])
           .filter(student =>
             !String(student.full_name || "").trim() &&
-            (student.user_id || student.account_id)
+            student.user_id
           )
-          .map(student => String(student.user_id || student.account_id));
+          .map(student => String(student.user_id));
 
         if(missingProfileIds.length){
           const { data:profiles, error:profileError } =
@@ -1256,55 +1256,22 @@ async function loadTeacherSchedule(){
           }
         }
 
-      }
 
-      /*
-        IMPORTANT FALLBACK:
-        In the current portal schema, class schedules can store the
-        student's linked Auth/Profile UUID in student_id. Teachers are
-        allowed to read the matching profile, while students themselves
-        are protected by RLS. This lookup therefore works even when the
-        direct students-table query is blocked by RLS.
-      */
-      const unresolvedIds = [
-        ...new Set(
-          schedules
-            .map(schedule => String(schedule.student_id || ""))
-            .filter(id => id && !studentMap[id])
-        )
-      ];
+        schedules =
+          schedules.map(
+            schedule => ({
 
-      if(unresolvedIds.length){
+              ...schedule,
 
-        const { data:profiles, error:profileError } =
-          await db
-            .from("profiles")
-            .select("id,full_name")
-            .in("id", unresolvedIds);
+              student_name:
+                studentMap[
+                  schedule.student_id
+                ]
+                ||
+                "Student"
 
-        if(!profileError){
-          (profiles || []).forEach(profile => {
-            const name = String(profile.full_name || "").trim();
-            if(name){
-              studentMap[String(profile.id)] = name;
-            }
-          });
-        }
-      }
-
-      schedules =
-        schedules.map(
-          schedule => ({
-
-            ...schedule,
-
-            student_name:
-              studentMap[String(schedule.student_id || "")]
-              ||
-              "Student"
-
-          })
-        );
+            })
+          );
 
       }
 
