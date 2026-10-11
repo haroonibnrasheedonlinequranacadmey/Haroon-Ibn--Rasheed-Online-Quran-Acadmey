@@ -1,0 +1,1630 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>My Fees | Haroon Ibn Rasheed Online Quran Academy</title>
+
+<link rel="stylesheet" href="../css/portal.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script src="../js/portal.js" defer></script>
+
+<style>
+
+/* =========================================================
+   STUDENT FEES
+   Existing portal.css / sidebar / layout preserved
+========================================================= */
+
+.fees-header{
+  margin-bottom:18px;
+}
+
+.fees-header h1{
+  margin:0;
+}
+
+.fees-subtitle{
+  margin:5px 0 0;
+  color:#718096;
+  font-size:14px;
+}
+
+.fee-summary{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+  margin-bottom:18px;
+}
+
+.fee-summary-card{
+  background:#fff;
+  border:1px solid #e4edf0;
+  border-radius:10px;
+  padding:18px;
+  display:flex;
+  align-items:center;
+  gap:13px;
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
+}
+
+.fee-icon{
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  background:#eef9fb;
+  font-size:20px;
+}
+
+.fee-summary-card:nth-child(2) .fee-icon{
+  background:#e8f8ef;
+}
+
+.fee-summary-card:nth-child(3) .fee-icon{
+  background:#fff5dc;
+}
+
+.fee-summary-card:nth-child(4) .fee-icon{
+  background:#fdecef;
+}
+
+.fee-label{
+  color:#718096;
+  font-size:12px;
+  margin-bottom:4px;
+}
+
+.fee-value{
+  color:#07394a;
+  font-size:21px;
+  font-weight:700;
+}
+
+.fee-note{
+  color:#8a98a3;
+  font-size:11px;
+  margin-top:3px;
+}
+
+.payment-layout{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+  margin-bottom:18px;
+}
+
+.payment-box h2{
+  margin-top:0;
+}
+
+.payment-info{
+  background:#eef9fb;
+  border:1px solid #d7eef3;
+  border-radius:8px;
+  padding:13px 15px;
+  color:#07394a;
+  font-size:13px;
+  line-height:1.6;
+  margin-bottom:15px;
+}
+
+.payment-method-list{
+  display:grid;
+  gap:10px;
+}
+
+.payment-method{
+  border:1px solid #e4edf0;
+  border-radius:8px;
+  padding:12px;
+  background:#fff;
+}
+
+.payment-method-name{
+  font-weight:700;
+  color:#07394a;
+}
+
+.payment-method-detail{
+  color:#718096;
+  font-size:12px;
+  margin-top:4px;
+  word-break:break-word;
+}
+
+.method-empty{
+  color:#718096;
+  font-size:13px;
+  padding:10px 0;
+}
+
+.payment-status{
+  display:inline-block;
+  padding:5px 10px;
+  border-radius:20px;
+  font-size:11px;
+  font-weight:600;
+  white-space:nowrap;
+}
+
+.status-paid{
+  background:#d9f5e7;
+  color:#16834b;
+}
+
+.status-submitted{
+  background:#dff3fa;
+  color:#08738b;
+}
+
+.status-pending{
+  background:#fff0c9;
+  color:#9a6700;
+}
+
+.status-rejected{
+  background:#fde0e3;
+  color:#b42332;
+}
+
+.status-refunded{
+  background:#eee9f8;
+  color:#65459a;
+}
+
+.next-due{
+  margin-bottom:18px;
+}
+
+.next-due strong{
+  color:#07394a;
+}
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+.payment-table{
+  min-width:800px;
+}
+
+.payment-form{
+  display:grid;
+  gap:12px;
+}
+
+.payment-form label{
+  display:block;
+  margin-bottom:5px;
+}
+
+.payment-form textarea{
+  min-height:90px;
+  resize:vertical;
+}
+
+.proof-note{
+  font-size:11px;
+  color:#718096;
+  margin-top:4px;
+}
+
+.submit-payment-btn{
+  margin-top:5px;
+}
+
+.success-box{
+  display:none;
+  padding:12px 15px;
+  border-radius:8px;
+  background:#e8f8ef;
+  border:1px solid #ccebd9;
+  color:#16834b;
+  font-size:13px;
+  margin-bottom:15px;
+}
+
+.error-box{
+  display:none;
+  padding:12px 15px;
+  border-radius:8px;
+  background:#fdecef;
+  border:1px solid #f4cbd0;
+  color:#b42332;
+  font-size:13px;
+  margin-bottom:15px;
+}
+
+@media(max-width:1000px){
+
+  .fee-summary{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .payment-layout{
+    grid-template-columns:1fr;
+  }
+
+}
+
+@media(max-width:650px){
+
+  .fee-summary{
+    grid-template-columns:1fr;
+  }
+
+}
+
+</style>
+
+
+<style id="student-top-header-style">
+.student-top-header{width:100%;background:linear-gradient(90deg,#061a35 0%,#0a3157 52%,#0b4268 100%);color:#fff;border-bottom:1px solid rgba(255,255,255,.12);box-shadow:0 4px 16px rgba(4,25,49,.22);position:relative;z-index:50}
+.student-brand-row{min-height:82px;width:100%;display:flex;align-items:center;justify-content:space-between;padding:10px 28px;box-sizing:border-box;gap:20px}
+.student-brand{display:flex;align-items:center;gap:14px;min-width:0;text-decoration:none!important}
+.student-brand img{width:62px;height:62px;object-fit:contain;display:block;flex:0 0 62px;border-radius:12px;background:rgba(255,255,255,.08)}
+.student-brand-text{display:flex;flex-direction:column;line-height:1.08}
+.student-brand-name{font-size:22px;font-weight:850;color:#fff;letter-spacing:.2px;white-space:nowrap}
+.student-brand-sub{font-size:12px;font-weight:700;color:#9edff2;margin-top:5px;letter-spacing:.7px;text-transform:uppercase;white-space:nowrap}
+.student-header-actions{display:flex;align-items:center;gap:9px}
+.student-header-icon{width:38px;height:38px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:#fff;font-size:17px;box-sizing:border-box}
+.student-profile-btn{height:40px;padding:0 13px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);border-radius:22px;display:inline-flex;align-items:center;gap:8px;text-decoration:none!important;color:#fff!important;font-size:13px;font-weight:700}
+.student-nav-row{width:100%;background:linear-gradient(90deg,#06304f,#075a78,#087493);display:flex;align-items:center;gap:0;overflow-x:auto;padding:0 20px;box-sizing:border-box;scrollbar-width:thin}
+.student-nav-row a{color:#fff!important;text-decoration:none!important;font-size:12px;font-weight:750;white-space:nowrap;padding:14px 13px;display:block;border-bottom:3px solid transparent;opacity:.94}
+.student-nav-row a:hover{background:rgba(255,255,255,.10);opacity:1}
+.student-nav-row a.active{background:rgba(255,255,255,.13);border-bottom-color:#8ee9f7;opacity:1}
+body.dashboard .side-layout,body .student-shell{display:block!important;width:100%!important;min-height:100vh;margin:0!important;padding:0!important}
+body.dashboard .side-layout>.content,body .student-main{display:block!important;width:100%!important;max-width:none!important;box-sizing:border-box!important;margin:0!important;padding:24px!important}
+body.dashboard .side-layout>.content>*{max-width:none}
+body.dashboard .side-layout .card,body .student-main .card{box-sizing:border-box}
+@media(max-width:700px){.student-brand-row{padding:9px 14px;min-height:70px}.student-brand img{width:50px;height:50px;flex-basis:50px}.student-brand-name{font-size:17px}.student-brand-sub{font-size:9px;letter-spacing:.5px}.student-header-icon{width:33px;height:33px;font-size:15px}.student-profile-btn{height:35px;padding:0 9px;font-size:11px}.student-nav-row{padding:0 6px}.student-nav-row a{font-size:11px;padding:13px 10px}body.dashboard .side-layout>.content,body .student-main{padding:16px 13px!important}}
+</style>
+
+<style>
+/* Student portal: teacher-style horizontal navigation */
+.student-top-header{background:linear-gradient(105deg,#062a49,#075878,#087493);color:#fff;padding:12px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:82px;box-shadow:0 4px 16px #062a4926;position:relative;z-index:30}
+.student-top-brand{display:flex;align-items:center;gap:12px;min-width:0}
+.student-top-brand img{width:54px;height:54px;object-fit:contain;border-radius:50%;background:#fff;padding:4px}
+.student-top-brand strong{display:block;font-size:17px;line-height:1.3;white-space:nowrap}
+.student-top-brand small{display:block;color:#a9e6f5;font-size:11px;letter-spacing:.7px;margin-top:4px}
+.student-top-actions{display:flex;align-items:center;gap:9px}
+.student-top-actions a{height:39px;min-width:39px;padding:0 12px;border:1px solid #ffffff45;background:#ffffff12;border-radius:22px;display:inline-flex;align-items:center;justify-content:center;gap:7px;color:#fff;text-decoration:none;font-size:13px;font-weight:700;white-space:nowrap}
+.student-top-actions a:hover{background:#ffffff26}
+.student-horizontal-nav{width:100%;background:linear-gradient(90deg,#06304f,#075a78,#087493);display:flex;align-items:stretch;gap:0;overflow-x:auto;padding:0 14px;box-sizing:border-box;scrollbar-width:thin}
+.student-horizontal-nav a{color:#fff!important;text-decoration:none!important;font-size:12px;font-weight:750;white-space:nowrap;padding:13px 14px 11px;display:flex;align-items:center;gap:7px;border-bottom:3px solid transparent;opacity:.95}
+.student-horizontal-nav a:hover{background:#ffffff16;opacity:1}
+.student-horizontal-nav a.active{background:#ffffff20;border-bottom-color:#8ee9f7;opacity:1}
+.student-horizontal-nav .nav-icon{width:17px;height:17px;display:inline-flex;align-items:center;justify-content:center;font-size:17px;line-height:1}
+.student-sidebar{display:none!important}
+.student-main{margin-left:0!important;width:100%!important;max-width:none!important;padding:26px!important}
+.student-shell{display:block!important;min-height:calc(100vh - 130px)}
+@media(max-width:650px){.student-top-header{padding:10px 12px;min-height:68px}.student-top-brand img{width:43px;height:43px}.student-top-brand strong{font-size:13px;white-space:normal}.student-top-brand small{font-size:9px}.student-top-actions a{min-width:34px;height:35px;padding:0 8px;font-size:12px}.student-horizontal-nav{padding:0 4px}.student-horizontal-nav a{padding:12px 10px;font-size:11px;gap:5px}.student-main{padding:15px!important}.stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}.dashboard-grid{grid-template-columns:1fr!important}.topbar{gap:12px;flex-wrap:wrap}.topbar h1{font-size:23px}}
+</style>
+</head>
+
+
+<body
+  class="dashboard"
+  data-page="student-fees">
+<header class="student-top-header"><div class="student-top-brand"><img src="assets/student-logo.svg" alt="Haroon Ibn Rasheed Academy logo" onerror="this.style.display='none'"><div><strong>Haroon Ibn Rasheed Online Quran Academy</strong><small>STUDENT PORTAL</small></div></div><div class="student-top-actions"><a href="dashboard.html" title="Dashboard" aria-label="Dashboard">⌂ <span>Home</span></a><a href="profile.html" title="Account" aria-label="Account">⚙ <span>Account</span></a></div></header><nav class="student-horizontal-nav" aria-label="Student pages"><a href="dashboard.html" class=""><span class="nav-icon" aria-hidden="true">⌂</span><span>Dashboard</span></a><a href="teacher.html" class=""><span class="nav-icon" aria-hidden="true">♙</span><span>My Teacher</span></a><a href="course.html" class=""><span class="nav-icon" aria-hidden="true">▤</span><span>My Courses</span></a><a href="classes.html" class=""><span class="nav-icon" aria-hidden="true">▣</span><span>My Classes</span></a><a href="schedule.html" class=""><span class="nav-icon" aria-hidden="true">▦</span><span>Schedule</span></a><a href="attendance.html" class=""><span class="nav-icon" aria-hidden="true">✓</span><span>Attendance</span></a><a href="fees.html" class="active"><span class="nav-icon" aria-hidden="true">$</span><span>Fees</span></a><a href="leaves.html" class=""><span class="nav-icon" aria-hidden="true">▱</span><span>Leaves</span></a><a href="profile.html" class=""><span class="nav-icon" aria-hidden="true">⚙</span><span>My Profile</span></a></nav>
+
+
+<div class="side-layout">
+
+
+<!-- =======================================================
+     SIDEBAR
+======================================================= -->
+
+<header class="student-top-header">
+<div class="student-brand-row">
+<a class="student-brand" href="dashboard.html" aria-label="Haroon Ibn Rasheed Online Quran Academy">
+<img src="assets/student-logo.svg" alt="HR">
+<span class="student-brand-text"><span class="student-brand-name">Haroon Ibn Rasheed</span><span class="student-brand-sub">Online Quran Academy</span></span>
+</a>
+<div class="student-header-actions">
+<a class="student-header-icon" href="dashboard.html" aria-label="Student dashboard" title="Dashboard">⌂</a>
+<a class="student-profile-btn" href="profile.html" aria-label="Open student profile" title="Profile">👤 <span>Student</span></a>
+</div>
+</div>
+<nav class="student-nav-row" aria-label="Student Portal Navigation"><a href="dashboard.html">Dashboard</a><a href="teacher.html">My Teacher</a><a href="course.html">My Courses</a><a href="classes.html">My Classes</a><a href="schedule.html">Schedule</a><a href="attendance.html">Attendance</a><a href="fees.html" class="active" aria-current="page">Fees</a><a href="leaves.html">Leaves</a><a href="profile.html">My Profile</a></nav>
+</header>
+
+
+<!-- =======================================================
+     MAIN
+======================================================= -->
+
+<main class="content">
+
+
+<!-- HEADER -->
+
+<section class="fees-header">
+
+<h1>
+My Fees & Payments
+</h1>
+
+<p class="fees-subtitle">
+View your fee balance and submit monthly payments
+</p>
+
+</section>
+
+
+<div
+  id="feeMessage"
+  class="msg">
+</div>
+
+
+<!-- =======================================================
+     SUMMARY
+======================================================= -->
+
+<section class="fee-summary">
+
+
+<div class="fee-summary-card">
+
+<div class="fee-icon">
+💰
+</div>
+
+<div>
+
+<div class="fee-label">
+Total Fee
+</div>
+
+<div
+  class="fee-value"
+  id="totalFee">
+$0.00
+</div>
+
+<div class="fee-note">
+Current fee
+</div>
+
+</div>
+
+</div>
+
+
+<div class="fee-summary-card">
+
+<div class="fee-icon">
+✓
+</div>
+
+<div>
+
+<div class="fee-label">
+Paid Amount
+</div>
+
+<div
+  class="fee-value"
+  id="paidAmount">
+$0.00
+</div>
+
+<div class="fee-note">
+Verified payments
+</div>
+
+</div>
+
+</div>
+
+
+<div class="fee-summary-card">
+
+<div class="fee-icon">
+◷
+</div>
+
+<div>
+
+<div class="fee-label">
+Due Amount
+</div>
+
+<div
+  class="fee-value"
+  id="dueAmount">
+$0.00
+</div>
+
+<div class="fee-note">
+Outstanding
+</div>
+
+</div>
+
+</div>
+
+
+<div class="fee-summary-card">
+
+<div class="fee-icon">
+!
+</div>
+
+<div>
+
+<div class="fee-label">
+Next Due
+</div>
+
+<div
+  class="fee-value"
+  id="nextDueDate">
+-
+</div>
+
+<div class="fee-note">
+Payment due date
+</div>
+
+</div>
+
+</div>
+
+
+</section>
+
+
+<!-- =======================================================
+     NEXT PAYMENT
+======================================================= -->
+
+<section class="card next-due">
+
+<div class="payment-info">
+
+<strong>
+🔔 Fee Payment Reminder
+</strong>
+
+<br>
+
+<span id="reminderText">
+Your next monthly fee is due. Please submit your payment to continue your classes.
+</span>
+
+</div>
+
+</section>
+
+
+<!-- =======================================================
+     PAYMENT AREA
+======================================================= -->
+
+<section class="payment-layout">
+
+
+<!-- PAYMENT METHODS -->
+
+<div class="card payment-box">
+
+<h2>
+Payment Methods
+</h2>
+
+<div class="payment-info">
+
+Only payment methods configured by the academy administrator
+will appear here.
+
+</div>
+
+
+<div
+  id="paymentMethods"
+  class="payment-method-list">
+
+<div class="method-empty">
+Loading payment methods...
+</div>
+
+</div>
+
+</div>
+
+
+<!-- SUBMIT PAYMENT -->
+
+<div class="card payment-box">
+
+<h2>
+Submit Payment
+</h2>
+
+
+<div
+  id="paymentSuccess"
+  class="success-box">
+
+⏳ <strong>Payment Submitted</strong><br>
+
+Your payment is waiting for admin verification.
+
+</div>
+
+
+<div
+  id="paymentError"
+  class="error-box">
+</div>
+
+
+<form
+  id="paymentForm"
+  class="payment-form">
+
+
+<div>
+
+<label>
+Amount
+</label>
+
+<input
+  class="input"
+  type="number"
+  name="amount"
+  id="paymentAmount"
+  min="0"
+  step="0.01"
+  required
+  placeholder="Enter payment amount">
+
+</div>
+
+
+<div>
+
+<label>
+Payment Method
+</label>
+
+<select
+  class="input"
+  name="method"
+  id="paymentMethod"
+  required>
+
+<option value="">
+Select payment method
+</option>
+
+</select>
+
+</div>
+
+
+<div>
+
+<label>
+Transaction / Reference ID
+</label>
+
+<input
+  class="input"
+  type="text"
+  name="reference"
+  id="paymentReference"
+  placeholder="Enter transaction/reference ID">
+
+</div>
+
+
+<div>
+
+<label>
+Payment Proof
+</label>
+
+<input
+  class="input"
+  type="url"
+  name="proof_url"
+  id="proofUrl"
+  placeholder="Paste payment proof URL">
+
+<p class="proof-note">
+You can paste the uploaded receipt/proof link here.
+Storage upload can be connected later through Supabase.
+</p>
+
+</div>
+
+
+<div>
+
+<label>
+Additional Note
+</label>
+
+<textarea
+  class="input"
+  name="note"
+  id="paymentNote"
+  placeholder="Optional payment note"></textarea>
+
+</div>
+
+
+<button
+  type="submit"
+  class="btn submit-payment-btn">
+
+Submit Payment
+
+</button>
+
+
+</form>
+
+</div>
+
+
+</section>
+
+
+<!-- =======================================================
+     PAYMENT HISTORY
+======================================================= -->
+
+<section class="card">
+
+<h2 style="margin-top:0">
+Payment History
+</h2>
+
+
+<div class="table-wrap">
+
+<table class="table payment-table">
+
+<thead>
+
+<tr>
+
+<th>Amount</th>
+
+<th>Method</th>
+
+<th>Status</th>
+
+<th>Reference</th>
+
+<th>Date</th>
+
+</tr>
+
+</thead>
+
+
+<tbody id="paymentRows">
+
+<tr>
+
+<td
+  colspan="5"
+  style="text-align:center;padding:25px">
+
+Loading payments...
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+
+</section>
+
+
+</main>
+
+</div>
+
+
+<script>
+
+(function(){
+
+'use strict';
+
+
+let currentStudentId = null;
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function escapeHTML(value){
+
+  if(
+    value === null ||
+    value === undefined
+  ){
+
+    return '';
+
+  }
+
+  return String(value)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;');
+
+}
+
+
+function formatMoney(value,currency){
+
+  const amount =
+    Number(value || 0);
+
+  return (
+    String(currency || 'USD') +
+    ' ' +
+    amount.toFixed(2)
+  );
+
+}
+
+
+function formatDate(value){
+
+  if(!value){
+    return '-';
+  }
+
+  return String(value).slice(0,10);
+
+}
+
+
+function statusClass(status){
+
+  const s =
+    String(status || '')
+      .toLowerCase();
+
+  if(
+    s === 'paid' ||
+    s === 'verified' ||
+    s === 'completed'
+  ){
+
+    return 'status-paid';
+
+  }
+
+  if(
+    s === 'submitted' ||
+    s === 'payment submitted'
+  ){
+
+    return 'status-submitted';
+
+  }
+
+  if(
+    s === 'rejected' ||
+    s === 'declined'
+  ){
+
+    return 'status-rejected';
+
+  }
+
+  if(s === 'refunded'){
+
+    return 'status-refunded';
+
+  }
+
+  return 'status-pending';
+
+}
+
+
+function statusText(status){
+
+  const s =
+    String(status || 'pending')
+      .toLowerCase();
+
+  if(s === 'paid'){
+    return 'Paid';
+  }
+
+  if(s === 'verified'){
+    return 'Verified';
+  }
+
+  if(s === 'completed'){
+    return 'Completed';
+  }
+
+  if(
+    s === 'submitted' ||
+    s === 'payment submitted'
+  ){
+
+    return 'Payment Submitted';
+
+  }
+
+  if(
+    s === 'rejected' ||
+    s === 'declined'
+  ){
+
+    return 'Rejected';
+
+  }
+
+  if(s === 'refunded'){
+    return 'Refunded';
+  }
+
+  return 'Pending';
+
+}
+
+
+/* =========================================================
+   GET CURRENT USER
+========================================================= */
+
+async function getCurrentUser(){
+
+  const result =
+    await supabaseClient
+      .auth
+      .getSession();
+
+
+  if(
+    result.error ||
+    !result.data?.session
+  ){
+
+    return null;
+
+  }
+
+
+  return result
+    .data
+    .session
+    .user;
+
+}
+
+
+/* =========================================================
+   LOAD STUDENT PROFILE
+========================================================= */
+
+async function loadStudent(){
+
+  const user =
+    await getCurrentUser();
+
+
+  if(!user){
+
+    showError(
+      'Please login again to view your fees.'
+    );
+
+    return null;
+
+  }
+
+
+  /*
+   * Student portal is linked to the logged-in
+   * Supabase Auth user.
+   */
+
+  currentStudentId =
+    user.id;
+
+
+  return user;
+
+}
+
+
+/* =========================================================
+   LOAD FEE DATA
+========================================================= */
+
+async function loadFees(){
+
+  /*
+   * The exact fee columns will be finalized after
+   * checking the real Supabase schema.
+   *
+   * This function intentionally does not invent
+   * database columns.
+   */
+
+  try{
+
+    /*
+     * Future database query structure:
+     *
+     * student-specific fee records
+     * + verified payments
+     * + due dates
+     */
+
+    document.getElementById(
+      'totalFee'
+    ).textContent = '$0.00';
+
+
+    document.getElementById(
+      'paidAmount'
+    ).textContent = '$0.00';
+
+
+    document.getElementById(
+      'dueAmount'
+    ).textContent = '$0.00';
+
+
+    document.getElementById(
+      'nextDueDate'
+    ).textContent = '-';
+
+
+  }catch(error){
+
+    console.error(error);
+
+  }
+
+}
+
+
+/* =========================================================
+   LOAD PAYMENT METHODS
+========================================================= */
+
+async function loadPaymentMethods(){
+
+  const container =
+    document.getElementById(
+      'paymentMethods'
+    );
+
+  const select =
+    document.getElementById(
+      'paymentMethod'
+    );
+
+
+  try{
+
+    const result =
+      await supabaseClient
+        .from('payment_methods')
+        .select('*')
+        .eq('active',true)
+        .order(
+          'created_at',
+          {
+            ascending:true
+          }
+        );
+
+
+    if(result.error){
+
+      console.error(
+        'Payment methods:',
+        result.error
+      );
+
+
+      container.innerHTML =
+        `<div class="method-empty">
+          Payment methods are not available yet.
+        </div>`;
+
+      return;
+
+    }
+
+
+    const methods =
+      result.data || [];
+
+
+    if(!methods.length){
+
+      container.innerHTML =
+        `<div class="method-empty">
+          No payment methods configured yet.
+        </div>`;
+
+      return;
+
+    }
+
+
+    container.innerHTML =
+      methods.map(function(method){
+
+        const name =
+          method.name ||
+          method.title ||
+          method.method ||
+          'Payment Method';
+
+
+        const details =
+          method.account_details ||
+          method.details ||
+          method.account_number ||
+          method.number ||
+          method.instructions ||
+          '';
+
+
+        return `
+
+          <div class="payment-method">
+
+            <div class="payment-method-name">
+              ${escapeHTML(name)}
+            </div>
+
+            <div class="payment-method-detail">
+              ${escapeHTML(details)}
+            </div>
+
+          </div>
+
+        `;
+
+      }).join('');
+
+
+    select.innerHTML =
+      `<option value="">
+        Select payment method
+      </option>`;
+
+
+    methods.forEach(function(method){
+
+      const name =
+        method.name ||
+        method.title ||
+        method.method ||
+        'Payment Method';
+
+
+      const option =
+        document.createElement('option');
+
+
+      option.value =
+        method.id ||
+        name;
+
+
+      option.textContent =
+        name;
+
+
+      select.appendChild(
+        option
+      );
+
+    });
+
+
+  }catch(error){
+
+    console.error(error);
+
+    container.innerHTML =
+      `<div class="method-empty">
+        Unable to load payment methods.
+      </div>`;
+
+  }
+
+}
+
+
+/* =========================================================
+   LOAD PAYMENT HISTORY
+========================================================= */
+
+async function loadPayments(){
+
+  const rows =
+    document.getElementById(
+      'paymentRows'
+    );
+
+
+  if(!currentStudentId){
+
+    return;
+
+  }
+
+
+  try{
+
+    /*
+     * Current project has previously used
+     * student_payments.
+     *
+     * Final table/schema will be aligned after
+     * the Supabase structure check.
+     */
+
+    const result =
+      await supabaseClient
+        .from('student_payments')
+        .select('*')
+        .eq(
+          'student_id',
+          currentStudentId
+        )
+        .order(
+          'created_at',
+          {
+            ascending:false
+          }
+        );
+
+
+    if(result.error){
+
+      console.error(
+        'Payments:',
+        result.error
+      );
+
+
+      rows.innerHTML =
+        `<tr>
+          <td
+            colspan="5"
+            style="text-align:center;padding:25px">
+            No payment history available.
+          </td>
+        </tr>`;
+
+      return;
+
+    }
+
+
+    const payments =
+      result.data || [];
+
+
+    if(!payments.length){
+
+      rows.innerHTML =
+        `<tr>
+          <td
+            colspan="5"
+            style="text-align:center;padding:25px">
+            No payments submitted yet.
+          </td>
+        </tr>`;
+
+      return;
+
+    }
+
+
+    rows.innerHTML =
+      payments.map(function(payment){
+
+        const amount =
+          payment.amount || 0;
+
+
+        const currency =
+          payment.currency ||
+          'USD';
+
+
+        const method =
+          payment.method ||
+          payment.payment_method ||
+          '-';
+
+
+        const status =
+          payment.status ||
+          'pending';
+
+
+        const reference =
+          payment.reference ||
+          payment.transaction_id ||
+          payment.transaction_reference ||
+          '';
+
+
+        const date =
+          payment.created_at ||
+          payment.paid_at;
+
+
+        return `
+
+          <tr>
+
+            <td>
+              <strong>
+                ${escapeHTML(
+                  formatMoney(
+                    amount,
+                    currency
+                  )
+                )}
+              </strong>
+            </td>
+
+            <td>
+              ${escapeHTML(method)}
+            </td>
+
+            <td>
+
+              <span
+                class="payment-status ${statusClass(status)}">
+
+                ${escapeHTML(
+                  statusText(status)
+                )}
+
+              </span>
+
+            </td>
+
+            <td>
+              ${escapeHTML(
+                reference || '-'
+              )}
+            </td>
+
+            <td>
+              ${escapeHTML(
+                formatDate(date)
+              )}
+            </td>
+
+          </tr>
+
+        `;
+
+      }).join('');
+
+
+  }catch(error){
+
+    console.error(error);
+
+    rows.innerHTML =
+      `<tr>
+        <td
+          colspan="5"
+          style="text-align:center;padding:25px">
+          Unable to load payment history.
+        </td>
+      </tr>`;
+
+  }
+
+}
+
+
+/* =========================================================
+   SUBMIT PAYMENT
+========================================================= */
+
+document
+  .getElementById('paymentForm')
+  .addEventListener(
+    'submit',
+    async function(event){
+
+      event.preventDefault();
+
+
+      const success =
+        document.getElementById(
+          'paymentSuccess'
+        );
+
+      const errorBox =
+        document.getElementById(
+          'paymentError'
+        );
+
+
+      success.style.display =
+        'none';
+
+
+      errorBox.style.display =
+        'none';
+
+
+      if(!currentStudentId){
+
+        showError(
+          'Please login again.'
+        );
+
+        return;
+
+      }
+
+
+      const form =
+        new FormData(
+          this
+        );
+
+
+      const amount =
+        Number(
+          form.get('amount')
+        );
+
+
+      const method =
+        String(
+          form.get('method') || ''
+        );
+
+
+      const reference =
+        String(
+          form.get('reference') || ''
+        );
+
+
+      const proofUrl =
+        String(
+          form.get('proof_url') || ''
+        );
+
+
+      const note =
+        String(
+          form.get('note') || ''
+        );
+
+
+      if(
+        !amount ||
+        amount <= 0
+      ){
+
+        showError(
+          'Please enter a valid payment amount.'
+        );
+
+        return;
+
+      }
+
+
+      if(!method){
+
+        showError(
+          'Please select a payment method.'
+        );
+
+        return;
+
+      }
+
+
+      /*
+       * IMPORTANT:
+       *
+       * Payment starts as "submitted".
+       *
+       * It must NOT become "paid" from the student portal.
+       *
+       * Admin verification will later change the
+       * status to "paid"/"verified".
+       */
+
+      const paymentData = {
+
+        student_id:
+          currentStudentId,
+
+        amount:
+          amount,
+
+        currency:
+          'USD',
+
+        method:
+          method,
+
+        status:
+          'submitted',
+
+        reference:
+          reference,
+
+        proof_url:
+          proofUrl,
+
+        note:
+          note
+
+      };
+
+
+      try{
+
+        const result =
+          await supabaseClient
+            .from('student_payments')
+            .insert(
+              paymentData
+            );
+
+
+        if(result.error){
+
+          console.error(
+            result.error
+          );
+
+
+          showError(
+            result.error.message
+          );
+
+          return;
+
+        }
+
+
+        this.reset();
+
+
+        success.style.display =
+          'block';
+
+
+        /*
+         * Notification text:
+         *
+         * ⏳ Payment Submitted
+         * Your payment is waiting for admin verification.
+         */
+
+        document.getElementById(
+          'reminderText'
+        ).textContent =
+          'Your payment is waiting for admin verification.';
+
+
+        await loadPayments();
+
+
+      }catch(error){
+
+        console.error(error);
+
+        showError(
+          'Payment could not be submitted.'
+        );
+
+      }
+
+    }
+  );
+
+
+/* =========================================================
+   ERROR MESSAGE
+========================================================= */
+
+function showError(message){
+
+  const box =
+    document.getElementById(
+      'paymentError'
+    );
+
+
+  box.textContent =
+    message;
+
+
+  box.style.display =
+    'block';
+
+}
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+async function init(){
+
+  const user =
+    await loadStudent();
+
+
+  if(!user){
+
+    return;
+
+  }
+
+
+  await Promise.all([
+
+    loadFees(),
+
+    loadPaymentMethods(),
+
+    loadPayments()
+
+  ]);
+
+}
+
+
+init();
+
+
+})();
+
+</script>
+
+</body>
+</html>
