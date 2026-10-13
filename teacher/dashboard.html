@@ -2132,7 +2132,8 @@ let actionHTML = "";
 
 
 /* ===================================================
-   NOT ACTIVE
+   UPCOMING / LATE — NO ACTIVATE BUTTON
+   Show class actions immediately without requiring activation.
 =================================================== */
 
 if(
@@ -2140,25 +2141,17 @@ if(
 !session?.started_at
 ){
 
+const meet = safeURL(schedule.google_meet_url);
+const classroom = getClassroomURL(schedule.classroom_code);
+
 actionHTML = `
-
 <div class="action-group">
-
-<button
-type="button"
-onclick="teacherActivateClass('${escapeHTML(schedule.id)}')">
-Activate
-</button>
-
-<button
-type="button"
-class="reschedule-action"
-onclick="teacherRescheduleClass('${escapeHTML(schedule.id)}')">
-Reschedule
-</button>
-
+<button type="button" class="danger-action" onclick="teacherEndClass('${escapeHTML(schedule.id)}','${escapeHTML(studentName)}','${escapeHTML(course + " • " + teacherTime)}')">End Class</button>
+${meet ? `<a href="${escapeHTML(meet)}" target="_blank" rel="noopener" class="join-meeting">Join with Meet</a>` : ""}
+${classroom ? `<a href="${escapeHTML(classroom)}" target="_blank" rel="noopener" class="join-classroom">Join with Classroom</a>` : ""}
+<button type="button" class="lesson-action" onclick="showOpenLessonModal('${escapeHTML(schedule.id)}','${escapeHTML(studentName)}')">Open Lesson</button>
+<button type="button" class="reschedule-action" onclick="teacherRescheduleClass('${escapeHTML(schedule.id)}')">Reschedule</button>
 </div>
-
 `;
 
 }
