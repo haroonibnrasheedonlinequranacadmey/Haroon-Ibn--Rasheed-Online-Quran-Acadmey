@@ -2875,40 +2875,7 @@ item.classList.toggle("open");
 }
 
 
-/* Public-page header slideshow using only newly created local artwork. */
-const PUBLIC_HEADER_IMAGES={
-home:['home-1.svg','home-2.svg','home-3.svg','home-4.svg','home-5.svg'],
-about:['about-1.svg','about-2.svg','about-3.svg'],
-courses:['courses-1.svg','courses-2.svg','courses-3.svg'],
-teachers:['teachers-1.svg','teachers-2.svg','teachers-3.svg'],
-fees:['fees-1.svg','fees-2.svg','fees-3.svg'],
-contact:['contact-1.svg','contact-2.svg','contact-3.svg'],
-faq:['faq-1.svg','faq-2.svg','faq-3.svg'],
-blog:['blog-1.svg','blog-2.svg','blog-3.svg'],
-reviews:['reviews-1.svg','reviews-2.svg','reviews-3.svg']
-};
-const publicHeaderTimers={};
-function initPublicHeader(hero){
-  if(!hero || hero.dataset.ready==='1') return;
-  const key=hero.dataset.hero, names=PUBLIC_HEADER_IMAGES[key]||[];
-  const wrap=hero.querySelector('.page-hero-slides'), dots=hero.querySelector('.page-hero-dots');
-  if(!wrap || !names.length) return;
-  names.forEach((name,i)=>{
-    const slide=document.createElement('div'); slide.className='page-hero-slide'+(i===0?' active':'');
-    slide.style.backgroundImage=`url("assets/public-headers/${name}")`; wrap.appendChild(slide);
-    if(dots){const dot=document.createElement('span'); dot.className=i===0?'active':''; dots.appendChild(dot);}
-  });
-  hero.dataset.ready='1';
-  let idx=0;
-  publicHeaderTimers[key]=setInterval(()=>{
-    const slides=[...wrap.children], ds=dots?[...dots.children]:[];
-    if(!slides.length) return;
-    slides[idx].classList.remove('active'); if(ds[idx]) ds[idx].classList.remove('active');
-    idx=(idx+1)%slides.length; slides[idx].classList.add('active'); if(ds[idx]) ds[idx].classList.add('active');
-  },5000);
-}
-document.querySelectorAll('.page-hero[data-hero]').forEach(initPublicHeader);
-
+// Public header slideshow is handled by js/public-headers.js
 showPage("home");
 
 </script>
@@ -3047,6 +3014,7 @@ Online Quran Academy
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/config.js"></script>
+<script src="js/public-headers.js"></script>
 <script src="js/public.js"></script>
 <script src="js/chat.js"></script>
 <script src="js/payments-public.js"></script>
@@ -3577,6 +3545,159 @@ Online Quran Academy
     }).catch(function(error){console.error('Reviews unexpected error:',error);});
   }
 
+})();
+</script>
+
+
+<!-- =====================================================
+     FINAL REAL-PHOTO PUBLIC HEADERS
+     Header-only override: keeps all existing page content,
+     branding, Supabase and navigation unchanged.
+===================================================== -->
+<style id="realPhotoHeaderOverride">
+  .page-hero-slides{position:absolute!important;inset:0!important;z-index:0!important;overflow:hidden!important}
+  .page-hero-slide{position:absolute!important;inset:0!important;background-position:center!important;background-size:cover!important;background-repeat:no-repeat!important;opacity:0!important;transform:scale(1.03)!important;transition:opacity .9s ease,transform 5s ease!important}
+  .page-hero-slide.active{opacity:1!important;transform:scale(1)!important}
+  .real-photo-about-hero{margin:0!important}
+</style>
+<script>
+(function(){
+  'use strict';
+
+  /* Capture the original branding before public-headers.js runs its branding override. */
+  var originalBrand = document.querySelector('header .brand');
+  var originalBrandHTML = originalBrand ? originalBrand.innerHTML : '';
+  var originalTitle = document.title;
+
+  /* 29 unique real-photography URLs: Home 5 + every other public page 3 each. */
+  var REAL_HEADER_PHOTOS = {
+    home: [
+      'https://images.unsplash.com/photo-1720654073347-e7c5ca2ecaa2?auto=format&fit=crop&fm=jpg&ixlib=rb-4.1.0&q=82&w=1800',
+      'https://images.unsplash.com/photo-1758696642916-7aba128db6bf?auto=format&fit=crop&fm=jpg&ixlib=rb-4.1.0&q=82&w=1800',
+      'https://images.unsplash.com/photo-1577792077974-0a424b741d34?auto=format&fit=crop&fm=jpg&ixlib=rb-4.1.0&q=82&w=1800',
+      'https://images.unsplash.com/photo-1673178643274-ecd2de1716bb?auto=format&fit=crop&fm=jpg&ixlib=rb-4.1.0&q=82&w=1800',
+      'https://images.unsplash.com/photo-1652064588708-2a3eefd68077?auto=format&fit=crop&fm=jpg&ixlib=rb-4.1.0&q=82&w=1800'
+    ],
+    about: [
+      'https://www.hola.com/horizon/original_aspect_ratio/5c31e64398a3-06-badshahi-masjidadobestock281869693-a.jpg?im=Resize%3D%28960%29',
+      'https://images.unsplash.com/photo-1558542403-bb396707e7da?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NXx8TW9zcXUlQzMlQTllJTIwRmFpc2FsJTIwcGhvdG98ZW58MHx8MHx8&ixlib=rb-4.0.3&q=80&w=1000',
+      'https://upload.wikimedia.org/wikipedia/commons/9/97/Courtyard_of_Shah_Jahan_Mosque.JPG'
+    ],
+    courses: [
+      'https://1rsrs.rationaltabs.com/CMS/3DC25B58-0B97-4C8E-AC3A-B5E9EA47FC30/addcourses/e2bwwbiifsm0m3rk3f.webp',
+      'https://www.waraqaweb.com/images/About_page%20%281%29.jpg',
+      'https://assets.pikiran-rakyat.com/crop/0x0%3A0x0/720x0/webp/photo/2023/07/28/790755058.jpg'
+    ],
+    teachers: [
+      'https://www.tasleemalquran.com/teacher-female-1.png',
+      'https://www.noohquranlearningcentre.com/assets/course-tajweed-LPPPqxgH.webp',
+      'https://assets.pikiran-rakyat.com/crop/0x0%3A0x0/720x0/webp/photo/2025/11/04/4264800646.jpeg'
+    ],
+    fees: [
+      'https://images.pexels.com/photos/36695127/pexels-photo-36695127.jpeg?cs=srgb&dl=pexels-rakhmatsuwandi-36695127.jpg&fm=jpg',
+      'https://images.pexels.com/photos/35361329/pexels-photo-35361329.jpeg?cs=srgb&dl=pexels-tkirkgoz-35361329.jpg&fm=jpg',
+      'https://images.unsplash.com/photo-1730474506965-2b659b1d6a71?auto=format&fit=crop&fm=jpg&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDMzfHx8ZW58MHx8fHx8&ixlib=rb-4.1.0&q=60&w=3000'
+    ],
+    contact: [
+      'https://images.pexels.com/photos/39965216/pexels-photo-39965216.jpeg?cs=srgb&dl=pexels-adem-albayrak-383796555-39965216.jpg&fm=jpg',
+      'https://miro.medium.com/v2/resize%3Afit%3A1400/1%2AxLOsiu0XZPMWRz_99JDxdg.jpeg',
+      'https://images.pexels.com/photos/34282549/pexels-photo-34282549.jpeg?cs=srgb&dl=pexels-umar-faruq-1662051319-34282549.jpg&fm=jpg'
+    ],
+    faq: [
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/PUTRA_MOSQUE_ARCHITECTURE.jpg/1280px-PUTRA_MOSQUE_ARCHITECTURE.jpg',
+      'https://cdns.klimg.com/resized/1200x600/p/headline/arti-nama-nuril-makna-cah-e82da15a4bcc.jpg',
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Courtyard_-_The_Sultan_Ahmed_Mosque_%28Blue_Mosque%29_with_people_digitally_removed_%288459612400%29.jpg/3840px-Courtyard_-_The_Sultan_Ahmed_Mosque_%28Blue_Mosque%29_with_people_digitally_removed_%288459612400%29.jpg'
+    ],
+    blog: [
+      'https://images.unsplash.com/photo-1652964287112-438ece0a6acc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDMyfHxtZWNjYXxlbnwwfHx8fDE3MzM3NDQxNjB8MA&ixlib=rb-4.0.3&q=80&w=2000',
+      'https://beautpic.klev.club/uploads/posts/2025-05/2266/mecheti_musulmanskie_109_f3380bbd.jpg',
+      'https://images.pexels.com/photos/17277258/pexels-photo-17277258.jpeg?cs=srgb&dl=pexels-safak-batura-518884812-17277258.jpg&fm=jpg'
+    ],
+    reviews: [
+      'https://1rsrs.rationaltabs.com/CMS/3DC25B58-0B97-4C8E-AC3A-B5E9EA47FC30/addcourses/e2bwwbiifsm0m3rk3f.webp',
+      'https://static.republika.co.id/uploads/images/inpicture_slide/kegiatan-belajar-mengaji-alquran_230405152204-909.jpg',
+      'https://hakyolcular.com/uploads/images/2024/10/image_750x500_67234ba5e52ec.jpg'
+    ]
+  };
+
+  var PAGE_TITLES = {
+    about:['ABOUT OUR ACADEMY','About Our Academy','Guiding Families With Quran Education'],
+    courses:['OUR QURAN COURSES','Learn Quran With a Clear, Personal Path','Explore Quran reading, Tajweed, Hifz and Islamic studies.'],
+    teachers:['OUR TEACHERS','Qualified Quran Teachers','Learn with experienced teachers through caring one-to-one guidance.'],
+    fees:['FEES & PLANS','Simple, Transparent & Flexible','Choose a Quran learning plan that fits your schedule.'],
+    contact:['CONTACT US','We Are Here to Help','Ask about classes, teachers, timings, registration or fees.'],
+    faq:['FAQS','Answers Before You Start','Quick answers about classes, timings, registration and learning support.'],
+    blog:['QURAN & ISLAMIC ARTICLES','Learn Beyond the Classroom','Helpful Quranic and Islamic educational articles.'],
+    reviews:['STUDENT REVIEWS','Families Share Their Experience','Real learning experiences from students and families.']
+  };
+
+  function makeAboutHero(){
+    var main=document.getElementById('about');
+    if(!main || main.querySelector(':scope > .page-hero')) return;
+    var s=document.createElement('section');
+    s.className='page-hero real-photo-about-hero';
+    s.setAttribute('data-hero','about');
+    s.innerHTML='<div class="page-hero-slides"></div><div class="page-hero-content"><div class="eyebrow">ABOUT OUR ACADEMY</div><h1>About Our Academy</h1><p>Guiding Families With Quran Education</p><div class="page-hero-dots"></div></div>';
+    main.insertBefore(s,main.firstElementChild);
+  }
+
+  function setupHero(page){
+    var main=document.getElementById(page);
+    if(!main) return;
+    var hero=main.querySelector(':scope > .page-hero');
+    if(!hero) return;
+    var urls=REAL_HEADER_PHOTOS[page];
+    if(!urls || !urls.length) return;
+    var box=hero.querySelector('.page-hero-slides');
+    if(!box){
+      box=document.createElement('div');
+      box.className='page-hero-slides';
+      hero.prepend(box);
+    }
+    box.innerHTML='';
+    var dots=hero.querySelector('.page-hero-dots');
+    if(dots) dots.innerHTML='';
+    urls.forEach(function(url,i){
+      var slide=document.createElement('div');
+      slide.className='page-hero-slide'+(i===0?' active':'');
+      slide.style.backgroundImage='url("'+url.replace(/"/g,'\\"')+'")';
+      box.appendChild(slide);
+      if(dots){
+        var dot=document.createElement('span');
+        if(i===0) dot.className='active';
+        dots.appendChild(dot);
+      }
+      var img=new Image(); img.src=url;
+    });
+    var index=0;
+    setInterval(function(){
+      var all=box.querySelectorAll('.page-hero-slide');
+      if(!all.length) return;
+      all[index].classList.remove('active');
+      if(dots && dots.children[index]) dots.children[index].classList.remove('active');
+      index=(index+1)%all.length;
+      all[index].classList.add('active');
+      if(dots && dots.children[index]) dots.children[index].classList.add('active');
+    },5000);
+  }
+
+  function cleanOldRuntime(){
+    document.querySelectorAll('.page-public-header,.public-home-slideshow').forEach(function(el){el.remove();});
+    var runtime=document.getElementById('publicHeaderRuntimeStyles');
+    if(runtime) runtime.remove();
+    if(originalBrand && originalBrandHTML) originalBrand.innerHTML=originalBrandHTML;
+    document.title=originalTitle;
+  }
+
+  function init(){
+    /* The existing JS may have inserted its old SVG headers; remove only those headers. */
+    cleanOldRuntime();
+    makeAboutHero();
+    Object.keys(REAL_HEADER_PHOTOS).forEach(setupHero);
+  }
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
+  else init();
 })();
 </script>
 
