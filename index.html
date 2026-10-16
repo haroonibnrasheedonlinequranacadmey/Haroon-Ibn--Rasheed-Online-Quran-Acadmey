@@ -646,7 +646,379 @@ box-sizing:border-box;
   .single-detail-content{padding:18px 15px}
   .single-detail-content h2{font-size:27px}
 }
-\n<style id="video-engagement-style">\n.video-engagement{margin-top:18px}\n.video-reaction-row{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:12px}\n.video-reaction-btn{border:1px solid #d9edf1;background:#fff;color:var(--dark);border-radius:22px;padding:9px 14px;font-weight:700;cursor:pointer}\n.video-reaction-btn:hover,.video-reaction-btn.active{background:#e7f7fa;border-color:var(--green);color:var(--green)}\n.video-comments-toggle{border:1px solid #d9edf1;background:#f7fcfd;color:var(--dark);border-radius:22px;padding:9px 14px;font-weight:700;cursor:pointer}\n.video-comments-panel{display:none;margin-top:12px;padding:16px;background:#f7fcfd;border:1px solid #d9edf1;border-radius:14px}\n.video-comments-panel.open{display:block}\n.video-comment-list{max-height:320px;overflow:auto;margin-bottom:14px}\n.video-comment-item{background:#fff;border:1px solid #e1eef1;border-radius:12px;padding:11px 13px;margin:8px 0}\n.video-comment-name{font-weight:700;color:var(--dark)}\n.video-comment-date{font-size:11px;color:var(--gray);margin-left:6px}\n.video-comment-text{margin-top:4px;color:#294f5b;white-space:pre-wrap;word-break:break-word}\n.video-comment-form{display:grid;gap:8px}\n.video-comment-form input,.video-comment-form textarea{width:100%;box-sizing:border-box;border:1px solid #cfe4e9;border-radius:9px;padding:10px;font:inherit;background:#fff}\n.video-comment-form button{border:0;border-radius:9px;padding:10px;background:var(--green);color:#fff;font-weight:700;cursor:pointer}\n.video-comment-status{font-size:12px;color:var(--gray);min-height:18px}\n@media(max-width:680px){.video-reaction-row{display:grid;grid-template-columns:1fr 1fr}.video-reaction-btn,.video-comments-toggle{width:100%}}\n</style>\n\n</head>
+\n<style id="video-engagement-style">\n.video-engagement{margin-top:18px}\n.video-reaction-row{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:12px}\n.video-reaction-btn{border:1px solid #d9edf1;background:#fff;color:var(--dark);border-radius:22px;padding:9px 14px;font-weight:700;cursor:pointer}\n.video-reaction-btn:hover,.video-reaction-btn.active{background:#e7f7fa;border-color:var(--green);color:var(--green)}\n.video-comments-toggle{border:1px solid #d9edf1;background:#f7fcfd;color:var(--dark);border-radius:22px;padding:9px 14px;font-weight:700;cursor:pointer}\n.video-comments-panel{display:none;margin-top:12px;padding:16px;background:#f7fcfd;border:1px solid #d9edf1;border-radius:14px}\n.video-comments-panel.open{display:block}\n.video-comment-list{max-height:320px;overflow:auto;margin-bottom:14px}\n.video-comment-item{background:#fff;border:1px solid #e1eef1;border-radius:12px;padding:11px 13px;margin:8px 0}\n.video-comment-name{font-weight:700;color:var(--dark)}\n.video-comment-date{font-size:11px;color:var(--gray);margin-left:6px}\n.video-comment-text{margin-top:4px;color:#294f5b;white-space:pre-wrap;word-break:break-word}\n.video-comment-form{display:grid;gap:8px}\n.video-comment-form input,.video-comment-form textarea{width:100%;box-sizing:border-box;border:1px solid #cfe4e9;border-radius:9px;padding:10px;font:inherit;background:#fff}\n.video-comment-form button{border:0;border-radius:9px;padding:10px;background:var(--green);color:#fff;font-weight:700;cursor:pointer}\n.video-comment-status{font-size:12px;color:var(--gray);min-height:18px}\n@media(max-width:680px){.video-reaction-row{display:grid;grid-template-columns:1fr 1fr}.video-reaction-btn,.video-comments-toggle{width:100%}}\n</style>\n\n
+<style id="hro-brand-polish">
+/* HRO brand refinement — keeps the existing logo and navigation intact */
+.brand{
+  gap:9px;
+  min-width:0;
+}
+.brand-copy{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  line-height:1.08;
+  min-width:0;
+  transform:translateY(1px);
+}
+.brand-title{
+  display:block;
+  font-size:clamp(16px,1.55vw,21px);
+  font-weight:900;
+  letter-spacing:.15px;
+  white-space:nowrap;
+  background:linear-gradient(180deg,#fff8cf 0%,#f7c94b 42%,#c98b12 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  -webkit-text-stroke:.2px rgba(7,57,74,.18);
+  text-shadow:0 1px 0 rgba(255,255,255,.22),0 3px 7px rgba(7,57,74,.18);
+}
+.brand-subtitle{
+  display:block;
+  margin-top:3px;
+  font-size:clamp(10px,1vw,13px);
+  font-weight:700;
+  letter-spacing:.2px;
+  color:#0b6680;
+  white-space:nowrap;
+}
+.trial{
+  border:1px solid #d49a18!important;
+  background:linear-gradient(145deg,#fff1a8 0%,#f7c94b 38%,#d99616 100%)!important;
+  color:#07394a!important;
+  font-weight:900!important;
+  padding:10px 16px!important;
+  border-radius:24px!important;
+  box-shadow:0 5px 14px rgba(7,57,74,.18), inset 0 1px 0 rgba(255,255,255,.55)!important;
+  transition:transform .18s ease,box-shadow .18s ease,filter .18s ease;
+  white-space:nowrap;
+}
+.trial:hover{
+  transform:translateY(-1px);
+  filter:saturate(1.08);
+  box-shadow:0 7px 18px rgba(7,57,74,.22), inset 0 1px 0 rgba(255,255,255,.6)!important;
+}
+@media(max-width:900px){
+  .brand-title{font-size:17px}
+  .brand-subtitle{font-size:11px}
+  .brand{gap:7px}
+}
+@media(max-width:680px){
+  .brand-title{font-size:15px}
+  .brand-subtitle{font-size:10px}
+  .logo{width:48px!important;height:48px!important}
+  .trial{padding:9px 13px!important;font-size:12px}
+}
+</style>
+
+
+<style id="final-navbar-fit-fix">
+/* Final navbar fit: keep every public page link visible without overlap. */
+.nav{
+  gap:10px;
+  align-items:center;
+}
+.brand{
+  flex:0 0 185px;
+  width:185px;
+  min-width:185px;
+  gap:8px;
+}
+.logo{
+  width:52px!important;
+  height:52px!important;
+  flex:0 0 52px;
+}
+.brand-copy{
+  min-width:0;
+  overflow:hidden;
+}
+.brand-title{
+  font-size:17px!important;
+  line-height:1.05;
+  white-space:nowrap;
+}
+.brand-subtitle{
+  font-size:10px!important;
+  line-height:1.15;
+  white-space:nowrap;
+}
+.menu{
+  flex:1 1 auto;
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:2px;
+  flex-wrap:wrap;
+}
+.menu button{
+  padding:8px 7px;
+  font-size:12px;
+  line-height:1.2;
+  white-space:nowrap;
+}
+.menu .login-link{
+  padding:8px 9px!important;
+  font-size:12px!important;
+  line-height:1.2!important;
+  white-space:nowrap;
+}
+.menu .trial{
+  padding:9px 12px!important;
+  font-size:12px!important;
+  white-space:nowrap;
+}
+@media(max-width:1120px){
+  .brand{flex-basis:165px;width:165px;min-width:165px}
+  .logo{width:48px!important;height:48px!important;flex-basis:48px}
+  .brand-title{font-size:15px!important}
+  .menu button{padding:7px 5px;font-size:11px}
+  .menu .login-link{padding:7px 7px!important;font-size:11px!important}
+  .menu .trial{padding:8px 10px!important;font-size:11px!important}
+}
+@media(max-width:950px) and (min-width:681px){
+  .nav{min-height:92px;align-items:center}
+  .brand{flex:0 0 155px;width:155px;min-width:155px}
+  .menu{row-gap:2px}
+  .menu button{padding:6px 5px}
+}
+@media(max-width:680px){
+  .brand{flex:0 0 auto;width:auto;min-width:0}
+  .brand-title{font-size:15px!important}
+  .brand-subtitle{font-size:10px!important}
+}
+</style>
+
+<style id="final-brand-name-visible-fix">
+/* Final brand visibility fix: keep the full academy name visible without touching the logo. */
+header .nav{gap:10px;align-items:center;}
+header .brand{
+  flex:0 0 190px;
+  width:190px;
+  min-width:190px;
+  max-width:190px;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  overflow:visible;
+}
+header .brand .logo{
+  width:50px!important;
+  height:50px!important;
+  min-width:50px!important;
+  flex:0 0 50px!important;
+}
+header .brand-copy{
+  display:flex!important;
+  flex-direction:column;
+  justify-content:center;
+  min-width:0;
+  overflow:visible;
+}
+header .brand-title{
+  display:block!important;
+  font-family:Georgia,'Times New Roman',serif!important;
+  font-size:15px!important;
+  font-weight:900!important;
+  line-height:1.05!important;
+  letter-spacing:-.25px!important;
+  white-space:nowrap!important;
+  color:#d69b20!important;
+  background:linear-gradient(90deg,#0b83e6 0%,#14bfff 28%,#f6cf62 58%,#d99517 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  text-shadow:0 1px 0 rgba(255,255,255,.25),0 2px 3px rgba(7,57,74,.18);
+}
+header .brand-subtitle{
+  display:block!important;
+  margin-top:3px!important;
+  font-family:Georgia,'Times New Roman',serif!important;
+  font-size:10.5px!important;
+  font-weight:800!important;
+  line-height:1.05!important;
+  letter-spacing:.05px!important;
+  white-space:nowrap!important;
+  color:#0b6680!important;
+  text-shadow:0 1px 0 #fff,0 1px 2px rgba(7,57,74,.12);
+}
+header .menu{
+  flex:1 1 auto;
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:2px;
+  flex-wrap:nowrap;
+}
+header .menu button,
+header .menu .login-link{
+  flex:0 0 auto;
+  white-space:nowrap;
+  font-size:11px!important;
+  padding:7px 6px!important;
+}
+header .menu .trial{
+  flex:0 0 auto;
+  white-space:nowrap;
+  font-size:11px!important;
+  padding:8px 10px!important;
+}
+@media(max-width:1180px){
+  header .brand{flex-basis:175px;width:175px;min-width:175px;max-width:175px}
+  header .brand-title{font-size:14px!important}
+  header .brand-subtitle{font-size:9.5px!important}
+  header .menu button,header .menu .login-link{font-size:10px!important;padding:6px 5px!important}
+  header .menu .trial{font-size:10px!important;padding:7px 8px!important}
+}
+@media(max-width:950px){
+  header .nav{min-height:88px}
+  header .brand{flex-basis:165px;width:165px;min-width:165px;max-width:165px}
+  header .brand .logo{width:46px!important;height:46px!important;min-width:46px!important;flex-basis:46px!important}
+  header .brand-title{font-size:13px!important}
+  header .brand-subtitle{font-size:9px!important}
+  header .menu{flex-wrap:wrap;justify-content:flex-end;row-gap:2px}
+}
+@media(max-width:680px){
+  header .brand{flex:0 0 auto;width:auto;min-width:0;max-width:none}
+  header .brand-title{font-size:14px!important}
+  header .brand-subtitle{font-size:9.5px!important}
+  header .menu{display:none}
+}
+</style>
+
+<style id="final-brand-navbar-fix">
+/* Final brand/navbar fix: show the complete academy name without overlap. */
+nav.navbar, .navbar, header .nav { min-width: 0 !important; }
+.brand {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  flex-shrink: 0 !important;
+  gap: 8px !important;
+  overflow: visible !important;
+}
+.brand .logo {
+  flex: 0 0 48px !important;
+  width: 48px !important; height: 48px !important;
+}
+.brand-copy {
+  width: 150px !important;
+  min-width: 150px !important;
+  max-width: 150px !important;
+  overflow: visible !important;
+}
+.brand-title {
+  display:block !important;
+  width:auto !important;
+  max-width:none !important;
+  overflow:visible !important;
+  white-space:nowrap !important;
+  font-size: 13.5px !important;
+  letter-spacing:-.35px !important;
+  line-height:1.08 !important;
+}
+.brand-subtitle {
+  display:block !important;
+  width:auto !important;
+  max-width:none !important;
+  overflow:visible !important;
+  white-space:nowrap !important;
+  font-size: 9.5px !important;
+  line-height:1.1 !important;
+}
+#nav .menu {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  gap: 6px !important;
+  justify-content: flex-end !important;
+}
+#nav .menu > button:not(.trial), #nav .menu > .login-link {
+  flex: 0 0 auto !important;
+  white-space: nowrap !important;
+}
+@media (max-width: 1150px) and (min-width: 801px) {
+  .brand-copy { width: 140px !important; min-width:140px !important; }
+  .brand-title { font-size:12.5px !important; }
+  .brand-subtitle { font-size:9px !important; }
+  #nav .menu { gap:4px !important; }
+  #nav .menu > button:not(.trial), #nav .menu > .login-link { padding-left:7px !important; padding-right:7px !important; font-size:12px !important; }
+}
+@media (max-width: 800px) {
+  .brand-copy { width:auto !important; min-width:0 !important; }
+  .brand-title { font-size:14px !important; }
+  .brand-subtitle { font-size:9.5px !important; }
+}
+</style>
+
+<style id="hro-final-name-actually-visible">
+/* Final correction: reserve enough navbar space for the complete academy name. */
+header .nav{display:flex!important;align-items:center!important;gap:12px!important;flex-wrap:nowrap!important;}
+header .brand{
+  flex:0 0 245px!important;
+  width:245px!important;
+  min-width:245px!important;
+  max-width:245px!important;
+  overflow:visible!important;
+  gap:7px!important;
+}
+header .brand .logo{width:50px!important;height:50px!important;flex:0 0 50px!important;}
+header .brand-copy{width:188px!important;min-width:188px!important;max-width:188px!important;overflow:visible!important;}
+header .brand-title{
+  display:block!important;
+  width:188px!important;
+  max-width:none!important;
+  overflow:visible!important;
+  white-space:nowrap!important;
+  font-size:14px!important;
+  letter-spacing:-.35px!important;
+  line-height:1.05!important;
+}
+header .brand-subtitle{
+  display:block!important;
+  width:188px!important;
+  max-width:none!important;
+  overflow:visible!important;
+  white-space:nowrap!important;
+  font-size:9.5px!important;
+  line-height:1.1!important;
+}
+header .menu{
+  flex:1 1 auto!important;
+  min-width:0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:0!important;
+  flex-wrap:nowrap!important;
+  overflow:visible!important;
+}
+header .menu button,header .menu .login-link{
+  flex:0 0 auto!important;
+  white-space:nowrap!important;
+  font-size:10.5px!important;
+  padding:7px 5px!important;
+}
+header .menu .trial{font-size:10.5px!important;padding:8px 9px!important;}
+@media(max-width:1150px){
+  header .brand{flex-basis:215px!important;width:215px!important;min-width:215px!important;max-width:215px!important;}
+  header .brand-copy{width:160px!important;min-width:160px!important;max-width:160px!important;}
+  header .brand-title{width:160px!important;font-size:12.5px!important;}
+  header .brand-subtitle{width:160px!important;font-size:8.5px!important;}
+  header .menu button,header .menu .login-link{font-size:9.5px!important;padding:6px 4px!important;}
+  header .menu .trial{font-size:9.5px!important;padding:7px 7px!important;}
+}
+@media(max-width:900px){
+  header .brand{flex-basis:190px!important;width:190px!important;min-width:190px!important;max-width:190px!important;}
+  header .brand-copy{width:137px!important;min-width:137px!important;max-width:137px!important;}
+  header .brand-title{width:137px!important;font-size:11px!important;}
+  header .brand-subtitle{width:137px!important;font-size:8px!important;}
+}
+</style>
+</head>
 
 <body>
 
@@ -655,9 +1027,9 @@ box-sizing:border-box;
 
 <a href="#" class="brand" onclick="showPage('home');return false;">
 <div class="logo" aria-label="Haroon Ibn Rasheed Online Quran Academy logo"></div>
-<div>
-Haroon Ibn Rasheed<br>
-Online Quran Academy
+<div class="brand-copy">
+<span class="brand-title">Haroon Ibn Rasheed</span>
+<span class="brand-subtitle">Online Quran Academy</span>
 </div>
 </a>
 
@@ -673,7 +1045,7 @@ Online Quran Academy
 <button data-page="contact" onclick="showPage('contact')">Contact Us</button>
 <button data-page="faq" onclick="showPage('faq')">FAQs</button><button data-page="blog" onclick="showPage('blog')">Blog</button><button data-page="reviews" onclick="showPage('reviews')">Reviews</button>
 
-<a class="login-link" href="portal-login.html" style="display:inline-block;padding:10px 14px;font-weight:bold;color:var(--dark);border:1px solid #d9edf1;border-radius:20px;">Student/Teacher Login</a>\n\n<a class="login-link" href="admin/login.html" style="display:inline-block;padding:10px 14px;font-weight:bold;color:var(--dark);border:1px solid #d9edf1;border-radius:20px;">Login</a>
+<a class="login-link" href="portal-login.html" style="display:inline-block;padding:10px 14px;font-weight:bold;color:var(--dark);border:1px solid #d9edf1;border-radius:20px;">Student/Teacher Login</a><a class="login-link" href="admin/login.html" style="display:inline-block;padding:10px 14px;font-weight:bold;color:var(--dark);border:1px solid #d9edf1;border-radius:20px;">Login</a>
 
 <button class="trial" onclick="openForm()">Book a Free Trial</button>
 
