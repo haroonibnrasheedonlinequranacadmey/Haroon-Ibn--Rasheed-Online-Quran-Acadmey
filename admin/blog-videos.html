@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Blog / Videos | Admin</title>
+<link href="../css/admin.css" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script src="../js/admin.js"></script>
+<style>
+.video-layout{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(320px,420px);
+  gap:20px;
+}
+
+.video-card{
+  background:#fff;
+  border:1px solid #e5eef1;
+  border-radius:14px;
+  padding:20px;
+  box-shadow:0 4px 16px rgba(0,0,0,.05);
+}
+
+.video-card h2{
+  margin:0 0 18px;
+}
+
+.field{
+  margin-bottom:15px;
+}
+
+.field label{
+  display:block;
+  margin-bottom:6px;
+  font-weight:600;
+}
+
+.input{
+  width:100%;
+  box-sizing:border-box;
+  padding:11px 12px;
+  border:1px solid #d7e3e7;
+  border-radius:9px;
+  background:#fff;
+  font:inherit;
+}
+
+textarea.input{
+  resize:vertical;
+}
+
+.help-text{
+  display:block;
+  margin-top:5px;
+  color:#687c83;
+  font-size:12px;
+  line-height:1.4;
+}
+
+.checkbox-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:18px;
+  margin:10px 0 18px;
+}
+
+.checkbox-row label{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  font-weight:500;
+}
+
+.actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.btn{
+  border:0;
+  border-radius:9px;
+  padding:10px 16px;
+  cursor:pointer;
+  font-weight:600;
+}
+
+.btn.primary{
+  background:#0b9fbb;
+  color:#fff;
+}
+
+.btn.secondary{
+  background:#eef9fb;
+  color:#07394a;
+}
+
+.btn.danger{
+  background:#dc3545;
+  color:#fff;
+}
+
+.msg{
+  margin-bottom:15px;
+  padding:11px 13px;
+  border-radius:8px;
+  display:none;
+}
+
+.msg.show{
+  display:block;
+}
+
+.msg.ok{
+  background:#e9f8ef;
+  color:#176b36;
+}
+
+.msg.error{
+  background:#fdecec;
+  color:#a52222;
+}
+
+.preview-box{
+  border:1px solid #e5eef1;
+  border-radius:12px;
+  overflow:hidden;
+  background:#f7fbfc;
+}
+
+.preview-thumb{
+  width:100%;
+  aspect-ratio:16/9;
+  object-fit:cover;
+  display:block;
+  background:#eef9fb;
+}
+
+.preview-info{
+  padding:14px;
+}
+
+.preview-title{
+  font-size:18px;
+  font-weight:700;
+  color:#07394a;
+  margin-bottom:6px;
+}
+
+.preview-description{
+  color:#587078;
+  line-height:1.5;
+  white-space:pre-wrap;
+}
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:1100px;
+}
+
+th,td{
+  padding:11px 10px;
+  border-bottom:1px solid #e8eef0;
+  text-align:left;
+  vertical-align:middle;
+}
+
+th{
+  background:#f5fafb;
+  color:#07394a;
+  font-weight:700;
+}
+
+.video-mini{
+  width:100px;
+  height:58px;
+  object-fit:cover;
+  border-radius:7px;
+  background:#eef9fb;
+}
+
+.status{
+  display:inline-block;
+  padding:4px 8px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:700;
+}
+
+.status.published{
+  background:#e8f7ed;
+  color:#19733b;
+}
+
+.status.draft{
+  background:#fff4df;
+  color:#9a6510;
+}
+
+.status.featured{
+  background:#fdeceb;
+  color:#a0443d;
+}
+
+.status.platform{
+  background:#eef9fb;
+  color:#07394a;
+}
+
+.empty{
+  text-align:center;
+  padding:30px;
+  color:#687c83;
+}
+
+.slug-preview{
+  display:block;
+  margin-top:6px;
+  padding:8px 10px;
+  border-radius:7px;
+  background:#f5fafb;
+  color:#587078;
+  font-size:12px;
+  word-break:break-all;
+}
+
+@media(max-width:900px){
+  .video-layout{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:600px){
+  .video-card{
+    padding:15px;
+  }
+
+  .actions .btn{
+    width:100%;
+  }
+}
+</style>
+<meta content="Blog / Videos | Admin for Haroon Ibn Rasheed Online Quran Academy. Access Quran learning services, student support and academy information." name="description"/><link href="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/admin/blog-videos.html" rel="canonical"/><meta content="Blog / Videos | Admin" property="og:title"/><meta content="Blog / Videos | Admin for Haroon Ibn Rasheed Online Quran Academy. Access Quran learning services, student support and academy information." property="og:description"/><meta content="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/admin/blog-videos.html" property="og:url"/><meta content="website" property="og:type"/><link href="../assets/hr-logo-round.png" rel="icon" type="image/png"/><style>.skip-link{position:absolute;left:-9999px;top:0;background:#fff;color:#102b46;padding:12px;z-index:99999}.skip-link:focus{left:12px;top:12px}</style></head>
+<body><a class="skip-link" href="#main-content">Skip to main content</a>
+<div class="admin-layout">
+<aside class="sidebar">
+<div class="brand">
+      HR Admin
+      <span>Haroon Ibn Rasheed Online Quran Academy</span>
+</div>
+<nav class="nav">
+<a href="dashboard.html">Dashboard</a>
+<a href="admissions.html">Admissions / Leads</a>
+<a href="users.html">Portal Users</a>
+<a href="students.html">Students</a>
+<a href="enrollments.html">Enrollments</a>
+<a href="teachers.html">Teachers</a>
+<a href="schedule.html">Schedule</a>
+<a href="classes.html">Classes</a>
+<a href="attendance.html">Attendance</a>
+<a href="payments.html">Payments</a>
+<a href="leaves.html">Leaves</a>
+<a href="salaries.html">Salaries</a>
+<a href="courses.html">Courses</a>
+<a href="fees.html">Fees</a>
+<a href="payment-methods.html">Payment Methods</a>
+<a href="messages.html">Messages</a>
+<a href="testimonials.html">Testimonials</a>
+<a href="articles.html">Blog / Articles</a>
+<a class="active" href="blog-videos.html">Blog / Videos</a>
+<a href="notifications.html">Notifications</a>
+<a href="faqs.html">FAQs</a>
+<a href="content.html">Website Content</a>
+<a href="settings.html">Settings</a>
+<a href="../index.html">View Website</a>
+<a href="#" onclick="logout();return false">Logout</a>
+</nav>
+</aside>
+<main class="main" id="main-content">
+<header class="page-header">
+<div>
+<h1>Blog / Videos</h1>
+<p>Manage website videos separately from Blog / Articles.</p>
+</div>
+</header>
+<div class="msg" id="msg"></div>
+<div class="video-layout">
+<!-- FORM -->
+<section class="video-card" id="formBox">
+<h2 id="formTitle">Add Video</h2>
+<form id="videoForm">
+<div class="field">
+<label for="title">
+              Video Title *
+            </label>
+<input class="input" id="title" placeholder="Enter video title" required="" type="text"/>
+</div>
+<div class="field">
+<label for="slug">
+              Video Slug
+            </label>
+<input class="input" id="slug" placeholder="video-title-slug" type="text"/>
+<span class="help-text">
+              This creates your own website video link.
+              It is generated automatically from the title.
+            </span>
+<span class="slug-preview" id="slugPreview">
+              Your video URL slug will appear here.
+            </span>
+</div>
+<!-- VIDEO PLATFORM -->
+<div class="field">
+<label for="platform">
+              Video Platform *
+            </label>
+<select class="input" id="platform" required="">
+<option value="youtube">
+                YouTube
+              </option>
+<option value="google_drive">
+                Google Drive
+              </option>
+<option value="facebook">
+                Facebook
+              </option>
+<option value="instagram">
+                Instagram
+              </option>
+<option value="tiktok">
+                TikTok
+              </option>
+<option value="other">
+                Other
+              </option>
+</select>
+<span class="help-text">
+              Select where the video is hosted.
+              The source URL is stored in the existing video URL field.
+            </span>
+</div>
+<!-- VIDEO URL -->
+<div class="field">
+<label for="video_url">
+              Video URL *
+            </label>
+<input class="input" id="video_url" placeholder="https://www.youtube.com/watch?v=..." required="" type="url"/>
+<span class="help-text" id="urlHelp">
+              Enter the YouTube video URL.
+            </span>
+</div>
+<div class="field">
+<label for="thumbnail_url">
+              Thumbnail URL
+            </label>
+<input class="input" id="thumbnail_url" placeholder="https://example.com/thumbnail.jpg" type="url"/>
+</div>
+<div class="field">
+<label for="description">
+              Description
+            </label>
+<textarea class="input" id="description" placeholder="Write a short description..." rows="5"></textarea>
+</div>
+<div class="field">
+<label for="category">
+              Category
+            </label>
+<input class="input" id="category" placeholder="Quran, Tajweed, Islamic Studies..." type="text"/>
+</div>
+<div class="field">
+<label for="author">
+              Author
+            </label>
+<input class="input" id="author" placeholder="Author name" type="text"/>
+</div>
+<div class="field">
+<label for="duration">
+              Duration
+            </label>
+<input class="input" id="duration" placeholder="10:25" type="text"/>
+</div>
+<div class="checkbox-row">
+<label>
+<input aria-label="Featured" id="featured" type="checkbox"/>
+              Featured
+            </label>
+<label>
+<input aria-label="Is published" id="is_published" type="checkbox"/>
+              Published
+            </label>
+</div>
+<div class="actions">
+<button class="btn primary" id="saveBtn" type="submit">
+              Add Video
+            </button>
+<button class="btn secondary" id="cancelBtn" style="display:none;" type="button">
+              Cancel
+            </button>
+</div>
+</form>
+</section>
+<!-- PREVIEW -->
+<section class="video-card">
+<h2>Preview</h2>
+<div class="preview-box">
+<img alt="Video thumbnail" class="preview-thumb" decoding="async" id="previewImage" loading="lazy" src="" style="display:none;"/>
+<div class="preview-info">
+<div class="preview-title" id="previewTitle">
+              Video title will appear here
+            </div>
+<div class="preview-description" id="previewDescription">
+              Video description will appear here.
+            </div>
+</div>
+</div>
+</section>
+</div>
+<!-- LIST -->
+<section class="video-card" style="margin-top:20px;">
+<h2>All Videos</h2>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>Thumbnail</th>
+<th>Title</th>
+<th>Platform</th>
+<th>Slug</th>
+<th>Category</th>
+<th>Author</th>
+<th>Duration</th>
+<th>Status</th>
+<th>Featured</th>
+<th>Created</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id="rows">
+<tr>
+<td class="empty" colspan="11">
+                Loading...
+              </td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</main>
+</div>
+<script>
+
+let records = [];
+let editId = null;
+let slugManuallyEdited = false;
+
+const $ = id => document.getElementById(id);
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(value){
+
+  return String(value ?? '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;');
+
+}
+
+
+/* =====================================================
+   SLUG GENERATOR
+===================================================== */
+
+function makeSlug(value){
+
+  return String(value || '')
+    .toLowerCase()
+    .trim()
+    .replace(/['’]/g,'')
+    .replace(/[^a-z0-9\s-]/g,'')
+    .replace(/\s+/g,'-')
+    .replace(/-+/g,'-')
+    .replace(/^-+|-+$/g,'');
+
+}
+
+
+/* =====================================================
+   PLATFORM NAME
+===================================================== */
+
+function platformName(value){
+
+  const names = {
+
+    youtube:'YouTube',
+
+    google_drive:'Google Drive',
+
+    facebook:'Facebook',
+
+    instagram:'Instagram',
+
+    tiktok:'TikTok',
+
+    other:'Other'
+
+  };
+
+  return names[value] || 'Other';
+
+}
+
+
+/* =====================================================
+   PLATFORM URL HELP
+===================================================== */
+
+function updateUrlHelp(){
+
+  const platform =
+    $('platform').value;
+
+  const input =
+    $('video_url');
+
+  const help =
+    $('urlHelp');
+
+
+  if(platform === 'youtube'){
+
+    input.placeholder =
+      'https://www.youtube.com/watch?v=...';
+
+    help.textContent =
+      'Enter the YouTube video URL.';
+
+    return;
+
+  }
+
+
+  if(platform === 'google_drive'){
+
+    input.placeholder =
+      'https://drive.google.com/file/d/.../view';
+
+    help.textContent =
+      'Enter the Google Drive video file URL. Make sure the Drive file is accessible to viewers.';
+
+    return;
+
+  }
+
+
+  if(platform === 'facebook'){
+
+    input.placeholder =
+      'https://www.facebook.com/...';
+
+    help.textContent =
+      'Enter the Facebook video URL.';
+
+    return;
+
+  }
+
+
+  if(platform === 'instagram'){
+
+    input.placeholder =
+      'https://www.instagram.com/reel/...';
+
+    help.textContent =
+      'Enter the Instagram Reel/Post video URL.';
+
+    return;
+
+  }
+
+
+  if(platform === 'tiktok'){
+
+    input.placeholder =
+      'https://www.tiktok.com/@user/video/...';
+
+    help.textContent =
+      'Enter the TikTok video URL.';
+
+    return;
+
+  }
+
+
+  input.placeholder =
+    'https://example.com/video';
+
+  help.textContent =
+    'Enter the video source URL.';
+
+}
+
+
+/* =====================================================
+   SHOW MESSAGE
+===================================================== */
+
+function showMsg(message,type){
+
+  const box = $('msg');
+
+  box.textContent = message;
+
+  box.className =
+    'msg show ' + type;
+
+
+  setTimeout(function(){
+
+    box.className =
+      'msg';
+
+  },4000);
+
+}
+
+
+/* =====================================================
+   INIT
+===================================================== */
+
+async function init(){
+
+  if(!window.db){
+
+    location.href =
+      'login.html';
+
+    return;
+
+  }
+
+
+  if(!(await adminGuard())){
+
+    return;
+
+  }
+
+
+  updateUrlHelp();
+
+  await load();
+
+}
+
+
+/* =====================================================
+   LOAD VIDEOS
+===================================================== */
+
+async function load(){
+
+  const result =
+    await db
+      .from('blog_videos')
+      .select('*')
+      .order(
+        'created_at',
+        {ascending:false}
+      );
+
+
+  if(result.error){
+
+    showMsg(
+      result.error.message,
+      'error'
+    );
+
+    return;
+
+  }
+
+
+  records =
+    result.data || [];
+
+
+  render();
+
+}
+
+
+/* =====================================================
+   RENDER
+===================================================== */
+
+function render(){
+
+  const rows =
+    $('rows');
+
+
+  if(!records.length){
+
+    rows.innerHTML = `
+      <tr>
+        <td
+          colspan="11"
+          class="empty">
+          No videos added yet.
+        </td>
+      </tr>
+    `;
+
+    return;
+
+  }
+
+
+  rows.innerHTML =
+    records.map(function(video){
+
+      const thumb =
+        video.thumbnail_url
+
+        ?
+
+        `
+          <img
+            src="${escapeHtml(video.thumbnail_url)}"
+            class="video-mini"
+            alt="">
+        `
+
+        :
+
+        `
+          <div
+            class="video-mini">
+          </div>
+        `;
+
+
+      const status =
+        video.is_published
+
+        ?
+
+        `
+          <span
+            class="status published">
+            Published
+          </span>
+        `
+
+        :
+
+        `
+          <span
+            class="status draft">
+            Draft
+          </span>
+        `;
+
+
+      const featured =
+        video.featured
+
+        ?
+
+        `
+          <span
+            class="status featured">
+            Featured
+          </span>
+        `
+
+        :
+
+        '—';
+
+
+      const platform =
+        `
+          <span
+            class="status platform">
+            ${escapeHtml(
+              platformName(
+                video.platform
+              )
+            )}
+          </span>
+        `;
+
+
+      const created =
+        video.created_at
+
+        ?
+
+        new Date(
+          video.created_at
+        ).toLocaleDateString()
+
+        :
+
+        '—';
+
+
+      return `
+        <tr>
+
+          <td>
+            ${thumb}
+          </td>
+
+
+          <td>
+            <strong>
+              ${escapeHtml(
+                video.title
+              )}
+            </strong>
+          </td>
+
+
+          <td>
+            ${platform}
+          </td>
+
+
+          <td>
+            ${escapeHtml(
+              video.slug || '—'
+            )}
+          </td>
+
+
+          <td>
+            ${escapeHtml(
+              video.category || '—'
+            )}
+          </td>
+
+
+          <td>
+            ${escapeHtml(
+              video.author || '—'
+            )}
+          </td>
+
+
+          <td>
+            ${escapeHtml(
+              video.duration || '—'
+            )}
+          </td>
+
+
+          <td>
+            ${status}
+          </td>
+
+
+          <td>
+            ${featured}
+          </td>
+
+
+          <td>
+            ${escapeHtml(
+              created
+            )}
+          </td>
+
+
+          <td>
+
+            <button
+              class="btn secondary"
+              onclick="editVideo('${escapeHtml(video.id)}')">
+              Edit
+            </button>
+
+
+            <button
+              class="btn danger"
+              onclick="deleteVideo('${escapeHtml(video.id)}')">
+              Delete
+            </button>
+
+          </td>
+
+        </tr>
+      `;
+
+    }).join('');
+
+}
+
+
+/* =====================================================
+   EDIT VIDEO
+===================================================== */
+
+function editVideo(id){
+
+  const video =
+    records.find(function(x){
+
+      return x.id === id;
+
+    });
+
+
+  if(!video){
+
+    return;
+
+  }
+
+
+  editId =
+    id;
+
+
+  slugManuallyEdited =
+    true;
+
+
+  $('formTitle').textContent =
+    'Edit Video';
+
+
+  $('saveBtn').textContent =
+    'Update Video';
+
+
+  $('cancelBtn').style.display =
+    'inline-block';
+
+
+  $('title').value =
+    video.title || '';
+
+
+  $('slug').value =
+    video.slug ||
+    makeSlug(
+      video.title || ''
+    );
+
+
+  $('platform').value =
+    video.platform ||
+    detectPlatform(
+      video.video_url || ''
+    );
+
+
+  $('video_url').value =
+    video.video_url || '';
+
+
+  $('thumbnail_url').value =
+    video.thumbnail_url || '';
+
+
+  $('description').value =
+    video.description || '';
+
+
+  $('category').value =
+    video.category || '';
+
+
+  $('author').value =
+    video.author || '';
+
+
+  $('duration').value =
+    video.duration || '';
+
+
+  $('featured').checked =
+    !!video.featured;
+
+
+  $('is_published').checked =
+    !!video.is_published;
+
+
+  updateUrlHelp();
+
+  updatePreview();
+
+  updateSlugPreview();
+
+
+  $('formBox').scrollIntoView({
+
+    behavior:'smooth',
+
+    block:'start'
+
+  });
+
+}
+
+
+/* =====================================================
+   DETECT OLD VIDEOS
+===================================================== */
+
+function detectPlatform(url){
+
+  const value =
+    String(url || '')
+      .toLowerCase();
+
+
+  if(
+    value.includes('youtube.com') ||
+    value.includes('youtu.be')
+  ){
+
+    return 'youtube';
+
+  }
+
+
+  if(
+    value.includes('drive.google.com')
+  ){
+
+    return 'google_drive';
+
+  }
+
+
+  if(
+    value.includes('facebook.com') ||
+    value.includes('fb.watch')
+  ){
+
+    return 'facebook';
+
+  }
+
+
+  if(
+    value.includes('instagram.com')
+  ){
+
+    return 'instagram';
+
+  }
+
+
+  if(
+    value.includes('tiktok.com')
+  ){
+
+    return 'tiktok';
+
+  }
+
+
+  return 'other';
+
+}
+
+
+/* =====================================================
+   RESET FORM
+===================================================== */
+
+function resetForm(){
+
+  editId =
+    null;
+
+
+  slugManuallyEdited =
+    false;
+
+
+  $('videoForm').reset();
+
+
+  $('platform').value =
+    'youtube';
+
+
+  $('formTitle').textContent =
+    'Add Video';
+
+
+  $('saveBtn').textContent =
+    'Add Video';
+
+
+  $('cancelBtn').style.display =
+    'none';
+
+
+  updateUrlHelp();
+
+  updatePreview();
+
+  updateSlugPreview();
+
+}
+
+
+/* =====================================================
+   DELETE VIDEO
+===================================================== */
+
+async function deleteVideo(id){
+
+  const video =
+    records.find(function(x){
+
+      return x.id === id;
+
+    });
+
+
+  if(!video){
+
+    return;
+
+  }
+
+
+  if(
+    !confirm(
+      'Delete this video?\n\n' +
+      (video.title || '')
+    )
+  ){
+
+    return;
+
+  }
+
+
+  const result =
+    await db
+      .from('blog_videos')
+      .delete()
+      .eq('id',id);
+
+
+  if(result.error){
+
+    showMsg(
+      result.error.message,
+      'error'
+    );
+
+    return;
+
+  }
+
+
+  showMsg(
+    'Video deleted successfully.',
+    'ok'
+  );
+
+
+  await load();
+
+}
+
+
+/* =====================================================
+   SAVE VIDEO
+===================================================== */
+
+$('videoForm').addEventListener(
+  'submit',
+  async function(e){
+
+    e.preventDefault();
+
+
+    const title =
+      $('title')
+        .value
+        .trim();
+
+
+    const platform =
+      $('platform')
+        .value;
+
+
+    const videoUrl =
+      $('video_url')
+        .value
+        .trim();
+
+
+    let slug =
+      $('slug')
+        .value
+        .trim();
+
+
+    if(!title){
+
+      showMsg(
+        'Please enter a video title.',
+        'error'
+      );
+
+      return;
+
+    }
+
+
+    if(!videoUrl){
+
+      showMsg(
+        'Please enter the video URL.',
+        'error'
+      );
+
+      return;
+
+    }
+
+
+    if(!slug){
+
+      slug =
+        makeSlug(title);
+
+    }
+
+
+    slug =
+      makeSlug(slug);
+
+
+    if(!slug){
+
+      showMsg(
+        'Please enter a valid video slug.',
+        'error'
+      );
+
+      return;
+
+    }
+
+
+    /*
+       The existing database uses video_url.
+       Platform is stored only when the database
+       already has a platform column.
+    */
+
+
+    const basePayload = {
+
+      title:title,
+
+      slug:slug,
+
+      video_url:videoUrl,
+
+      thumbnail_url:
+        $('thumbnail_url')
+          .value
+          .trim() || null,
+
+      description:
+        $('description')
+          .value
+          .trim() || null,
+
+      category:
+        $('category')
+          .value
+          .trim() || null,
+
+      author:
+        $('author')
+          .value
+          .trim() || null,
+
+      duration:
+        $('duration')
+          .value
+          .trim() || null,
+
+      featured:
+        $('featured')
+          .checked,
+
+      is_published:
+        $('is_published')
+          .checked,
+
+      published_at:
+        $('is_published').checked
+          ? new Date().toISOString()
+          : null
+
+    };
+
+
+    /*
+       First try with platform.
+       If the existing database does not yet
+       contain that column, automatically retry
+       using the original database structure.
+    */
+
+    const payloadWithPlatform =
+      Object.assign(
+        {},
+        basePayload,
+        {
+          platform:platform
+        }
+      );
+
+
+    let result;
+
+
+    if(editId){
+
+      result =
+        await db
+          .from('blog_videos')
+          .update(
+            payloadWithPlatform
+          )
+          .eq('id',editId);
+
+    }else{
+
+      result =
+        await db
+          .from('blog_videos')
+          .insert(
+            payloadWithPlatform
+          );
+
+    }
+
+
+    /*
+       If platform column does not exist,
+       save everything else exactly as before.
+    */
+
+    if(
+      result.error &&
+      (
+        String(
+          result.error.message || ''
+        )
+        .toLowerCase()
+        .includes('platform')
+      )
+    ){
+
+      if(editId){
+
+        result =
+          await db
+            .from('blog_videos')
+            .update(
+              basePayload
+            )
+            .eq('id',editId);
+
+      }else{
+
+        result =
+          await db
+            .from('blog_videos')
+            .insert(
+              basePayload
+            );
+
+      }
+
+    }
+
+
+    if(result.error){
+
+      if(
+        result.error.code ===
+        '23505'
+      ){
+
+        showMsg(
+          'This video slug already exists. Please use a different slug.',
+          'error'
+        );
+
+      }else{
+
+        showMsg(
+          result.error.message,
+          'error'
+        );
+
+      }
+
+      return;
+
+    }
+
+
+    showMsg(
+
+      editId
+
+        ?
+
+        'Video updated successfully.'
+
+        :
+
+        'Video added successfully.',
+
+      'ok'
+
+    );
+
+
+    resetForm();
+
+    await load();
+
+  }
+);
+
+
+/* =====================================================
+   CANCEL
+===================================================== */
+
+$('cancelBtn').addEventListener(
+  'click',
+  resetForm
+);
+
+
+/* =====================================================
+   PREVIEW
+===================================================== */
+
+function updatePreview(){
+
+  const title =
+    $('title')
+      .value
+      .trim() ||
+
+    'Video title will appear here';
+
+
+  const description =
+    $('description')
+      .value
+      .trim() ||
+
+    'Video description will appear here';
+
+
+  const thumbnail =
+    $('thumbnail_url')
+      .value
+      .trim();
+
+
+  $('previewTitle').textContent =
+    title;
+
+
+  $('previewDescription').textContent =
+    description;
+
+
+  if(thumbnail){
+
+    $('previewImage').src =
+      thumbnail;
+
+
+    $('previewImage').style.display =
+      'block';
+
+  }else{
+
+    $('previewImage').style.display =
+      'none';
+
+
+    $('previewImage').removeAttribute(
+      'src'
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   SLUG PREVIEW
+===================================================== */
+
+function updateSlugPreview(){
+
+  const slug =
+    $('slug')
+      .value
+      .trim() ||
+
+    makeSlug(
+      $('title')
+        .value
+        .trim()
+    );
+
+
+  const preview =
+    $('slugPreview');
+
+
+  if(!slug){
+
+    preview.textContent =
+      'Your video URL slug will appear here.';
+
+    return;
+
+  }
+
+
+  preview.textContent =
+    'Slug: ' + slug;
+
+}
+
+
+/* =====================================================
+   EVENTS
+===================================================== */
+
+$('platform').addEventListener(
+  'change',
+  updateUrlHelp
+);
+
+
+$('slug').addEventListener(
+  'input',
+  function(){
+
+    slugManuallyEdited =
+      true;
+
+    updateSlugPreview();
+
+  }
+);
+
+
+$('title').addEventListener(
+  'input',
+  function(){
+
+    updatePreview();
+
+
+    if(!slugManuallyEdited){
+
+      $('slug').value =
+        makeSlug(
+          $('title').value
+        );
+
+    }
+
+
+    updateSlugPreview();
+
+  }
+);
+
+
+$('description').addEventListener(
+  'input',
+  updatePreview
+);
+
+
+$('thumbnail_url').addEventListener(
+  'input',
+  updatePreview
+);
+
+
+/* =====================================================
+   START
+===================================================== */
+
+init();
+
+</script>
+</body>
+</html>
