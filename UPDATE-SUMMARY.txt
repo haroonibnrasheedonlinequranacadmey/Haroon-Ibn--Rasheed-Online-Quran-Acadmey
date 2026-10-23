@@ -1,0 +1,31 @@
+UPDATE SUMMARY — Haroon Ibn Rasheed Online Quran Academy
+Updated: 2026-10-23
+
+Public website pages split into separate files:
+- index.html (Home)
+- about.html
+- courses.html
+- teachers.html
+- fees.html
+- contact.html
+- faq.html
+- blog.html
+- reviews.html
+
+Changes made:
+- Replaced public navigation buttons with direct links to each page.
+- Added responsive mobile navigation CSS so the menu stacks vertically instead of overlapping.
+- Moved repeated public CSS into css/public.css and inline public runtime scripts into js/public-runtime.js.
+- Updated footer social links: YouTube (existing channel retained), Facebook Page, Instagram, and TikTok.
+- Added footer to all student portal HTML pages.
+- Added/standardized page titles, descriptions, canonical links, Open Graph/Twitter metadata and EducationalOrganization JSON-LD for public pages.
+- Updated robots.txt and sitemap.xml for the new public pages.
+- Added language declaration, skip-navigation links, accessible labels for form controls, names for icon-only links, image alt text, and reduced-motion CSS where applicable.
+- Added defer to external scripts on public pages.
+- Checked local HTML resource references: no missing local references were found in the HTML files.
+
+Important notes:
+- Search-engine scores cannot be guaranteed from a code change alone; re-run the SEO audit after publishing and allow search engines to recrawl the pages.
+- Google Analytics is not enabled because no GA4 Measurement ID was provided.
+- GitHub Pages does not provide configurable server Cache-Control headers; server-level caching warnings may remain.
+- Student/admin/teacher portals and authentication still depend on the existing JavaScript/Supabase configuration and should be tested in the deployed site. No Supabase credentials or database schema were changed.
