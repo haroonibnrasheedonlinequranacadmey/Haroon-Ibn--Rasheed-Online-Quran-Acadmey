@@ -1,19 +1,17 @@
-<!doctype html>
+<!DOCTYPE html>
+<!DOCTYPE html>
+
+<!DOCTYPE html>
+
 <html lang="en">
-
 <head>
-
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>My Salary | Haroon Ibn Rasheed Online Quran Academy</title>
-
-<link rel="stylesheet" href="../css/portal.css">
-
+<link href="../css/portal.css" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../js/config.js"></script>
-<script src="../js/portal.js" defer></script>
-
+<script defer="" src="../js/portal.js"></script>
 <style>
 
 /* =========================================================
@@ -153,9 +151,6 @@
 }
 
 </style>
-
-
-
 <style id="teacher-top-header-style">
 /* ===== TEACHER HEADER ONLY =====
    Existing page content, schedule logic, Supabase and JS are preserved.
@@ -339,229 +334,132 @@ body.dashboard .teacher-top-layout .card{
  .course-image{height:150px!important;min-height:150px!important;}
 }
 </style>
-
-
-</head>
-
-
-<body
-  class="dashboard"
-  data-page="teacher-salary">
-
-
+<meta content="My Salary | Haroon Ibn Rasheed Online Quran Academy for Haroon Ibn Rasheed Online Quran Academy. Access Quran learning services, student support and academ" name="description"/><link href="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/teacher/salary.html" rel="canonical"/><meta content="My Salary | Haroon Ibn Rasheed Online Quran Academy" property="og:title"/><meta content="My Salary | Haroon Ibn Rasheed Online Quran Academy for Haroon Ibn Rasheed Online Quran Academy. Access Quran learning services, student support and academ" property="og:description"/><meta content="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/teacher/salary.html" property="og:url"/><meta content="website" property="og:type"/><link href="../assets/hr-logo-round.png" rel="icon" type="image/png"/><style>.skip-link{position:absolute;left:-9999px;top:0;background:#fff;color:#102b46;padding:12px;z-index:99999}.skip-link:focus{left:12px;top:12px}</style></head>
+<body class="dashboard" data-page="teacher-salary"><a class="skip-link" href="#main-content">Skip to main content</a>
 <header class="teacher-top-header">
-  <div class="teacher-brand-row">
-    <a class="teacher-brand" href="dashboard.html" aria-label="Haroon Ibn Rasheed Online Quran Academy">
-      <img src="assets/hr-logo.png" alt="HR">
-      <span class="teacher-brand-text"><span class="teacher-brand-name">Haroon Ibn Rasheed</span><span class="teacher-brand-sub">Online Quran Academy</span></span>
-    </a>
-    <div class="teacher-header-actions">
-      <a class="teacher-header-icon" href="#" aria-label="Notifications" title="Notifications">🔔</a>
-      <a class="teacher-profile-btn" href="profile.html" aria-label="Open teacher profile" title="Profile">👤 <span>Teacher</span></a>
-    </div>
-  </div>
-  <nav class="teacher-nav-row" aria-label="Teacher Portal Navigation"><a href="dashboard.html">Dashboard</a><a href="students.html">My Students</a><a href="classes.html">My Classes</a><a href="courses.html">My Courses</a><a href="schedule.html">My Schedule</a><a href="attendance.html">Attendance</a><a href="leaves.html">My Leaves</a><a href="salary.html" class="active" aria-current="page">My Salary</a><a href="profile.html">My Profile</a></nav>
+<div class="teacher-brand-row">
+<a aria-label="Haroon Ibn Rasheed Online Quran Academy" class="teacher-brand" href="dashboard.html">
+<img alt="HR" decoding="async" loading="lazy" src="assets/hr-logo.png"/>
+<span class="teacher-brand-text"><span class="teacher-brand-name">Haroon Ibn Rasheed</span><span class="teacher-brand-sub">Online Quran Academy</span></span>
+</a>
+<div class="teacher-header-actions">
+<a aria-label="Notifications" class="teacher-header-icon" href="#" title="Notifications">🔔</a>
+<a aria-label="Open teacher profile" class="teacher-profile-btn" href="profile.html" title="Profile">👤 <span>Teacher</span></a>
+</div>
+</div>
+<nav aria-label="Teacher Portal Navigation" class="teacher-nav-row"><a href="dashboard.html">Dashboard</a><a href="students.html">My Students</a><a href="classes.html">My Classes</a><a href="courses.html">My Courses</a><a href="schedule.html">My Schedule</a><a href="attendance.html">Attendance</a><a href="leaves.html">My Leaves</a><a aria-current="page" class="active" href="salary.html">My Salary</a><a href="profile.html">My Profile</a></nav>
 </header>
-
 <div class="side-layout teacher-top-layout">
-<main class="content">
-
-
+<main class="content" id="main-content">
 <!-- HEADER -->
-
 <section class="salary-header">
-
 <h1>
 My Salary
 </h1>
-
 <p class="salary-subtitle">
 View your salary details and payment history
 </p>
-
 </section>
-
-
-<div
-  id="salaryMessage"
-  class="msg">
+<div class="msg" id="salaryMessage">
 </div>
-
-
 <!-- =======================================================
      SUMMARY CARDS
 ======================================================= -->
-
 <section class="salary-summary">
-
-
 <div class="salary-card">
-
 <div class="salary-icon">
 💰
 </div>
-
 <div>
-
 <div class="salary-label">
 Total Salary
 </div>
-
-<div
-  class="salary-value"
-  id="totalSalary">
+<div class="salary-value" id="totalSalary">
 $0.00
 </div>
-
 <div class="salary-note">
 This Month
 </div>
-
 </div>
-
 </div>
-
-
 <div class="salary-card">
-
 <div class="salary-icon">
 ✓
 </div>
-
 <div>
-
 <div class="salary-label">
 Paid Amount
 </div>
-
-<div
-  class="salary-value"
-  id="paidSalary">
+<div class="salary-value" id="paidSalary">
 $0.00
 </div>
-
 <div class="salary-note">
 Received
 </div>
-
 </div>
-
 </div>
-
-
 <div class="salary-card">
-
 <div class="salary-icon">
 ◷
 </div>
-
 <div>
-
 <div class="salary-label">
 Pending Amount
 </div>
-
-<div
-  class="salary-value"
-  id="pendingSalary">
+<div class="salary-value" id="pendingSalary">
 $0.00
 </div>
-
 <div class="salary-note">
 Awaiting payment
 </div>
-
 </div>
-
 </div>
-
-
 </section>
-
-
 <!-- =======================================================
      SALARY HISTORY
 ======================================================= -->
-
 <section class="card">
-
 <h2 style="margin-top:0">
 Salary History
 </h2>
-
-
 <div class="salary-table-wrap">
-
 <table class="table salary-table">
-
 <thead>
-
 <tr>
-
 <th>#</th>
-
 <th>Month</th>
-
 <th>Basic Salary</th>
-
 <th>Bonus / Extra</th>
-
 <th>Deduction</th>
-
 <th>Net Salary</th>
-
 <th>Payment Method</th>
-
 <th>Status</th>
-
 <th>Paid Date</th>
-
 </tr>
-
 </thead>
-
-
 <tbody id="salaryRows">
-
 <tr>
-
-<td
-  colspan="9"
-  class="salary-empty">
+<td class="salary-empty" colspan="9">
 
 Loading salary records...
 
 </td>
-
 </tr>
-
 </tbody>
-
 </table>
-
 </div>
-
-
 <div class="salary-info">
-
 <strong>
 Your salary is calculated based on your assigned students and classes.
 </strong>
-
-<br>
+<br/>
 
 For any salary issue or adjustment, please contact the academy administrator.
 
 </div>
-
-
 </section>
-
-
 </main>
 </div>
-
-
 <script>
 
 (function(){
@@ -1076,6 +974,5 @@ loadSalary();
 })();
 
 </script>
-
 </body>
-  </html>
+</html>

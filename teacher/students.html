@@ -1,24 +1,18 @@
-<!doctype html>
+<!DOCTYPE html>
+<!DOCTYPE html>
+
+<!DOCTYPE html>
+
 <html lang="en">
-
 <head>
-
-<meta charset="utf-8">
-
-<meta name="viewport"
-content="width=device-width,initial-scale=1">
-
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>
 My Students | Haroon Ibn Rasheed Online Quran Academy
 </title>
-
-<link rel="stylesheet"
-href="../css/portal.css">
-
+<link href="../css/portal.css" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script src="../js/config.js"></script>
-
 <!-- SUPABASE DATABASE CLIENT -->
 <script>
 const db = supabase.createClient(
@@ -26,11 +20,7 @@ const db = supabase.createClient(
   window.SUPABASE_CONFIG.anonKey
 );
 </script>
-
-<script src="../js/portal.js" defer></script>
-
-
-
+<script defer="" src="../js/portal.js"></script>
 <style id="teacher-top-header-style">
 /* ===== TEACHER HEADER ONLY =====
    Existing page content, schedule logic, Supabase and JS are preserved.
@@ -214,125 +204,75 @@ body.dashboard .teacher-top-layout .card{
  .course-image{height:150px!important;min-height:150px!important;}
 }
 </style>
-
-
-</head>
-
-
-<body
-class="dashboard"
-data-page="teacher-students">
-
-
+<meta content="My Students | Haroon Ibn Rasheed Online Quran Academy for Haroon Ibn Rasheed Online Quran Academy. Access Quran learning services, student support and acad" name="description"/><link href="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/teacher/students.html" rel="canonical"/><meta content="My Students | Haroon Ibn Rasheed Online Quran Academy" property="og:title"/><meta content="My Students | Haroon Ibn Rasheed Online Quran Academy for Haroon Ibn Rasheed Online Quran Academy. Access Quran learning services, student support and acad" property="og:description"/><meta content="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/teacher/students.html" property="og:url"/><meta content="website" property="og:type"/><link href="../assets/hr-logo-round.png" rel="icon" type="image/png"/><style>.skip-link{position:absolute;left:-9999px;top:0;background:#fff;color:#102b46;padding:12px;z-index:99999}.skip-link:focus{left:12px;top:12px}</style></head>
+<body class="dashboard" data-page="teacher-students"><a class="skip-link" href="#main-content">Skip to main content</a>
 <header class="teacher-top-header">
-  <div class="teacher-brand-row">
-    <a class="teacher-brand" href="dashboard.html" aria-label="Haroon Ibn Rasheed Online Quran Academy">
-      <img src="assets/hr-logo.png" alt="HR">
-      <span class="teacher-brand-text"><span class="teacher-brand-name">Haroon Ibn Rasheed</span><span class="teacher-brand-sub">Online Quran Academy</span></span>
-    </a>
-    <div class="teacher-header-actions">
-      <a class="teacher-header-icon" href="#" aria-label="Notifications" title="Notifications">🔔</a>
-      <a class="teacher-profile-btn" href="profile.html" aria-label="Open teacher profile" title="Profile">👤 <span>Teacher</span></a>
-    </div>
-  </div>
-  <nav class="teacher-nav-row" aria-label="Teacher Portal Navigation"><a href="dashboard.html">Dashboard</a><a href="students.html" class="active" aria-current="page">My Students</a><a href="classes.html">My Classes</a><a href="courses.html">My Courses</a><a href="schedule.html">My Schedule</a><a href="attendance.html">Attendance</a><a href="leaves.html">My Leaves</a><a href="salary.html">My Salary</a><a href="profile.html">My Profile</a></nav>
+<div class="teacher-brand-row">
+<a aria-label="Haroon Ibn Rasheed Online Quran Academy" class="teacher-brand" href="dashboard.html">
+<img alt="HR" decoding="async" loading="lazy" src="assets/hr-logo.png"/>
+<span class="teacher-brand-text"><span class="teacher-brand-name">Haroon Ibn Rasheed</span><span class="teacher-brand-sub">Online Quran Academy</span></span>
+</a>
+<div class="teacher-header-actions">
+<a aria-label="Notifications" class="teacher-header-icon" href="#" title="Notifications">🔔</a>
+<a aria-label="Open teacher profile" class="teacher-profile-btn" href="profile.html" title="Profile">👤 <span>Teacher</span></a>
+</div>
+</div>
+<nav aria-label="Teacher Portal Navigation" class="teacher-nav-row"><a href="dashboard.html">Dashboard</a><a aria-current="page" class="active" href="students.html">My Students</a><a href="classes.html">My Classes</a><a href="courses.html">My Courses</a><a href="schedule.html">My Schedule</a><a href="attendance.html">Attendance</a><a href="leaves.html">My Leaves</a><a href="salary.html">My Salary</a><a href="profile.html">My Profile</a></nav>
 </header>
-
 <div class="side-layout teacher-top-layout">
-<main class="content">
-
-
+<main class="content" id="main-content">
 <section class="card">
-
-
 <h1>
 My Students
 </h1>
-
-
-<div
-id="studentMessage"
-style="
+<div id="studentMessage" style="
 margin:15px 0;
 padding:12px;
 border-radius:8px;
 display:none;
 ">
 </div>
-
-
 <div class="table-wrap">
-
-
 <table class="table">
-
-
 <thead>
-
 <tr>
-
 <th>
 Name
 </th>
-
 <th>
 Father Name
 </th>
-
 <th>
 Email
 </th>
-
 <th>
 Phone
 </th>
-
 <th>
 Course
 </th>
-
 <th>
 Status
 </th>
-
 <th>
 Account ID
 </th>
-
 </tr>
-
 </thead>
-
-
 <tbody id="studentRows">
-
 <tr>
-
-<td colspan="7"
-style="text-align:center;padding:25px">
+<td colspan="7" style="text-align:center;padding:25px">
 
 Loading students...
 
 </td>
-
 </tr>
-
 </tbody>
-
-
 </table>
-
 </div>
-
-
 </section>
-
-
 </main>
 </div>
-
-
-
 <script>
 
 /* =====================================================
@@ -705,8 +645,5 @@ error
 initTeacherStudents();
 
 </script>
-
-
 </body>
-
 </html>
