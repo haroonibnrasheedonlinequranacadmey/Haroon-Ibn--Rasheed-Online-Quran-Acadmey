@@ -713,7 +713,7 @@ item.classList.toggle("open");
   }
 
   function cleanOldRuntime(){
-    document.querySelectorAll('.page-public-header,.public-home-slideshow').forEach(function(el){el.remove();});
+    /* Keep the real-photo headers/slideshow inserted by public-headers.js. */
     var runtime=document.getElementById('publicHeaderRuntimeStyles');
     if(runtime) runtime.remove();
     if(originalBrand && originalBrandHTML) originalBrand.innerHTML=originalBrandHTML;
@@ -723,8 +723,7 @@ item.classList.toggle("open");
   function init(){
     /* The existing JS may have inserted its old SVG headers; remove only those headers. */
     cleanOldRuntime();
-    makeAboutHero();
-    Object.keys(REAL_HEADER_PHOTOS).forEach(setupHero);
+    /* Header photography is managed by js/public-headers.js to avoid duplicate/conflicting slideshows. */
   }
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);

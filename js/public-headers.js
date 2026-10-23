@@ -2,22 +2,16 @@
   'use strict';
 
   const slides = {
-    home: [
-      'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&w=1800&q=85',
-      'https://images.unsplash.com/photo-1585036156171-384164a8c675?auto=format&fit=crop&w=1800&q=85',
-      'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=1800&q=85',
-      'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=1800&q=85'
-    ],
-    about: ['https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&w=1800&q=85','https://images.unsplash.com/photo-1585036156171-384164a8c675?auto=format&fit=crop&w=1800&q=85','https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=1800&q=85','https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=1800&q=85'],
-    courses: ['https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&w=1800&q=85','https://images.unsplash.com/photo-1585036156171-384164a8c675?auto=format&fit=crop&w=1800&q=85','https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=1800&q=85','https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=1800&q=85'],
-    teachers: ['https://images.unsplash.com/photo-1585036156171-384164a8c675?auto=format&fit=crop&w=1800&q=85','https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&w=1800&q=85','https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=1800&q=85','https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=1800&q=85'],
-    fees: ['https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=1800&q=85','https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&w=1800&q=85','https://images.unsplash.com/photo-1585036156171-384164a8c675?auto=format&fit=crop&w=1800&q=85','https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=1800&q=85'],
-    contact: ['https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=1800&q=85','https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&w=1800&q=85','https://images.unsplash.com/photo-1585036156171-384164a8c675?auto=format&fit=crop&w=1800&q=85','https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=1800&q=85'],
-    faq: ['https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&w=1800&q=85','https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=1800&q=85','https://images.unsplash.com/photo-1585036156171-384164a8c675?auto=format&fit=crop&w=1800&q=85','https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=1800&q=85'],
-    blog: ['https://images.unsplash.com/photo-1585036156171-384164a8c675?auto=format&fit=crop&w=1800&q=85','https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=1800&q=85','https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&w=1800&q=85','https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=1800&q=85'],
-    reviews: ['https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=1800&q=85','https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=1800&q=85','https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&w=1800&q=85','https://images.unsplash.com/photo-1585036156171-384164a8c675?auto=format&fit=crop&w=1800&q=85']
+    home: ['https://images.unsplash.com/photo-1720654073347-e7c5ca2ecaa2?auto=format&fit=crop&fm=jpg&q=82&w=1800', 'https://images.unsplash.com/photo-1577792077974-0a424b741d34?auto=format&fit=crop&fm=jpg&q=82&w=1800', 'https://images.unsplash.com/photo-1673178643274-ecd2de1716bb?auto=format&fit=crop&fm=jpg&q=82&w=1800', 'https://images.unsplash.com/photo-1652064588708-2a3eefd68077?auto=format&fit=crop&fm=jpg&q=82&w=1800'],
+    about: ['https://upload.wikimedia.org/wikipedia/commons/9/97/Courtyard_of_Shah_Jahan_Mosque.JPG', 'https://images.unsplash.com/photo-1558542403-bb396707e7da?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&q=80&w=1600'],
+    courses: ['https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1585036156171-384164a8c675?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&q=80&w=1600'],
+    teachers: ['https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=1600'],
+    fees: ['https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1585036156171-384164a8c675?auto=format&fit=crop&q=80&w=1600', 'https://upload.wikimedia.org/wikipedia/commons/9/97/Courtyard_of_Shah_Jahan_Mosque.JPG'],
+    contact: ['https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&q=80&w=1600', 'https://upload.wikimedia.org/wikipedia/commons/9/97/Courtyard_of_Shah_Jahan_Mosque.JPG', 'https://images.unsplash.com/photo-1558542403-bb396707e7da?auto=format&fit=crop&q=80&w=1600'],
+    faq: ['https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/PUTRA_MOSQUE_ARCHITECTURE.jpg/1280px-PUTRA_MOSQUE_ARCHITECTURE.jpg', 'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1558542403-bb396707e7da?auto=format&fit=crop&q=80&w=1600'],
+    blog: ['https://images.unsplash.com/photo-1652964287112-438ece0a6acc?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&q=80&w=1600', 'https://upload.wikimedia.org/wikipedia/commons/9/97/Courtyard_of_Shah_Jahan_Mosque.JPG'],
+    reviews: ['https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&q=80&w=1600']
   };
-
   const pageInfo = {
     about: ['ABOUT US', 'Learn, Understand & Live the Quran', 'Discover our mission, values and commitment to quality Quranic education.'],
     courses: ['QURAN COURSES', 'Learn With a Clear, Personal Path', 'Explore Quran reading, Tajweed, Hifz, translation and Islamic studies.'],
@@ -51,9 +45,11 @@
       .form-logo {width:92px!important;height:92px!important;border-radius:50%!important;overflow:hidden!important;background:#071a34!important;border:3px solid #f5c84b!important;color:transparent!important;font-size:0!important;box-shadow:0 8px 24px rgba(0,0,0,.22)!important;}
       .form-logo img {display:block!important;width:100%!important;height:100%!important;object-fit:cover!important;border-radius:50%!important;}
       .public-home-slideshow{position:absolute;inset:0;z-index:0;background-size:cover;background-position:center;transition:opacity .65s ease,background-image .65s ease;}
-      .hero{position:relative!important;overflow:hidden!important;background:#071a34!important;}
+      .hero{position:relative!important;overflow:hidden!important;background:#071a34!important;background-image:none!important;}
+      .hero > .public-home-slideshow{position:absolute!important;inset:0!important;z-index:0!important;pointer-events:none!important;}
+      .hero > .hero-content,.hero > .page-hero-content{position:relative!important;z-index:2!important;}
       .hero:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(3,17,35,.86),rgba(3,17,35,.48),rgba(3,17,35,.34));z-index:1;pointer-events:none;}
-      .hero > .hero-content{position:relative;z-index:2;}
+      .hero > *{position:relative;z-index:2;}
       .page-public-header{position:relative;min-height:330px;display:flex;align-items:center;overflow:hidden;color:#fff;background:#071a34;margin:0!important;}
       .page-public-header .ph-slides{position:absolute;inset:0;background-size:cover;background-position:center;transition:opacity .65s ease;}
       .page-public-header:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(3,17,35,.88),rgba(3,17,35,.54),rgba(3,17,35,.38));}
@@ -111,14 +107,12 @@
     document.title = 'Haroon Ibn Rasheed Online Quran Academy';
   }
 
-  function preload(list) {
-    list.forEach(function(name){ const img=new Image(); img.src=(name.indexOf('http://')===0 || name.indexOf('https://')===0) ? name : base+name; });
-  }
+  function preload(list) { list.forEach(function(url){ const img=new Image(); img.src=url; }); }
 
   function startBackgroundSlideshow(el, list, interval) {
     if (!el || !list || !list.length) return;
     let i=0;
-    const first=(list[0].indexOf('http://')===0 || list[0].indexOf('https://')===0) ? list[0] : base+list[0];
+    const first=list[0];
     el.style.backgroundImage='url("'+first+'")';
     preload(list);
     if (list.length < 2) return;
@@ -126,46 +120,40 @@
       i=(i+1)%list.length;
       el.style.opacity='0.55';
       setTimeout(function(){
-        el.style.backgroundImage='url("'+((list[i].indexOf('http://')===0 || list[i].indexOf('https://')===0) ? list[i] : base+list[i])+'")';
+        el.style.backgroundImage='url("'+list[i]+'")';
         el.style.opacity='1';
       }, 260);
     }, interval || 5500);
   }
 
   function setupHome() {
-    const home=document.getElementById('home');
+    const home=document.getElementById('home') || document.getElementById('main-content') || document.querySelector('main');
     if (!home) return;
     const hero=home.querySelector('.hero');
     if (!hero) return;
     let bg=hero.querySelector('.public-home-slideshow');
     if (!bg) { bg=document.createElement('div'); bg.className='public-home-slideshow'; hero.prepend(bg); }
+    hero.style.backgroundImage='none';
     startBackgroundSlideshow(bg, slides.home, 2000);
   }
 
   function makePageHero(page) {
-    const main=document.getElementById(page);
-    if (!main || !pageInfo[page]) return;
-    if (main.querySelector(':scope > .page-public-header')) return;
+    const isHome = page === 'home';
+    const main = isHome ? (document.querySelector('#main-content') || document.querySelector('main')) : document.querySelector('main');
+    if (!main) return;
+    if (isHome) { setupHome(); return; }
+    if (document.querySelector('.page-public-header')) return;
     const info=pageInfo[page];
+    if (!info) return;
     const section=document.createElement('section');
     section.className='page-public-header';
     section.innerHTML='<div class="ph-slides"></div><div class="ph-inner"><div class="ph-kicker">'+info[0]+'</div><h1>'+info[1]+'</h1><p>'+info[2]+'</p><div class="page-public-dots" aria-hidden="true"></div></div>';
-    main.prepend(section);
+    main.parentNode.insertBefore(section, main);
     const dots=section.querySelector('.page-public-dots');
-    slides[page].forEach(function(_,idx){ const s=document.createElement('span'); if(idx===0)s.classList.add('active'); dots.appendChild(s); });
-    const bg=section.querySelector('.ph-slides');
-    let i=0;
-    bg.style.backgroundImage='url("'+slides[page][0]+'")';
-    preload(slides[page]);
-    setInterval(function(){
-      i=(i+1)%slides[page].length;
-      bg.style.opacity='.45';
-      setTimeout(function(){
-        bg.style.backgroundImage='url("'+slides[page][i]+'")';
-        bg.style.opacity='1';
-        dots.querySelectorAll('span').forEach(function(dot,n){dot.classList.toggle('active',n===i);});
-      },260);
-    }, 2000);
+    slides[page].forEach(function(_,idx){ const dot=document.createElement('span'); if(idx===0)dot.classList.add('active'); dots.appendChild(dot); });
+    const bg=section.querySelector('.ph-slides'); let i=0;
+    bg.style.backgroundImage='url("'+slides[page][0]+'")'; preload(slides[page]);
+    setInterval(function(){ i=(i+1)%slides[page].length; bg.style.opacity='.45'; setTimeout(function(){ bg.style.backgroundImage='url("'+slides[page][i]+'")'; bg.style.opacity='1'; dots.querySelectorAll('span').forEach(function(dot,n){dot.classList.toggle('active',n===i);}); },180); },2000);
   }
 
   function ensureAboutPage() {
@@ -192,8 +180,9 @@
     updateBranding();
     ensureAboutPage();
     ensureAboutNav();
-    setupHome();
-    Object.keys(slides).filter(function(k){return k!=='home';}).forEach(function(page){makePageHero(page);});
+    const file=(location.pathname.split('/').pop()||'index.html').toLowerCase().replace('.html','');
+    const page=file==='index'?'home':(file==='faq'?'faq':file);
+    if(page==='home') setupHome(); else makePageHero(page);
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
