@@ -1,19 +1,27 @@
-<!DOCTYPE html>
-<!DOCTYPE html>
-
-<!DOCTYPE html>
-
+<!doctype html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1" name="viewport"/>
+
+<meta charset="utf-8">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
 <title>
 Courses | Admin | Haroon Ibn Rasheed Online Quran Academy
 </title>
-<link href="../css/admin.css" rel="stylesheet"/>
+
+<link rel="stylesheet"
+href="../css/admin.css">
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="../js/config.js"></script>
+
 <script src="../js/admin.js"></script>
+
+
 <style>
 
 /* ================================
@@ -421,13 +429,22 @@ height:200px;
 }
 
 </style>
-<meta content="Courses | Admin | Haroon Ibn Rasheed Online Quran Academy for Haroon Ibn Rasheed Online Quran Academy. Access Quran learning services, student support and " name="description"/><link href="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/admin/courses.html" rel="canonical"/><meta content="Courses | Admin | Haroon Ibn Rasheed Online Quran Academy" property="og:title"/><meta content="Courses | Admin | Haroon Ibn Rasheed Online Quran Academy for Haroon Ibn Rasheed Online Quran Academy. Access Quran learning services, student support and " property="og:description"/><meta content="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/admin/courses.html" property="og:url"/><meta content="website" property="og:type"/><link href="../assets/hr-logo-round.png" rel="icon" type="image/png"/><style>.skip-link{position:absolute;left:-9999px;top:0;background:#fff;color:#102b46;padding:12px;z-index:99999}.skip-link:focus{left:12px;top:12px}</style></head>
-<body><a class="skip-link" href="#main-content">Skip to main content</a>
+
+</head>
+
+
+<body>
+
+
 <div class="admin-layout">
+
+
 <!-- =====================================
      SIDEBAR
 ===================================== -->
+
 <aside class="sidebar">
+
 <div class="brand">
 
 HR Admin
@@ -435,185 +452,309 @@ HR Admin
 <span>
 Haroon Ibn Rasheed Online Quran Academy
 </span>
+
 </div>
+
+
 <nav class="nav">
+
 <a href="dashboard.html">
 Dashboard
 </a>
+
 <a href="admissions.html">
 Admissions / Leads
 </a>
+
 <a href="users.html">
 Portal Users
 </a>
+
 <a href="students.html">
 Students
 </a>
+
 <a href="enrollments.html">
 Enrollments
 </a>
+
 <a href="teachers.html">
 Teachers
 </a>
+
 <a href="schedule.html">
 Schedule
 </a>
+
 <a href="classes.html">
 Classes
 </a>
+
 <a href="attendance.html">
 Attendance
 </a>
+
 <a href="payments.html">
 Payments
 </a>
+
 <a href="leaves.html">
 Leaves
 </a>
+
 <a href="salaries.html">
 Salaries
 </a>
-<a class="active" href="courses.html">
+
+<a href="courses.html" class="active">
 Courses
 </a>
+
 <a href="fees.html">
 Fees
 </a>
+
 <a href="payment-methods.html">
 Payment Methods
 </a>
+
 <a href="messages.html">
 Messages
 </a>
+
 <a href="testimonials.html">
 Testimonials
 </a>
+
 <a href="articles.html">
 Blog / Articles
 </a>
+
 <a href="notifications.html">
 Notifications
 </a>
+
 <a href="faqs.html">
 FAQs
 </a>
+
 <a href="content.html">
 Website Content
 </a>
+
 <a href="settings.html">
 Settings
 </a>
+
 <a href="admin-accounts.html">
 🔐 Account Credentials
 </a>
+
 <a href="../index.html">
 View Website
 </a>
-<a href="#" onclick="logout();return false">
+
+<a href="#"
+onclick="logout();return false">
 Logout
 </a>
+
 </nav>
+
 </aside>
+
+
 <!-- =====================================
      MAIN
 ===================================== -->
-<main class="main" id="main-content">
+
+<main class="main">
+
+
 <div class="top">
+
 <div>
+
 <h1>
 Courses
 </h1>
+
 <span class="muted">
 Add, edit, delete and manage academy courses
 </span>
+
 </div>
+
 </div>
+
+
 <!-- =====================================
      TOOLBAR
 ===================================== -->
+
 <div class="courses-toolbar">
+
 <div>
 <strong id="courseCount">
 Loading courses...
 </strong>
 </div>
-<button class="add-course-btn" onclick="openAddCourse()">
+
+<button
+class="add-course-btn"
+onclick="openAddCourse()">
 
 ＋ Add New Course
 
 </button>
+
 </div>
+
+
 <!-- =====================================
      ADD / EDIT FORM
 ===================================== -->
-<div class="course-form-box" id="courseFormBox">
+
+<div
+id="courseFormBox"
+class="course-form-box">
+
+
 <h2 id="formTitle">
 Add New Course
 </h2>
+
+
 <div class="form-grid">
+
+
 <div class="form-group">
+
 <label>
 Course Name *
 </label>
-<input aria-label="Example: noorani qaida" id="courseTitle" placeholder="Example: Noorani Qaida" type="text"/>
+
+<input
+type="text"
+id="courseTitle"
+placeholder="Example: Noorani Qaida">
+
 </div>
+
+
 <div class="form-group">
+
 <label>
 Status
 </label>
-<select aria-label="Coursestatus" id="courseStatus">
+
+<select id="courseStatus">
+
 <option value="active">
 Active
 </option>
+
 <option value="inactive">
 Inactive
 </option>
+
 </select>
+
 </div>
+
+
 <div class="form-group full">
+
 <label>
 Course Description
 </label>
-<textarea aria-label="Write course description..." id="courseDescription" placeholder="Write course description..."></textarea>
+
+<textarea
+id="courseDescription"
+placeholder="Write course description..."></textarea>
+
 </div>
+
+
 <div class="form-group">
+
 <label>
 Course Image URL
 </label>
-<input aria-label="Https://example.com/course.jpg" id="courseImage" placeholder="https://example.com/course.jpg" type="text"/>
+
+<input
+type="text"
+id="courseImage"
+placeholder="https://example.com/course.jpg">
+
 </div>
+
+
 <div class="form-group">
+
 <label>
 Course Link / URL
 </label>
-<input aria-label="Https://..." id="courseUrl" placeholder="https://..." type="text"/>
+
+<input
+type="text"
+id="courseUrl"
+placeholder="https://...">
+
 </div>
+
+
 </div>
+
+
 <div class="form-buttons">
-<button class="save-btn" id="saveCourseBtn" onclick="saveCourse()">
+
+<button
+class="save-btn"
+onclick="saveCourse()"
+id="saveCourseBtn">
 
 Save Course
 
 </button>
-<button class="cancel-btn" onclick="closeCourseForm()">
+
+
+<button
+class="cancel-btn"
+onclick="closeCourseForm()">
 
 Cancel
 
 </button>
+
 </div>
+
+
 </div>
+
+
 <!-- =====================================
      COURSES
 ===================================== -->
-<div class="courses-grid" id="coursesGrid">
+
+<div
+id="coursesGrid"
+class="courses-grid">
+
 <div class="loading">
 
 Loading courses...
 
 </div>
+
 </div>
+
+
 </main>
+
 </div>
+
+
 <script>
 
 /* =====================================
@@ -1258,5 +1399,8 @@ return "../assets/hr-logo.svg";
 }
 
 </script>
+
+
 </body>
-</html>
+
+   </html>

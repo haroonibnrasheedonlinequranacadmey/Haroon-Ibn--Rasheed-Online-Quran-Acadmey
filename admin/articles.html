@@ -1,17 +1,16 @@
-<!DOCTYPE html>
-<!DOCTYPE html>
-
-<!DOCTYPE html>
-
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Blog / Articles | Admin</title>
-<link href="../css/admin.css" rel="stylesheet"/>
+
+<link rel="stylesheet" href="../css/admin.css">
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../js/config.js"></script>
 <script src="../js/admin.js"></script>
+
 <style>
 .article-editor{
   display:grid;
@@ -252,14 +251,19 @@
   }
 }
 </style>
-<meta content="Blog / Articles | Admin for Haroon Ibn Rasheed Online Quran Academy. Access Quran learning services, student support and academy information." name="description"/><link href="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/admin/articles.html" rel="canonical"/><meta content="Blog / Articles | Admin" property="og:title"/><meta content="Blog / Articles | Admin for Haroon Ibn Rasheed Online Quran Academy. Access Quran learning services, student support and academy information." property="og:description"/><meta content="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/admin/articles.html" property="og:url"/><meta content="website" property="og:type"/><link href="../assets/hr-logo-round.png" rel="icon" type="image/png"/><style>.skip-link{position:absolute;left:-9999px;top:0;background:#fff;color:#102b46;padding:12px;z-index:99999}.skip-link:focus{left:12px;top:12px}</style></head>
-<body><a class="skip-link" href="#main-content">Skip to main content</a>
+</head>
+
+<body>
+
 <div class="admin-layout">
+
 <aside class="sidebar">
+
 <div class="brand">
 HR Admin
 <span>Haroon Ibn Rasheed Online Quran Academy</span>
 </div>
+
 <nav class="nav">
 <a href="dashboard.html">Dashboard</a>
 <a href="admissions.html">Admissions / Leads</a>
@@ -286,43 +290,85 @@ HR Admin
 <a href="../index.html">View Website</a>
 <a href="#" onclick="logout();return false">Logout</a>
 </nav>
+
 </aside>
-<main class="main" id="main-content">
+
+
+<main class="main">
+
 <div class="top">
 <h1 id="pageTitle">Blog / Articles</h1>
 </div>
-<div class="msg" id="msg"></div>
-<div class="card" id="formBox">
+
+<div id="msg" class="msg"></div>
+
+
+<div id="formBox" class="card">
+
 <form id="articleForm">
+
 <div class="article-editor">
+
+
 <!-- LEFT -->
+
 <div>
+
 <div class="article-section">
+
 <h2>Article Information</h2>
+
+
 <div class="field">
+
 <label for="articleTitle">
 Article Title *
 </label>
-<input autocomplete="off" id="articleTitle" placeholder="Enter article title" required="" type="text"/>
+
+<input
+id="articleTitle"
+type="text"
+placeholder="Enter article title"
+autocomplete="off"
+required
+>
+
 <small>
 Use a clear, useful title for visitors and search engines.
 </small>
+
 </div>
+
+
 <div class="two-col">
+
 <div class="field">
+
 <label for="articleSlug">
 Slug / URL
 </label>
-<input id="articleSlug" placeholder="example-quran-learning-guide" type="text"/>
+
+<input
+id="articleSlug"
+type="text"
+placeholder="example-quran-learning-guide"
+>
+
 <small>
 Example: /blog/example-quran-learning-guide
 </small>
+
 </div>
+
+
 <div class="field">
+
 <label for="articleCategory">
 Category
 </label>
+
 <select id="articleCategory">
+
 <option value="">Select category</option>
 <option value="Quran Learning">Quran Learning</option>
 <option value="Tajweed">Tajweed</option>
@@ -336,189 +382,399 @@ Category
 <option value="Online Quran Classes">Online Quran Classes</option>
 <option value="Ramadan">Ramadan</option>
 <option value="General">General</option>
+
 </select>
+
 </div>
+
 </div>
+
+
 <div class="two-col">
+
 <div class="field">
+
 <label for="articleAuthor">
 Author
 </label>
-<input id="articleAuthor" placeholder="Haroon Ibn Rasheed" type="text"/>
+
+<input
+id="articleAuthor"
+type="text"
+placeholder="Haroon Ibn Rasheed"
+>
+
 </div>
+
+
 <div class="field">
+
 <label for="readingTime">
 Reading Time
 </label>
-<input id="readingTime" placeholder="5 min read" type="text"/>
+
+<input
+id="readingTime"
+type="text"
+placeholder="5 min read"
+>
+
 </div>
+
 </div>
+
+
 <div class="field">
+
 <label for="articleTags">
 Tags
 </label>
-<input id="articleTags" placeholder="Quran, Tajweed, Online Quran, Children" type="text"/>
+
+<input
+id="articleTags"
+type="text"
+placeholder="Quran, Tajweed, Online Quran, Children"
+>
+
 <small>
 Separate tags with commas.
 </small>
+
 </div>
+
+
 <div class="field">
+
 <label for="articleExcerpt">
 Short Description / Excerpt
 </label>
-<textarea id="articleExcerpt" placeholder="Write a short description for the Blog card..."></textarea>
+
+<textarea
+id="articleExcerpt"
+placeholder="Write a short description for the Blog card..."
+></textarea>
+
 </div>
+
+
 <div class="field">
+
 <label for="articleBody">
 Full Article Content *
 </label>
-<textarea class="article-body" id="articleBody" placeholder="Write the complete article content here..." required=""></textarea>
+
+<textarea
+id="articleBody"
+class="article-body"
+placeholder="Write the complete article content here..."
+required
+></textarea>
+
 <small>
 This is the full content shown on the public article page.
 </small>
+
 </div>
+
 </div>
+
+
 <!-- SEO -->
+
 <div class="article-section">
+
 <h2>SEO</h2>
+
+
 <div class="field">
+
 <label for="metaTitle">
 SEO Title
 </label>
-<input id="metaTitle" placeholder="SEO title" type="text"/>
+
+<input
+id="metaTitle"
+type="text"
+placeholder="SEO title"
+>
+
 </div>
+
+
 <div class="field">
+
 <label for="metaDescription">
 Meta Description
 </label>
-<textarea id="metaDescription" placeholder="Short search-engine description..."></textarea>
+
+<textarea
+id="metaDescription"
+placeholder="Short search-engine description..."
+></textarea>
+
 </div>
+
+
 <div class="field">
+
 <label for="metaKeywords">
 SEO Keywords
 </label>
-<input id="metaKeywords" placeholder="online Quran, Tajweed, Quran classes" type="text"/>
+
+<input
+id="metaKeywords"
+type="text"
+placeholder="online Quran, Tajweed, Quran classes"
+>
+
 </div>
+
+
 <div class="field">
+
 <label for="canonicalUrl">
 Canonical URL
 </label>
-<input id="canonicalUrl" placeholder="https://..." type="url"/>
+
+<input
+id="canonicalUrl"
+type="url"
+placeholder="https://..."
+>
+
 </div>
+
+
 <div class="field">
+
 <label for="ogImage">
 Social / OG Image URL
 </label>
-<input id="ogImage" placeholder="https://..." type="url"/>
+
+<input
+id="ogImage"
+type="url"
+placeholder="https://..."
+>
+
 </div>
+
 </div>
+
 </div>
+
+
 <!-- RIGHT -->
+
 <div>
+
+
 <div class="article-section">
+
 <h2>Cover Image</h2>
+
+
 <div class="field">
+
 <label for="imageUrl">
 Cover Image URL
 </label>
-<input id="imageUrl" placeholder="https://..." type="url"/>
+
+<input
+id="imageUrl"
+type="url"
+placeholder="https://..."
+>
+
 <small>
 Enter the public image URL. Image upload/storage can be connected later.
 </small>
+
 </div>
+
+
 <div class="field">
+
 <label for="imageAlt">
 Image Alt Text
 </label>
-<input id="imageAlt" placeholder="Quran learning online" type="text"/>
+
+<input
+id="imageAlt"
+type="text"
+placeholder="Quran learning online"
+>
+
 </div>
-<div class="media-preview" id="imagePreview">
+
+
+<div id="imagePreview" class="media-preview">
+
 <div class="article-help">
 Cover image preview will appear here.
 </div>
+
 </div>
+
 </div>
+
+
 <div class="article-section">
+
 <h2>Publishing</h2>
+
+
 <div class="check-row">
-<input id="published" type="checkbox"/>
+
+<input
+id="published"
+type="checkbox"
+>
+
 <label for="published">
 Publish this article
 </label>
+
 </div>
+
+
 <div class="check-row">
-<input id="featured" type="checkbox"/>
+
+<input
+id="featured"
+type="checkbox"
+>
+
 <label for="featured">
 Featured article
 </label>
+
 </div>
+
+
 <div class="check-row">
-<input id="allowComments" type="checkbox"/>
+
+<input
+id="allowComments"
+type="checkbox"
+>
+
 <label for="allowComments">
 Allow comments
 </label>
+
 </div>
+
+
 <div class="field">
+
 <label for="publishDate">
 Publish Date
 </label>
-<input id="publishDate" type="datetime-local"/>
+
+<input
+id="publishDate"
+type="datetime-local"
+>
+
 </div>
+
+
 <div class="status-box">
-<strong>Public Website</strong><br/>
+
+<strong>Public Website</strong><br>
 
 Published articles can appear in the public Blog.
 Featured articles can be highlighted on the public website.
 
 </div>
+
+
 <div class="form-actions">
-<button class="btn-main" id="saveBtn" type="submit">
+
+<button
+type="submit"
+class="btn-main"
+id="saveBtn"
+>
 Save Article
 </button>
-<button class="btn-secondary" id="clearBtn" type="button">
+
+<button
+type="button"
+class="btn-secondary"
+id="clearBtn"
+>
 Clear Form
 </button>
+
 </div>
+
 </div>
+
+
 <div class="article-section">
+
 <h2>Recommended Blog Content</h2>
+
 <div class="article-help">
-<strong>Quran Learning</strong><br/>
+
+<strong>Quran Learning</strong><br>
 Quran learning tips, Nazra, Tajweed and Hifz guidance.
 
-<br/><br/>
-<strong>Parents Guide</strong><br/>
+<br><br>
+
+<strong>Parents Guide</strong><br>
 Helpful guidance for parents supporting children in Quran learning.
 
-<br/><br/>
-<strong>Islamic Knowledge</strong><br/>
+<br><br>
+
+<strong>Islamic Knowledge</strong><br>
 Educational Islamic articles, Quran and Hadith related topics.
 
-<br/><br/>
-<strong>Online Quran</strong><br/>
+<br><br>
+
+<strong>Online Quran</strong><br>
 Benefits and guidance about learning Quran online.
 
-<br/><br/>
-<strong>Ramadan</strong><br/>
+<br><br>
+
+<strong>Ramadan</strong><br>
 Quran, Ramadan preparation and Islamic reminders.
 
 </div>
+
 </div>
+
 </div>
+
 </div>
+
 </form>
+
 </div>
+
+
 <!-- ARTICLES LIST -->
+
 <div class="card">
+
 <div class="top" style="margin-bottom:15px">
+
 <h2 style="margin:0;color:#07394a">
 Articles
 </h2>
+
 </div>
+
 <div class="article-table-wrap">
+
 <table class="article-table">
+
 <thead>
+
 <tr>
+
 <th>Cover</th>
 <th>Title</th>
 <th>Category</th>
@@ -526,20 +782,33 @@ Articles
 <th>Featured</th>
 <th>Created</th>
 <th>Actions</th>
+
 </tr>
+
 </thead>
+
 <tbody id="articleRows">
+
 <tr>
-<td class="empty-row" colspan="7">
+<td colspan="7" class="empty-row">
 Loading articles...
 </td>
 </tr>
+
 </tbody>
+
 </table>
+
 </div>
+
 </div>
+
+
 </main>
+
 </div>
+
+
 <script>
 
 const articleState = {
@@ -1161,5 +1430,6 @@ async function startArticlesPage(){
 startArticlesPage();
 
 </script>
+
 </body>
 </html>

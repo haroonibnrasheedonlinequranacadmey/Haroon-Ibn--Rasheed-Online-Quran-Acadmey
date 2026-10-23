@@ -1,17 +1,18 @@
-<!DOCTYPE html>
-<!DOCTYPE html>
-
-<!DOCTYPE html>
-
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1" name="viewport"/>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>Fees | Admin</title>
-<link href="../css/admin.css" rel="stylesheet"/>
+
+<link rel="stylesheet" href="../css/admin.css">
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../js/config.js"></script>
 <script src="../js/admin.js"></script>
+
 <style>
 
 /* =========================================================
@@ -230,13 +231,19 @@
 }
 
 </style>
-<meta content="Fees | Admin for Haroon Ibn Rasheed Online Quran Academy. Access Quran learning services, student support and academy information." name="description"/><link href="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/admin/fees.html" rel="canonical"/><meta content="Fees | Admin" property="og:title"/><meta content="Fees | Admin for Haroon Ibn Rasheed Online Quran Academy. Access Quran learning services, student support and academy information." property="og:description"/><meta content="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/admin/fees.html" property="og:url"/><meta content="website" property="og:type"/><link href="../assets/hr-logo-round.png" rel="icon" type="image/png"/><style>.skip-link{position:absolute;left:-9999px;top:0;background:#fff;color:#102b46;padding:12px;z-index:99999}.skip-link:focus{left:12px;top:12px}</style></head>
-<body><a class="skip-link" href="#main-content">Skip to main content</a>
+
+</head>
+
+<body>
+
 <div class="admin-layout">
+
 <!-- =======================================================
      SIDEBAR
 ======================================================= -->
+
 <aside class="sidebar">
+
 <div class="brand">
 
 HR Admin
@@ -244,130 +251,228 @@ HR Admin
 <span>
 Haroon Ibn Rasheed Online Quran Academy
 </span>
+
 </div>
+
 <nav class="nav">
+
 <a href="dashboard.html">Dashboard</a>
+
 <a href="admissions.html">Admissions / Leads</a>
+
 <a href="users.html">Portal Users</a>
+
 <a href="students.html">Students</a>
+
 <a href="enrollments.html">Enrollments</a>
+
 <a href="teachers.html">Teachers</a>
+
 <a href="schedule.html">Schedule</a>
+
 <a href="classes.html">Classes</a>
+
 <a href="attendance.html">Attendance</a>
+
 <a href="payments.html">Payments</a>
+
 <a href="leaves.html">Leaves</a>
+
 <a href="salaries.html">Salaries</a>
+
 <a href="courses.html">Courses</a>
+
 <a href="fees.html">Fees</a>
+
 <a href="payment-methods.html">Payment Methods</a>
+
 <a href="messages.html">Messages</a>
+
 <a href="testimonials.html">Testimonials</a>
+
 <a href="articles.html">Blog / Articles</a>
+
 <a href="notifications.html">Notifications</a>
+
 <a href="faqs.html">FAQs</a>
+
 <a href="content.html">Website Content</a>
+
 <a href="settings.html">Settings</a>
+
 <a href="../index.html">View Website</a>
+
 <a href="#" onclick="logout();return false">
 Logout
 </a>
+
 </nav>
+
 </aside>
+
+
 <!-- =======================================================
      MAIN
 ======================================================= -->
-<main class="main" id="main-content">
+
+<main class="main">
+
+
 <!-- HEADER -->
+
 <div class="fees-header">
+
 <div>
+
 <h1 id="title">
 Fees
 </h1>
+
 <p class="fees-subtitle">
 Manage student fees, due dates and payment status
 </p>
+
 </div>
-<button class="btn add-fee-btn" onclick="document.getElementById('formBox').scrollIntoView({behavior:'smooth'})" type="button">
+
+<button
+  type="button"
+  class="btn add-fee-btn"
+  onclick="document.getElementById('formBox').scrollIntoView({behavior:'smooth'})">
 + Add Student Fee
 </button>
+
 </div>
-<div class="msg" id="msg"></div>
+
+
+<div id="msg" class="msg"></div>
+
+
 <!-- =======================================================
      SUMMARY
 ======================================================= -->
+
 <div class="summary-grid">
+
+
 <div class="summary-card">
+
 <div class="summary-icon">
 💰
 </div>
+
 <div>
+
 <div class="summary-label">
 Total Fees
 </div>
-<div class="summary-value" id="feeTotal">
+
+<div
+  class="summary-value"
+  id="feeTotal">
 0
 </div>
+
 <div class="summary-note">
 All student fees
 </div>
+
 </div>
+
 </div>
+
+
 <div class="summary-card">
+
 <div class="summary-icon">
 ✓
 </div>
+
 <div>
+
 <div class="summary-label">
 Paid Amount
 </div>
-<div class="summary-value" id="feePaid">
+
+<div
+  class="summary-value"
+  id="feePaid">
 0
 </div>
+
 <div class="summary-note">
 Verified payments
 </div>
+
 </div>
+
 </div>
+
+
 <div class="summary-card">
+
 <div class="summary-icon">
 ◷
 </div>
+
 <div>
+
 <div class="summary-label">
 Due Amount
 </div>
-<div class="summary-value" id="feeDue">
+
+<div
+  class="summary-value"
+  id="feeDue">
 0
 </div>
+
 <div class="summary-note">
 Outstanding
 </div>
+
 </div>
+
 </div>
+
+
 <div class="summary-card">
+
 <div class="summary-icon">
 !
 </div>
+
 <div>
+
 <div class="summary-label">
 Pending Fees
 </div>
-<div class="summary-value" id="feePending">
+
+<div
+  class="summary-value"
+  id="feePending">
 0
 </div>
+
 <div class="summary-note">
 Awaiting payment
 </div>
+
 </div>
+
 </div>
+
 </div>
+
+
 <!-- =======================================================
      FEE RULE INFO
 ======================================================= -->
+
 <div class="card">
+
 <div class="info-box">
-<strong>Fee Structure</strong><br/>
+
+<strong>Fee Structure</strong><br>
 
 3 free trial classes → first payment for the starting period →
 monthly fee paid in advance → automatic due-date reminder.
@@ -376,114 +481,195 @@ Payment submitted by the student will remain pending until
 the admin verifies it.
 
 </div>
+
 </div>
+
+
 <!-- =======================================================
      ADD / EDIT FEE
 ======================================================= -->
-<div class="card" id="formBox">
+
+<div
+  id="formBox"
+  class="card">
+
 <h2 style="margin-top:0">
 Student Fee
 </h2>
-<form class="form-grid" id="form">
+
+<form
+  id="form"
+  class="form-grid">
 </form>
+
 </div>
+
+
 <!-- =======================================================
      SEARCH / FILTER
 ======================================================= -->
+
 <div class="card">
+
 <div class="fee-toolbar">
-<input aria-label="Search student, id or course..." class="input" id="feeSearch" placeholder="Search student, ID or course..." type="text"/>
-<select aria-label="Feestatusfilter" class="input" id="feeStatusFilter">
+
+<input
+  type="text"
+  class="input"
+  id="feeSearch"
+  placeholder="Search student, ID or course..."
+>
+
+<select
+  class="input"
+  id="feeStatusFilter">
+
 <option value="">
 All Status
 </option>
+
 <option value="paid">
 Paid
 </option>
+
 <option value="pending">
 Pending
 </option>
+
 <option value="partial">
 Partial
 </option>
+
 <option value="overdue">
 Overdue
 </option>
+
 </select>
-<select aria-label="Feecoursefilter" class="input" id="feeCourseFilter">
+
+
+<select
+  class="input"
+  id="feeCourseFilter">
+
 <option value="">
 All Courses
 </option>
+
 </select>
-<select aria-label="Feemonthfilter" class="input" id="feeMonthFilter">
+
+
+<select
+  class="input"
+  id="feeMonthFilter">
+
 <option value="">
 All Months
 </option>
+
 <option value="01">
 January
 </option>
+
 <option value="02">
 February
 </option>
+
 <option value="03">
 March
 </option>
+
 <option value="04">
 April
 </option>
+
 <option value="05">
 May
 </option>
+
 <option value="06">
 June
 </option>
+
 <option value="07">
 July
 </option>
+
 <option value="08">
 August
 </option>
+
 <option value="09">
 September
 </option>
+
 <option value="10">
 October
 </option>
+
 <option value="11">
 November
 </option>
+
 <option value="12">
 December
 </option>
+
 </select>
+
 </div>
+
 </div>
+
+
 <!-- =======================================================
      FEES TABLE
 ======================================================= -->
+
 <div class="card">
+
 <div class="fee-table-wrap">
+
 <table class="table fee-table">
+
 <thead>
+
 <tr id="head">
+
 </tr>
+
 </thead>
+
 <tbody id="rows">
+
 <tr>
+
 <td class="empty-row">
 Loading fees...
 </td>
+
 </tr>
+
 </tbody>
+
 </table>
+
 </div>
+
 </div>
+
+
 </main>
+
 </div>
+
+
 <!-- =======================================================
      EXISTING MANAGEMENT SYSTEM
 ======================================================= -->
+
 <script src="../js/manage.js"></script>
+
+
 <script>
 
 /*
@@ -740,5 +926,6 @@ feeTableObserver.observe(
 );
 
 </script>
+
 </body>
-</html>
+  </html>

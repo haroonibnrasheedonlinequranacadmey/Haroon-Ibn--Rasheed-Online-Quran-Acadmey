@@ -1,144 +1,294 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
-
-<!DOCTYPE html>
-
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Account Credentials | Haroon Ibn Rasheed Online Quran Academy</title>
-<link href="../css/portal.css" rel="stylesheet"/>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="../js/config.js"></script>
-<script src="../js/admin.js"></script>
-<meta content="Account Credentials | Haroon Ibn Rasheed Online Quran Academy for Haroon Ibn Rasheed Online Quran Academy. Access Quran learning services, student support " name="description"/><link href="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/admin/admin-accounts.html" rel="canonical"/><meta content="Account Credentials | Haroon Ibn Rasheed Online Quran Academy" property="og:title"/><meta content="Account Credentials | Haroon Ibn Rasheed Online Quran Academy for Haroon Ibn Rasheed Online Quran Academy. Access Quran learning services, student support " property="og:description"/><meta content="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/admin/admin-accounts.html" property="og:url"/><meta content="website" property="og:type"/><link href="../assets/hr-logo-round.png" rel="icon" type="image/png"/><style>.skip-link{position:absolute;left:-9999px;top:0;background:#fff;color:#102b46;padding:12px;z-index:99999}.skip-link:focus{left:12px;top:12px}</style></head>
-<body class="dashboard" data-page="admin-accounts"><a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Account Credentials | Haroon Ibn Rasheed Online Quran Academy</title>
+
+  <link rel="stylesheet" href="../css/portal.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/admin.js"></script>
+
+</head>
+
+<body class="dashboard" data-page="admin-accounts">
+
 <header class="topbar">
-<div class="brand">
-<img alt="HR Logo" decoding="async" loading="lazy" src="../assets/hr-logo-round.png"/>
-<div>
-<h1>Haroon Ibn Rasheed</h1>
-<span>
+
+  <div class="brand">
+
+    <img
+      src="../assets/hr-logo.svg"
+      alt="HR Logo"
+    >
+
+    <div>
+
+      <h1>Haroon Ibn Rasheed</h1>
+
+      <span>
         Online Quran Academy
       </span>
-</div>
-</div>
-<button class="logout-btn" onclick="logout()">
+
+    </div>
+
+  </div>
+
+
+  <button
+    class="logout-btn"
+    onclick="logout()"
+  >
     Logout
   </button>
+
 </header>
-<main class="portal-container" id="main-content">
-<div class="page-header">
-<div>
-<h2>
+
+
+<main class="portal-container">
+
+
+  <div class="page-header">
+
+    <div>
+
+      <h2>
         Account Credentials
       </h2>
-<p>
-        Teacher &amp; Student account information
+
+      <p>
+        Teacher & Student account information
       </p>
-</div>
-</div>
-<!-- ADD ACCOUNT -->
-<section class="portal-card">
-<h3>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- ADD ACCOUNT -->
+
+  <section class="portal-card">
+
+    <h3>
       Add Account
     </h3>
-<form id="accountForm">
-<div class="form-grid">
-<div class="form-group">
-<label>
+
+
+    <form id="accountForm">
+
+
+      <div class="form-grid">
+
+
+        <div class="form-group">
+
+          <label>
             Full Name
           </label>
-<input aria-label="Enter full name" id="accountName" placeholder="Enter full name" required="" type="text"/>
-</div>
-<div class="form-group">
-<label>
+
+          <input
+            type="text"
+            id="accountName"
+            placeholder="Enter full name"
+            required
+          >
+
+        </div>
+
+
+
+        <div class="form-group">
+
+          <label>
             Role
           </label>
-<select aria-label="Accountrole" id="accountRole" required="">
-<option value="">
+
+          <select
+            id="accountRole"
+            required
+          >
+
+            <option value="">
               Select Role
             </option>
-<option value="teacher">
+
+            <option value="teacher">
               Teacher
             </option>
-<option value="student">
+
+            <option value="student">
               Student
             </option>
-</select>
-</div>
-<div class="form-group">
-<label>
+
+          </select>
+
+        </div>
+
+
+
+        <div class="form-group">
+
+          <label>
             Email
           </label>
-<input aria-label="Example@email.com" id="accountEmail" placeholder="example@email.com" required="" type="email"/>
-</div>
-<div class="form-group">
-<label>
+
+          <input
+            type="email"
+            id="accountEmail"
+            placeholder="example@email.com"
+            required
+          >
+
+        </div>
+
+
+
+        <div class="form-group">
+
+          <label>
             Password
           </label>
-<input aria-label="Enter password" id="accountPassword" placeholder="Enter password" required="" type="text"/>
-</div>
-<div class="form-group">
-<label>
+
+          <input
+            type="text"
+            id="accountPassword"
+            placeholder="Enter password"
+            required
+          >
+
+        </div>
+
+
+
+        <div class="form-group">
+
+          <label>
             Account UUID
           </label>
-<input aria-label="Paste supabase user uuid" id="accountUUID" placeholder="Paste Supabase User UUID" type="text"/>
-</div>
-</div>
-<button class="btn-primary" id="saveAccountBtn" type="submit">
+
+          <input
+            type="text"
+            id="accountUUID"
+            placeholder="Paste Supabase User UUID"
+          >
+
+        </div>
+
+
+      </div>
+
+
+      <button
+        type="submit"
+        class="btn-primary"
+        id="saveAccountBtn"
+      >
         Save Account
       </button>
-</form>
-</section>
-<!-- SAVED ACCOUNTS -->
-<section class="portal-card">
-<div class="section-heading">
-<div>
-<h3>
+
+
+    </form>
+
+  </section>
+
+
+
+  <!-- SAVED ACCOUNTS -->
+
+  <section class="portal-card">
+
+
+    <div class="section-heading">
+
+      <div>
+
+        <h3>
           Saved Accounts
         </h3>
-<p>
+
+        <p>
           Teacher and Student credentials saved by Admin.
         </p>
-</div>
-</div>
-<div class="table-wrapper">
-<table class="portal-table">
-<thead>
-<tr>
-<th>
+
+      </div>
+
+    </div>
+
+
+
+    <div class="table-wrapper">
+
+
+      <table class="portal-table">
+
+
+        <thead>
+
+          <tr>
+
+            <th>
               Name
             </th>
-<th>
+
+            <th>
               Role
             </th>
-<th>
+
+            <th>
               Email
             </th>
-<th>
+
+            <th>
               Password
             </th>
-<th>
+
+            <th>
               UUID
             </th>
-<th>
+
+            <th>
               Actions
             </th>
-</tr>
-</thead>
-<tbody id="accountsRows">
-<tr>
-<td colspan="6" style="text-align:center;">
+
+          </tr>
+
+        </thead>
+
+
+
+        <tbody id="accountsRows">
+
+          <tr>
+
+            <td
+              colspan="6"
+              style="text-align:center;"
+            >
               Loading accounts...
             </td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
+
+          </tr>
+
+        </tbody>
+
+
+      </table>
+
+
+    </div>
+
+  </section>
+
+
 </main>
+
+
+
 <script>
 
 
@@ -743,5 +893,6 @@ document
 
 
 </script>
+
 </body>
 </html>

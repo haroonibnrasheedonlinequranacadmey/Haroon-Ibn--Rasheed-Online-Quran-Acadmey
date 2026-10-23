@@ -1,24 +1,42 @@
-<!DOCTYPE html>
-<!DOCTYPE html>
-
-<!DOCTYPE html>
-
+<!doctype html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1" name="viewport"/>
+
+<meta charset="utf-8">
+
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1"
+>
+
 <title>Teachers | Admin</title>
-<link href="../css/admin.css" rel="stylesheet"/>
+
+<link
+  rel="stylesheet"
+  href="../css/admin.css"
+>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="../js/config.js"></script>
+
 <script src="../js/admin.js"></script>
-<meta content="Teachers | Admin for Haroon Ibn Rasheed Online Quran Academy. Access Quran learning services, student support and academy information." name="description"/><link href="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/admin/teachers.html" rel="canonical"/><meta content="Teachers | Admin" property="og:title"/><meta content="Teachers | Admin for Haroon Ibn Rasheed Online Quran Academy. Access Quran learning services, student support and academy information." property="og:description"/><meta content="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/admin/teachers.html" property="og:url"/><meta content="website" property="og:type"/><link href="../assets/hr-logo-round.png" rel="icon" type="image/png"/><style>.skip-link{position:absolute;left:-9999px;top:0;background:#fff;color:#102b46;padding:12px;z-index:99999}.skip-link:focus{left:12px;top:12px}</style></head>
-<body><a class="skip-link" href="#main-content">Skip to main content</a>
+
+</head>
+
+
+<body>
+
 <div class="admin-layout">
+
+
 <!-- =====================================================
      SIDEBAR
 ===================================================== -->
+
 <aside class="sidebar">
+
 <div class="brand">
 
 HR Admin
@@ -26,285 +44,504 @@ HR Admin
 <span>
 Haroon Ibn Rasheed Online Quran Academy
 </span>
+
 </div>
+
+
 <nav class="nav">
+
 <a href="dashboard.html">
 Dashboard
 </a>
+
 <a href="admissions.html">
 Admissions / Leads
 </a>
+
 <a href="users.html">
 Portal Users
 </a>
+
 <a href="students.html">
 Students
 </a>
-<a class="active" href="teachers.html">
+
+<a
+  class="active"
+  href="teachers.html"
+>
 Teachers
 </a>
+
 <a href="enrollments.html">
 Enrollments
 </a>
+
 <a href="courses.html">
 Courses
 </a>
+
 <a href="schedule.html">
 Schedule
 </a>
+
 <a href="classes.html">
 Classes
 </a>
+
 <a href="attendance.html">
 Attendance
 </a>
+
 <a href="payments.html">
 Payments
 </a>
+
 <a href="leaves.html">
 Leaves
 </a>
+
 <a href="salaries.html">
 Salaries
 </a>
+
 <a href="fees.html">
 Fees
 </a>
+
 <a href="payment-methods.html">
 Payment Methods
 </a>
+
 <a href="messages.html">
 Messages
 </a>
+
 <a href="testimonials.html">
 Testimonials
 </a>
+
 <a href="articles.html">
 Blog / Articles
 </a>
+
 <a href="notifications.html">
 Notifications
 </a>
+
 <a href="faqs.html">
 FAQs
 </a>
+
 <a href="content.html">
 Website Content
 </a>
+
 <a href="settings.html">
 Settings
 </a>
+
 <a href="../index.html">
 View Website
 </a>
-<a href="#" onclick="logout();return false">
+
+<a
+  href="#"
+  onclick="logout();return false"
+>
 Logout
 </a>
+
 </nav>
+
 </aside>
+
+
 <!-- =====================================================
      MAIN
 ===================================================== -->
-<main class="main" id="main-content">
+
+<main class="main">
+
+
 <div class="top">
+
 <h1>
 Teachers
 </h1>
+
 </div>
-<div class="msg" id="msg"></div>
+
+
+<div
+  id="msg"
+  class="msg"
+></div>
+
+
 <!-- =====================================================
      SUMMARY
 ===================================================== -->
-<div style="
+
+<div
+style="
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
 gap:15px;
 margin-bottom:20px;
-">
+"
+>
+
+
 <div class="card">
+
 <small>
 Total Teachers
 </small>
+
 <h2 id="totalTeachers">
 0
 </h2>
+
 </div>
+
+
 <div class="card">
+
 <small>
 Active Teachers
 </small>
+
 <h2 id="activeTeachers">
 0
 </h2>
+
 </div>
+
+
 <div class="card">
+
 <small>
 Inactive Teachers
 </small>
+
 <h2 id="inactiveTeachers">
 0
 </h2>
+
 </div>
+
+
 <div class="card">
+
 <small>
 Total Assigned Students
 </small>
+
 <h2 id="totalAssignedStudents">
 0
 </h2>
+
 </div>
+
+
 </div>
+
+
 <!-- =====================================================
      CREATE TEACHER
 ===================================================== -->
+
 <div class="card">
+
 <h2>
 Create Teacher Account
 </h2>
-<form class="form-grid" id="teacherForm">
+
+
+<form
+id="teacherForm"
+class="form-grid"
+>
+
+
 <div class="field">
+
 <label>
 Teacher Name
 </label>
-<input aria-label="Enter teacher name" class="input" id="teacher_name" placeholder="Enter teacher name" required="" type="text"/>
+
+<input
+id="teacher_name"
+class="input"
+type="text"
+placeholder="Enter teacher name"
+required
+>
+
 </div>
+
+
 <div class="field">
+
 <label>
 Email
 </label>
-<input aria-label="Teacher@example.com" class="input" id="teacher_email" placeholder="teacher@example.com" required="" type="email"/>
+
+<input
+id="teacher_email"
+class="input"
+type="email"
+placeholder="teacher@example.com"
+required
+>
+
 </div>
+
+
 <div class="field">
+
 <label>
 Password
 </label>
-<input aria-label="Create password" class="input" id="teacher_password" minlength="6" placeholder="Create password" required="" type="password"/>
+
+<input
+id="teacher_password"
+class="input"
+type="password"
+placeholder="Create password"
+required
+minlength="6"
+>
+
 </div>
+
+
 <div class="field">
+
 <label>
 Gender
 </label>
-<select aria-label="Teacher gender" class="input" id="teacher_gender">
+
+<select
+id="teacher_gender"
+class="input"
+>
+
 <option value="">
 Select Gender
 </option>
+
 <option value="Male">
 Male
 </option>
+
 <option value="Female">
 Female
 </option>
+
 </select>
+
 </div>
+
+
 <div class="field">
+
 <label>
 Teacher Time Zone
 </label>
-<select aria-label="Teacher timezone" class="input" id="teacher_timezone" required="">
+
+<select
+id="teacher_timezone"
+class="input"
+required
+>
+
 <option value="Asia/Karachi">
 Asia/Karachi — Pakistan
 </option>
+
 </select>
-<small style="
+
+<small
+style="
 display:block;
 margin-top:6px;
 opacity:.7;
 line-height:1.4;
-">
+"
+>
 
 Select the teacher's local IANA time zone.
 
 </small>
+
 </div>
+
+
 <div class="field full">
+
 <label>
 Bio
 </label>
-<textarea aria-label="Teacher bio" class="input" id="teacher_bio" placeholder="Teacher bio" rows="4"></textarea>
+
+<textarea
+id="teacher_bio"
+class="input"
+rows="4"
+placeholder="Teacher bio"
+></textarea>
+
 </div>
+
+
 <div class="field full">
-<button class="btn" id="createTeacherBtn" type="submit">
+
+<button
+id="createTeacherBtn"
+class="btn"
+type="submit"
+>
 
 Create Teacher Account
 
 </button>
+
 </div>
+
 </form>
+
 </div>
+
+
 <!-- =====================================================
      SEARCH
 ===================================================== -->
+
 <div class="card">
-<div style="
+
+<div
+style="
 display:grid;
 grid-template-columns:1fr auto;
 gap:10px;
-">
-<input aria-label="Search teacher by name, gender or timezone..." class="input" id="teacherSearch" oninput="renderTeachers()" placeholder="Search teacher by name, gender or timezone..." type="search"/>
-<button class="btn" onclick="resetSearch()" type="button">
+"
+>
+
+<input
+id="teacherSearch"
+class="input"
+type="search"
+placeholder="Search teacher by name, gender or timezone..."
+oninput="renderTeachers()"
+>
+
+
+<button
+class="btn"
+type="button"
+onclick="resetSearch()"
+>
 
 Reset
 
 </button>
+
 </div>
+
 </div>
+
+
 <!-- =====================================================
      TEACHER LIST
 ===================================================== -->
+
 <div class="card">
+
 <h2>
 All Teachers
 </h2>
+
+
 <div class="table-wrap">
+
 <table class="table">
+
 <thead>
+
 <tr>
+
 <th>
 Name
 </th>
+
 <th>
 Gender
 </th>
+
 <th>
 Bio
 </th>
+
 <th>
 Time Zone
 </th>
+
 <th>
 Students
 </th>
+
 <th>
 Classes
 </th>
+
 <th>
 Status
 </th>
+
 <th>
 Classroom
 </th>
+
 <th>
 Account ID
 </th>
+
 <th>
 Actions
 </th>
+
 </tr>
+
 </thead>
+
+
 <tbody id="rows">
+
 <tr>
+
 <td colspan="10">
 Loading...
 </td>
+
 </tr>
+
 </tbody>
+
 </table>
+
 </div>
+
 </div>
+
+
 <!-- =====================================================
      EDIT TEACHER MODAL
 ===================================================== -->
-<div id="editModal" style="
+
+<div
+id="editModal"
+style="
 display:none;
 position:fixed;
 inset:0;
@@ -313,74 +550,157 @@ z-index:9999;
 align-items:center;
 justify-content:center;
 padding:20px;
-">
-<div class="card" style="
+"
+>
+
+
+<div
+class="card"
+style="
 width:100%;
 max-width:600px;
 max-height:90vh;
 overflow:auto;
-">
+"
+>
+
+
 <h2>
 Edit Teacher
 </h2>
-<form class="form-grid" id="editTeacherForm">
-<input aria-label="Edit teacher id" id="edit_teacher_id" type="hidden"/>
+
+
+<form
+id="editTeacherForm"
+class="form-grid"
+>
+
+
+<input
+type="hidden"
+id="edit_teacher_id"
+>
+
+
 <div class="field">
+
 <label>
 Teacher Name
 </label>
-<input aria-label="Edit teacher name" class="input" id="edit_teacher_name" required=""/>
+
+<input
+id="edit_teacher_name"
+class="input"
+required
+>
+
 </div>
+
+
 <div class="field">
+
 <label>
 Gender
 </label>
-<select aria-label="Edit teacher gender" class="input" id="edit_teacher_gender">
+
+<select
+id="edit_teacher_gender"
+class="input"
+>
+
 <option value="">
 Select Gender
 </option>
+
 <option value="Male">
 Male
 </option>
+
 <option value="Female">
 Female
 </option>
+
 </select>
+
 </div>
+
+
 <div class="field full">
+
 <label>
 Time Zone
 </label>
-<select aria-label="Edit teacher timezone" class="input" id="edit_teacher_timezone" required="">
+
+<select
+id="edit_teacher_timezone"
+class="input"
+required
+>
+
 </select>
+
 </div>
+
+
 <div class="field full">
+
 <label>
 Bio
 </label>
-<textarea aria-label="Edit teacher bio" class="input" id="edit_teacher_bio" rows="5"></textarea>
+
+<textarea
+id="edit_teacher_bio"
+class="input"
+rows="5"
+></textarea>
+
 </div>
-<div class="field full" style="
+
+
+<div
+class="field full"
+style="
 display:flex;
 gap:10px;
 flex-wrap:wrap;
-">
-<button class="btn" id="updateTeacherBtn" type="submit">
+"
+>
+
+<button
+class="btn"
+type="submit"
+id="updateTeacherBtn"
+>
 
 Save Changes
 
 </button>
-<button class="btn" onclick="closeEditModal()" type="button">
+
+
+<button
+class="btn"
+type="button"
+onclick="closeEditModal()"
+>
 
 Cancel
 
 </button>
+
 </div>
+
 </form>
+
 </div>
+
 </div>
+
+
 </main>
+
 </div>
+
+
 <script>
 
 /* =========================================================
@@ -1989,5 +2309,6 @@ loadTimeZones();
 loadTeachers();
 
 </script>
+
 </body>
 </html>

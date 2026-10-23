@@ -1,350 +1,685 @@
-<!DOCTYPE html>
-<!DOCTYPE html>
-
-<!DOCTYPE html>
-
+<!doctype html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1" name="viewport"/>
-<title>Payments | Haroon Ibn Rasheed</title>
-<link href="../css/admin.css" rel="stylesheet"/>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="../js/config.js"></script>
-<script src="../js/admin-ops.js"></script>
-<meta content="Payments | Haroon Ibn Rasheed for Haroon Ibn Rasheed Online Quran Academy. Access Quran learning services, student support and academy information." name="description"/><link href="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/admin/payments.html" rel="canonical"/><meta content="Payments | Haroon Ibn Rasheed" property="og:title"/><meta content="Payments | Haroon Ibn Rasheed for Haroon Ibn Rasheed Online Quran Academy. Access Quran learning services, student support and academy information." property="og:description"/><meta content="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/admin/payments.html" property="og:url"/><meta content="website" property="og:type"/><link href="../assets/hr-logo-round.png" rel="icon" type="image/png"/><style>.skip-link{position:absolute;left:-9999px;top:0;background:#fff;color:#102b46;padding:12px;z-index:99999}.skip-link:focus{left:12px;top:12px}</style></head>
-<body><a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  >
+
+  <title>Payments | Haroon Ibn Rasheed</title>
+
+  <link
+    rel="stylesheet"
+    href="../css/admin.css"
+  >
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script src="../js/config.js"></script>
+
+  <script src="../js/admin-ops.js"></script>
+
+</head>
+
+
+<body>
+
 <div class="admin-layout">
-<!-- ================= SIDEBAR ================= -->
-<aside class="sidebar">
-<div class="brand">
+
+
+  <!-- ================= SIDEBAR ================= -->
+
+  <aside class="sidebar">
+
+    <div class="brand">
 
       HR Admin
 
       <span>
         Haroon Ibn Rasheed Online Quran Academy
       </span>
-</div>
-<nav class="nav">
-<a href="dashboard.html">Dashboard</a>
-<a href="admissions.html">Admissions</a>
-<a href="users.html">Users</a>
-<a href="students.html">Students</a>
-<a href="teachers.html">Teachers</a>
-<a href="enrollments.html">Enrollments</a>
-<a href="courses.html">Courses</a>
-<a href="schedule.html">Schedule</a>
-<a href="classes.html">Classes</a>
-<a href="attendance.html">Attendance</a>
-<a href="fees.html">Fees</a>
-<a href="payment-methods.html">
+
+    </div>
+
+
+    <nav class="nav">
+
+      <a href="dashboard.html">Dashboard</a>
+
+      <a href="admissions.html">Admissions</a>
+
+      <a href="users.html">Users</a>
+
+      <a href="students.html">Students</a>
+
+      <a href="teachers.html">Teachers</a>
+
+      <a href="enrollments.html">Enrollments</a>
+
+      <a href="courses.html">Courses</a>
+
+      <a href="schedule.html">Schedule</a>
+
+      <a href="classes.html">Classes</a>
+
+      <a href="attendance.html">Attendance</a>
+
+      <a href="fees.html">Fees</a>
+
+      <a href="payment-methods.html">
         Payment Methods
       </a>
-<a class="active" href="payments.html">
+
+      <a
+        href="payments.html"
+        class="active"
+      >
         Payments
       </a>
-<a href="leaves.html">Leaves</a>
-<a href="salaries.html">Salaries</a>
-<a href="messages.html">Messages</a>
-<a href="notifications.html">
+
+      <a href="leaves.html">Leaves</a>
+
+      <a href="salaries.html">Salaries</a>
+
+      <a href="messages.html">Messages</a>
+
+      <a href="notifications.html">
         Notifications
       </a>
-<a href="faqs.html">FAQs</a>
-<a href="testimonials.html">
+
+      <a href="faqs.html">FAQs</a>
+
+      <a href="testimonials.html">
         Testimonials
       </a>
-<a href="articles.html">
+
+      <a href="articles.html">
         Articles
       </a>
-<a href="content.html">
+
+      <a href="content.html">
         Website Content
       </a>
-<a href="settings.html">
+
+      <a href="settings.html">
         Settings
       </a>
-<a href="admin-accounts.html">
+
+      <a href="account-credentials.html">
         Account Credentials
       </a>
-<a href="../index.html">
+
+      <a href="../index.html">
         View Website
       </a>
-<a href="#" onclick="adminLogout();return false">
+
+      <a
+        href="#"
+        onclick="adminLogout();return false"
+      >
         Logout
       </a>
-</nav>
-</aside>
-<!-- ================= MAIN ================= -->
-<main class="main" id="main-content">
-<div class="top">
-<div>
-<h1>
+
+    </nav>
+
+  </aside>
+
+
+  <!-- ================= MAIN ================= -->
+
+  <main class="main">
+
+
+    <div class="top">
+
+      <div>
+
+        <h1>
           Payments
         </h1>
-<p>
+
+        <p>
           Manage student payments and payment status.
         </p>
-</div>
-</div>
-<div class="msg" id="msg"></div>
-<!-- ================= SUMMARY ================= -->
-<div style="
+
+      </div>
+
+    </div>
+
+
+    <div
+      id="msg"
+      class="msg"
+    ></div>
+
+
+    <!-- ================= SUMMARY ================= -->
+
+    <div
+      style="
         display:grid;
         grid-template-columns:
         repeat(auto-fit,minmax(180px,1fr));
         gap:15px;
         margin-bottom:20px;
-      ">
-<div class="card">
-<small>
+      "
+    >
+
+      <div class="card">
+
+        <small>
           Total Paid
         </small>
-<h2 id="totalPaid">
+
+        <h2 id="totalPaid">
           0
         </h2>
-</div>
-<div class="card">
-<small>
+
+      </div>
+
+
+      <div class="card">
+
+        <small>
           Completed
         </small>
-<h2 id="completedCount">
+
+        <h2 id="completedCount">
           0
         </h2>
-</div>
-<div class="card">
-<small>
+
+      </div>
+
+
+      <div class="card">
+
+        <small>
           Pending
         </small>
-<h2 id="pendingCount">
+
+        <h2 id="pendingCount">
           0
         </h2>
-</div>
-<div class="card">
-<small>
+
+      </div>
+
+
+      <div class="card">
+
+        <small>
           Students
         </small>
-<h2 id="studentCount">
+
+        <h2 id="studentCount">
           0
         </h2>
-</div>
-</div>
-<!-- ================= ADD PAYMENT ================= -->
-<div class="card">
-<h2 id="formTitle">
+
+      </div>
+
+    </div>
+
+
+    <!-- ================= ADD PAYMENT ================= -->
+
+    <div class="card">
+
+      <h2 id="formTitle">
         Record Payment
       </h2>
-<form class="form-grid" id="paymentForm">
-<input aria-label="Paymentid" id="paymentId" type="hidden"/>
-<!-- STUDENT -->
-<div>
-<label>
+
+
+      <form
+        id="paymentForm"
+        class="form-grid"
+      >
+
+
+        <input
+          type="hidden"
+          id="paymentId"
+        >
+
+
+        <!-- STUDENT -->
+
+        <div>
+
+          <label>
             Student
           </label>
-<select aria-label="Studentid" class="input" id="studentId" required="">
-<option value="">
+
+          <select
+            class="input"
+            id="studentId"
+            required
+          >
+
+            <option value="">
               Select Student
             </option>
-</select>
-</div>
-<!-- COURSE -->
-<div>
-<label>
+
+          </select>
+
+        </div>
+
+
+        <!-- COURSE -->
+
+        <div>
+
+          <label>
             Course
           </label>
-<input aria-label="Quran reading" class="input" id="course" placeholder="Quran Reading"/>
-</div>
-<!-- AMOUNT -->
-<div>
-<label>
+
+          <input
+            class="input"
+            id="course"
+            placeholder="Quran Reading"
+          >
+
+        </div>
+
+
+        <!-- AMOUNT -->
+
+        <div>
+
+          <label>
             Amount
           </label>
-<input aria-label="30" class="input" id="amount" min="0" placeholder="30" required="" step="0.01" type="number"/>
-</div>
-<!-- CURRENCY -->
-<div>
-<label>
+
+          <input
+            class="input"
+            type="number"
+            id="amount"
+            min="0"
+            step="0.01"
+            required
+            placeholder="30"
+          >
+
+        </div>
+
+
+        <!-- CURRENCY -->
+
+        <div>
+
+          <label>
             Currency
           </label>
-<select aria-label="Currency" class="input" id="currency">
-<option value="USD">
+
+          <select
+            class="input"
+            id="currency"
+          >
+
+            <option value="USD">
               USD
             </option>
-<option value="GBP">
+
+            <option value="GBP">
               GBP
             </option>
-<option value="EUR">
+
+            <option value="EUR">
               EUR
             </option>
-<option value="PKR">
+
+            <option value="PKR">
               PKR
             </option>
-<option value="CAD">
+
+            <option value="CAD">
               CAD
             </option>
-<option value="AED">
+
+            <option value="AED">
               AED
             </option>
-</select>
-</div>
-<!-- METHOD -->
-<div>
-<label>
+
+          </select>
+
+        </div>
+
+
+        <!-- METHOD -->
+
+        <div>
+
+          <label>
             Payment Method
           </label>
-<select aria-label="Method" class="input" id="method">
-<option value="">
+
+          <select
+            class="input"
+            id="method"
+          >
+
+            <option value="">
               Select Method
             </option>
-</select>
-</div>
-<!-- STATUS -->
-<div>
-<label>
+
+          </select>
+
+        </div>
+
+
+        <!-- STATUS -->
+
+        <div>
+
+          <label>
             Status
           </label>
-<select aria-label="Status" class="input" id="status">
-<option value="pending">
+
+          <select
+            class="input"
+            id="status"
+          >
+
+            <option value="pending">
               Pending
             </option>
-<option value="paid">
+
+            <option value="paid">
               Paid
             </option>
-<option value="rejected">
+
+            <option value="rejected">
               Rejected
             </option>
-</select>
-</div>
-<!-- REFERENCE -->
-<div>
-<label>
+
+          </select>
+
+        </div>
+
+
+        <!-- REFERENCE -->
+
+        <div>
+
+          <label>
             Reference / Transaction ID
           </label>
-<input aria-label="Transaction id" class="input" id="reference" placeholder="Transaction ID"/>
-</div>
-<!-- PAYMENT DATE -->
-<div>
-<label>
+
+          <input
+            class="input"
+            id="reference"
+            placeholder="Transaction ID"
+          >
+
+        </div>
+
+
+        <!-- PAYMENT DATE -->
+
+        <div>
+
+          <label>
             Payment Date
           </label>
-<input aria-label="Paymentdate" class="input" id="paymentDate" type="date"/>
-</div>
-<!-- PROOF -->
-<div class="full">
-<label>
+
+          <input
+            class="input"
+            type="date"
+            id="paymentDate"
+          >
+
+        </div>
+
+
+        <!-- PROOF -->
+
+        <div class="full">
+
+          <label>
             Payment Proof URL
           </label>
-<input aria-label="Https://..." class="input" id="proofUrl" placeholder="https://..." type="url"/>
-</div>
-<!-- NOTES -->
-<div class="full">
-<label>
+
+          <input
+            class="input"
+            type="url"
+            id="proofUrl"
+            placeholder="https://..."
+          >
+
+        </div>
+
+
+        <!-- NOTES -->
+
+        <div class="full">
+
+          <label>
             Payment Notes
           </label>
-<textarea aria-label="Payment notes..." class="input" id="notes" placeholder="Payment notes..." rows="3"></textarea>
-</div>
-<!-- ADMIN NOTES -->
-<div class="full">
-<label>
+
+          <textarea
+            class="input"
+            id="notes"
+            rows="3"
+            placeholder="Payment notes..."
+          ></textarea>
+
+        </div>
+
+
+        <!-- ADMIN NOTES -->
+
+        <div class="full">
+
+          <label>
             Admin Notes
           </label>
-<textarea aria-label="Internal admin notes..." class="input" id="adminNotes" placeholder="Internal admin notes..." rows="3"></textarea>
-</div>
-<!-- BUTTONS -->
-<div class="full" style="
+
+          <textarea
+            class="input"
+            id="adminNotes"
+            rows="3"
+            placeholder="Internal admin notes..."
+          ></textarea>
+
+        </div>
+
+
+        <!-- BUTTONS -->
+
+        <div
+          class="full"
+          style="
             display:flex;
             gap:10px;
             flex-wrap:wrap;
-          ">
-<button class="btn" id="saveBtn" type="submit">
+          "
+        >
+
+          <button
+            class="btn"
+            type="submit"
+            id="saveBtn"
+          >
             Record Payment
           </button>
-<button class="btn" id="cancelBtn" onclick="resetForm()" style="display:none" type="button">
+
+
+          <button
+            class="btn"
+            type="button"
+            id="cancelBtn"
+            onclick="resetForm()"
+            style="display:none"
+          >
             Cancel
           </button>
-</div>
-</form>
-</div>
-<!-- ================= FILTERS ================= -->
-<div class="card">
-<div style="
+
+        </div>
+
+      </form>
+
+    </div>
+
+
+    <!-- ================= FILTERS ================= -->
+
+    <div class="card">
+
+      <div
+        style="
           display:grid;
           grid-template-columns:
           repeat(auto-fit,minmax(180px,1fr));
           gap:10px;
-        ">
-<input aria-label="Search student or reference..." class="input" id="search" oninput="renderRows()" placeholder="Search student or reference..."/>
-<select aria-label="Statusfilter" class="input" id="statusFilter" onchange="renderRows()">
-<option value="">
+        "
+      >
+
+        <input
+          class="input"
+          id="search"
+          placeholder="Search student or reference..."
+          oninput="renderRows()"
+        >
+
+
+        <select
+          class="input"
+          id="statusFilter"
+          onchange="renderRows()"
+        >
+
+          <option value="">
             All Status
           </option>
-<option value="pending">
+
+          <option value="pending">
             Pending
           </option>
-<option value="paid">
+
+          <option value="paid">
             Paid
           </option>
-<option value="rejected">
+
+          <option value="rejected">
             Rejected
           </option>
-</select>
-<select aria-label="Methodfilter" class="input" id="methodFilter" onchange="renderRows()">
-<option value="">
+
+        </select>
+
+
+        <select
+          class="input"
+          id="methodFilter"
+          onchange="renderRows()"
+        >
+
+          <option value="">
             All Methods
           </option>
-</select>
-<button class="btn" onclick="resetFilters()" type="button">
+
+        </select>
+
+
+        <button
+          class="btn"
+          type="button"
+          onclick="resetFilters()"
+        >
           Reset
         </button>
-</div>
-</div>
-<!-- ================= PAYMENTS TABLE ================= -->
-<div class="card">
-<div style="
+
+      </div>
+
+    </div>
+
+
+    <!-- ================= PAYMENTS TABLE ================= -->
+
+    <div class="card">
+
+      <div
+        style="
           overflow-x:auto;
-        ">
-<table class="table">
-<thead>
-<tr>
-<th>
+        "
+      >
+
+        <table class="table">
+
+          <thead>
+
+            <tr>
+
+              <th>
                 Student
               </th>
-<th>
+
+              <th>
                 Course
               </th>
-<th>
+
+              <th>
                 Amount
               </th>
-<th>
+
+              <th>
                 Method
               </th>
-<th>
+
+              <th>
                 Reference
               </th>
-<th>
+
+              <th>
                 Date
               </th>
-<th>
+
+              <th>
                 Status
               </th>
-<th>
+
+              <th>
                 Proof
               </th>
-<th>
+
+              <th>
                 Actions
               </th>
-</tr>
-</thead>
-<tbody id="rows">
-<tr>
-<td colspan="9" style="text-align:center">
+
+            </tr>
+
+          </thead>
+
+
+          <tbody id="rows">
+
+            <tr>
+
+              <td
+                colspan="9"
+                style="text-align:center"
+              >
                 Loading payments...
               </td>
-</tr>
-</tbody>
-</table>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+
+  </main>
+
 </div>
-</div>
-</main>
-</div>
+
+
 <script>
 
 /* =====================================================
@@ -1793,5 +2128,6 @@ function resetFilters() {
 load();
 
 </script>
+
 </body>
 </html>

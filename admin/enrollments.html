@@ -1,26 +1,31 @@
-<!DOCTYPE html>
-<!DOCTYPE html>
-
-<!DOCTYPE html>
-
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>Enrollments | Admin</title>
-<link href="../css/admin.css" rel="stylesheet"/>
+
+<link rel="stylesheet" href="../css/admin.css">
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../js/config.js"></script>
 <script src="../js/admin.js"></script>
-<meta content="Enrollments | Admin for Haroon Ibn Rasheed Online Quran Academy. Access Quran learning services, student support and academy information." name="description"/><link href="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/admin/enrollments.html" rel="canonical"/><meta content="Enrollments | Admin" property="og:title"/><meta content="Enrollments | Admin for Haroon Ibn Rasheed Online Quran Academy. Access Quran learning services, student support and academy information." property="og:description"/><meta content="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/admin/enrollments.html" property="og:url"/><meta content="website" property="og:type"/><link href="../assets/hr-logo-round.png" rel="icon" type="image/png"/><style>.skip-link{position:absolute;left:-9999px;top:0;background:#fff;color:#102b46;padding:12px;z-index:99999}.skip-link:focus{left:12px;top:12px}</style></head>
-<body><a class="skip-link" href="#main-content">Skip to main content</a>
+</head>
+
+<body>
+
 <div class="admin-layout">
+
 <aside class="sidebar">
+
 <div class="brand">
 HR Admin
 <span>Haroon Ibn Rasheed Online Quran Academy</span>
 </div>
+
 <nav class="nav">
+
 <a href="dashboard.html">Dashboard</a>
 <a href="admissions.html">Admissions / Leads</a>
 <a href="users.html">Portal Users</a>
@@ -44,90 +49,177 @@ HR Admin
 <a href="content.html">Website Content</a>
 <a href="settings.html">Settings</a>
 <a href="../index.html">View Website</a>
+
 <a href="#" onclick="logout();return false">
 Logout
 </a>
+
 </nav>
 </aside>
-<main class="main" id="main-content">
+
+
+<main class="main">
+
 <div class="top">
 <h1>Course Enrollments</h1>
 </div>
-<div class="msg" id="msg"></div>
+
+<div id="msg" class="msg"></div>
+
+
 <!-- =====================================================
      CREATE ENROLLMENT
 ===================================================== -->
+
 <div class="card">
+
 <h2>Enroll Student</h2>
-<form class="form-grid" id="enrollmentForm">
+
+<form id="enrollmentForm" class="form-grid">
+
+
 <!-- STUDENT -->
+
 <div class="field">
+
 <label>Student</label>
-<select aria-label="Student id" class="input" id="student_id" required="">
+
+<select
+id="student_id"
+class="input"
+required>
+
 <option value="">
 Loading students...
 </option>
+
 </select>
+
 </div>
+
+
 <!-- COURSE -->
+
 <div class="field">
+
 <label>Course</label>
-<select aria-label="Course id" class="input" id="course_id" required="">
+
+<select
+id="course_id"
+class="input"
+required>
+
 <option value="">
 Loading courses...
 </option>
+
 </select>
+
 </div>
+
+
 <!-- TEACHER -->
+
 <div class="field">
+
 <label>Teacher</label>
-<select aria-label="Teacher id" class="input" id="teacher_id">
+
+<select
+id="teacher_id"
+class="input">
+
 <option value="">
 No Teacher / Select Teacher
 </option>
+
 </select>
+
 </div>
+
+
 <!-- PROGRESS -->
+
 <div class="field">
+
 <label>Progress %</label>
-<input aria-label="Progress" class="input" id="progress" max="100" min="0" required="" type="number" value="0"/>
+
+<input
+id="progress"
+class="input"
+type="number"
+min="0"
+max="100"
+value="0"
+required>
+
 </div>
+
+
 <!-- STATUS -->
+
 <div class="field">
+
 <label>Status</label>
-<select aria-label="Status" class="input" id="status">
+
+<select
+id="status"
+class="input">
+
 <option value="pending">
 Pending
 </option>
-<option selected="" value="active">
+
+<option value="active" selected>
 Active
 </option>
+
 <option value="completed">
 Completed
 </option>
+
 <option value="cancelled">
 Cancelled
 </option>
+
 </select>
+
 </div>
+
+
 <div class="field full">
-<button class="btn" id="enrollBtn" type="submit">
+
+<button
+id="enrollBtn"
+class="btn"
+type="submit">
 
 Enroll Student
 
 </button>
+
 </div>
+
 </form>
+
 </div>
+
+
 <!-- =====================================================
      ENROLLMENT LIST
 ===================================================== -->
+
 <div class="card">
+
 <h2>All Enrollments</h2>
+
 <div class="table-wrap">
+
 <table class="table">
+
 <thead>
+
 <tr>
+
 <th>Student</th>
 <th>Course</th>
 <th>Teacher</th>
@@ -135,20 +227,34 @@ Enroll Student
 <th>Progress</th>
 <th>Enrolled</th>
 <th>Actions</th>
+
 </tr>
+
 </thead>
+
 <tbody id="rows">
+
 <tr>
+
 <td colspan="7">
 Loading enrollments...
 </td>
+
 </tr>
+
 </tbody>
+
 </table>
+
 </div>
+
 </div>
+
 </main>
+
 </div>
+
+
 <script>
 
 /* =====================================================
@@ -1339,5 +1445,6 @@ error.message,
 initEnrollments();
 
 </script>
+
 </body>
 </html>

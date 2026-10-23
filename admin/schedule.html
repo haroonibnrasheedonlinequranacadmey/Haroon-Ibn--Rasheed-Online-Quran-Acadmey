@@ -1,17 +1,17 @@
-<!DOCTYPE html>
-<!DOCTYPE html>
-
-<!DOCTYPE html>
-
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>Schedule | Admin</title>
-<link href="../css/admin.css" rel="stylesheet"/>
+
+<link rel="stylesheet" href="../css/admin.css">
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../js/config.js"></script>
 <script src="../js/admin.js"></script>
+
 <style>
 
 .schedule-form{
@@ -312,15 +312,21 @@
 }
 
 </style>
-<meta content="Schedule | Admin for Haroon Ibn Rasheed Online Quran Academy. Access Quran learning services, student support and academy information." name="description"/><link href="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/admin/schedule.html" rel="canonical"/><meta content="Schedule | Admin" property="og:title"/><meta content="Schedule | Admin for Haroon Ibn Rasheed Online Quran Academy. Access Quran learning services, student support and academy information." property="og:description"/><meta content="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/admin/schedule.html" property="og:url"/><meta content="website" property="og:type"/><link href="../assets/hr-logo-round.png" rel="icon" type="image/png"/><style>.skip-link{position:absolute;left:-9999px;top:0;background:#fff;color:#102b46;padding:12px;z-index:99999}.skip-link:focus{left:12px;top:12px}</style></head>
-<body><a class="skip-link" href="#main-content">Skip to main content</a>
+</head>
+
+<body>
+
 <div class="admin-layout">
+
 <aside class="sidebar">
+
 <div class="brand">
 HR Admin
 <span>Haroon Ibn Rasheed Online Quran Academy</span>
 </div>
+
 <nav class="nav">
+
 <a href="dashboard.html">Dashboard</a>
 <a href="admissions.html">Admissions / Leads</a>
 <a href="users.html">Portal Users</a>
@@ -345,112 +351,189 @@ HR Admin
 <a href="settings.html">Settings</a>
 <a href="../index.html">View Website</a>
 <a href="#" onclick="logout();return false">Logout</a>
+
 </nav>
+
 </aside>
-<main class="main" id="main-content">
+
+<main class="main">
+
 <div class="top">
 <h1>Weekly Class Schedule</h1>
 </div>
-<div class="msg" id="msg"></div>
+
+<div id="msg" class="msg"></div>
+
+
 <!-- ======================================================
      ADD SCHEDULE
 ====================================================== -->
+
 <div class="card">
+
 <h2 style="margin-top:0">
 Add Weekly Class
 </h2>
-<form class="schedule-form" id="scheduleForm">
+
+<form id="scheduleForm" class="schedule-form">
+
+
 <!-- TEACHER -->
+
 <div class="field">
+
 <label>Teacher</label>
-<select aria-label="Teacher id" class="input" id="teacher_id" required="">
+
+<select id="teacher_id" class="input" required>
 <option value="">Loading teachers...</option>
 </select>
-<div class="timezone-box" id="teacherTimezoneBox" style="display:none">
+
+<div id="teacherTimezoneBox" class="timezone-box" style="display:none">
+
 <div class="timezone-line">
+
 <span class="timezone-label">
 Teacher Time Zone
 </span>
-<span class="timezone-value" id="teacherTimezone">
+
+<span id="teacherTimezone"
+class="timezone-value">
 —
 </span>
+
 </div>
+
 </div>
+
 </div>
+
+
 <!-- STUDENT -->
+
 <div class="field">
+
 <label>Student</label>
-<select aria-label="Student id" class="input" id="student_id" required="">
+
+<select id="student_id" class="input" required>
 <option value="">Select teacher first</option>
 </select>
-<div class="timezone-box" id="studentTimezoneBox" style="display:none">
+
+<div id="studentTimezoneBox" class="timezone-box" style="display:none">
+
 <div class="timezone-line">
+
 <span class="timezone-label">
 Student Time Zone
 </span>
-<span class="timezone-value" id="studentTimezone">
+
+<span id="studentTimezone"
+class="timezone-value">
 —
 </span>
+
 </div>
+
 </div>
+
 </div>
+
+
 <!-- COURSE -->
+
 <div class="field">
+
 <label>Course</label>
-<input aria-label="E.g. nazra quran" class="input" id="course" placeholder="e.g. Nazra Quran" type="text"/>
+
+<input
+id="course"
+class="input"
+type="text"
+placeholder="e.g. Nazra Quran">
+
 </div>
+
+
 <!-- DURATION -->
+
 <div class="field">
+
 <label>Duration</label>
-<select aria-label="Duration minutes" class="input" id="duration_minutes">
+
+<select id="duration_minutes" class="input">
+
 <option value="30">30 Minutes</option>
 <option value="45">45 Minutes</option>
 <option value="60">60 Minutes</option>
+
 </select>
+
 </div>
+
+
 <!-- DAYS -->
+
 <div class="field full">
+
 <label>Class Days</label>
+
 <div class="days-box">
+
 <div class="day-check">
-<input id="mon" type="checkbox" value="Monday"/>
+<input type="checkbox" id="mon" value="Monday">
 <label for="mon">Monday</label>
 </div>
+
 <div class="day-check">
-<input id="tue" type="checkbox" value="Tuesday"/>
+<input type="checkbox" id="tue" value="Tuesday">
 <label for="tue">Tuesday</label>
 </div>
+
 <div class="day-check">
-<input id="wed" type="checkbox" value="Wednesday"/>
+<input type="checkbox" id="wed" value="Wednesday">
 <label for="wed">Wednesday</label>
 </div>
+
 <div class="day-check">
-<input id="thu" type="checkbox" value="Thursday"/>
+<input type="checkbox" id="thu" value="Thursday">
 <label for="thu">Thursday</label>
 </div>
+
 <div class="day-check">
-<input id="fri" type="checkbox" value="Friday"/>
+<input type="checkbox" id="fri" value="Friday">
 <label for="fri">Friday</label>
 </div>
+
 <div class="day-check">
-<input id="sat" type="checkbox" value="Saturday"/>
+<input type="checkbox" id="sat" value="Saturday">
 <label for="sat">Saturday</label>
 </div>
+
 <div class="day-check">
-<input id="sun" type="checkbox" value="Sunday"/>
+<input type="checkbox" id="sun" value="Sunday">
 <label for="sun">Sunday</label>
 </div>
+
 </div>
+
 <div class="small-note">
 Select all days on which this weekly class should run.
 </div>
+
 </div>
+
+
 <!-- TIME -->
+
 <div class="field">
+
 <label>Class Time — Pakistan Time</label>
+
 <div class="time-row">
-<select aria-label="Hour" class="input" id="hour" required="">
+
+<select id="hour" class="input" required>
+
 <option value="">Hour</option>
+
 <option value="12">12</option>
 <option value="1">1</option>
 <option value="2">2</option>
@@ -463,110 +546,201 @@ Select all days on which this weekly class should run.
 <option value="9">9</option>
 <option value="10">10</option>
 <option value="11">11</option>
+
 </select>
-<select aria-label="Minute" class="input" id="minute">
+
+<select id="minute" class="input">
+
 <option value="00">00</option>
 <option value="30">30</option>
+
 </select>
-<select aria-label="Ampm" class="input" id="ampm">
+
+<select id="ampm" class="input">
+
 <option value="AM">AM</option>
 <option value="PM">PM</option>
+
 </select>
+
 </div>
+
 <div class="small-note">
 This is the base schedule time. It is stored as Asia/Karachi.
 </div>
+
 </div>
+
+
 <!-- MEET -->
+
 <div class="field">
+
 <label>Google Meet Link</label>
-<input aria-label="Https://meet.google.com/..." class="input" id="google_meet_url" placeholder="https://meet.google.com/..." type="url"/>
+
+<input
+id="google_meet_url"
+class="input"
+type="url"
+placeholder="https://meet.google.com/...">
+
 </div>
+
+
 <!-- CLASSROOM -->
+
 <div class="field">
+
 <label>Classroom</label>
-<select aria-label="Classroom code" class="input" id="classroom_code">
+
+<select id="classroom_code" class="input">
+
 <option value="">
 Select teacher first
 </option>
+
 </select>
+
 </div>
+
+
 <!-- STATUS -->
+
 <div class="field">
+
 <label>Status</label>
-<select aria-label="Active" class="input" id="active">
+
+<select id="active" class="input">
+
 <option value="true">Active</option>
 <option value="false">Inactive</option>
+
 </select>
+
 </div>
+
+
 <!-- TIMEZONE PREVIEW -->
+
 <div class="field timezone-preview-card">
+
 <div class="timezone-preview">
+
 <div class="preview-title">
 Local Time Preview
 </div>
+
 <div class="preview-row">
+
 <strong>Pakistan:</strong>
+
 <span id="previewPakistan">
 Select day and time
 </span>
+
 </div>
+
 <div class="preview-row">
+
 <strong>Student:</strong>
+
 <span id="previewStudent">
 Select student and time
 </span>
+
 </div>
+
 <div class="preview-row">
+
 <strong>Teacher:</strong>
+
 <span id="previewTeacher">
 Select teacher and time
 </span>
+
 </div>
+
 <div class="small-note">
 Preview uses the selected upcoming weekly day. Actual portal times will be calculated from the student's or teacher's saved timezone, including daylight-saving changes where applicable.
 </div>
+
 </div>
+
 </div>
+
+
 <!-- TIMEZONE SEARCH -->
+
 <div class="field full">
+
 <label>
 Timezone Search / Preview
 </label>
+
 <div class="tz-search-wrap">
-<input aria-label="Search timezone e.g. india, uk, usa, london, new york, dubai" autocomplete="off" class="input tz-search" id="timezoneSearch" placeholder="Search timezone e.g. India, UK, USA, London, New York, Dubai" type="text"/>
-<div class="tz-results" id="timezoneResults">
+
+<input
+id="timezoneSearch"
+class="input tz-search"
+type="text"
+autocomplete="off"
+placeholder="Search timezone e.g. India, UK, USA, London, New York, Dubai">
+
+<div id="timezoneResults"
+class="tz-results">
 </div>
+
 </div>
-<div class="tz-selected" id="timezoneSelected">
+
+<div id="timezoneSelected"
+class="tz-selected">
 No preview timezone selected.
 </div>
+
 <div class="small-note">
 This search is for timezone preview. Student and teacher profile timezones remain stored separately.
 </div>
+
 </div>
+
+
 <!-- SAVE -->
+
 <div class="field full">
+
 <button class="btn" type="submit">
 Save Weekly Class
 </button>
+
 </div>
+
 </form>
+
 </div>
+
+
 <!-- ======================================================
      AM GRID
 ====================================================== -->
+
 <div class="card schedule-section">
+
 <div class="schedule-title">
 Night AM — 12:00 AM to 11:30 AM
 </div>
+
 <div class="weekly-wrap">
+
 <table class="weekly-grid">
+
 <thead>
+
 <tr>
+
 <th class="time-col">
 Night AM
 </th>
+
 <th>MONDAY</th>
 <th>TUESDAY</th>
 <th>WEDNESDAY</th>
@@ -574,26 +748,42 @@ Night AM
 <th>FRIDAY</th>
 <th>SATURDAY</th>
 <th>SUNDAY</th>
+
 </tr>
+
 </thead>
+
 <tbody id="amGrid"></tbody>
+
 </table>
+
 </div>
+
 </div>
+
+
 <!-- ======================================================
      PM GRID
 ====================================================== -->
+
 <div class="card schedule-section">
+
 <div class="schedule-title">
 Afternoon PM — 12:00 PM to 11:30 PM
 </div>
+
 <div class="weekly-wrap">
+
 <table class="weekly-grid">
+
 <thead>
+
 <tr>
+
 <th class="time-col">
 Afternoon PM
 </th>
+
 <th>MONDAY</th>
 <th>TUESDAY</th>
 <th>WEDNESDAY</th>
@@ -601,21 +791,36 @@ Afternoon PM
 <th>FRIDAY</th>
 <th>SATURDAY</th>
 <th>SUNDAY</th>
+
 </tr>
+
 </thead>
+
 <tbody id="pmGrid"></tbody>
+
 </table>
+
 </div>
+
 </div>
+
+
 <!-- ======================================================
      SAVED
 ====================================================== -->
+
 <div class="card schedule-section">
+
 <h2>Saved Weekly Classes</h2>
+
 <div class="saved-table-wrap">
+
 <table class="table saved-table">
+
 <thead>
+
 <tr>
+
 <th>Teacher</th>
 <th>Student</th>
 <th>Days</th>
@@ -628,14 +833,24 @@ Afternoon PM
 <th>Classroom</th>
 <th>Status</th>
 <th>Action</th>
+
 </tr>
+
 </thead>
+
 <tbody id="rows"></tbody>
+
 </table>
+
 </div>
+
 </div>
+
 </main>
+
 </div>
+
+
 <script>
 
 "use strict";
@@ -3237,5 +3452,6 @@ async function init(){
 init();
 
 </script>
+
 </body>
 </html>

@@ -1,24 +1,43 @@
-<!DOCTYPE html>
-<!DOCTYPE html>
-
-<!DOCTYPE html>
-
+<!doctype html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1" name="viewport"/>
+
+<meta charset="utf-8">
+
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1"
+>
+
 <title>Students | Admin</title>
-<link href="../css/admin.css" rel="stylesheet"/>
+
+<link
+  rel="stylesheet"
+  href="../css/admin.css"
+>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="../js/config.js"></script>
+
 <script src="../js/admin.js"></script>
-<meta content="Students | Admin for Haroon Ibn Rasheed Online Quran Academy. Access Quran learning services, student support and academy information." name="description"/><link href="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/admin/students.html" rel="canonical"/><meta content="Students | Admin" property="og:title"/><meta content="Students | Admin for Haroon Ibn Rasheed Online Quran Academy. Access Quran learning services, student support and academy information." property="og:description"/><meta content="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/admin/students.html" property="og:url"/><meta content="website" property="og:type"/><link href="../assets/hr-logo-round.png" rel="icon" type="image/png"/><style>.skip-link{position:absolute;left:-9999px;top:0;background:#fff;color:#102b46;padding:12px;z-index:99999}.skip-link:focus{left:12px;top:12px}</style></head>
-<body><a class="skip-link" href="#main-content">Skip to main content</a>
+
+</head>
+
+
+<body>
+
+
 <div class="admin-layout">
+
+
 <!-- =====================================================
      SIDEBAR
 ===================================================== -->
+
 <aside class="sidebar">
+
 <div class="brand">
 
 HR Admin
@@ -26,209 +45,469 @@ HR Admin
 <span>
 Haroon Ibn Rasheed Online Quran Academy
 </span>
+
 </div>
+
+
 <nav class="nav">
+
 <a href="dashboard.html">Dashboard</a>
+
 <a href="admissions.html">Admissions / Leads</a>
+
 <a href="users.html">Portal Users</a>
+
 <a class="active" href="students.html">Students</a>
+
 <a href="enrollments.html">Enrollments</a>
+
 <a href="teachers.html">Teachers</a>
+
 <a href="schedule.html">Schedule</a>
+
 <a href="classes.html">Classes</a>
+
 <a href="attendance.html">Attendance</a>
+
 <a href="payments.html">Payments</a>
+
 <a href="leaves.html">Leaves</a>
+
 <a href="salaries.html">Salaries</a>
+
 <a href="courses.html">Courses</a>
+
 <a href="fees.html">Fees</a>
+
 <a href="payment-methods.html">Payment Methods</a>
+
 <a href="messages.html">Messages</a>
+
 <a href="testimonials.html">Testimonials</a>
+
 <a href="articles.html">Blog / Articles</a>
+
 <a href="notifications.html">Notifications</a>
+
 <a href="faqs.html">FAQs</a>
+
 <a href="content.html">Website Content</a>
+
 <a href="settings.html">Settings</a>
+
 <a href="../index.html">View Website</a>
+
 <a href="#" onclick="logout();return false">Logout</a>
+
 </nav>
+
 </aside>
+
+
 <!-- =====================================================
      MAIN
 ===================================================== -->
-<main class="main" id="main-content">
+
+<main class="main">
+
+
 <div class="top">
+
 <h1>
 Students
 </h1>
+
 </div>
-<div class="msg" id="msg" style="display:none;"></div>
+
+
+<div
+id="msg"
+class="msg"
+style="display:none;"
+></div>
+
+
 <!-- =====================================================
      SUMMARY CARDS
 ===================================================== -->
-<div style="
+
+<div
+style="
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
 gap:15px;
 margin-bottom:20px;
-">
+"
+>
+
 <div class="card">
+
 <small>Total Students</small>
+
 <h2 id="totalStudents">0</h2>
+
 </div>
+
+
 <div class="card">
+
 <small>Active Students</small>
+
 <h2 id="activeStudents">0</h2>
+
 </div>
+
+
 <div class="card">
+
 <small>Inactive Students</small>
+
 <h2 id="inactiveStudents">0</h2>
+
 </div>
+
+
 <div class="card">
+
 <small>Assigned Students</small>
+
 <h2 id="assignedStudents">0</h2>
+
 </div>
+
+
 <div class="card">
+
 <small>Scheduled Classes</small>
+
 <h2 id="totalSchedules">0</h2>
+
 </div>
+
 </div>
+
+
 <!-- =====================================================
      CREATE STUDENT
 ===================================================== -->
+
 <div class="card">
+
 <h2>
 Create Student Account
 </h2>
-<form class="form-grid" id="studentForm">
+
+
+<form
+id="studentForm"
+class="form-grid"
+>
+
+
 <div class="field">
+
 <label>Student Name</label>
-<input aria-label="Enter student name" class="input" id="student_name" placeholder="Enter student name" required="" type="text"/>
+
+<input
+id="student_name"
+class="input"
+type="text"
+placeholder="Enter student name"
+required
+>
+
 </div>
+
+
 <div class="field">
+
 <label>Email</label>
-<input aria-label="Student@example.com" class="input" id="student_email" placeholder="student@example.com" required="" type="email"/>
+
+<input
+id="student_email"
+class="input"
+type="email"
+placeholder="student@example.com"
+required
+>
+
 </div>
+
+
 <div class="field">
+
 <label>Password</label>
-<input aria-label="Create password" class="input" id="student_password" minlength="6" placeholder="Create password" required="" type="password"/>
+
+<input
+id="student_password"
+class="input"
+type="password"
+placeholder="Create password"
+required
+minlength="6"
+>
+
 </div>
+
+
 <div class="field">
+
 <label>Father Name</label>
-<input aria-label="Enter father name" class="input" id="father_name" placeholder="Enter father name" type="text"/>
+
+<input
+id="father_name"
+class="input"
+type="text"
+placeholder="Enter father name"
+>
+
 </div>
+
+
 <div class="field">
+
 <label>Phone</label>
-<input aria-label="Enter phone number" class="input" id="student_phone" placeholder="Enter phone number" type="text"/>
+
+<input
+id="student_phone"
+class="input"
+type="text"
+placeholder="Enter phone number"
+>
+
 </div>
+
+
 <div class="field">
+
 <label>Course</label>
-<input aria-label="Example: quran with tajweed" class="input" id="student_course" placeholder="Example: Quran with Tajweed" type="text"/>
+
+<input
+id="student_course"
+class="input"
+type="text"
+placeholder="Example: Quran with Tajweed"
+>
+
 </div>
+
+
 <div class="field">
+
 <label>Teacher</label>
-<select aria-label="Teacher id" class="input" id="teacher_id" required="">
+
+<select
+id="teacher_id"
+class="input"
+required
+>
+
 <option value="">
 Loading teachers...
 </option>
+
 </select>
+
 </div>
+
+
 <div class="field">
+
 <label>Student Time Zone</label>
-<input aria-label="Search timezone..." autocomplete="off" class="input" id="timezone_search" placeholder="Search timezone..." style="margin-bottom:8px;" type="search"/>
-<select aria-label="Student timezone" class="input" id="student_timezone" required="">
+
+<input
+id="timezone_search"
+class="input"
+type="search"
+placeholder="Search timezone..."
+autocomplete="off"
+style="margin-bottom:8px;"
+>
+
+
+<select
+id="student_timezone"
+class="input"
+required
+>
+
 <option value="Asia/Karachi">
 Asia/Karachi — Pakistan
 </option>
+
 </select>
-<small id="timezone_count" style="
+
+
+<small
+id="timezone_count"
+style="
 display:block;
 margin-top:6px;
 opacity:.7;
 line-height:1.4;
-">
+"
+>
 
 Loading time zones...
 
 </small>
+
 </div>
+
+
 <div class="field">
+
 <label>Status</label>
-<select aria-label="Student status" class="input" id="student_status">
+
+<select
+id="student_status"
+class="input"
+>
+
 <option value="active">
 Active
 </option>
+
 <option value="inactive">
 Inactive
 </option>
+
 </select>
+
 </div>
+
+
 <div class="field full">
-<button class="btn" id="createStudentBtn" type="submit">
+
+<button
+id="createStudentBtn"
+class="btn"
+type="submit"
+>
 
 Create Student Account
 
 </button>
+
 </div>
+
 </form>
+
 </div>
+
+
 <!-- =====================================================
      SEARCH
 ===================================================== -->
+
 <div class="card">
-<div style="
+
+<div
+style="
 display:grid;
 grid-template-columns:1fr auto;
 gap:10px;
-">
-<input aria-label="Search by student name, email, phone, course or teacher..." class="input" id="studentSearch" oninput="renderStudents()" placeholder="Search by student name, email, phone, course or teacher..." type="search"/>
-<button class="btn" onclick="resetSearch()" type="button">
+"
+>
+
+<input
+id="studentSearch"
+class="input"
+type="search"
+placeholder="Search by student name, email, phone, course or teacher..."
+oninput="renderStudents()"
+>
+
+
+<button
+type="button"
+class="btn"
+onclick="resetSearch()"
+>
 
 Reset
 
 </button>
+
 </div>
+
 </div>
+
+
 <!-- =====================================================
      STUDENTS TABLE
 ===================================================== -->
+
 <div class="card">
+
 <h2>
 Students
 </h2>
+
+
 <div class="table-wrap">
+
 <table class="table">
+
 <thead>
+
 <tr>
+
 <th>Student ID</th>
+
 <th>Name</th>
+
 <th>Father Name</th>
+
 <th>Phone</th>
+
 <th>Email</th>
+
 <th>Course</th>
+
 <th>Teacher</th>
+
 <th>Time Zone</th>
+
 <th>Classes</th>
+
 <th>Payments</th>
+
 <th>Status</th>
+
 <th>Actions</th>
+
 </tr>
+
 </thead>
+
+
 <tbody id="rows">
+
 <tr>
+
 <td colspan="12">
 Loading students...
 </td>
+
 </tr>
+
 </tbody>
+
 </table>
+
 </div>
+
 </div>
+
+
 <!-- =====================================================
      EDIT STUDENT MODAL
 ===================================================== -->
-<div id="editModal" style="
+
+<div
+id="editModal"
+style="
 display:none;
 position:fixed;
 inset:0;
@@ -237,86 +516,204 @@ z-index:9999;
 align-items:center;
 justify-content:center;
 padding:20px;
-">
-<div class="card" style="
+"
+>
+
+
+<div
+class="card"
+style="
 width:100%;
 max-width:650px;
 max-height:90vh;
 overflow:auto;
-">
+"
+>
+
+
 <h2>
 Edit Student
 </h2>
-<form class="form-grid" id="editStudentForm">
-<input aria-label="Edit student id" id="edit_student_id" type="hidden"/>
+
+
+<form
+id="editStudentForm"
+class="form-grid"
+>
+
+
+<input
+type="hidden"
+id="edit_student_id"
+>
+
+
 <div class="field">
+
 <label>Student Name</label>
-<input aria-label="Edit student name" class="input" id="edit_student_name" required=""/>
+
+<input
+id="edit_student_name"
+class="input"
+required
+>
+
 </div>
+
+
 <div class="field">
+
 <label>Father Name</label>
-<input aria-label="Edit father name" class="input" id="edit_father_name"/>
+
+<input
+id="edit_father_name"
+class="input"
+>
+
 </div>
+
+
 <div class="field">
+
 <label>Phone</label>
-<input aria-label="Edit student phone" class="input" id="edit_student_phone"/>
+
+<input
+id="edit_student_phone"
+class="input"
+>
+
 </div>
+
+
 <div class="field">
+
 <label>Email</label>
-<input aria-label="Edit student email" class="input" id="edit_student_email" type="email"/>
+
+<input
+id="edit_student_email"
+class="input"
+type="email"
+>
+
 </div>
+
+
 <div class="field">
+
 <label>Course</label>
-<input aria-label="Edit student course" class="input" id="edit_student_course"/>
+
+<input
+id="edit_student_course"
+class="input"
+>
+
 </div>
+
+
 <div class="field">
+
 <label>Teacher</label>
-<select aria-label="Edit teacher id" class="input" id="edit_teacher_id" required="">
+
+<select
+id="edit_teacher_id"
+class="input"
+required
+>
+
 <option value="">
 Select Teacher
 </option>
+
 </select>
+
 </div>
+
+
 <div class="field full">
+
 <label>Time Zone</label>
-<select aria-label="Edit student timezone" class="input" id="edit_student_timezone" required="">
+
+<select
+id="edit_student_timezone"
+class="input"
+required
+>
+
 <option value="Asia/Karachi">
 Asia/Karachi — Pakistan
 </option>
+
 </select>
+
 </div>
+
+
 <div class="field">
+
 <label>Status</label>
-<select aria-label="Edit student status" class="input" id="edit_student_status">
+
+<select
+id="edit_student_status"
+class="input"
+>
+
 <option value="active">
 Active
 </option>
+
 <option value="inactive">
 Inactive
 </option>
+
 </select>
+
 </div>
-<div class="field full" style="
+
+
+<div
+class="field full"
+style="
 display:flex;
 gap:10px;
 flex-wrap:wrap;
-">
-<button class="btn" id="updateStudentBtn" type="submit">
+"
+>
+
+<button
+id="updateStudentBtn"
+class="btn"
+type="submit"
+>
 
 Save Changes
 
 </button>
-<button class="btn" onclick="closeEditModal()" type="button">
+
+
+<button
+type="button"
+class="btn"
+onclick="closeEditModal()"
+>
 
 Cancel
 
 </button>
+
 </div>
+
 </form>
+
 </div>
+
 </div>
+
+
 </main>
+
 </div>
+
+
 <script>
 
 /* =====================================================
@@ -2668,5 +3065,7 @@ error.message,
 initStudents();
 
 </script>
+
 </body>
+
 </html>

@@ -1,17 +1,17 @@
-<!DOCTYPE html>
-<!DOCTYPE html>
-
-<!DOCTYPE html>
-
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>Admin Dashboard | Haroon Ibn Rasheed Online Quran Academy</title>
-<link href="../css/admin.css" rel="stylesheet"/>
+
+<link rel="stylesheet" href="../css/admin.css">
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../js/config.js"></script>
 <script src="../js/admin.js"></script>
+
 <style>
 .dashboard-grid{
   display:grid;
@@ -199,205 +199,311 @@
   }
 }
 </style>
-<meta content="Admin Dashboard | Haroon Ibn Rasheed Online Quran Academy for Haroon Ibn Rasheed Online Quran Academy. Access Quran learning services, student support and " name="description"/><link href="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/admin/dashboard.html" rel="canonical"/><meta content="Admin Dashboard | Haroon Ibn Rasheed Online Quran Academy" property="og:title"/><meta content="Admin Dashboard | Haroon Ibn Rasheed Online Quran Academy for Haroon Ibn Rasheed Online Quran Academy. Access Quran learning services, student support and " property="og:description"/><meta content="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/admin/dashboard.html" property="og:url"/><meta content="website" property="og:type"/><link href="../assets/hr-logo-round.png" rel="icon" type="image/png"/><style>.skip-link{position:absolute;left:-9999px;top:0;background:#fff;color:#102b46;padding:12px;z-index:99999}.skip-link:focus{left:12px;top:12px}</style></head>
-<body><a class="skip-link" href="#main-content">Skip to main content</a>
+</head>
+
+<body>
+
 <div class="admin-layout">
+
 <aside class="sidebar">
+
 <div class="brand">
 HR Admin
 <span>Haroon Ibn Rasheed Online Quran Academy</span>
 </div>
+
 <nav class="nav">
+
 <a class="active" href="dashboard.html">
 Dashboard
 </a>
+
 <a href="admissions.html">
 Admissions / Leads
 </a>
+
 <a href="users.html">
 Portal Users
 </a>
+
 <a href="students.html">
 Students
 </a>
+
 <a href="enrollments.html">
 Enrollments
 </a>
+
 <a href="teachers.html">
 Teachers
 </a>
+
 <a href="schedule.html">
 Schedule
 </a>
+
 <a href="classes.html">
 Classes
 </a>
+
 <a href="attendance.html">
 Attendance
 </a>
+
 <a href="payments.html">
 Payments
 </a>
+
 <a href="leaves.html">
 Leaves
 </a>
+
 <a href="salaries.html">
 Salaries
 </a>
+
 <a href="courses.html">
 Courses
 </a>
+
 <a href="fees.html">
 Fees
 </a>
+
 <a href="payment-methods.html">
 Payment Methods
 </a>
+
 <a href="messages.html">
 Messages
 </a>
+
 <a href="testimonials.html">
 Testimonials
 </a>
+
 <a href="articles.html">
 Blog / Articles
 </a>
+
 <!-- NEW VIDEO OPTION -->
 <a href="blog-videos.html">
 Blog / Videos
 </a>
+
 <a href="notifications.html">
 Notifications
 </a>
+
 <a href="faqs.html">
 FAQs
 </a>
+
 <a href="content.html">
 Website Content
 </a>
+
 <a href="settings.html">
 Settings
 </a>
+
 <a href="admin-accounts.html">
 🔐 Account Credentials
 </a>
+
 <a href="../index.html">
 View Website
 </a>
+
 <a href="#" onclick="logout();return false">
 Logout
 </a>
+
 </nav>
+
 </aside>
-<main class="main" id="main-content">
+
+
+<main class="main">
+
 <div class="top">
+
 <div>
+
 <h1>Admin Dashboard</h1>
+
 <span class="muted">
-Welcome, <b data-admin-name="">Admin</b>
+Welcome, <b data-admin-name>Admin</b>
 </span>
+
 </div>
+
 <button class="refresh-btn" id="refreshBtn">
 ↻ Refresh
 </button>
+
 </div>
-<div class="msg" id="dashboardMsg"></div>
+
+
+<div id="dashboardMsg" class="msg"></div>
+
+
 <div class="dashboard-note">
 <strong>Today:</strong>
 <span id="todayText">Loading...</span>
 </div>
+
+
 <div class="dashboard-grid">
+
 <div class="card stat">
+
 <div class="stat-title">
 <small>Total Leads</small>
 <div class="stat-icon">📩</div>
 </div>
+
 <div class="stat-value" id="totalLeads">0</div>
+
 <span class="stat-sub">
 All admission enquiries
 </span>
+
 </div>
+
+
 <div class="card stat">
+
 <div class="stat-title">
 <small>New Leads</small>
 <div class="stat-icon">🆕</div>
 </div>
+
 <div class="stat-value" id="newLeads">0</div>
+
 <span class="stat-sub">
 New admissions
 </span>
+
 </div>
+
+
 <div class="card stat">
+
 <div class="stat-title">
 <small>Total Students</small>
 <div class="stat-icon">👨‍🎓</div>
 </div>
+
 <div class="stat-value" id="totalStudents">0</div>
+
 <span class="stat-sub">
 Active students
 </span>
+
 </div>
+
+
 <div class="card stat">
+
 <div class="stat-title">
 <small>Total Teachers</small>
 <div class="stat-icon">👨‍🏫</div>
 </div>
+
 <div class="stat-value" id="totalTeachers">0</div>
+
 <span class="stat-sub">
 Active teachers
 </span>
+
 </div>
+
+
 <div class="card stat">
+
 <div class="stat-title">
 <small>Total Courses</small>
 <div class="stat-icon">📚</div>
 </div>
+
 <div class="stat-value" id="totalCourses">0</div>
+
 <span class="stat-sub">
 Active courses
 </span>
+
 </div>
+
+
 <div class="card stat">
+
 <div class="stat-title">
 <small>Today's Classes</small>
 <div class="stat-icon">🗓️</div>
 </div>
+
 <div class="stat-value" id="todayClasses">0</div>
+
 <span class="stat-sub">
 Classes scheduled today
 </span>
+
 </div>
+
+
 <div class="card stat">
+
 <div class="stat-title">
 <small>Pending Payments</small>
 <div class="stat-icon">💰</div>
 </div>
+
 <div class="stat-value" id="pendingPayments">0</div>
+
 <span class="stat-sub">
 Student payments
 </span>
+
 </div>
+
+
 <div class="card stat">
+
 <div class="stat-title">
 <small>Pending Salary</small>
 <div class="stat-icon">💵</div>
 </div>
+
 <div class="stat-value" id="pendingSalary">0</div>
+
 <span class="stat-sub">
 Teacher salary records
 </span>
+
 </div>
+
 </div>
+
+
 <div class="card">
+
 <div class="section-head">
+
 <h2>Today's Classes</h2>
+
 <span class="muted" id="classCountText">
 0 classes
 </span>
+
 </div>
+
 <div class="table-wrap">
+
 <table class="table">
+
 <thead>
+
 <tr>
 <th>Student</th>
 <th>Teacher</th>
@@ -406,28 +512,47 @@ Teacher salary records
 <th>Duration</th>
 <th>Status</th>
 </tr>
+
 </thead>
+
 <tbody id="todayClassRows">
+
 <tr>
-<td class="empty" colspan="6">
+<td colspan="6" class="empty">
 Loading today's classes...
 </td>
 </tr>
+
 </tbody>
+
 </table>
+
 </div>
+
 </div>
+
+
 <div class="dashboard-two">
+
+
 <div class="card">
+
 <div class="section-head">
+
 <h2>Recent Admissions</h2>
+
 <a class="btn" href="admissions.html">
 View All
 </a>
+
 </div>
+
 <div class="table-wrap">
+
 <table class="table">
+
 <thead>
+
 <tr>
 <th>Student</th>
 <th>Course</th>
@@ -435,185 +560,291 @@ View All
 <th>Status</th>
 <th>Date</th>
 </tr>
+
 </thead>
+
 <tbody id="admissionRows">
+
 <tr>
-<td class="empty" colspan="5">
+<td colspan="5" class="empty">
 Loading...
 </td>
 </tr>
+
 </tbody>
+
 </table>
+
 </div>
+
 </div>
+
+
 <div class="card">
+
 <div class="section-head">
+
 <h2>Quick Actions</h2>
+
 </div>
+
 <div class="quick-grid">
+
 <a class="quick-btn" href="students.html">
 👨‍🎓 Students
 </a>
+
 <a class="quick-btn" href="teachers.html">
 👨‍🏫 Teachers
 </a>
+
 <a class="quick-btn" href="schedule.html">
 🗓️ Schedule
 </a>
+
 <a class="quick-btn" href="classes.html">
 🎓 Classes
 </a>
+
 <a class="quick-btn" href="payments.html">
 💳 Payments
 </a>
+
 <a class="quick-btn" href="salaries.html">
 💰 Salaries
 </a>
+
 <a class="quick-btn" href="fees.html">
 🧾 Fees
 </a>
+
 <a class="quick-btn" href="payment-methods.html">
 🏦 Payment Methods
 </a>
+
 <a class="quick-btn" href="articles.html">
 📝 Blog / Articles
 </a>
+
 <a class="quick-btn" href="blog-videos.html">
 🎬 Blog / Videos
 </a>
+
 </div>
+
 </div>
+
 </div>
+
+
 <div class="dashboard-two">
+
+
 <div class="card">
+
 <div class="section-head">
+
 <h2>Student Payments</h2>
+
 <a class="btn" href="payments.html">
 Manage
 </a>
+
 </div>
+
 <div class="table-wrap">
+
 <table class="table">
+
 <thead>
+
 <tr>
 <th>Status</th>
 <th>Records</th>
 <th>Amount</th>
 </tr>
+
 </thead>
+
 <tbody>
+
 <tr>
+
 <td>
 <span class="badge badge-paid">
 Paid
 </span>
 </td>
+
 <td id="paidPaymentCount">0</td>
+
 <td class="money" id="paidPaymentAmount">0</td>
+
 </tr>
+
 <tr>
+
 <td>
 <span class="badge badge-pending">
 Pending
 </span>
 </td>
+
 <td id="pendingPaymentCount">0</td>
+
 <td class="money" id="pendingPaymentAmount">0</td>
+
 </tr>
+
 </tbody>
+
 </table>
+
 </div>
+
 </div>
+
+
 <div class="card">
+
 <div class="section-head">
+
 <h2>Teacher Salary</h2>
+
 <a class="btn" href="salaries.html">
 Manage
 </a>
+
 </div>
+
 <div class="table-wrap">
+
 <table class="table">
+
 <thead>
+
 <tr>
 <th>Status</th>
 <th>Records</th>
 <th>Amount</th>
 </tr>
+
 </thead>
+
 <tbody>
+
 <tr>
+
 <td>
 <span class="badge badge-paid">
 Paid
 </span>
 </td>
+
 <td id="paidSalaryCount">0</td>
+
 <td class="money" id="paidSalaryAmount">0</td>
+
 </tr>
+
 <tr>
+
 <td>
 <span class="badge badge-pending">
 Pending
 </span>
 </td>
+
 <td id="pendingSalaryCount">0</td>
+
 <td class="money" id="pendingSalaryAmount">0</td>
+
 </tr>
+
 </tbody>
+
 </table>
+
 </div>
+
 </div>
+
 </div>
+
+
 <div class="card">
+
 <div class="section-head">
+
 <h2>Academy Overview</h2>
+
 </div>
+
 <div class="table-wrap">
+
 <table class="table">
+
 <thead>
+
 <tr>
 <th>Item</th>
 <th>Current Count</th>
 <th>Action</th>
 </tr>
+
 </thead>
+
 <tbody>
+
 <tr>
 <td>Students</td>
 <td id="overviewStudents">0</td>
 <td><a class="btn" href="students.html">Open</a></td>
 </tr>
+
 <tr>
 <td>Teachers</td>
 <td id="overviewTeachers">0</td>
 <td><a class="btn" href="teachers.html">Open</a></td>
 </tr>
+
 <tr>
 <td>Courses</td>
 <td id="overviewCourses">0</td>
 <td><a class="btn" href="courses.html">Open</a></td>
 </tr>
+
 <tr>
 <td>Active Schedules</td>
 <td id="overviewSchedules">0</td>
 <td><a class="btn" href="schedule.html">Open</a></td>
 </tr>
+
 <tr>
 <td>Notifications</td>
 <td id="overviewNotifications">0</td>
 <td><a class="btn" href="notifications.html">Open</a></td>
 </tr>
+
 <tr>
 <td>Blog Videos</td>
 <td>—</td>
 <td><a class="btn" href="blog-videos.html">Open</a></td>
 </tr>
+
 </tbody>
+
 </table>
+
 </div>
+
 </div>
+
 </main>
+
 </div>
+
+
 <script>
 
 (async()=>{
@@ -1355,5 +1586,6 @@ await loadDashboard();
 
 })();
 </script>
+
 </body>
 </html>
