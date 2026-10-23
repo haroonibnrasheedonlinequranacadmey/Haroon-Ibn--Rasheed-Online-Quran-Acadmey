@@ -1,17 +1,17 @@
-<!DOCTYPE html>
-<!DOCTYPE html>
-
-<!DOCTYPE html>
-
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>Student Dashboard | Haroon Ibn Rasheed Online Quran Academy</title>
-<link href="../css/portal.css" rel="stylesheet"/>
+
+<link rel="stylesheet" href="../css/portal.css">
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../js/config.js"></script>
-<script defer="" src="../js/portal.js"></script>
+<script src="../js/portal.js" defer></script>
+
 <style>
 *{box-sizing:border-box}
 
@@ -594,6 +594,7 @@ td{
 
 }
 </style>
+
 <style id="student-top-header-style">
 .student-top-header{width:100%;background:linear-gradient(90deg,#061a35 0%,#0a3157 52%,#0b4268 100%);color:#fff;border-bottom:1px solid rgba(255,255,255,.12);box-shadow:0 4px 16px rgba(4,25,49,.22);position:relative;z-index:50}
 .student-brand-row{min-height:82px;width:100%;display:flex;align-items:center;justify-content:space-between;padding:10px 28px;box-sizing:border-box;gap:20px}
@@ -615,6 +616,7 @@ body.dashboard .side-layout>.content>*{max-width:none}
 body.dashboard .side-layout .card,body .student-main .card{box-sizing:border-box}
 @media(max-width:700px){.student-brand-row{padding:9px 14px;min-height:70px}.student-brand img{width:50px;height:50px;flex-basis:50px}.student-brand-name{font-size:17px}.student-brand-sub{font-size:9px;letter-spacing:.5px}.student-header-icon{width:33px;height:33px;font-size:15px}.student-profile-btn{height:35px;padding:0 9px;font-size:11px}.student-nav-row{padding:0 6px}.student-nav-row a{font-size:11px;padding:13px 10px}body.dashboard .side-layout>.content,body .student-main{padding:16px 13px!important}}
 </style>
+
 <style>
 /* Student portal: teacher-style horizontal navigation */
 .student-top-header{background:linear-gradient(105deg,#062a49,#075878,#087493);color:#fff;padding:12px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:82px;box-shadow:0 4px 16px #062a4926;position:relative;z-index:30}
@@ -635,162 +637,282 @@ body.dashboard .side-layout .card,body .student-main .card{box-sizing:border-box
 .student-shell{display:block!important;min-height:calc(100vh - 130px)}
 @media(max-width:650px){.student-top-header{padding:10px 12px;min-height:68px}.student-top-brand img{width:43px;height:43px}.student-top-brand strong{font-size:13px;white-space:normal}.student-top-brand small{font-size:9px}.student-top-actions a{min-width:34px;height:35px;padding:0 8px;font-size:12px}.student-horizontal-nav{padding:0 4px}.student-horizontal-nav a{padding:12px 10px;font-size:11px;gap:5px}.student-main{padding:15px!important}.stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}.dashboard-grid{grid-template-columns:1fr!important}.topbar{gap:12px;flex-wrap:wrap}.topbar h1{font-size:23px}}
 </style>
-<meta content="Student Dashboard | Haroon Ibn Rasheed Online Quran Academy for Haroon Ibn Rasheed Online Quran Academy. Access Quran learning services, student support an" name="description"/><link href="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/student/dashboard.html" rel="canonical"/><meta content="Student Dashboard | Haroon Ibn Rasheed Online Quran Academy" property="og:title"/><meta content="Student Dashboard | Haroon Ibn Rasheed Online Quran Academy for Haroon Ibn Rasheed Online Quran Academy. Access Quran learning services, student support an" property="og:description"/><meta content="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/student/dashboard.html" property="og:url"/><meta content="website" property="og:type"/><link href="../assets/hr-logo-round.png" rel="icon" type="image/png"/><style>.skip-link{position:absolute;left:-9999px;top:0;background:#fff;color:#102b46;padding:12px;z-index:99999}.skip-link:focus{left:12px;top:12px}</style></head>
-<body data-page="student-dashboard"><a class="skip-link" href="#main-content">Skip to main content</a>
-<header class="student-top-header"><div class="student-top-brand"><img alt="Haroon Ibn Rasheed Academy logo" decoding="async" loading="lazy" onerror="this.style.display='none'" src="assets/student-logo.svg"/><div><strong>Haroon Ibn Rasheed Online Quran Academy</strong><small>STUDENT PORTAL</small></div></div><div class="student-top-actions"><a aria-label="Dashboard" href="dashboard.html" title="Dashboard">⌂ <span>Home</span></a><a aria-label="Account" href="profile.html" title="Account">⚙ <span>Account</span></a></div></header><nav aria-label="Student pages" class="student-horizontal-nav"><a class="active" href="dashboard.html"><span aria-hidden="true" class="nav-icon">⌂</span><span>Dashboard</span></a><a class="" href="teacher.html"><span aria-hidden="true" class="nav-icon">♙</span><span>My Teacher</span></a><a class="" href="course.html"><span aria-hidden="true" class="nav-icon">▤</span><span>My Courses</span></a><a class="" href="classes.html"><span aria-hidden="true" class="nav-icon">▣</span><span>My Classes</span></a><a class="" href="schedule.html"><span aria-hidden="true" class="nav-icon">▦</span><span>Schedule</span></a><a class="" href="attendance.html"><span aria-hidden="true" class="nav-icon">✓</span><span>Attendance</span></a><a class="" href="fees.html"><span aria-hidden="true" class="nav-icon">$</span><span>Fees</span></a><a class="" href="leaves.html"><span aria-hidden="true" class="nav-icon">▱</span><span>Leaves</span></a><a class="" href="profile.html"><span aria-hidden="true" class="nav-icon">⚙</span><span>My Profile</span></a></nav>
+</head>
+
+<body data-page="student-dashboard">
+<header class="student-top-header"><div class="student-top-brand"><img src="assets/student-logo.svg" alt="Haroon Ibn Rasheed Academy logo" onerror="this.style.display='none'"><div><strong>Haroon Ibn Rasheed Online Quran Academy</strong><small>STUDENT PORTAL</small></div></div><div class="student-top-actions"><a href="dashboard.html" title="Dashboard" aria-label="Dashboard">⌂ <span>Home</span></a><a href="profile.html" title="Account" aria-label="Account">⚙ <span>Account</span></a></div></header><nav class="student-horizontal-nav" aria-label="Student pages"><a href="dashboard.html" class="active"><span class="nav-icon" aria-hidden="true">⌂</span><span>Dashboard</span></a><a href="teacher.html" class=""><span class="nav-icon" aria-hidden="true">♙</span><span>My Teacher</span></a><a href="course.html" class=""><span class="nav-icon" aria-hidden="true">▤</span><span>My Courses</span></a><a href="classes.html" class=""><span class="nav-icon" aria-hidden="true">▣</span><span>My Classes</span></a><a href="schedule.html" class=""><span class="nav-icon" aria-hidden="true">▦</span><span>Schedule</span></a><a href="attendance.html" class=""><span class="nav-icon" aria-hidden="true">✓</span><span>Attendance</span></a><a href="fees.html" class=""><span class="nav-icon" aria-hidden="true">$</span><span>Fees</span></a><a href="leaves.html" class=""><span class="nav-icon" aria-hidden="true">▱</span><span>Leaves</span></a><a href="profile.html" class=""><span class="nav-icon" aria-hidden="true">⚙</span><span>My Profile</span></a></nav>
+
 <div class="student-shell">
+
 <header class="student-top-header">
 <div class="student-brand-row">
-<a aria-label="Haroon Ibn Rasheed Online Quran Academy" class="student-brand" href="dashboard.html">
-<img alt="HR" decoding="async" loading="lazy" src="assets/student-logo.svg"/>
+<a class="student-brand" href="dashboard.html" aria-label="Haroon Ibn Rasheed Online Quran Academy">
+<img src="assets/student-logo.svg" alt="HR">
 <span class="student-brand-text"><span class="student-brand-name">Haroon Ibn Rasheed</span><span class="student-brand-sub">Online Quran Academy</span></span>
 </a>
 <div class="student-header-actions">
-<a aria-label="Student dashboard" class="student-header-icon" href="dashboard.html" title="Dashboard">⌂</a>
-<a aria-label="Open student profile" class="student-profile-btn" href="profile.html" title="Profile">👤 <span>Student</span></a>
+<a class="student-header-icon" href="dashboard.html" aria-label="Student dashboard" title="Dashboard">⌂</a>
+<a class="student-profile-btn" href="profile.html" aria-label="Open student profile" title="Profile">👤 <span>Student</span></a>
 </div>
 </div>
-<nav aria-label="Student Portal Navigation" class="student-nav-row"><a aria-current="page" class="active" href="dashboard.html">Dashboard</a><a href="teacher.html">My Teacher</a><a href="course.html">My Courses</a><a href="classes.html">My Classes</a><a href="schedule.html">Schedule</a><a href="attendance.html">Attendance</a><a href="fees.html">Fees</a><a href="leaves.html">Leaves</a><a href="profile.html">My Profile</a></nav>
+<nav class="student-nav-row" aria-label="Student Portal Navigation"><a href="dashboard.html" class="active" aria-current="page">Dashboard</a><a href="teacher.html">My Teacher</a><a href="course.html">My Courses</a><a href="classes.html">My Classes</a><a href="schedule.html">Schedule</a><a href="attendance.html">Attendance</a><a href="fees.html">Fees</a><a href="leaves.html">Leaves</a><a href="profile.html">My Profile</a></nav>
 </header>
-<main class="student-main" id="main-content">
-<div class="topbar">
-<div>
-<h1>Student Dashboard</h1>
-<p>Your learning overview</p>
-</div>
-<div class="date-box" id="todayDate">
+
+<main class="student-main">
+
+  <div class="topbar">
+
+    <div>
+
+      <h1>Student Dashboard</h1>
+
+      <p>Your learning overview</p>
+
+    </div>
+
+    <div class="date-box" id="todayDate">
       Loading date...
     </div>
-</div>
-<section class="welcome">
-<h2>
+
+  </div>
+
+  <section class="welcome">
+
+    <h2>
       Welcome,
       <span id="studentName">Student</span>
-</h2>
-<p>
+    </h2>
+
+    <p>
       Here is your latest class schedule,
       courses and academy activity.
     </p>
-<div class="timezone-info" id="studentTimezoneInfo">
+
+    <div
+      id="studentTimezoneInfo"
+      class="timezone-info"
+    >
       Timezone loading...
     </div>
-</section>
-<section class="fee-notification" id="feeNotification">
-<div class="fee-notification-content">
-<div class="fee-notification-title" id="feeNotificationTitle">
+
+  </section>
+
+  <section
+    id="feeNotification"
+    class="fee-notification"
+  >
+
+    <div class="fee-notification-content">
+
+      <div
+        id="feeNotificationTitle"
+        class="fee-notification-title"
+      >
         🔔 Fee Payment Reminder
       </div>
-<div class="fee-notification-message" id="feeNotificationMessage">
+
+      <div
+        id="feeNotificationMessage"
+        class="fee-notification-message"
+      >
         Your monthly fee payment is due.
       </div>
-</div>
-<a class="fee-notification-btn" href="fees.html" id="feeNotificationButton">
+
+    </div>
+
+    <a
+      id="feeNotificationButton"
+      class="fee-notification-btn"
+      href="fees.html"
+    >
       Submit Payment
     </a>
-</section>
-<section class="stats">
-<div class="stat-card">
-<small>Enrolled Courses</small>
-<strong id="courseCount">0</strong>
-<div class="stat-note">Academy courses</div>
-</div>
-<div class="stat-card">
-<small>Upcoming Classes</small>
-<strong id="classCount">0</strong>
-<div class="stat-note">Next 7 days</div>
-</div>
-<div class="stat-card">
-<small>Attendance</small>
-<strong id="attendanceRate">—</strong>
-<div class="stat-note">Attendance record</div>
-</div>
-<div class="stat-card">
-<small>Notifications</small>
-<strong id="notificationCount">0</strong>
-<div class="stat-note">Your notifications</div>
-</div>
-</section>
-<section class="dashboard-grid">
-<div class="card">
-<div class="card-header">
-<h2>Today's Class</h2>
-<a class="view-link" href="schedule.html">
+
+  </section>
+
+  <section class="stats">
+
+    <div class="stat-card">
+      <small>Enrolled Courses</small>
+      <strong id="courseCount">0</strong>
+      <div class="stat-note">Academy courses</div>
+    </div>
+
+    <div class="stat-card">
+      <small>Upcoming Classes</small>
+      <strong id="classCount">0</strong>
+      <div class="stat-note">Next 7 days</div>
+    </div>
+
+    <div class="stat-card">
+      <small>Attendance</small>
+      <strong id="attendanceRate">—</strong>
+      <div class="stat-note">Attendance record</div>
+    </div>
+
+    <div class="stat-card">
+      <small>Notifications</small>
+      <strong id="notificationCount">0</strong>
+      <div class="stat-note">Your notifications</div>
+    </div>
+
+  </section>
+
+  <section class="dashboard-grid">
+
+    <div class="card">
+
+      <div class="card-header">
+
+        <h2>Today's Class</h2>
+
+        <a
+          href="schedule.html"
+          class="view-link"
+        >
           Full Schedule
         </a>
-</div>
-<div id="todayClass">
-<div class="no-class">
+
+      </div>
+
+      <div id="todayClass">
+
+        <div class="no-class">
           Loading today's class...
         </div>
-</div>
-</div>
-<div class="card">
-<div class="card-header">
-<h2>Upcoming Classes</h2>
-<a class="view-link" href="schedule.html">
+
+      </div>
+
+    </div>
+
+    <div class="card">
+
+      <div class="card-header">
+
+        <h2>Upcoming Classes</h2>
+
+        <a
+          href="schedule.html"
+          class="view-link"
+        >
           View All
         </a>
-</div>
-<div id="upcomingClasses">
-<div class="empty">
+
+      </div>
+
+      <div id="upcomingClasses">
+
+        <div class="empty">
           Loading upcoming classes...
         </div>
-</div>
-</div>
-</section>
-<section class="dashboard-grid">
-<div class="card">
-<div class="card-header">
-<h2>My Courses</h2>
-<a class="view-link" href="course.html">
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <section class="dashboard-grid">
+
+    <div class="card">
+
+      <div class="card-header">
+
+        <h2>My Courses</h2>
+
+        <a
+          href="course.html"
+          class="view-link"
+        >
           View All
         </a>
-</div>
-<div id="courseCards">
-<div class="empty">
+
+      </div>
+
+      <div id="courseCards">
+
+        <div class="empty">
           Loading courses...
         </div>
-</div>
-</div>
-<div class="card">
-<div class="card-header">
-<h2>Recent Payments</h2>
-<a class="view-link" href="fees.html">
+
+      </div>
+
+    </div>
+
+    <div class="card">
+
+      <div class="card-header">
+
+        <h2>Recent Payments</h2>
+
+        <a
+          href="fees.html"
+          class="view-link"
+        >
           View All
         </a>
-</div>
-<div class="table-wrap">
-<table>
-<thead>
-<tr>
-<th>Amount</th>
-<th>Status</th>
-<th>Date</th>
-</tr>
-</thead>
-<tbody id="paymentRows">
-<tr>
-<td class="empty" colspan="3">
+
+      </div>
+
+      <div class="table-wrap">
+
+        <table>
+
+          <thead>
+
+            <tr>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+
+          </thead>
+
+          <tbody id="paymentRows">
+
+            <tr>
+
+              <td
+                colspan="3"
+                class="empty"
+              >
                 Loading payments...
               </td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</section>
-<section class="card">
-<div class="card-header">
-<h2>Notifications</h2>
-</div>
-<div id="notificationRows">
-<div class="empty">
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <section class="card">
+
+    <div class="card-header">
+
+      <h2>Notifications</h2>
+
+    </div>
+
+    <div id="notificationRows">
+
+      <div class="empty">
         Loading notifications...
       </div>
-</div>
-</section>
+
+    </div>
+
+  </section>
+
 </main>
+
 </div>
+
 <script>
 
 (function(){
@@ -2608,28 +2730,6 @@ document.addEventListener(
 })();
 
 </script>
-<footer class="student-footer" role="contentinfo">
-<div class="student-footer-inner">
-<strong>Haroon Ibn Rasheed Online Quran Academy</strong>
-<p>Learn Quran online with personalized one-to-one classes for children and adults.</p>
-<nav aria-label="Footer links">
-<a href="../index.html">Home</a>
-<a href="../courses.html">Courses</a>
-<a href="../contact.html">Contact</a>
-<a href="../portal-login.html">Portal Login</a>
-</nav>
-<div aria-label="Social media" class="student-footer-social">
-<a href="https://www.youtube.com/@Haroon-Ibn-Rasheed" rel="noopener noreferrer" target="_blank">YouTube</a>
-<a href="https://www.facebook.com/share/1D97jipXyu/" rel="noopener noreferrer" target="_blank">Facebook</a>
-<a href="https://www.instagram.com/haroonibnrasheedonoinequran?mdxt=MXJndWdvYmZ1ZGMycA==" rel="noopener noreferrer" target="_blank">Instagram</a>
-<a href="https://www.tiktok.com/@its.haroon.ibn.ra" rel="noopener noreferrer" target="_blank">TikTok</a>
-</div>
-<small>© 2026 Haroon Ibn Rasheed Online Quran Academy. All rights reserved.</small>
-</div>
-</footer><style>
-.student-footer{margin-top:48px;background:#102b46;color:#fff;padding:28px 18px;text-align:center}
-.student-footer-inner{max-width:1100px;margin:0 auto}.student-footer p{margin:10px auto;color:#e5eef5}
-.student-footer nav,.student-footer-social{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;margin:14px 0}
-.student-footer a{color:#fff;text-decoration:underline;text-underline-offset:3px}.student-footer small{display:block;margin-top:18px;color:#e5eef5}
-</style></body>
+
+</body>
 </html>
