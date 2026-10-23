@@ -2,17 +2,64 @@
   'use strict';
 
   const base = 'assets/public-headers/';
-  const slides = {
-    home: ['home-1.svg','home-2.svg','home-3.svg','home-4.svg','home-5.svg'],
-    about: ['about-1.svg','about-2.svg','about-3.svg'],
-    courses: ['courses-1.svg','courses-2.svg','courses-3.svg'],
-    teachers: ['teachers-1.svg','teachers-2.svg','teachers-3.svg'],
-    fees: ['fees-1.svg','fees-2.svg','fees-3.svg'],
-    contact: ['contact-1.svg','contact-2.svg','contact-3.svg'],
-    faq: ['faq-1.svg','faq-2.svg','faq-3.svg'],
-    blog: ['blog-1.svg','blog-2.svg','blog-3.svg'],
-    reviews: ['reviews-1.svg','reviews-2.svg','reviews-3.svg']
+  // Real photographic backgrounds (remote image CDN); four slides per public page.
+  const photos = {
+    home: [
+      'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=1920&q=85',
+      'https://images.unsplash.com/photo-1591604129939-f1a054c0eacb?auto=format&fit=crop&w=1920&q=85',
+      'https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&w=1920&q=85',
+      'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&w=1920&q=85'
+    ],
+    about: [
+      'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=1920&q=85',
+      'https://images.unsplash.com/photo-1591604129939-f1a054c0eacb?auto=format&fit=crop&w=1920&q=85',
+      'https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&w=1920&q=85',
+      'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&w=1920&q=85'
+    ],
+    courses: [
+      'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&w=1920&q=85',
+      'https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&w=1920&q=85',
+      'https://images.unsplash.com/photo-1591604129939-f1a054c0eacb?auto=format&fit=crop&w=1920&q=85',
+      'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=1920&q=85'
+    ],
+    teachers: [
+      'https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&w=1920&q=85',
+      'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&w=1920&q=85',
+      'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=1920&q=85',
+      'https://images.unsplash.com/photo-1591604129939-f1a054c0eacb?auto=format&fit=crop&w=1920&q=85'
+    ],
+    fees: [
+      'https://images.unsplash.com/photo-1591604129939-f1a054c0eacb?auto=format&fit=crop&w=1920&q=85',
+      'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=1920&q=85',
+      'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&w=1920&q=85',
+      'https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&w=1920&q=85'
+    ],
+    contact: [
+      'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=1920&q=85',
+      'https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&w=1920&q=85',
+      'https://images.unsplash.com/photo-1591604129939-f1a054c0eacb?auto=format&fit=crop&w=1920&q=85',
+      'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&w=1920&q=85'
+    ],
+    faq: [
+      'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&w=1920&q=85',
+      'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=1920&q=85',
+      'https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&w=1920&q=85',
+      'https://images.unsplash.com/photo-1591604129939-f1a054c0eacb?auto=format&fit=crop&w=1920&q=85'
+    ],
+    blog: [
+      'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&w=1920&q=85',
+      'https://images.unsplash.com/photo-1591604129939-f1a054c0eacb?auto=format&fit=crop&w=1920&q=85',
+      'https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&w=1920&q=85',
+      'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=1920&q=85'
+    ],
+    reviews: [
+      'https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&w=1920&q=85',
+      'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=1920&q=85',
+      'https://images.unsplash.com/photo-1591604129939-f1a054c0eacb?auto=format&fit=crop&w=1920&q=85',
+      'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&w=1920&q=85'
+    ]
   };
+  const slides = Object.fromEntries(Object.entries(photos).map(([key, urls]) => [key, urls]));
 
   const pageInfo = {
     about: ['ABOUT US', 'Learn, Understand & Live the Quran', 'Discover our mission, values and commitment to quality Quranic education.'],
@@ -108,13 +155,13 @@
   }
 
   function preload(list) {
-    list.forEach(function(name){ const img=new Image(); img.src=base+name; });
+    list.forEach(function(name){ const img=new Image(); img.src=(name.indexOf('http://')===0 || name.indexOf('https://')===0) ? name : base+name; });
   }
 
   function startBackgroundSlideshow(el, list, interval) {
     if (!el || !list || !list.length) return;
     let i=0;
-    const first=base+list[0];
+    const first=(list[0].indexOf('http://')===0 || list[0].indexOf('https://')===0) ? list[0] : base+list[0];
     el.style.backgroundImage='url("'+first+'")';
     preload(list);
     if (list.length < 2) return;
@@ -122,7 +169,7 @@
       i=(i+1)%list.length;
       el.style.opacity='0.55';
       setTimeout(function(){
-        el.style.backgroundImage='url("'+base+list[i]+'")';
+        el.style.backgroundImage='url("'+((list[i].indexOf('http://')===0 || list[i].indexOf('https://')===0) ? list[i] : base+list[i])+'")';
         el.style.opacity='1';
       }, 260);
     }, interval || 5500);
@@ -135,7 +182,7 @@
     if (!hero) return;
     let bg=hero.querySelector('.public-home-slideshow');
     if (!bg) { bg=document.createElement('div'); bg.className='public-home-slideshow'; hero.prepend(bg); }
-    startBackgroundSlideshow(bg, slides.home, 5000);
+    startBackgroundSlideshow(bg, slides.home, 2000);
   }
 
   function makePageHero(page) {
@@ -151,17 +198,17 @@
     slides[page].forEach(function(_,idx){ const s=document.createElement('span'); if(idx===0)s.classList.add('active'); dots.appendChild(s); });
     const bg=section.querySelector('.ph-slides');
     let i=0;
-    bg.style.backgroundImage='url("'+base+slides[page][0]+'")';
+    bg.style.backgroundImage='url("'+slides[page][0]+'")';
     preload(slides[page]);
     setInterval(function(){
       i=(i+1)%slides[page].length;
       bg.style.opacity='.45';
       setTimeout(function(){
-        bg.style.backgroundImage='url("'+base+slides[page][i]+'")';
+        bg.style.backgroundImage='url("'+slides[page][i]+'")';
         bg.style.opacity='1';
         dots.querySelectorAll('span').forEach(function(dot,n){dot.classList.toggle('active',n===i);});
       },260);
-    }, 5200);
+    }, 2000);
   }
 
   function ensureAboutPage() {
