@@ -1189,3 +1189,37 @@ margin-bottom:15px;
   header #nav .brand-subtitle { font-size: 8px !important; }
   header #nav .mobile { font-size: 12px !important; padding: 9px 10px !important; }
 }
+
+
+/* FIX v2: Hide any accidentally inserted oversized logo/image inside the home hero. */
+#main-content .hero > img,
+#main-content .hero img,
+#main-content .page-hero > img,
+#main-content .page-hero img,
+main .hero .logo,
+main .page-hero .logo,
+main .hero [class*="logo"],
+main .page-hero [class*="logo"] {
+  display: none !important;
+  visibility: hidden !important;
+  width: 0 !important;
+  height: 0 !important;
+  max-width: 0 !important;
+  max-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+#main-content .hero::before,
+#main-content .page-hero::before { background-image: none !important; }
+header .brand .logo {
+  display: block !important; visibility: visible !important;
+  width: 50px !important; height: 50px !important;
+  min-width: 50px !important; max-width: 50px !important;
+  max-height: 50px !important; flex: 0 0 50px !important;
+}
+header .brand .logo img {
+  display: block !important; visibility: visible !important;
+  width: 100% !important; height: 100% !important;
+  max-width: 100% !important; max-height: 100% !important;
+  object-fit: cover !important;
+}
