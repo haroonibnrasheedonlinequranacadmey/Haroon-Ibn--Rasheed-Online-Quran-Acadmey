@@ -1228,3 +1228,60 @@ header .logo img {
   position: relative !important;
   z-index: 2 !important;
 }
+
+/* Laptop/desktop navbar refinement: smaller page labels and tighter spacing.
+   Mobile menu rules below 901px remain unchanged. */
+@media (min-width: 901px) and (max-width: 1920px) {
+  header .container.nav#nav {
+    width: 96% !important;
+    max-width: 1600px !important;
+    gap: 6px !important;
+  }
+  header #nav > .brand {
+    flex: 0 0 210px !important;
+    width: 210px !important;
+    min-width: 210px !important;
+    max-width: 210px !important;
+    gap: 6px !important;
+  }
+  header #nav .brand-title {
+    font-size: 15px !important;
+    line-height: 1.08 !important;
+  }
+  header #nav .brand-subtitle {
+    font-size: 9px !important;
+    line-height: 1.1 !important;
+  }
+  header #nav > nav.menu {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    gap: 1px !important;
+    flex-wrap: nowrap !important;
+    justify-content: space-between !important;
+  }
+  header #nav > nav.menu a[data-page] {
+    flex: 0 1 auto !important;
+    min-width: 0 !important;
+    padding: 6px 5px !important;
+    font-size: 12px !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+    letter-spacing: 0 !important;
+  }
+  header #nav > nav.menu .login-link {
+    padding: 6px 6px !important;
+    font-size: 10px !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+  }
+  header #nav > nav.menu .trial {
+    padding: 7px 8px !important;
+    font-size: 10.5px !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+  }
+  header #nav .mobile {
+    display: none !important;
+  }
+}
+
