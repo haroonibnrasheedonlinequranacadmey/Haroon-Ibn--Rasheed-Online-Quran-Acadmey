@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Student / Teacher Login | Haroon Ibn Rasheed</title>
+<link href="css/portal.css" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<meta content="Student / Teacher Login | Haroon Ibn Rasheed for Haroon Ibn Rasheed Online Quran Academy. Access Quran learning services, student support and academy infor" name="description"/><link href="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/portal-login.html" rel="canonical"/><meta content="Student / Teacher Login | Haroon Ibn Rasheed" property="og:title"/><meta content="Student / Teacher Login | Haroon Ibn Rasheed for Haroon Ibn Rasheed Online Quran Academy. Access Quran learning services, student support and academy infor" property="og:description"/><meta content="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/portal-login.html" property="og:url"/><meta content="website" property="og:type"/><link href="assets/hr-logo-round.png" rel="icon" type="image/png"/><style>.skip-link{position:absolute;left:-9999px;top:0;background:#fff;color:#102b46;padding:12px;z-index:99999}.skip-link:focus{left:12px;top:12px}</style></head>
+<body><a class="skip-link" href="#main-content">Skip to main content</a>
+<main class="auth-page" id="main-content">
+<section class="auth-card">
+<img alt="Haroon Ibn Rasheed Online Quran Academy" class="auth-logo" decoding="async" loading="lazy" src="assets/hr-logo-round.png"/>
+<h1>Student / Teacher Portal</h1>
+<p>Sign in to your academy account.</p>
+<div class="msg" id="msg"></div>
+<form id="login">
+<label>
+Email
+<input aria-label="Email" id="email" required="" type="email"/>
+</label>
+<label>
+Password
+<input aria-label="Password" id="password" required="" type="password"/>
+</label>
+<button type="submit">
+Login
+</button>
+</form>
+<div class="links">
+<a href="register.html">
+Create Student Account
+</a>
+<a href="index.html">
+Back to Website
+</a>
+</div>
+</section>
+</main>
+<script>
+
+"use strict";
+
+
+/* =========================
+   SUPABASE
+========================= */
+
+const cfg = window.SUPABASE_CONFIG || {};
+
+const db = window.supabase.createClient(
+    cfg.url,
+    cfg.anonKey
+);
+
+
+/* =========================
+   ELEMENTS
+========================= */
+
+const loginForm =
+    document.getElementById("login");
+
+const emailInput =
+    document.getElementById("email");
+
+const passwordInput =
+    document.getElementById("password");
+
+const message =
+    document.getElementById("msg");
+
+
+/* =========================
+   LOGIN
+========================= */
+
+loginForm.addEventListener(
+    "submit",
+    async function(e){
+
+        e.preventDefault();
+
+        message.textContent =
+            "Signing in...";
+
+
+        try {
+
+            /* LOGIN */
+
+            const loginResult =
+                await db.auth.signInWithPassword({
+
+                    email:
+                        emailInput.value.trim(),
+
+                    password:
+                        passwordInput.value
+
+                });
+
+
+            if(loginResult.error){
+
+                message.textContent =
+                    loginResult.error.message;
+
+                return;
+            }
+
+
+            const user =
+                loginResult.data.user;
+
+
+            if(!user){
+
+                message.textContent =
+                    "User account not found.";
+
+                return;
+            }
+
+
+            /* =========================
+               GET PROFILE ROLE
+            ========================= */
+
+            const profileResult =
+                await db
+                    .from("profiles")
+                    .select(
+                        "id,full_name,role"
+                    )
+                    .eq("id", user.id)
+                    .maybeSingle();
+
+
+            if(profileResult.error){
+
+                message.textContent =
+                    "Profile error: " +
+                    profileResult.error.message;
+
+                return;
+            }
+
+
+            if(!profileResult.data){
+
+                message.textContent =
+                    "Profile not found for this account.";
+
+                return;
+            }
+
+
+            /* =========================
+               NORMALIZE ROLE
+            ========================= */
+
+            const role =
+                String(
+                    profileResult.data.role || ""
+                )
+                .trim()
+                .toLowerCase();
+
+
+            /*
+             * Debug information.
+             * This helps us confirm exactly
+             * which account and role logged in.
+             */
+
+            console.log(
+                "Logged in User ID:",
+                user.id
+            );
+
+            console.log(
+                "Profile:",
+                profileResult.data
+            );
+
+            console.log(
+                "Detected Role:",
+                role
+            );
+
+
+            /* =========================
+               TEACHER
+            ========================= */
+
+            if(role === "teacher"){
+
+                message.textContent =
+                    "Opening Teacher Portal...";
+
+                window.location.href =
+                    "teacher/dashboard.html";
+
+                return;
+            }
+
+
+            /* =========================
+               STUDENT
+            ========================= */
+
+            if(role === "student"){
+
+                message.textContent =
+                    "Opening Student Portal...";
+
+                window.location.href =
+                    "student/dashboard.html";
+
+                return;
+            }
+
+
+            /* =========================
+               ADMIN
+            ========================= */
+
+            if(role === "admin"){
+
+                message.textContent =
+                    "Opening Admin Portal...";
+
+                window.location.href =
+                    "admin/dashboard.html";
+
+                return;
+            }
+
+
+            /* =========================
+               UNKNOWN ROLE
+            ========================= */
+
+            message.textContent =
+                "Unknown account role: " + role;
+
+
+        } catch(error){
+
+            console.error(
+                "Login error:",
+                error
+            );
+
+            message.textContent =
+                "Login error: " +
+                (error.message || error);
+        }
+
+    }
+);
+
+</script>
+</body>
+</html>
