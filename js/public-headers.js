@@ -2,7 +2,13 @@
   'use strict';
 
   const slides = {
-    home: ['https://images.unsplash.com/photo-1720654073347-e7c5ca2ecaa2?auto=format&fit=crop&fm=jpg&q=82&w=1800', 'https://images.unsplash.com/photo-1577792077974-0a424b741d34?auto=format&fit=crop&fm=jpg&q=82&w=1800', 'https://images.unsplash.com/photo-1673178643274-ecd2de1716bb?auto=format&fit=crop&fm=jpg&q=82&w=1800', 'https://images.unsplash.com/photo-1652064588708-2a3eefd68077?auto=format&fit=crop&fm=jpg&q=82&w=1800', 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&fm=jpg&q=82&w=1800'],
+    home: [
+      'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&fm=jpg&q=85&w=1920',
+      'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&fm=jpg&q=85&w=1920',
+      'https://images.unsplash.com/photo-1542816417-0983c9c9ad53?auto=format&fit=crop&fm=jpg&q=85&w=1920',
+      'https://images.unsplash.com/photo-1585036156171-384164a8c675?auto=format&fit=crop&fm=jpg&q=85&w=1920',
+      'https://images.unsplash.com/photo-1577792077974-0a424b741d34?auto=format&fit=crop&fm=jpg&q=85&w=1920'
+    ],
     about: ['https://upload.wikimedia.org/wikipedia/commons/9/97/Courtyard_of_Shah_Jahan_Mosque.JPG', 'https://images.unsplash.com/photo-1558542403-bb396707e7da?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&q=80&w=1600'],
     courses: ['https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1585036156171-384164a8c675?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&q=80&w=1600'],
     teachers: ['https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=1600'],
@@ -10,7 +16,11 @@
     contact: ['https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&q=80&w=1600', 'https://upload.wikimedia.org/wikipedia/commons/9/97/Courtyard_of_Shah_Jahan_Mosque.JPG', 'https://images.unsplash.com/photo-1558542403-bb396707e7da?auto=format&fit=crop&q=80&w=1600'],
     faq: ['https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/PUTRA_MOSQUE_ARCHITECTURE.jpg/1280px-PUTRA_MOSQUE_ARCHITECTURE.jpg', 'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1558542403-bb396707e7da?auto=format&fit=crop&q=80&w=1600'],
     blog: ['https://images.unsplash.com/photo-1652964287112-438ece0a6acc?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&q=80&w=1600', 'https://upload.wikimedia.org/wikipedia/commons/9/97/Courtyard_of_Shah_Jahan_Mosque.JPG'],
-    reviews: ['https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&q=80&w=1600']
+    reviews: ['https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&q=80&w=1600'],
+    register: ['https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&q=85&w=1600', 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&q=85&w=1600'],
+    'portal-login': ['https://images.unsplash.com/photo-1585036156171-384164a8c675?auto=format&fit=crop&q=85&w=1600', 'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&q=85&w=1600'],
+    video: ['https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&q=85&w=1600', 'https://images.unsplash.com/photo-1585036156171-384164a8c675?auto=format&fit=crop&q=85&w=1600'],
+    'system-check': ['https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&q=85&w=1600']
   };
   const pageInfo = {
     about: ['ABOUT US', 'Learn, Understand & Live the Quran', 'Discover our mission, values and commitment to quality Quranic education.'],
@@ -20,7 +30,11 @@
     contact: ['CONTACT US', 'We Are Here to Help', 'Reach out to Haroon Ibn Rasheed Online Quran Academy for admissions and support.'],
     faq: ['FAQS', 'Questions, Clearly Answered', 'Find quick answers about classes, courses, timings, fees and admissions.'],
     blog: ['QURAN & ISLAMIC ARTICLES', 'Learn Beyond the Classroom', 'Helpful Quranic and Islamic educational articles from the academy.'],
-    reviews: ['STUDENT REVIEWS', 'What Our Students Say', 'Real experiences and feedback from students and families.']
+    reviews: ['STUDENT REVIEWS', 'What Our Students Say', 'Real experiences and feedback from students and families.'],
+    register: ['ADMISSIONS', 'Begin Your Quran Learning Journey', 'Register for a free trial and find the right Quran course for your family.'],
+    'portal-login': ['STUDENT & TEACHER PORTAL', 'Welcome Back to Your Learning Portal', 'Sign in to access classes, learning resources and your academy account.'],
+    video: ['QURAN LEARNING VIDEOS', 'Learn Quran Step by Step', 'Explore Quran learning videos and educational resources from our academy.'],
+    'system-check': ['ACADEMY SUPPORT', 'Online Learning System Check', 'Check your setup for a smooth online Quran learning experience.']
   };
 
   function injectStyles() {
@@ -46,10 +60,10 @@
       .form-logo img {display:block!important;width:100%!important;height:100%!important;object-fit:cover!important;border-radius:50%!important;}
       .public-home-slideshow{position:absolute;inset:0;z-index:0;background-size:cover;background-position:center;transition:opacity .65s ease,background-image .65s ease;}
       .hero{position:relative!important;overflow:hidden!important;background:#071a34!important;background-image:none!important;}
-      .hero > .public-home-slideshow{position:absolute!important;inset:0!important;z-index:0!important;pointer-events:none!important;}
+      .hero > .public-home-slideshow{position:absolute!important;inset:0!important;z-index:0!important;pointer-events:none!important;display:block!important;background-repeat:no-repeat!important;}
       .hero > .hero-content,.hero > .page-hero-content{position:relative!important;z-index:2!important;}
       .hero:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(3,17,35,.86),rgba(3,17,35,.48),rgba(3,17,35,.34));z-index:1;pointer-events:none;}
-      .hero > *{position:relative;z-index:2;}
+      .hero > *{position:relative;z-index:2;} .hero > .public-home-slideshow{position:absolute!important;z-index:0!important;} .hero:after{z-index:1!important;} .hero > .hero-content,.hero > .page-hero-content{z-index:2!important;}
       .page-public-header{position:relative;min-height:330px;display:flex;align-items:center;overflow:hidden;color:#fff;background:#071a34;margin:0!important;}
       .page-public-header .ph-slides{position:absolute;inset:0;background-size:cover;background-position:center;transition:opacity .65s ease;}
       .page-public-header:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(3,17,35,.88),rgba(3,17,35,.54),rgba(3,17,35,.38));}
@@ -118,7 +132,7 @@
     if (list.length < 2) return;
     setInterval(function(){
       i=(i+1)%list.length;
-      el.style.opacity='0.55';
+      el.style.opacity='0.25';
       setTimeout(function(){
         el.style.backgroundImage='url("'+list[i]+'")';
         el.style.opacity='1';
@@ -153,7 +167,7 @@
     slides[page].forEach(function(_,idx){ const dot=document.createElement('span'); if(idx===0)dot.classList.add('active'); dots.appendChild(dot); });
     const bg=section.querySelector('.ph-slides'); let i=0;
     bg.style.backgroundImage='url("'+slides[page][0]+'")'; preload(slides[page]);
-    setInterval(function(){ i=(i+1)%slides[page].length; bg.style.opacity='.45'; setTimeout(function(){ bg.style.backgroundImage='url("'+slides[page][i]+'")'; bg.style.opacity='1'; dots.querySelectorAll('span').forEach(function(dot,n){dot.classList.toggle('active',n===i);}); },180); },2000);
+    setInterval(function(){ i=(i+1)%slides[page].length; bg.style.opacity='.45'; setTimeout(function(){ bg.style.backgroundImage='url("'+slides[page][i]+'")'; bg.style.opacity='1'; dots.querySelectorAll('span').forEach(function(dot,n){dot.classList.toggle('active',n===i);}); },180); },3000);
   }
 
   function ensureAboutPage() {
