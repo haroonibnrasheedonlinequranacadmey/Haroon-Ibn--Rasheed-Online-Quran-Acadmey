@@ -2,13 +2,7 @@
   'use strict';
 
   const slides = {
-    home: [
-      'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&fm=jpg&q=85&w=1920',
-      'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&fm=jpg&q=85&w=1920',
-      'https://images.unsplash.com/photo-1542816417-0983c9c9ad53?auto=format&fit=crop&fm=jpg&q=85&w=1920',
-      'https://images.unsplash.com/photo-1585036156171-384164a8c675?auto=format&fit=crop&fm=jpg&q=85&w=1920',
-      'https://images.unsplash.com/photo-1577792077974-0a424b741d34?auto=format&fit=crop&fm=jpg&q=85&w=1920'
-    ],
+    home: ['https://images.unsplash.com/photo-1720654073347-e7c5ca2ecaa2?auto=format&fit=crop&fm=jpg&q=82&w=1800', 'https://images.unsplash.com/photo-1577792077974-0a424b741d34?auto=format&fit=crop&fm=jpg&q=82&w=1800', 'https://images.unsplash.com/photo-1673178643274-ecd2de1716bb?auto=format&fit=crop&fm=jpg&q=82&w=1800', 'https://images.unsplash.com/photo-1652064588708-2a3eefd68077?auto=format&fit=crop&fm=jpg&q=82&w=1800'],
     about: ['https://upload.wikimedia.org/wikipedia/commons/9/97/Courtyard_of_Shah_Jahan_Mosque.JPG', 'https://images.unsplash.com/photo-1558542403-bb396707e7da?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&q=80&w=1600'],
     courses: ['https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1585036156171-384164a8c675?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&q=80&w=1600'],
     teachers: ['https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=1600'],
@@ -16,11 +10,7 @@
     contact: ['https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&q=80&w=1600', 'https://upload.wikimedia.org/wikipedia/commons/9/97/Courtyard_of_Shah_Jahan_Mosque.JPG', 'https://images.unsplash.com/photo-1558542403-bb396707e7da?auto=format&fit=crop&q=80&w=1600'],
     faq: ['https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/PUTRA_MOSQUE_ARCHITECTURE.jpg/1280px-PUTRA_MOSQUE_ARCHITECTURE.jpg', 'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1558542403-bb396707e7da?auto=format&fit=crop&q=80&w=1600'],
     blog: ['https://images.unsplash.com/photo-1652964287112-438ece0a6acc?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&q=80&w=1600', 'https://upload.wikimedia.org/wikipedia/commons/9/97/Courtyard_of_Shah_Jahan_Mosque.JPG'],
-    reviews: ['https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&q=80&w=1600'],
-    register: ['https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&q=85&w=1600', 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&q=85&w=1600'],
-    'portal-login': ['https://images.unsplash.com/photo-1585036156171-384164a8c675?auto=format&fit=crop&q=85&w=1600', 'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&q=85&w=1600'],
-    video: ['https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&q=85&w=1600', 'https://images.unsplash.com/photo-1585036156171-384164a8c675?auto=format&fit=crop&q=85&w=1600'],
-    'system-check': ['https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&q=85&w=1600']
+    reviews: ['https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&q=80&w=1600']
   };
   const pageInfo = {
     about: ['ABOUT US', 'Learn, Understand & Live the Quran', 'Discover our mission, values and commitment to quality Quranic education.'],
@@ -30,11 +20,7 @@
     contact: ['CONTACT US', 'We Are Here to Help', 'Reach out to Haroon Ibn Rasheed Online Quran Academy for admissions and support.'],
     faq: ['FAQS', 'Questions, Clearly Answered', 'Find quick answers about classes, courses, timings, fees and admissions.'],
     blog: ['QURAN & ISLAMIC ARTICLES', 'Learn Beyond the Classroom', 'Helpful Quranic and Islamic educational articles from the academy.'],
-    reviews: ['STUDENT REVIEWS', 'What Our Students Say', 'Real experiences and feedback from students and families.'],
-    register: ['ADMISSIONS', 'Begin Your Quran Learning Journey', 'Register for a free trial and find the right Quran course for your family.'],
-    'portal-login': ['STUDENT & TEACHER PORTAL', 'Welcome Back to Your Learning Portal', 'Sign in to access classes, learning resources and your academy account.'],
-    video: ['QURAN LEARNING VIDEOS', 'Learn Quran Step by Step', 'Explore Quran learning videos and educational resources from our academy.'],
-    'system-check': ['ACADEMY SUPPORT', 'Online Learning System Check', 'Check your setup for a smooth online Quran learning experience.']
+    reviews: ['STUDENT REVIEWS', 'What Our Students Say', 'Real experiences and feedback from students and families.']
   };
 
   function injectStyles() {
@@ -58,12 +44,12 @@
       .brand-sub {color:#fff!important;}
       .form-logo {width:92px!important;height:92px!important;border-radius:50%!important;overflow:hidden!important;background:#071a34!important;border:3px solid #f5c84b!important;color:transparent!important;font-size:0!important;box-shadow:0 8px 24px rgba(0,0,0,.22)!important;}
       .form-logo img {display:block!important;width:100%!important;height:100%!important;object-fit:cover!important;border-radius:50%!important;}
-      .public-home-slideshow{position:absolute;inset:0;z-index:0;background-size:cover;background-position:center;transition:opacity .65s ease,background-image .65s ease;}
+      .public-home-slideshow{position:absolute;inset:0;z-index:0;background-size:cover;background-position:center;transition:opacity 1.4s ease-in-out,background-image 1.4s ease-in-out;}
       .hero{position:relative!important;overflow:hidden!important;background:#071a34!important;background-image:none!important;}
-      .hero > .public-home-slideshow{position:absolute!important;inset:0!important;z-index:0!important;pointer-events:none!important;display:block!important;background-repeat:no-repeat!important;}
+      .hero > .public-home-slideshow{position:absolute!important;inset:0!important;z-index:0!important;pointer-events:none!important;}
       .hero > .hero-content,.hero > .page-hero-content{position:relative!important;z-index:2!important;}
       .hero:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(3,17,35,.86),rgba(3,17,35,.48),rgba(3,17,35,.34));z-index:1;pointer-events:none;}
-      .hero > *{position:relative;z-index:2;} .hero > .public-home-slideshow{position:absolute!important;z-index:0!important;} .hero:after{z-index:1!important;} .hero > .hero-content,.hero > .page-hero-content{z-index:2!important;}
+      .hero > *{position:relative;z-index:2;}
       .page-public-header{position:relative;min-height:330px;display:flex;align-items:center;overflow:hidden;color:#fff;background:#071a34;margin:0!important;}
       .page-public-header .ph-slides{position:absolute;inset:0;background-size:cover;background-position:center;transition:opacity .65s ease;}
       .page-public-header:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(3,17,35,.88),rgba(3,17,35,.54),rgba(3,17,35,.38));}
@@ -79,6 +65,13 @@
         .page-public-header{min-height:280px;}
         .page-public-header .ph-inner{padding:54px 0 48px;}
       }
+      .page-public-header{isolation:isolate!important;min-height:330px!important;z-index:0!important;}
+      .page-public-header .ph-slides{z-index:-1!important;transition:opacity 1.4s ease-in-out!important;background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important;}
+      .page-public-header:after{z-index:0!important;pointer-events:none!important;}
+      .page-public-header .ph-inner{z-index:2!important;}
+      .page-public-header .ph-inner h1,.page-public-header .ph-inner p{position:relative;z-index:2;}
+      main > .page-public-header{margin:0!important;width:100%!important;max-width:none!important;}
+      main > .page-public-header + .page-public-header{display:none!important;}
     `;
     document.head.appendChild(style);
   }
@@ -121,104 +114,138 @@
     document.title = 'Haroon Ibn Rasheed Online Quran Academy';
   }
 
-  function preload(list) {
-    list.forEach(function (url) {
-      const img = new Image();
-      img.src = url;
-    });
-  }
-
-  // Use a local image as a reliable fallback if an external photo URL fails.
-  function fallbackPhoto() {
-    return new URL('images/Online%20Quran%20Class%20with%20Expert%20Teachers.png', document.baseURI).href;
-  }
-
-  function setBackgroundPhoto(el, url) {
-    if (!el) return;
-    const img = new Image();
-    img.onload = function () {
-      el.style.backgroundImage = 'url("' + url.replace(/"/g, '\\"') + '")';
-    };
-    img.onerror = function () {
-      el.style.backgroundImage = 'url("' + fallbackPhoto() + '")';
-    };
-    img.src = url;
-  }
+  function preload(list) { list.forEach(function(url){ const img=new Image(); img.src=url; }); }
 
   function startBackgroundSlideshow(el, list, interval) {
     if (!el || !list || !list.length) return;
-
-    // Inline positioning avoids the existing generic .hero > * rule covering the image.
-    el.style.position = 'absolute';
-    el.style.inset = '0';
-    el.style.zIndex = '0';
-    el.style.pointerEvents = 'none';
-    el.style.backgroundSize = 'cover';
-    el.style.backgroundPosition = 'center';
-    el.style.backgroundRepeat = 'no-repeat';
-    el.style.opacity = '1';
-    el.style.transition = 'opacity .7s ease';
-
-    let i = 0;
-    setBackgroundPhoto(el, list[0]);
+    let i=0;
+    const first=list[0];
+    el.style.backgroundImage='url("'+first+'")';
+    preload(list);
     if (list.length < 2) return;
-
-    window.setInterval(function () {
-      i = (i + 1) % list.length;
-      el.style.opacity = '0.35';
-      window.setTimeout(function () {
-        setBackgroundPhoto(el, list[i]);
-        el.style.opacity = '1';
-      }, 350);
-    }, interval || 3000);
+    setInterval(function(){
+      i=(i+1)%list.length;
+      el.style.opacity='0.55';
+      setTimeout(function(){
+        el.style.backgroundImage='url("'+list[i]+'")';
+        el.style.opacity='1';
+      }, 260);
+    }, interval || 5500);
   }
 
   function setupHome() {
-    const main = document.getElementById('main-content') || document.querySelector('main');
-    if (!main) return;
-    const hero = main.querySelector('.page-hero[data-hero="home"]') || main.querySelector('.hero');
+    const home=document.getElementById('home') || document.getElementById('main-content') || document.querySelector('main');
+    if (!home) return;
+    const hero=home.querySelector('.hero');
     if (!hero) return;
-
-    hero.style.position = 'relative';
-    hero.style.isolation = 'isolate';
-    hero.style.overflow = 'hidden';
-    hero.style.backgroundColor = '#071a34';
-    hero.style.backgroundImage = 'none';
-
-    let bg = hero.querySelector('.public-home-slideshow');
-    if (!bg) {
-      bg = document.createElement('div');
-      bg.className = 'public-home-slideshow';
-      hero.insertBefore(bg, hero.firstChild);
-    }
-    // Explicit inline layer order: photo (0), dark overlay (1), content (2).
-    bg.style.position = 'absolute';
-    bg.style.inset = '0';
-    bg.style.zIndex = '0';
-    hero.querySelectorAll('.hero-content, .page-hero-content').forEach(function (content) {
-      content.style.position = 'relative';
-      content.style.zIndex = '2';
-    });
-    startBackgroundSlideshow(bg, slides.home, 3000);
+    let bg=hero.querySelector('.public-home-slideshow');
+    if (!bg) { bg=document.createElement('div'); bg.className='public-home-slideshow'; hero.prepend(bg); }
+    hero.style.backgroundImage='none';
+    startBackgroundSlideshow(bg, slides.home, 6500);
   }
 
-    function makePageHero(page) {
+  function makePageHero(page) {
     const isHome = page === 'home';
     const main = isHome ? (document.querySelector('#main-content') || document.querySelector('main')) : document.querySelector('main');
     if (!main) return;
     if (isHome) { setupHome(); return; }
-    if (document.querySelector('.page-public-header')) return;
-    const info=pageInfo[page];
+
+    const info = pageInfo[page];
     if (!info) return;
-    const section=document.createElement('section');
-    section.className='page-public-header';
-    section.innerHTML='<div class="ph-slides"></div><div class="ph-inner"><div class="ph-kicker">'+info[0]+'</div><h1>'+info[1]+'</h1><p>'+info[2]+'</p><div class="page-public-dots" aria-hidden="true"></div></div>';
-    main.parentNode.insertBefore(section, main);
-    const dots=section.querySelector('.page-public-dots');
-    slides[page].forEach(function(_,idx){ const dot=document.createElement('span'); if(idx===0)dot.classList.add('active'); dots.appendChild(dot); });
-    const bg=section.querySelector('.ph-slides'); bg.style.position='absolute'; bg.style.inset='0'; bg.style.zIndex='0'; bg.style.backgroundSize='cover'; bg.style.backgroundPosition='center'; let i=0;
-    setBackgroundPhoto(bg, slides[page][0]); preload(slides[page]);
-    setInterval(function(){ i=(i+1)%slides[page].length; bg.style.opacity='.45'; setTimeout(function(){ setBackgroundPhoto(bg, slides[page][i]); bg.style.opacity='1'; dots.querySelectorAll('span').forEach(function(dot,n){dot.classList.toggle('active',n===i);}); },180); },3000);
+
+    /* Reuse an existing hero if the page already has one.
+       This prevents a second header/hero from being inserted above it. */
+    let section = main.querySelector('.page-public-header, .page-hero, .hero');
+    if (!section) {
+      section = document.createElement('section');
+      section.className = 'page-public-header';
+      section.innerHTML = '<div class="ph-slides"></div><div class="ph-inner"><div class="ph-kicker"></div><h1></h1><p></p><div class="page-public-dots" aria-hidden="true"></div></div>';
+      main.insertBefore(section, main.firstChild);
+    } else {
+      section.classList.add('page-public-header');
+      let bg = section.querySelector('.ph-slides');
+      if (!bg) {
+        bg = document.createElement('div');
+        bg.className = 'ph-slides';
+        section.prepend(bg);
+      }
+      let inner = section.querySelector('.ph-inner, .page-hero-content, .hero-content');
+      if (!inner) {
+        inner = document.createElement('div');
+        inner.className = 'ph-inner';
+        section.appendChild(inner);
+      }
+      if (!inner.querySelector('.ph-kicker')) {
+        const kicker = document.createElement('div');
+        kicker.className = 'ph-kicker';
+        inner.prepend(kicker);
+      }
+      if (!inner.querySelector('h1')) {
+        const h1 = document.createElement('h1');
+        inner.appendChild(h1);
+      }
+      if (!inner.querySelector('p')) {
+        const p = document.createElement('p');
+        inner.appendChild(p);
+      }
+      if (!inner.querySelector('.page-public-dots')) {
+        const dots = document.createElement('div');
+        dots.className = 'page-public-dots';
+        dots.setAttribute('aria-hidden', 'true');
+        inner.appendChild(dots);
+      }
+    }
+
+    section.style.position = 'relative';
+    section.style.overflow = 'hidden';
+    section.style.marginTop = '0';
+    const inner = section.querySelector('.ph-inner, .page-hero-content, .hero-content');
+    const kicker = inner.querySelector('.ph-kicker');
+    const h1 = inner.querySelector('h1');
+    const p = inner.querySelector('p');
+    kicker.textContent = info[0];
+    h1.textContent = info[1];
+    p.textContent = info[2];
+
+    let bg = section.querySelector('.ph-slides');
+    if (!bg) {
+      bg = document.createElement('div');
+      bg.className = 'ph-slides';
+      section.prepend(bg);
+    }
+    bg.style.position = 'absolute';
+    bg.style.inset = '0';
+    bg.style.zIndex = '0';
+    bg.style.pointerEvents = 'none';
+    inner.style.position = 'relative';
+    inner.style.zIndex = '2';
+
+    let dots = section.querySelector('.page-public-dots');
+    dots.replaceChildren();
+    slides[page].forEach(function(_, idx) {
+      const dot = document.createElement('span');
+      if (idx === 0) dot.classList.add('active');
+      dots.appendChild(dot);
+    });
+
+    let i = 0;
+    bg.style.backgroundImage = 'url("' + slides[page][0] + '")';
+    bg.style.backgroundSize = 'cover';
+    bg.style.backgroundPosition = 'center';
+    bg.style.backgroundRepeat = 'no-repeat';
+    bg.style.opacity = '1';
+    preload(slides[page]);
+    setInterval(function() {
+      i = (i + 1) % slides[page].length;
+      bg.style.opacity = '0';
+      setTimeout(function() {
+        bg.style.backgroundImage = 'url("' + slides[page][i] + '")';
+        bg.style.opacity = '1';
+        dots.querySelectorAll('span').forEach(function(dot, n) {
+          dot.classList.toggle('active', n === i);
+        });
+      }, 700);
+    }, 6500);
   }
 
   function ensureAboutPage() {
