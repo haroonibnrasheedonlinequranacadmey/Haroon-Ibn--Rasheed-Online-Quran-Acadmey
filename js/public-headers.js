@@ -121,37 +121,88 @@
     document.title = 'Haroon Ibn Rasheed Online Quran Academy';
   }
 
-  function preload(list) { list.forEach(function(url){ const img=new Image(); img.src=url; }); }
+  function preload(list) {
+    list.forEach(function (url) {
+      const img = new Image();
+      img.src = url;
+    });
+  }
+
+  // Use a local image as a reliable fallback if an external photo URL fails.
+  function fallbackPhoto() {
+    return new URL('images/Online%20Quran%20Class%20with%20Expert%20Teachers.png', document.baseURI).href;
+  }
+
+  function setBackgroundPhoto(el, url) {
+    if (!el) return;
+    const img = new Image();
+    img.onload = function () {
+      el.style.backgroundImage = 'url("' + url.replace(/"/g, '\\"') + '")';
+    };
+    img.onerror = function () {
+      el.style.backgroundImage = 'url("' + fallbackPhoto() + '")';
+    };
+    img.src = url;
+  }
 
   function startBackgroundSlideshow(el, list, interval) {
     if (!el || !list || !list.length) return;
-    let i=0;
-    const first=list[0];
-    el.style.backgroundImage='url("'+first+'")';
-    preload(list);
+
+    // Inline positioning avoids the existing generic .hero > * rule covering the image.
+    el.style.position = 'absolute';
+    el.style.inset = '0';
+    el.style.zIndex = '0';
+    el.style.pointerEvents = 'none';
+    el.style.backgroundSize = 'cover';
+    el.style.backgroundPosition = 'center';
+    el.style.backgroundRepeat = 'no-repeat';
+    el.style.opacity = '1';
+    el.style.transition = 'opacity .7s ease';
+
+    let i = 0;
+    setBackgroundPhoto(el, list[0]);
     if (list.length < 2) return;
-    setInterval(function(){
-      i=(i+1)%list.length;
-      el.style.opacity='0.25';
-      setTimeout(function(){
-        el.style.backgroundImage='url("'+list[i]+'")';
-        el.style.opacity='1';
-      }, 260);
-    }, interval || 5500);
+
+    window.setInterval(function () {
+      i = (i + 1) % list.length;
+      el.style.opacity = '0.35';
+      window.setTimeout(function () {
+        setBackgroundPhoto(el, list[i]);
+        el.style.opacity = '1';
+      }, 350);
+    }, interval || 3000);
   }
 
   function setupHome() {
-    const home=document.getElementById('home') || document.getElementById('main-content') || document.querySelector('main');
-    if (!home) return;
-    const hero=home.querySelector('.hero');
+    const main = document.getElementById('main-content') || document.querySelector('main');
+    if (!main) return;
+    const hero = main.querySelector('.page-hero[data-hero="home"]') || main.querySelector('.hero');
     if (!hero) return;
-    let bg=hero.querySelector('.public-home-slideshow');
-    if (!bg) { bg=document.createElement('div'); bg.className='public-home-slideshow'; hero.prepend(bg); }
-    hero.style.backgroundImage='none';
+
+    hero.style.position = 'relative';
+    hero.style.isolation = 'isolate';
+    hero.style.overflow = 'hidden';
+    hero.style.backgroundColor = '#071a34';
+    hero.style.backgroundImage = 'none';
+
+    let bg = hero.querySelector('.public-home-slideshow');
+    if (!bg) {
+      bg = document.createElement('div');
+      bg.className = 'public-home-slideshow';
+      hero.insertBefore(bg, hero.firstChild);
+    }
+    // Explicit inline layer order: photo (0), dark overlay (1), content (2).
+    bg.style.position = 'absolute';
+    bg.style.inset = '0';
+    bg.style.zIndex = '0';
+    hero.querySelectorAll('.hero-content, .page-hero-content').forEach(function (content) {
+      content.style.position = 'relative';
+      content.style.zIndex = '2';
+    });
     startBackgroundSlideshow(bg, slides.home, 3000);
   }
 
-  function makePageHero(page) {
+    function makePageHero(page) {
     const isHome = page === 'home';
     const main = isHome ? (document.querySelector('#main-content') || document.querySelector('main')) : document.querySelector('main');
     if (!main) return;
@@ -165,9 +216,9 @@
     main.parentNode.insertBefore(section, main);
     const dots=section.querySelector('.page-public-dots');
     slides[page].forEach(function(_,idx){ const dot=document.createElement('span'); if(idx===0)dot.classList.add('active'); dots.appendChild(dot); });
-    const bg=section.querySelector('.ph-slides'); let i=0;
-    bg.style.backgroundImage='url("'+slides[page][0]+'")'; preload(slides[page]);
-    setInterval(function(){ i=(i+1)%slides[page].length; bg.style.opacity='.45'; setTimeout(function(){ bg.style.backgroundImage='url("'+slides[page][i]+'")'; bg.style.opacity='1'; dots.querySelectorAll('span').forEach(function(dot,n){dot.classList.toggle('active',n===i);}); },180); },3000);
+    const bg=section.querySelector('.ph-slides'); bg.style.position='absolute'; bg.style.inset='0'; bg.style.zIndex='0'; bg.style.backgroundSize='cover'; bg.style.backgroundPosition='center'; let i=0;
+    setBackgroundPhoto(bg, slides[page][0]); preload(slides[page]);
+    setInterval(function(){ i=(i+1)%slides[page].length; bg.style.opacity='.45'; setTimeout(function(){ setBackgroundPhoto(bg, slides[page][i]); bg.style.opacity='1'; dots.querySelectorAll('span').forEach(function(dot,n){dot.classList.toggle('active',n===i);}); },180); },3000);
   }
 
   function ensureAboutPage() {
