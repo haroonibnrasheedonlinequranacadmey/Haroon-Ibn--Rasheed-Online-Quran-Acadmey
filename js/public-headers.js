@@ -2,7 +2,7 @@
   'use strict';
 
   const slides = {
-    home: ['https://images.unsplash.com/photo-1720654073347-e7c5ca2ecaa2?auto=format&fit=crop&fm=jpg&q=82&w=1800', 'https://images.unsplash.com/photo-1577792077974-0a424b741d34?auto=format&fit=crop&fm=jpg&q=82&w=1800', 'https://images.unsplash.com/photo-1673178643274-ecd2de1716bb?auto=format&fit=crop&fm=jpg&q=82&w=1800', 'https://images.unsplash.com/photo-1652064588708-2a3eefd68077?auto=format&fit=crop&fm=jpg&q=82&w=1800'],
+    home: ['https://images.unsplash.com/photo-1720654073347-e7c5ca2ecaa2?auto=format&fit=crop&fm=jpg&q=82&w=1800', 'https://images.unsplash.com/photo-1577792077974-0a424b741d34?auto=format&fit=crop&fm=jpg&q=82&w=1800', 'https://images.unsplash.com/photo-1673178643274-ecd2de1716bb?auto=format&fit=crop&fm=jpg&q=82&w=1800', 'https://images.unsplash.com/photo-1652064588708-2a3eefd68077?auto=format&fit=crop&fm=jpg&q=82&w=1800', 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&fm=jpg&q=82&w=1800'],
     about: ['https://upload.wikimedia.org/wikipedia/commons/9/97/Courtyard_of_Shah_Jahan_Mosque.JPG', 'https://images.unsplash.com/photo-1558542403-bb396707e7da?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&q=80&w=1600'],
     courses: ['https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1585036156171-384164a8c675?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&q=80&w=1600'],
     teachers: ['https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=1600'],
@@ -134,7 +134,7 @@
     let bg=hero.querySelector('.public-home-slideshow');
     if (!bg) { bg=document.createElement('div'); bg.className='public-home-slideshow'; hero.prepend(bg); }
     hero.style.backgroundImage='none';
-    startBackgroundSlideshow(bg, slides.home, 2000);
+    startBackgroundSlideshow(bg, slides.home, 3000);
   }
 
   function makePageHero(page) {
