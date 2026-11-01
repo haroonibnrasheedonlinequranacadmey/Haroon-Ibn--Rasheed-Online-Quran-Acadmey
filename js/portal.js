@@ -4928,3 +4928,43 @@ if(
 
 
 })();
+
+/* =====================================================
+   TEACHER ADMIN-MESSAGE NOTIFICATIONS
+===================================================== */
+(()=>{
+  if(!location.pathname.includes('/teacher/')) return;
+  const db=window.academyDB;
+  if(!db) return;
+  let audioCtx=null;
+  window.teacherMessageBeep=()=>{
+    try{
+      audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();
+      if(audioCtx.state==='suspended') audioCtx.resume();
+      const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+      o.type='sine';o.frequency.setValueAtTime(880,audioCtx.currentTime);o.frequency.setValueAtTime(1175,audioCtx.currentTime+.11);
+      g.gain.setValueAtTime(.0001,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.16,audioCtx.currentTime+.02);g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+.38);
+      o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+.4);
+    }catch(e){}
+  };
+  const prime=()=>{try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();}catch(e){}};
+  document.addEventListener('pointerdown',prime,{once:true});
+  let first=true,last='';
+  async function check(){
+    try{
+      const s=(await db.auth.getSession()).data.session;if(!s)return;
+      const p=(await db.from('profiles').select('role').eq('id',s.user.id).single()).data;if(p?.role!=='teacher')return;
+      const r=await db.from('messages').select('id,created_at,conversation_id').eq('sender_type','admin').order('created_at',{ascending:false}).limit(1);if(r.error||!r.data?.length)return;
+      const m=r.data[0];
+      const c=await db.from('conversations').select('teacher_id').eq('id',m.conversation_id).eq('conversation_type','teacher').eq('teacher_id',s.user.id).maybeSingle();
+      if(!c.data)return;
+      if(!first&&m.id!==last){window.teacherMessageBeep();showTeacherNotification();}
+      last=m.id;first=false;
+    }catch(e){}
+  }
+  function showTeacherNotification(){
+    let b=document.getElementById('teacherMsgBadge');
+    if(!b){const bell=document.querySelector('.teacher-header-icon');if(!bell)return;bell.href='messages.html';bell.style.position='relative';b=document.createElement('span');b.id='teacherMsgBadge';b.textContent='!';Object.assign(b.style,{position:'absolute',right:'-3px',top:'-3px',width:'16px',height:'16px',borderRadius:'50%',background:'#e53935',color:'#fff',fontSize:'10px',fontWeight:'800',display:'grid',placeItems:'center',border:'2px solid #fff'});bell.appendChild(b)}
+  }
+  const bell=document.querySelector('.teacher-header-icon');if(bell)bell.href='messages.html';check();setInterval(check,5000);
+})();
