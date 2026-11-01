@@ -325,6 +325,24 @@ body.dashboard .side-layout .card,body .student-main .card{box-sizing:border-box
 .student-shell{display:block!important;min-height:calc(100vh - 130px)}
 @media(max-width:650px){.student-top-header{padding:10px 12px;min-height:68px}.student-top-brand img{width:43px;height:43px}.student-top-brand strong{font-size:13px;white-space:normal}.student-top-brand small{font-size:9px}.student-top-actions a{min-width:34px;height:35px;padding:0 8px;font-size:12px}.student-horizontal-nav{padding:0 4px}.student-horizontal-nav a{padding:12px 10px;font-size:11px;gap:5px}.student-main{padding:15px!important}.stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}.dashboard-grid{grid-template-columns:1fr!important}.topbar{gap:12px;flex-wrap:wrap}.topbar h1{font-size:23px}}
 </style>
+
+<style id="student-portal-footer-style">
+.student-portal-footer{background:#062f40;color:#dceef2;padding:55px 0 20px;margin-top:35px;width:100%;box-sizing:border-box}
+.student-footer-container{width:min(1200px,92%);margin:0 auto}
+.student-footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:30px}
+.student-portal-footer h3{color:#fff;margin:0 0 12px;font-size:16px}
+.student-portal-footer p{margin:0;line-height:1.7;color:#dceef2;font-size:13px}
+.student-portal-footer ul{list-style:none;padding:0;margin:0}
+.student-portal-footer li{margin:8px 0;font-size:13px;line-height:1.45}
+.student-portal-footer a{color:#dceef2;text-decoration:none}
+.student-portal-footer a:hover{text-decoration:underline}
+.student-footer-social{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.student-footer-social a{border:1px solid rgba(220,238,242,.25);border-radius:20px;padding:7px 10px;font-size:11px}
+.student-footer-copy{border-top:1px solid rgba(255,255,255,.15);margin-top:30px;padding-top:18px;text-align:center;font-size:12px}
+@media(max-width:950px){.student-footer-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.student-footer-grid{grid-template-columns:1fr;gap:24px}.student-portal-footer{padding:40px 0 18px}.student-footer-container{width:90%}}
+</style>
+
 </head>
 
 <body class="dashboard" data-page="student-teacher">
@@ -332,19 +350,7 @@ body.dashboard .side-layout .card,body .student-main .card{box-sizing:border-box
 
 <div class="side-layout">
 
-<header class="student-top-header">
-<div class="student-brand-row">
-<a class="student-brand" href="dashboard.html" aria-label="Haroon Ibn Rasheed Online Quran Academy">
-<img src="assets/student-logo.svg" alt="HR">
-<span class="student-brand-text"><span class="student-brand-name">Haroon Ibn Rasheed</span><span class="student-brand-sub">Online Quran Academy</span></span>
-</a>
-<div class="student-header-actions">
-<a class="student-header-icon" href="dashboard.html" aria-label="Student dashboard" title="Dashboard">⌂</a>
-<a class="student-profile-btn" href="profile.html" aria-label="Open student profile" title="Profile">👤 <span>Student</span></a>
-</div>
-</div>
-<nav class="student-nav-row" aria-label="Student Portal Navigation"><a href="dashboard.html">Dashboard</a><a href="teacher.html" class="active" aria-current="page">My Teacher</a><a href="course.html">My Courses</a><a href="classes.html">My Classes</a><a href="schedule.html">Schedule</a><a href="attendance.html">Attendance</a><a href="fees.html">Fees</a><a href="leaves.html">Leaves</a><a href="profile.html">My Profile</a></nav>
-</header>
+
 
 
 <main class="content">
@@ -424,38 +430,204 @@ Loading teacher information...
 
 
 <script>
+
 document.addEventListener("DOMContentLoaded", loadTeacherPage);
 
 async function loadTeacherPage(){
-  const list=document.getElementById("scheduleList");
+  const list = document.getElementById("scheduleList");
+  const nameEl = document.getElementById("teacherName");
+  const avatarEl = document.getElementById("teacherAvatar");
+  const courseEl = document.getElementById("teacherCourse");
+  const daysEl = document.getElementById("teacherDays");
+  const timeEl = document.getElementById("teacherTime");
+
   try{
-    const client=window.academyDB || window.supabase.createClient(window.SUPABASE_CONFIG.url,window.SUPABASE_CONFIG.anonKey);
-    const {data:{session},error:se}=await client.auth.getSession();
-    if(se) throw se;
-    if(!session){ location.href="../portal-login.html"; return; }
-    const studentId=session.user.id;
-    const {data:schedules,error}=await client.from("class_schedules").select("id,teacher_id,student_id,course,class_days,class_time,duration_minutes,duration,google_meet_url,classroom_code,active,schedule_timezone").eq("student_id",studentId).eq("active",true).order("class_time",{ascending:true});
-    if(error) throw error;
-    const rows=schedules||[];
-    if(!rows.length){ showNoTeacher(); return; }
-    const ids=[...new Set(rows.map(x=>x.teacher_id).filter(Boolean))];
-    let teachers=[];
-    if(ids.length){ const r=await client.from("teachers").select("id,name,gender,bio,image_url,active,account_id").in("account_id",ids).eq("active",true); if(r.error) throw r.error; teachers=r.data||[]; }
-    const map={}; teachers.forEach(t=>map[String(t.account_id)]=t);
-    const first=map[String(rows[0].teacher_id)]||null; const name=first?.name||"Assigned Teacher";
-    document.getElementById("teacherName").textContent=name;
-    document.getElementById("teacherAvatar").innerHTML=first?.image_url?`<img src="${escapeHtml(first.image_url)}" alt="${escapeHtml(name)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`:escapeHtml(name.charAt(0).toUpperCase());
-    document.getElementById("teacherCourse").textContent=rows[0].course||"Quran Class";
-    document.getElementById("teacherDays").textContent=formatDays(rows[0].class_days);
-    document.getElementById("teacherTime").textContent=formatTime(rows[0].class_time);
-    list.innerHTML=rows.map(x=>{const t=map[String(x.teacher_id)]||first; const dur=x.duration_minutes??x.duration??x.minutes??"-"; const meet=x.google_meet_url?`<a class="meet-btn" href="${escapeHtml(x.google_meet_url)}" target="_blank" rel="noopener">Join Google Meet</a>`:""; return `<div class="schedule-item"><div class="schedule-top"><div class="course">${escapeHtml(x.course||"Quran Class")}</div><div class="day">${escapeHtml(formatDays(x.class_days))}</div></div><div class="schedule-info"><span>👨‍🏫 ${escapeHtml(t?.name||"Teacher")}</span><span>🕐 ${escapeHtml(formatTime(x.class_time))}</span><span>⏱ ${escapeHtml(String(dur))}</span></div>${meet}</div>`;}).join("");
-  }catch(error){ console.error("My Teacher error:",error); list.innerHTML=`<div class="empty"><h3>Teacher information could not be loaded</h3><p>Please try again.</p></div>`; }
+    const {data:sessionData,error:sessionError} = await db.auth.getSession();
+    if(sessionError || !sessionData?.session){
+      location.href = "../portal-login.html";
+      return;
+    }
+
+    const studentId = sessionData.session.user.id;
+
+    // The portal schema links the logged-in student directly to class_schedule.
+    // We also check student_enrollments so a newly assigned teacher can appear
+    // even before the first class schedule row is created.
+    let {data:schedules,error:scheduleError} = await db
+      .from("class_schedule")
+      .select("id,student_id,teacher_id,course_id,class_date,start_time,end_time,meeting_link,status,notes")
+      .eq("student_id",studentId)
+      .order("class_date",{ascending:true})
+      .order("start_time",{ascending:true});
+
+    if(scheduleError) throw scheduleError;
+    schedules = schedules || [];
+
+    let {data:enrollments,error:enrollmentError} = await db
+      .from("student_enrollments")
+      .select("id,teacher_id,course_id,status,progress,enrolled_at")
+      .eq("student_id",studentId)
+      .eq("status","active");
+
+    if(enrollmentError) enrollmentError = null;
+    enrollments = enrollments || [];
+
+    const teacherIds = [...new Set([
+      ...schedules.map(x=>x.teacher_id).filter(Boolean),
+      ...enrollments.map(x=>x.teacher_id).filter(Boolean)
+    ])];
+
+    const courseIds = [...new Set([
+      ...schedules.map(x=>x.course_id).filter(Boolean),
+      ...enrollments.map(x=>x.course_id).filter(Boolean)
+    ])];
+
+    let teachers = [];
+    if(teacherIds.length){
+      const r = await db
+        .from("teachers")
+        .select("id,account_id,name,gender,bio,image_url,active,timezone")
+        .in("account_id",teacherIds)
+        .eq("active",true);
+      if(r.error) throw r.error;
+      teachers = r.data || [];
+    }
+
+    let courses = [];
+    if(courseIds.length){
+      const r = await db
+        .from("courses")
+        .select("id,title")
+        .in("id",courseIds)
+        .eq("active",true);
+      if(!r.error) courses = r.data || [];
+    }
+
+    const teacherMap = new Map(teachers.map(t=>[t.account_id,t]));
+    const courseMap = new Map(courses.map(c=>[c.id,c.title]));
+
+    // Prefer the teacher from the first active schedule, otherwise enrollment.
+    const firstTeacherId = schedules.find(x=>x.teacher_id)?.teacher_id || enrollments.find(x=>x.teacher_id)?.teacher_id || null;
+    const teacher = firstTeacherId ? teacherMap.get(firstTeacherId) : null;
+
+    if(!teacher){
+      nameEl.textContent = "No teacher assigned";
+      avatarEl.textContent = "?";
+      courseEl.textContent = "Not assigned";
+      daysEl.textContent = "Not scheduled";
+      timeEl.textContent = "Not scheduled";
+      list.innerHTML = `<div class="empty"><h3>No Teacher Assigned</h3><p>Your teacher profile will appear here after the administrator links a teacher account to your class or enrollment.</p></div>`;
+      return;
+    }
+
+    nameEl.textContent = teacher.name || "Assigned Teacher";
+    if(teacher.image_url){
+      avatarEl.innerHTML = `<img src="${escapeHtml(teacher.image_url)}" alt="${escapeHtml(teacher.name || 'Teacher')}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+    }else{
+      avatarEl.textContent = (teacher.name || "T").charAt(0).toUpperCase();
+    }
+
+    const firstSchedule = schedules.find(x=>x.teacher_id===firstTeacherId) || schedules[0];
+    const firstEnrollment = enrollments.find(x=>x.teacher_id===firstTeacherId) || enrollments[0];
+    const courseId = firstSchedule?.course_id || firstEnrollment?.course_id;
+    courseEl.textContent = courseMap.get(courseId) || "Quran Class";
+
+    const teacherSchedules = schedules.filter(x=>x.teacher_id===firstTeacherId);
+    const dayNames = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+    const days = [...new Set(teacherSchedules.map(x=>x.class_date ? dayNames[new Date(`${x.class_date}T00:00:00`).getDay()] : null).filter(Boolean))];
+    daysEl.textContent = days.length ? days.join(", ") : "Not scheduled";
+    timeEl.textContent = firstSchedule?.start_time ? `${formatTime(firstSchedule.start_time)}${firstSchedule.end_time ? ` - ${formatTime(firstSchedule.end_time)}` : ""}` : "Not scheduled";
+
+    if(!teacherSchedules.length){
+      list.innerHTML = `<div class="empty"><h3>${escapeHtml(teacher.name || "Teacher")}</h3><p>Your teacher is assigned. Your class schedule will appear here when the administrator creates a class.</p></div>`;
+      return;
+    }
+
+    list.innerHTML = "";
+    teacherSchedules.forEach(schedule=>{
+      const item = document.createElement("div");
+      item.className = "schedule-item";
+      const course = courseMap.get(schedule.course_id) || "Quran Class";
+      const dateText = schedule.class_date ? new Date(`${schedule.class_date}T00:00:00`).toLocaleDateString("en-US",{weekday:"long",year:"numeric",month:"short",day:"numeric"}) : "Date not set";
+      const status = schedule.status || "scheduled";
+      const meetButton = schedule.meeting_link ? `<a class="meet-btn" href="${escapeHtml(schedule.meeting_link)}" target="_blank" rel="noopener">Join Class</a>` : "";
+      item.innerHTML = `
+        <div class="schedule-top"><div class="course">${escapeHtml(course)}</div><div class="day">${escapeHtml(dateText)}</div></div>
+        <div class="schedule-info"><span>👨‍🏫 ${escapeHtml(teacher.name || "Teacher")}</span><span>🕐 ${escapeHtml(schedule.start_time ? formatTime(schedule.start_time) : "Time not set")}${schedule.end_time ? ` - ${escapeHtml(formatTime(schedule.end_time))}` : ""}</span><span>● ${escapeHtml(status)}</span></div>
+        ${meetButton}
+      `;
+      list.appendChild(item);
+    });
+  }catch(error){
+    console.error("My Teacher error:",error);
+    list.innerHTML = `<div class="empty"><h3>Unable to load teacher information</h3><p>Please refresh the page. If the problem continues, check that the student's teacher account is linked in the Admin panel.</p></div>`;
+  }
 }
-function showNoTeacher(){ document.getElementById("teacherName").textContent="No teacher assigned"; document.getElementById("teacherAvatar").textContent="?"; document.getElementById("teacherCourse").textContent="Not assigned"; document.getElementById("teacherDays").textContent="Not scheduled"; document.getElementById("teacherTime").textContent="Not scheduled"; document.getElementById("scheduleList").innerHTML=`<div class="empty"><h3>No Teacher Assigned</h3><p>Your teacher information will appear here after the academy assigns your class.</p></div>`; }
-function formatDays(v){if(!v)return "Not scheduled";if(Array.isArray(v))return v.join(", ");return String(v).replace(/[\[\]"]/g,"").replace(/,/g,", ");}
-function formatTime(v){if(!v)return "Not scheduled";const p=String(v).split(":");if(p.length<2)return String(v);let h=parseInt(p[0],10);if(Number.isNaN(h))return String(v);const m=p[1],a=h>=12?"PM":"AM";h=h%12||12;return `${h}:${m} ${a}`;}
-function escapeHtml(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]));}
+
+function formatTime(time){
+  if(!time) return "Not scheduled";
+  const parts = String(time).split(":");
+  if(parts.length < 2) return time;
+  let hour = parseInt(parts[0],10);
+  const minute = parts[1];
+  const ampm = hour >= 12 ? "PM" : "AM";
+  hour = hour % 12 || 12;
+  return `${hour}:${minute} ${ampm}`;
+}
+
+function escapeHtml(value){
+  return String(value ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+}
+
 </script>
+
+
+<footer class="student-portal-footer">
+  <div class="student-footer-container">
+    <div class="student-footer-grid">
+      <div>
+        <h3>Haroon Ibn Rasheed Online Quran Academy</h3>
+        <p>Learn Quran online with personalized one-to-one classes for children and adults.</p>
+        <div class="student-footer-social">
+          <a aria-label="YouTube" href="https://www.youtube.com/@Haroon-Ibn-Rasheed" target="_blank" rel="noopener noreferrer">YouTube</a>
+          <a aria-label="Facebook Page" href="https://www.facebook.com/share/1D97jipXyu/" target="_blank" rel="noopener noreferrer">Facebook</a>
+          <a aria-label="Instagram" href="https://www.instagram.com/haroonibnrasheedonoinequran?mdxt=MXJndWdvYmZ1ZGMycA==" target="_blank" rel="noopener noreferrer">Instagram</a>
+          <a aria-label="TikTok" href="https://www.tiktok.com/@its.haroon.ibn.ra" target="_blank" rel="noopener noreferrer">TikTok</a>
+        </div>
+      </div>
+      <div>
+        <h3>OUR TUTORS</h3>
+        <ul>
+          <li>Noorani Qaida Tutors for Kids</li>
+          <li>Online Quran Tutors for Kids</li>
+          <li>Quran Memorization Tutors</li>
+          <li>Quran Translation Tutors</li>
+          <li>Islamic Studies Tutors for Kids</li>
+        </ul>
+      </div>
+      <div>
+        <h3>QURAN CLASSES</h3>
+        <ul>
+          <li>Noorani Qaida Classes for Kids</li>
+          <li>Quran Reading Classes for Kids</li>
+          <li>Quran Memorization Classes</li>
+          <li>Quran Translation Classes</li>
+          <li>Islamic Studies Classes for Kids</li>
+        </ul>
+      </div>
+      <div>
+        <h3>CONTACT US</h3>
+        <ul>
+          <li>📧 easyquranlearning10@gmail.com</li>
+          <li>📱 +92-3189842581</li>
+          <li>📱 +92-3478140162</li>
+          <li><a href="https://wa.me/923189842581" target="_blank" rel="noopener noreferrer">WhatsApp Us</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="student-footer-copy">© 2026 Haroon Ibn Rasheed Online Quran Academy. All Rights Reserved.</div>
+  </div>
+</footer>
 
 </body>
 </html>

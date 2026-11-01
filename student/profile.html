@@ -463,6 +463,24 @@ body.dashboard .side-layout .card,body .student-main .card{box-sizing:border-box
 .student-shell{display:block!important;min-height:calc(100vh - 130px)}
 @media(max-width:650px){.student-top-header{padding:10px 12px;min-height:68px}.student-top-brand img{width:43px;height:43px}.student-top-brand strong{font-size:13px;white-space:normal}.student-top-brand small{font-size:9px}.student-top-actions a{min-width:34px;height:35px;padding:0 8px;font-size:12px}.student-horizontal-nav{padding:0 4px}.student-horizontal-nav a{padding:12px 10px;font-size:11px;gap:5px}.student-main{padding:15px!important}.stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}.dashboard-grid{grid-template-columns:1fr!important}.topbar{gap:12px;flex-wrap:wrap}.topbar h1{font-size:23px}}
 </style>
+
+<style id="student-portal-footer-style">
+.student-portal-footer{background:#062f40;color:#dceef2;padding:55px 0 20px;margin-top:35px;width:100%;box-sizing:border-box}
+.student-footer-container{width:min(1200px,92%);margin:0 auto}
+.student-footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:30px}
+.student-portal-footer h3{color:#fff;margin:0 0 12px;font-size:16px}
+.student-portal-footer p{margin:0;line-height:1.7;color:#dceef2;font-size:13px}
+.student-portal-footer ul{list-style:none;padding:0;margin:0}
+.student-portal-footer li{margin:8px 0;font-size:13px;line-height:1.45}
+.student-portal-footer a{color:#dceef2;text-decoration:none}
+.student-portal-footer a:hover{text-decoration:underline}
+.student-footer-social{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.student-footer-social a{border:1px solid rgba(220,238,242,.25);border-radius:20px;padding:7px 10px;font-size:11px}
+.student-footer-copy{border-top:1px solid rgba(255,255,255,.15);margin-top:30px;padding-top:18px;text-align:center;font-size:12px}
+@media(max-width:950px){.student-footer-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.student-footer-grid{grid-template-columns:1fr;gap:24px}.student-portal-footer{padding:40px 0 18px}.student-footer-container{width:90%}}
+</style>
+
 </head>
 
 <body data-page="student-profile">
@@ -470,19 +488,7 @@ body.dashboard .side-layout .card,body .student-main .card{box-sizing:border-box
 
 <div class="student-shell">
 
-<header class="student-top-header">
-<div class="student-brand-row">
-<a class="student-brand" href="dashboard.html" aria-label="Haroon Ibn Rasheed Online Quran Academy">
-<img src="assets/student-logo.svg" alt="HR">
-<span class="student-brand-text"><span class="student-brand-name">Haroon Ibn Rasheed</span><span class="student-brand-sub">Online Quran Academy</span></span>
-</a>
-<div class="student-header-actions">
-<a class="student-header-icon" href="dashboard.html" aria-label="Student dashboard" title="Dashboard">⌂</a>
-<a class="student-profile-btn" href="profile.html" aria-label="Open student profile" title="Profile">👤 <span>Student</span></a>
-</div>
-</div>
-<nav class="student-nav-row" aria-label="Student Portal Navigation"><a href="dashboard.html">Dashboard</a><a href="teacher.html">My Teacher</a><a href="course.html">My Courses</a><a href="classes.html">My Classes</a><a href="schedule.html">Schedule</a><a href="attendance.html">Attendance</a><a href="fees.html">Fees</a><a href="leaves.html">Leaves</a><a href="profile.html" class="active" aria-current="page">My Profile</a></nav>
-</header>
+
 
 
 <main class="student-main">
@@ -1439,6 +1445,54 @@ loadProfile();
 })();
 
 </script>
+
+
+<footer class="student-portal-footer">
+  <div class="student-footer-container">
+    <div class="student-footer-grid">
+      <div>
+        <h3>Haroon Ibn Rasheed Online Quran Academy</h3>
+        <p>Learn Quran online with personalized one-to-one classes for children and adults.</p>
+        <div class="student-footer-social">
+          <a aria-label="YouTube" href="https://www.youtube.com/@Haroon-Ibn-Rasheed" target="_blank" rel="noopener noreferrer">YouTube</a>
+          <a aria-label="Facebook Page" href="https://www.facebook.com/share/1D97jipXyu/" target="_blank" rel="noopener noreferrer">Facebook</a>
+          <a aria-label="Instagram" href="https://www.instagram.com/haroonibnrasheedonoinequran?mdxt=MXJndWdvYmZ1ZGMycA==" target="_blank" rel="noopener noreferrer">Instagram</a>
+          <a aria-label="TikTok" href="https://www.tiktok.com/@its.haroon.ibn.ra" target="_blank" rel="noopener noreferrer">TikTok</a>
+        </div>
+      </div>
+      <div>
+        <h3>OUR TUTORS</h3>
+        <ul>
+          <li>Noorani Qaida Tutors for Kids</li>
+          <li>Online Quran Tutors for Kids</li>
+          <li>Quran Memorization Tutors</li>
+          <li>Quran Translation Tutors</li>
+          <li>Islamic Studies Tutors for Kids</li>
+        </ul>
+      </div>
+      <div>
+        <h3>QURAN CLASSES</h3>
+        <ul>
+          <li>Noorani Qaida Classes for Kids</li>
+          <li>Quran Reading Classes for Kids</li>
+          <li>Quran Memorization Classes</li>
+          <li>Quran Translation Classes</li>
+          <li>Islamic Studies Classes for Kids</li>
+        </ul>
+      </div>
+      <div>
+        <h3>CONTACT US</h3>
+        <ul>
+          <li>📧 easyquranlearning10@gmail.com</li>
+          <li>📱 +92-3189842581</li>
+          <li>📱 +92-3478140162</li>
+          <li><a href="https://wa.me/923189842581" target="_blank" rel="noopener noreferrer">WhatsApp Us</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="student-footer-copy">© 2026 Haroon Ibn Rasheed Online Quran Academy. All Rights Reserved.</div>
+  </div>
+</footer>
 
 </body>
 </html>
