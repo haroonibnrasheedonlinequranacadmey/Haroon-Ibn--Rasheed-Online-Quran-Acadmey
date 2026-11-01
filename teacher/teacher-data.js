@@ -80,12 +80,42 @@
     if(!document.getElementById('classRows') || document.body.dataset.page!=='teacher-attendance') return;
     const rows=document.getElementById('classRows'); rows.innerHTML='<tr><td colspan="7" style="text-align:center;padding:28px">Loading attendance…</td></tr>';
     try{
-      const ctx=await teacherContext(); setHeader(ctx); const map=await studentMap(ctx); const r=await db.from('teacher_class_sessions').select('id,schedule_id,teacher_id,student_id,class_date,status,started_at,completed_at,student_joined_at,class,test,session,session_timezone').in('teacher_id',ctx.ids).order('class_date',{ascending:false}).limit(200);
+      const ctx=await teacherContext(); setHeader(ctx); const map=await studentMap(ctx);
+      const r=await db.from('teacher_class_sessions').select('id,schedule_id,teacher_id,student_id,class_date,status,started_at,completed_at,student_joined_at,class,test,session,session_timezone').in('teacher_id',ctx.ids).order('class_date',{ascending:false}).limit(200);
       if(r.error) throw r.error; const sessions=r.data||[];
+      const total=document.getElementById('attTotal'), present=document.getElementById('attPresent'), absent=document.getElementById('attAbsent'), rate=document.getElementById('attRate');
+      const p=sessions.filter(x=>String(x.status||'').toLowerCase()==='present').length, a=sessions.filter(x=>String(x.status||'').toLowerCase()==='absent').length;
+      if(total) total.textContent=sessions.length; if(present) present.textContent=p; if(absent) absent.textContent=a; if(rate) rate.textContent=(p+a?Math.round(p/(p+a)*100):0)+'%';
       if(!sessions.length){rows.innerHTML='<tr><td colspan="7" style="text-align:center;padding:28px">No attendance records found yet.</td></tr>';return;}
-      rows.innerHTML=sessions.map(x=>{const st=map.get(String(x.student_id));const status=x.status||'Scheduled';return `<tr><td>${fmtDate(x.class_date)}</td><td>${fmtTime(x.started_at||'')}</td><td><strong>${esc(st?.full_name||'Student')}</strong><br><small>${esc(st?.phone||st?.email||'')}</small></td><td>${esc(st?.course||'—')}</td><td><strong>${esc(status)}</strong></td><td><button type="button" class="btn-small teacher-mark-att" data-id="${esc(x.id)}" data-status="present">Present</button> <button type="button" class="btn-small teacher-mark-att" data-id="${esc(x.id)}" data-status="absent">Absent</button></td><td>${esc(x.class||x.session||'—')}</td></tr>`;}).join('');
+      rows.innerHTML=sessions.map(x=>{const st=map.get(String(x.student_id));const status=String(x.status||'Scheduled').toLowerCase();const badge=status==='present'?'present':status==='absent'?'absent':'scheduled';return `<tr><td>${fmtDate(x.class_date)}</td><td>${fmtTime(x.started_at||'')}</td><td><strong>${esc(st?.full_name||'Student')}</strong><br><small>${esc(st?.phone||st?.email||'')}</small></td><td>${esc(st?.course||'—')}</td><td><span class="att-badge ${badge}">${esc(x.status||'Scheduled')}</span></td><td><div class="att-mark-wrap"><button type="button" class="att-mark-btn present teacher-mark-att" data-id="${esc(x.id)}" data-status="present">Present</button><button type="button" class="att-mark-btn absent teacher-mark-att" data-id="${esc(x.id)}" data-status="absent">Absent</button></div></td><td>${esc(x.class||x.session||'—')}</td></tr>`;}).join('');
       rows.querySelectorAll('.teacher-mark-att').forEach(btn=>btn.addEventListener('click',async()=>{btn.disabled=true;const rr=await db.from('teacher_class_sessions').update({status:btn.dataset.status}).eq('id',btn.dataset.id).in('teacher_id',ctx.ids);btn.disabled=false;if(rr.error) alert(rr.error.message);else loadAttendance();}));
     }catch(e){rows.innerHTML=`<tr><td colspan="7" style="text-align:center;padding:28px;color:#991b1b">${esc(e.message||'Unable to load attendance.')}</td></tr>`;}
+  }
+
+  async function loadLeaves(){
+    if(!document.getElementById('leaveRows') || document.body.dataset.page!=='teacher-leaves') return;
+    const rows=document.getElementById('leaveRows');
+    const setStat=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+    try{
+      const ctx=await teacherContext(); setHeader(ctx);
+      const teacherId=ctx.teacher?.id||ctx.user.id;
+      const r=await db.from('teacher_leaves').select('id,teacher_id,start_date,end_date,reason,status,admin_note,created_at').eq('teacher_id',teacherId).order('created_at',{ascending:false});
+      if(r.error) throw r.error; const data=r.data||[];
+      setStat('leaveTotal',data.length); setStat('leavePending',data.filter(x=>String(x.status||'pending').toLowerCase()==='pending').length); setStat('leaveApproved',data.filter(x=>String(x.status||'').toLowerCase()==='approved').length); setStat('leaveRejected',data.filter(x=>String(x.status||'').toLowerCase()==='rejected').length);
+      if(!data.length){rows.innerHTML='<tr><td colspan="5" style="text-align:center;padding:28px">No leave requests yet. Submit your first request above.</td></tr>';return;}
+      rows.innerHTML=data.map(x=>{const st=String(x.status||'pending').toLowerCase();return `<tr><td>${fmtDate(x.start_date)}</td><td>${fmtDate(x.end_date)}</td><td class="leave-reason">${esc(x.reason||'—')}${x.admin_note?`<br><small><strong>Admin:</strong> ${esc(x.admin_note)}</small>`:''}</td><td><span class="leave-badge ${esc(st)}">${esc(x.status||'Pending')}</span></td><td>${fmtDate(x.created_at)}</td></tr>`;}).join('');
+    }catch(e){rows.innerHTML=`<tr><td colspan="5" style="text-align:center;padding:28px;color:#991b1b">${esc(e.message||'Unable to load leave requests. Run the supplied SQL first.')}</td></tr>`;}
+  }
+
+  async function initLeavesForm(){
+    const form=document.getElementById('leaveForm'); if(!form) return;
+    form.addEventListener('submit',async e=>{
+      e.preventDefault(); const btn=form.querySelector('button[type="submit"]'), msg=document.getElementById('leaveStatusMsg'); const fd=new FormData(form); const start=fd.get('start_date'), end=fd.get('end_date'), reason=String(fd.get('reason')||'').trim();
+      if(end<start){msg.textContent='End date cannot be before start date.';msg.style.color='#b91c1c';return;}
+      btn.disabled=true; msg.textContent='Submitting…'; msg.style.color='#64748b';
+      try{const ctx=await teacherContext(); const teacherId=ctx.teacher?.id||ctx.user.id; const r=await db.from('teacher_leaves').insert({teacher_id:teacherId,start_date:start,end_date:end,reason,status:'pending'}); if(r.error) throw r.error; form.reset(); msg.textContent='Leave request submitted successfully.';msg.style.color='#15803d'; await loadLeaves();}
+      catch(err){msg.textContent=err.message||'Unable to submit leave request.';msg.style.color='#b91c1c';} finally{btn.disabled=false;}
+    });
   }
 
   const fieldDefs=[
@@ -178,7 +208,7 @@
   async function init(){
     try{
       const ctx=await teacherContext(); setHeader(ctx);
-      await loadStudents(); await loadClasses(); await loadAttendance(); renderProfile(ctx);
+      await loadStudents(); await loadClasses(); await loadAttendance(); await loadLeaves(); await initLeavesForm(); renderProfile(ctx);
     }catch(e){console.warn('Teacher data enhancement:',e);}
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
