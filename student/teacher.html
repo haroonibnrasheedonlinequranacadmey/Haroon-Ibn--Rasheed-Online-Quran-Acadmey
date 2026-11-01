@@ -424,258 +424,37 @@ Loading teacher information...
 
 
 <script>
-
 document.addEventListener("DOMContentLoaded", loadTeacherPage);
 
-
 async function loadTeacherPage(){
-
+  const list=document.getElementById("scheduleList");
   try{
-
-    const result = await getCurrentStudent();
-
-    if(!result){
-      return;
-    }
-
-    const studentId = result.student.id;
-
-
-    const { data, error } = await db
-
-      .from("class_schedules")
-
-      .select(`
-        *,
-        teacher:profiles!class_schedules_teacher_id_fkey(
-          id,
-          full_name
-        )
-      `)
-
-      .eq("student_id",studentId)
-
-      .eq("active",true)
-
-      .order("class_time");
-
-
-    if(error){
-
-      console.error("Teacher query error:",error);
-
-      document.getElementById("scheduleList").innerHTML = `
-        <div class="empty">
-          Could not load teacher information.
-        </div>
-      `;
-
-      return;
-    }
-
-
-    if(!data || data.length === 0){
-
-      document.getElementById("teacherName").textContent =
-        "No teacher assigned";
-
-      document.getElementById("teacherAvatar").textContent =
-        "?";
-
-      document.getElementById("teacherCourse").textContent =
-        "Not assigned";
-
-      document.getElementById("teacherDays").textContent =
-        "Not scheduled";
-
-      document.getElementById("teacherTime").textContent =
-        "Not scheduled";
-
-      document.getElementById("scheduleList").innerHTML = `
-        <div class="empty">
-          <h3>No Teacher Assigned</h3>
-          <p>Your teacher information will appear here after the academy assigns your class.</p>
-        </div>
-      `;
-
-      return;
-    }
-
-
-    const first = data[0];
-
-    const teacherName =
-      first.teacher?.full_name || "Assigned Teacher";
-
-
-    document.getElementById("teacherName").textContent =
-      teacherName;
-
-
-    document.getElementById("teacherAvatar").textContent =
-      teacherName.charAt(0).toUpperCase();
-
-
-    document.getElementById("teacherCourse").textContent =
-      first.course || "Not specified";
-
-
-    document.getElementById("teacherDays").textContent =
-      formatDays(first.class_days);
-
-
-    document.getElementById("teacherTime").textContent =
-      formatTime(first.class_time);
-
-
-    const list =
-      document.getElementById("scheduleList");
-
-
-    list.innerHTML = "";
-
-
-    data.forEach(schedule => {
-
-      const item =
-        document.createElement("div");
-
-      item.className =
-        "schedule-item";
-
-
-      let meetButton = "";
-
-      if(schedule.google_meet_url){
-
-        meetButton = `
-          <a
-            class="meet-btn"
-            href="${escapeHtml(schedule.google_meet_url)}"
-            target="_blank"
-            rel="noopener"
-          >
-            Join Google Meet
-          </a>
-        `;
-
-      }
-
-
-      item.innerHTML = `
-
-        <div class="schedule-top">
-
-          <div class="course">
-            ${escapeHtml(schedule.course || "Quran Class")}
-          </div>
-
-          <div class="day">
-            ${escapeHtml(formatDays(schedule.class_days))}
-          </div>
-
-        </div>
-
-
-        <div class="schedule-info">
-
-          <span>
-            👨‍🏫 ${escapeHtml(schedule.teacher?.full_name || "Teacher")}
-          </span>
-
-          <span>
-            🕐 ${escapeHtml(formatTime(schedule.class_time))}
-          </span>
-
-          <span>
-            ⏱ ${escapeHtml(String(schedule.duration || schedule.minutes || "-"))}
-          </span>
-
-        </div>
-
-        ${meetButton}
-
-      `;
-
-
-      list.appendChild(item);
-
-    });
-
-
-  }catch(error){
-
-    console.error("My Teacher error:",error);
-
-    document.getElementById("scheduleList").innerHTML = `
-      <div class="empty">
-        Something went wrong while loading teacher information.
-      </div>
-    `;
-
-  }
-
+    const client=window.academyDB || window.supabase.createClient(window.SUPABASE_CONFIG.url,window.SUPABASE_CONFIG.anonKey);
+    const {data:{session},error:se}=await client.auth.getSession();
+    if(se) throw se;
+    if(!session){ location.href="../portal-login.html"; return; }
+    const studentId=session.user.id;
+    const {data:schedules,error}=await client.from("class_schedules").select("id,teacher_id,student_id,course,class_days,class_time,duration_minutes,duration,google_meet_url,classroom_code,active,schedule_timezone").eq("student_id",studentId).eq("active",true).order("class_time",{ascending:true});
+    if(error) throw error;
+    const rows=schedules||[];
+    if(!rows.length){ showNoTeacher(); return; }
+    const ids=[...new Set(rows.map(x=>x.teacher_id).filter(Boolean))];
+    let teachers=[];
+    if(ids.length){ const r=await client.from("teachers").select("id,name,gender,bio,image_url,active,account_id").in("account_id",ids).eq("active",true); if(r.error) throw r.error; teachers=r.data||[]; }
+    const map={}; teachers.forEach(t=>map[String(t.account_id)]=t);
+    const first=map[String(rows[0].teacher_id)]||null; const name=first?.name||"Assigned Teacher";
+    document.getElementById("teacherName").textContent=name;
+    document.getElementById("teacherAvatar").innerHTML=first?.image_url?`<img src="${escapeHtml(first.image_url)}" alt="${escapeHtml(name)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`:escapeHtml(name.charAt(0).toUpperCase());
+    document.getElementById("teacherCourse").textContent=rows[0].course||"Quran Class";
+    document.getElementById("teacherDays").textContent=formatDays(rows[0].class_days);
+    document.getElementById("teacherTime").textContent=formatTime(rows[0].class_time);
+    list.innerHTML=rows.map(x=>{const t=map[String(x.teacher_id)]||first; const dur=x.duration_minutes??x.duration??x.minutes??"-"; const meet=x.google_meet_url?`<a class="meet-btn" href="${escapeHtml(x.google_meet_url)}" target="_blank" rel="noopener">Join Google Meet</a>`:""; return `<div class="schedule-item"><div class="schedule-top"><div class="course">${escapeHtml(x.course||"Quran Class")}</div><div class="day">${escapeHtml(formatDays(x.class_days))}</div></div><div class="schedule-info"><span>👨‍🏫 ${escapeHtml(t?.name||"Teacher")}</span><span>🕐 ${escapeHtml(formatTime(x.class_time))}</span><span>⏱ ${escapeHtml(String(dur))}</span></div>${meet}</div>`;}).join("");
+  }catch(error){ console.error("My Teacher error:",error); list.innerHTML=`<div class="empty"><h3>Teacher information could not be loaded</h3><p>Please try again.</p></div>`; }
 }
-
-
-function formatDays(days){
-
-  if(!days){
-    return "Not scheduled";
-  }
-
-  if(Array.isArray(days)){
-    return days.join(", ");
-  }
-
-  return String(days)
-    .replace(/[\[\]"]/g,"")
-    .replace(/,/g,", ");
-
-}
-
-
-function formatTime(time){
-
-  if(!time){
-    return "Not scheduled";
-  }
-
-  const parts =
-    String(time).split(":");
-
-  if(parts.length < 2){
-    return time;
-  }
-
-  let hour =
-    parseInt(parts[0],10);
-
-  const minute =
-    parts[1];
-
-  const ampm =
-    hour >= 12 ? "PM" : "AM";
-
-  hour =
-    hour % 12 || 12;
-
-  return `${hour}:${minute} ${ampm}`;
-
-}
-
-
-function escapeHtml(value){
-
-  return String(value)
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
-
-}
-
+function showNoTeacher(){ document.getElementById("teacherName").textContent="No teacher assigned"; document.getElementById("teacherAvatar").textContent="?"; document.getElementById("teacherCourse").textContent="Not assigned"; document.getElementById("teacherDays").textContent="Not scheduled"; document.getElementById("teacherTime").textContent="Not scheduled"; document.getElementById("scheduleList").innerHTML=`<div class="empty"><h3>No Teacher Assigned</h3><p>Your teacher information will appear here after the academy assigns your class.</p></div>`; }
+function formatDays(v){if(!v)return "Not scheduled";if(Array.isArray(v))return v.join(", ");return String(v).replace(/[\[\]"]/g,"").replace(/,/g,", ");}
+function formatTime(v){if(!v)return "Not scheduled";const p=String(v).split(":");if(p.length<2)return String(v);let h=parseInt(p[0],10);if(Number.isNaN(h))return String(v);const m=p[1],a=h>=12?"PM":"AM";h=h%12||12;return `${h}:${m} ${a}`;}
+function escapeHtml(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]));}
 </script>
 
 </body>
