@@ -1,0 +1,29 @@
+
+/* Teacher Portal final shared additions */
+.teacher-final-footer{background:#062f40;color:#dceef2;padding:55px 0 20px;margin-top:40px}
+.teacher-final-footer .tf-container{max-width:1200px;margin:0 auto;padding:0 24px}
+.teacher-final-footer .tf-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:30px}
+.teacher-final-footer h3{color:#fff;margin:0 0 12px;font-size:16px}
+.teacher-final-footer p{margin:0 0 16px;line-height:1.6}
+.teacher-final-footer ul{list-style:none;padding:0;margin:0}
+.teacher-final-footer li{margin:8px 0;line-height:1.45}
+.teacher-final-footer a{color:#dceef2;text-decoration:none}
+.teacher-final-footer a:hover{text-decoration:underline}
+.teacher-final-footer .tf-social{display:flex;gap:12px;align-items:center}
+.teacher-final-footer .tf-social a{width:38px;height:38px;border:1px solid rgba(255,255,255,.25);border-radius:50%;display:grid;place-items:center}
+.teacher-final-footer .tf-social svg{width:19px;height:19px;fill:currentColor}
+.teacher-final-footer .tf-copy{border-top:1px solid rgba(255,255,255,.15);margin-top:30px;padding-top:18px;text-align:center;font-size:12px}
+.teacher-whatsapp-fab{position:fixed;right:22px;bottom:22px;width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#25D366;color:#fff!important;text-decoration:none!important;box-shadow:0 8px 24px rgba(0,0,0,.28);z-index:99998;font-size:34px;border:3px solid #fff;line-height:1;transition:transform .18s ease,box-shadow .18s ease}
+.teacher-whatsapp-fab:hover{transform:scale(1.08);box-shadow:0 10px 28px rgba(0,0,0,.34)}
+.teacher-message-fab{position:fixed;right:22px;bottom:94px;width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#0b9fbb;color:#fff;border:3px solid #fff;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:99998;font-size:27px;cursor:pointer}
+.teacher-message-fab:hover{transform:scale(1.06)}
+.teacher-message-panel{display:none;position:fixed;right:22px;bottom:166px;width:min(390px,calc(100vw - 30px));background:#fff;border-radius:16px;box-shadow:0 18px 55px rgba(0,0,0,.28);z-index:99999;overflow:hidden;border:1px solid #d7edf2}
+.teacher-message-panel.open{display:block}
+.teacher-message-head{background:#07394a;color:#fff;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.teacher-message-head strong{display:block}.teacher-message-head small{display:block;opacity:.8;margin-top:3px}
+.teacher-message-head button{border:0;background:transparent;color:#fff;font-size:25px;cursor:pointer}
+.teacher-message-form{padding:16px}.teacher-message-form input,.teacher-message-form textarea{width:100%;box-sizing:border-box;border:1px solid #cfe4e9;border-radius:9px;padding:10px;margin-bottom:10px;font:inherit}
+.teacher-message-form button[type=submit]{width:100%;border:0;border-radius:9px;padding:11px;background:#0b9fbb;color:#fff;font-weight:700;cursor:pointer}
+.teacher-message-status{margin-top:9px;font-size:12px;color:#0b7187;min-height:18px}
+@media(max-width:850px){.teacher-final-footer .tf-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.teacher-final-footer .tf-grid{grid-template-columns:1fr}.teacher-whatsapp-fab{width:54px;height:54px;right:15px;bottom:15px;font-size:30px}.teacher-message-fab{width:54px;height:54px;right:15px;bottom:78px;font-size:24px}.teacher-message-panel{right:15px;bottom:140px}}
