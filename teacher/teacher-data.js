@@ -93,13 +93,85 @@
   ];
   function renderProfile(ctx){
     const main=document.querySelector('#main-content'); if(!main||document.body.dataset.page!=='teacher-profile') return;
-    const t=ctx.teacher||{}; const u=ctx.user; const photo=t.avatar_url||t.profile_image||t.photo_url||t.image_url||t.image||u.user_metadata?.avatar_url||''; const name=t.full_name||t.name||u.user_metadata?.full_name||u.email||'Teacher';
-    const cards=fieldDefs.map(([k,label])=>{let v=t[k]; if(k==='email') v=v||u.email; if(v==null||v==='') return ''; return `<div class="teacher-profile-field"><span>${esc(label)}</span><strong>${esc(v)}</strong></div>`;}).join('');
-    main.innerHTML=`<section class="card teacher-profile-card"><div class="teacher-profile-hero"><div class="teacher-avatar-wrap">${photo?`<img src="${esc(photo)}" alt="${esc(name)}">`:`<div class="teacher-avatar-placeholder">${esc(name.charAt(0).toUpperCase())}</div>`}</div><div><h1>${esc(name)}</h1><p>Teacher Profile • Haroon Ibn Rasheed Online Quran Academy</p><a class="btn-small" href="https://wa.me/923189842581" target="_blank" rel="noopener">WhatsApp Academy</a></div></div><div class="teacher-profile-grid">${cards||'<p>No additional teacher profile details have been added yet.</p>'}</div><form id="teacherProfileEdit" class="teacher-profile-edit"><h2>Update Profile</h2><div class="profile-edit-grid"><label>Full Name<input id="tpFullName" value="${esc(name)}" required></label><label>Phone<input id="tpPhone" value="${esc(t.phone||'')}"></label><label>Qualification<input id="tpQualification" value="${esc(t.qualification||'')}"></label><label>Specialization<input id="tpSpecialization" value="${esc(t.specialization||'')}"></label><label>Experience<input id="tpExperience" value="${esc(t.experience||'')}"></label><label>Profile Image URL<input id="tpPhoto" value="${esc(photo)}"></label><label class="full">About / Bio<textarea id="tpBio" rows="4">${esc(t.bio||'')}</textarea></label></div><button class="btn-small" type="submit">Save Profile</button><span id="tpSaveStatus"></span></form></section>`;
-    document.getElementById('teacherProfileEdit').addEventListener('submit',async e=>{e.preventDefault();const status=document.getElementById('tpSaveStatus');status.textContent='Saving…';const vals={full_name:document.getElementById('tpFullName').value.trim(),phone:document.getElementById('tpPhone').value.trim(),qualification:document.getElementById('tpQualification').value.trim(),specialization:document.getElementById('tpSpecialization').value.trim(),experience:document.getElementById('tpExperience').value.trim(),bio:document.getElementById('tpBio').value.trim(),avatar_url:document.getElementById('tpPhoto').value.trim(),profile_image:document.getElementById('tpPhoto').value.trim(),photo_url:document.getElementById('tpPhoto').value.trim(),image_url:document.getElementById('tpPhoto').value.trim()};
+    const t=ctx.teacher||{}; const u=ctx.user||{};
+    const val=(...keys)=>{for(const k of keys){if(t[k]!==undefined&&t[k]!==null&&String(t[k]).trim()!=='') return t[k]; if(u.user_metadata?.[k]!==undefined&&u.user_metadata?.[k]!==null&&String(u.user_metadata[k]).trim()!=='') return u.user_metadata[k];}return '';};
+    const name=val('full_name','name')||u.email||'Teacher';
+    const email=t.email||u.email||'';
+    const phone=val('phone','phone_number'); const wa=val('whatsapp','whatsapp_number')||phone;
+    const qualification=val('qualification','education')||'Not added yet';
+    const specialization=val('specialization','speciality')||'Quran Teaching';
+    const experience=val('experience','years_experience')||'Not added yet';
+    const country=val('country')||''; const city=val('city')||''; const location=[country,city].filter(Boolean).join(' – ')||'Not added yet';
+    const timezone=val('timezone','time_zone')||'Asia/Karachi';
+    const joined=val('joining_date','joined_at','created_at');
+    const status=val('status','account_status')||'Active';
+    const bio=val('bio','about','about_me')||'Dedicated Quran teacher committed to providing professional and personalized online Quran education.';
+    const photo=val('avatar_url','profile_image','photo_url','image_url','image')||'';
+    const subjectsRaw=val('subjects','subject','teaching_subjects');
+    const subjects=Array.isArray(subjectsRaw)?subjectsRaw:(String(subjectsRaw||'Quran, Tajweed, Arabic').split(/[,|]/).map(s=>s.trim()).filter(Boolean));
+    const escA=v=>esc(v);
+    const fmtJoined=joined?fmtDate(joined):'Not added yet';
+    const photoHtml=photo?`<img class="profile-photo" src="${escA(photo)}" alt="${escA(name)} profile photo" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">`:'<div class="profile-photo" style="display:none"></div>';
+    const placeholder=`<div class="profile-photo-placeholder" ${photo?'style="display:none"':''}>${escA(String(name).charAt(0).toUpperCase())}</div>`;
+    const subjectHtml=subjects.map(s=>`<span class="profile-chip">${escA(s)}</span>`).join('');
+    main.innerHTML=`
+      <div class="profile-page-wrap">
+        <section class="profile-titlebar">
+          <div class="profile-title-left"><div class="profile-title-icon">👤</div><div><h1>My Profile</h1><p>View and update your profile information</p></div></div>
+          <div class="profile-motto">Teach • Guide • <b>Inspire</b></div>
+        </section>
+        <div class="profile-layout">
+          <section class="profile-panel">
+            <div class="profile-panel-head">✎ &nbsp; Profile Information</div>
+            <div class="profile-panel-body">
+              <form id="teacherProfileEdit">
+                <div class="profile-form-grid">
+                  <div class="profile-field"><label>Full Name *</label><input id="tpFullName" value="${escA(name)}" required></div>
+                  <div class="profile-field"><label>Email Address *</label><input value="${escA(email)}" disabled></div>
+                  <div class="profile-field"><label>Phone Number *</label><input id="tpPhone" value="${escA(phone)}"></div>
+                  <div class="profile-field"><label>WhatsApp Number</label><input id="tpWhatsapp" value="${escA(wa)}"></div>
+                  <div class="profile-field"><label>Qualification</label><input id="tpQualification" value="${escA(qualification==='Not added yet'?'':qualification)}" placeholder="e.g. Master in Islamic Studies"></div>
+                  <div class="profile-field"><label>Specialization</label><select id="tpSpecialization"><option ${specialization==='Quran Teaching'?'selected':''}>Quran Teaching</option><option ${specialization==='Tajweed'?'selected':''}>Tajweed</option><option ${specialization==='Hifz'?'selected':''}>Hifz / Memorization</option><option ${specialization==='Arabic'?'selected':''}>Arabic</option><option ${specialization==='Islamic Studies'?'selected':''}>Islamic Studies</option></select></div>
+                  <div class="profile-field"><label>Experience</label><input id="tpExperience" value="${escA(experience==='Not added yet'?'':experience)}" placeholder="e.g. 5+ Years"></div>
+                  <div class="profile-field"><label>Subjects</label><input id="tpSubjects" value="${escA(subjects.join(', '))}" placeholder="Quran, Tajweed, Arabic"></div>
+                  <div class="profile-field"><label>Country</label><input id="tpCountry" value="${escA(country)}" placeholder="Pakistan"></div>
+                  <div class="profile-field"><label>City</label><input id="tpCity" value="${escA(city)}" placeholder="Lahore"></div>
+                  <div class="profile-field"><label>Timezone</label><input id="tpTimezone" value="${escA(timezone)}"></div>
+                  <div class="profile-field"><label>Joining Date</label><input value="${escA(fmtJoined)}" disabled></div>
+                  <div class="profile-field"><label>Profile Image URL</label><input id="tpPhoto" value="${escA(photo)}" placeholder="https://..."></div>
+                  <div class="profile-field"><label>Status</label><input value="${escA(status)}" disabled></div>
+                  <div class="profile-field full"><label>About Me</label><textarea id="tpBio" rows="5" placeholder="Tell students about your teaching experience...">${escA(bio)}</textarea></div>
+                </div>
+                <button class="profile-save" type="submit">💾 Update Profile</button><span id="tpSaveStatus" class="profile-status"></span>
+              </form>
+            </div>
+          </section>
+          <aside class="profile-panel profile-summary">
+            <div class="profile-panel-head">👤 &nbsp; Your Profile</div>
+            <div class="profile-panel-body">
+              ${photoHtml}${placeholder}
+              <h2>${escA(name)}</h2><div class="active-badge">✓ ${escA(status==='Active'?'Active Teacher':status)}</div>
+              <div class="summary-list">
+                <div class="summary-item"><i>✉</i><div><strong>${escA(email||'Not added')}</strong></div></div>
+                <div class="summary-item"><i>☎</i><div><strong>${escA(phone||'Not added')}</strong></div></div>
+                <div class="summary-item"><i>🎓</i><div><strong>${escA(qualification)}</strong></div></div>
+                <div class="summary-item"><i>⭐</i><div><strong>${escA(specialization)}</strong></div></div>
+                <div class="summary-item"><i>📍</i><div><strong>${escA(location)}</strong></div></div>
+                <div class="summary-item"><i>◷</i><div><strong>${escA(timezone)}</strong></div></div>
+                <div class="summary-item"><i>📅</i><div><strong>Joined: ${escA(fmtJoined)}</strong></div></div>
+                <div class="summary-item"><i>📚</i><div>${subjectHtml}</div></div>
+              </div>
+              <a class="profile-save" style="display:inline-flex;text-decoration:none;margin-top:14px" href="https://wa.me/923189842581" target="_blank" rel="noopener">💬 Send us a Message</a>
+            </div>
+          </aside>
+        </div>
+      </div>`;
+    document.getElementById('teacherProfileEdit').addEventListener('submit',async e=>{
+      e.preventDefault(); const statusEl=document.getElementById('tpSaveStatus'); statusEl.textContent='Saving…';
+      const vals={full_name:document.getElementById('tpFullName').value.trim(),phone:document.getElementById('tpPhone').value.trim(),whatsapp:document.getElementById('tpWhatsapp').value.trim(),qualification:document.getElementById('tpQualification').value.trim(),specialization:document.getElementById('tpSpecialization').value.trim(),experience:document.getElementById('tpExperience').value.trim(),subjects:document.getElementById('tpSubjects').value.trim(),country:document.getElementById('tpCountry').value.trim(),city:document.getElementById('tpCity').value.trim(),timezone:document.getElementById('tpTimezone').value.trim(),bio:document.getElementById('tpBio').value.trim(),avatar_url:document.getElementById('tpPhoto').value.trim()};
       const payload={}; Object.keys(vals).forEach(k=>{if(Object.prototype.hasOwnProperty.call(t,k)) payload[k]=vals[k];}); if(t.id) payload.full_name=vals.full_name;
       let err=null; if(t.id){const rr=await db.from('teachers').update(payload).eq('id',t.id);err=rr.error;} else {const rr=await db.from('profiles').update({full_name:vals.full_name}).eq('id',u.id);err=rr.error;}
-      if(err){status.textContent=err.message;status.style.color='#b91c1c';}else{status.textContent='Profile saved successfully.';status.style.color='#15803d';ctx.teacher=Object.assign({},t,payload);setHeader(ctx);}
+      if(err){statusEl.textContent=err.message;statusEl.style.color='#b91c1c';}else{statusEl.textContent='Profile saved successfully.';statusEl.style.color='#15803d';ctx.teacher=Object.assign({},t,payload);setHeader(ctx);renderProfile(ctx);}
     });
   }
 
