@@ -786,6 +786,11 @@ Lesson Details
 <textarea id="lessonDetails" name="lesson_details" placeholder="Which lesson/page was taught..."></textarea>
 </div>
 <div class="lesson-field">
+<label for="lessonPageUrl">Teacher Page URL</label>
+<input id="lessonPageUrl" name="teacher_page_url" type="url" inputmode="url" placeholder="Paste the exact Quran / lesson page URL here..." />
+<small>Paste the exact page link so it can be opened again from Open Lesson.</small>
+</div>
+<div class="lesson-field">
 <label>Student Performance</label>
 <div class="performance-options">
 <div class="performance-option">
@@ -2656,6 +2661,9 @@ document.getElementById(
 if(!modal)
 return;
 
+const lessonForm = document.getElementById("lessonForm");
+if(lessonForm) lessonForm.reset();
+
 document.getElementById(
 "lessonScheduleId"
 ).value =
@@ -2715,225 +2723,185 @@ modal.setAttribute(
 window.submitTeacherLesson =
 async function(event){
 
-if(event)
-event.preventDefault();
+if(event) event.preventDefault();
 
+const db = window.academyDB;
+if(!db){ alert("Database connection is not ready. Please refresh and try again."); return false; }
 
-if(
-typeof window.saveTeacherLesson ===
-"function"
-){
+const scheduleId = document.getElementById("lessonScheduleId").value;
+if(!scheduleId){ alert("Class not found."); return false; }
 
-return window.saveTeacherLesson(
-event
-);
+const juzValue = document.getElementById("lessonJuz").value.trim();
+const pageValue = document.getElementById("lessonPage").value.trim();
+const lessonName = document.getElementById("lessonName").value.trim();
+const description = document.getElementById("lessonDescription").value.trim();
+const lessonDetails = document.getElementById("lessonDetails").value.trim();
+const pageUrl = document.getElementById("lessonPageUrl").value.trim();
+const performance = document.querySelector('input[name="performance"]:checked')?.value || "";
 
+if(!juzValue || !pageValue || !lessonName){
+ alert("Please enter Juz Number, Page Number and Lesson / Subject Name.");
+ return false;
+}
+if(pageUrl){
+ try { const u = new URL(pageUrl); if(!['http:','https:'].includes(u.protocol)) throw new Error(); }
+ catch(_){ alert("Please enter a valid page URL starting with https:// or http://"); return false; }
 }
 
+const submitButton = document.querySelector('#lessonForm button[type="submit"]');
+const oldButtonText = submitButton?.textContent || "Submit Lesson";
+if(submitButton){ submitButton.disabled = true; submitButton.textContent = "Saving..."; }
 
-const scheduleId =
-document.getElementById(
-"lessonScheduleId"
-).value;
+try {
+ const auth = await db.auth.getUser();
+ const user = auth?.data?.user;
+ if(auth?.error || !user){ throw new Error("Teacher login has expired. Please sign in again."); }
 
+ const scheduleResult = await db.from("class_schedules")
+   .select("id,teacher_id,student_id,schedule_timezone")
+   .eq("id", scheduleId)
+   .eq("teacher_id", user.id)
+   .maybeSingle();
+ if(scheduleResult.error) throw scheduleResult.error;
+ if(!scheduleResult.data) throw new Error("This class is not assigned to your teacher account.");
 
-if(!scheduleId){
+ const timezone = scheduleResult.data.schedule_timezone || window.currentTeacherTimezone || "Asia/Karachi";
+ const classDate = new Intl.DateTimeFormat("en-CA", {
+   timeZone: timezone, year:"numeric", month:"2-digit", day:"2-digit"
+ }).format(new Date());
+ const now = new Date().toISOString();
 
-alert("Class not found.");
+ // Read today's existing class session first so we update it instead of creating duplicates.
+ const existingResult = await db.from("teacher_class_sessions")
+   .select("id,started_at")
+   .eq("schedule_id", scheduleId)
+   .eq("teacher_id", user.id)
+   .eq("class_date", classDate)
+   .maybeSingle();
+ if(existingResult.error) throw existingResult.error;
 
-return false;
+ const payload = {
+   schedule_id: scheduleId,
+   teacher_id: user.id,
+   student_id: scheduleResult.data.student_id,
+   class_date: classDate,
+   session_timezone: timezone,
+   status: "completed",
+   started_at: existingResult.data?.started_at || now,
+   completed_at: now,
+   // Legacy fields are also filled so existing dashboard/attendance screens keep working.
+   class: lessonName,
+   session: lessonDetails,
+   test: performance,
+   // Detailed lesson fields (added by lesson-columns.sql).
+   juz_number: Number(juzValue),
+   page_number: Number(pageValue),
+   description: description,
+   lesson_name: lessonName,
+   lesson_details: lessonDetails,
+   student_performance: performance,
+   teacher_page_url: pageUrl
+ };
 
+ let saveResult;
+ if(existingResult.data?.id){
+   saveResult = await db.from("teacher_class_sessions")
+     .update(payload)
+     .eq("id", existingResult.data.id)
+     .eq("teacher_id", user.id);
+ } else {
+   saveResult = await db.from("teacher_class_sessions").insert(payload);
+ }
+ if(saveResult.error){
+   const msg = saveResult.error.message || "Database save failed.";
+   if(/column .* does not exist|schema cache/i.test(msg)){
+     throw new Error("Lesson fields are not installed yet. Run teacher/lesson-columns.sql in Supabase SQL Editor, then try again. Details: " + msg);
+   }
+   throw saveResult.error;
+ }
+
+ closeLessonModal();
+ const form = document.getElementById("lessonForm");
+ form?.reset();
+ alert("Lesson saved successfully. You can open it later using Open Lesson.");
+ if(typeof window.loadTeacherToday === "function") await window.loadTeacherToday();
+ return false;
+
+} catch(error){
+ console.error("Teacher lesson save error:", error);
+ alert("Lesson could not be saved: " + (error?.message || error));
+ return false;
+} finally {
+ if(submitButton){ submitButton.disabled = false; submitButton.textContent = oldButtonText; }
 }
-
-
-/*
-  If your existing portal.js already contains
-  saveTeacherLesson(), it will handle the complete
-  lesson saving process.
-*/
-
-alert(
-"Lesson saving function is not connected in portal.js yet."
-);
-
-return false;
-
 };
 
 
 /* =====================================================
-   OPEN PREVIOUS LESSON
+   OPEN PREVIOUS LESSON - SHOW DESCRIPTION AND PAGE LINK
 ===================================================== */
-
 window.showOpenLessonModal =
-async function(
-scheduleId,
-studentName
-){
+async function(scheduleId, studentName){
+ const modal = document.getElementById("openLessonModal");
+ if(!modal) return;
+ document.getElementById("openLessonStudentName").textContent = studentName || "Student";
+ const content = document.getElementById("openLessonContent");
+ content.innerHTML = '<div class="today-empty">Loading previous lesson...</div>';
+ modal.classList.add("show");
+ modal.setAttribute("aria-hidden", "false");
 
-const modal =
-document.getElementById(
-"openLessonModal"
-);
+ const db = window.academyDB;
+ if(!db){ content.innerHTML='<div class="today-empty">Database connection is not ready.</div>'; return; }
+ try {
+  const auth = await db.auth.getUser();
+  const user = auth?.data?.user;
+  if(auth?.error || !user) throw new Error("Please sign in again.");
+  const result = await db.from("teacher_class_sessions")
+    .select("*")
+    .eq("schedule_id", scheduleId)
+    .eq("teacher_id", user.id)
+    .order("class_date", {ascending:false})
+    .limit(1)
+    .maybeSingle();
+  if(result.error) throw result.error;
+  const lesson = result.data;
+  if(!lesson){ content.innerHTML='<div class="today-empty">No previous lesson has been saved for this class yet.</div>'; return; }
 
-if(!modal)
-return;
+  const esc = value => String(value ?? "—").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const lessonName = lesson.lesson_name || lesson.class || "—";
+  const details = lesson.lesson_details || lesson.session || "—";
+  const performance = lesson.student_performance || lesson.test || "—";
+  const pageUrl = String(lesson.teacher_page_url || "").trim();
+  const pageNo = lesson.page_number;
+  let openUrl = pageUrl;
+  if(pageUrl){
+   try {
+    const parsed = new URL(pageUrl);
+    if(pageNo && (/\.pdf$/i.test(parsed.pathname) || /\.pdf(?:$|[?#])/i.test(pageUrl))){
+      parsed.hash = "page=" + encodeURIComponent(pageNo);
+      openUrl = parsed.toString();
+    }
+   } catch(_) { openUrl = ""; }
+  }
+  const urlBlock = pageUrl && openUrl
+   ? `<div class="lesson-view-item"><small>Teacher Page URL</small><span><a href="${esc(openUrl)}" target="_blank" rel="noopener noreferrer">Open saved page ↗</a></span><small>${esc(pageUrl)}</small></div>`
+   : `<div class="lesson-view-item"><small>Teacher Page URL</small><span>Not added</span></div>`;
 
-
-document.getElementById(
-"openLessonStudentName"
-).textContent =
-studentName || "Student";
-
-
-const content =
-document.getElementById(
-"openLessonContent"
-);
-
-content.innerHTML = `
-<div class="today-empty">
-Loading previous lesson...
-</div>
-`;
-
-
-modal.classList.add("show");
-
-modal.setAttribute(
-"aria-hidden",
-"false"
-);
-
-
-if(
-typeof window.loadPreviousTeacherLesson ===
-"function"
-){
-
-await window.loadPreviousTeacherLesson(
-scheduleId
-);
-
-return;
-
-}
-
-
-/*
-  Direct fallback:
-  Try to load the most recent completed session.
-*/
-
-if(window.academyDB){
-
-const result =
-await window.academyDB
-.from("teacher_class_sessions")
-.select(`
-id,
-schedule_id,
-class,
-test,
-session,
-status,
-started_at,
-completed_at
-`)
-.eq(
-"schedule_id",
-scheduleId
-)
-.order(
-"completed_at",
-{
-ascending:false
-}
-)
-.limit(1)
-.maybeSingle();
-
-
-if(
-!result.error &&
-result.data
-){
-
-const lesson =
-result.data;
-
-
-content.innerHTML = `
-
-<div class="lesson-view-item">
-
-<small>Status</small>
-
-<strong>
-${escapeHTML(
-lesson.status || "Completed"
-)}
-</strong>
-
-</div>
-
-<div class="lesson-view-item">
-
-<small>Lesson</small>
-
-<span>
-${escapeHTML(
-lesson.class || "—"
-)}
-</span>
-
-</div>
-
-<div class="lesson-view-item">
-
-<small>Lesson Details</small>
-
-<span>
-${escapeHTML(
-lesson.session || "—"
-)}
-</span>
-
-</div>
-
-<div class="lesson-view-item">
-
-<small>Performance</small>
-
-<span>
-${escapeHTML(
-lesson.test || "—"
-)}
-</span>
-
-</div>
-
-`;
-
-return;
-
-}
-
-}
-
-
-content.innerHTML = `
-
-<div class="today-empty">
-
-No previous lesson found.
-
-</div>
-
-`;
-
+  content.innerHTML = `
+   <div class="lesson-view-item"><small>Lesson / Subject</small><strong>${esc(lessonName)}</strong></div>
+   <div class="lesson-view-item"><small>Juz Number</small><span>${esc(lesson.juz_number ?? "—")}</span></div>
+   <div class="lesson-view-item"><small>Page Number</small><span>${esc(pageNo ?? "—")}</span></div>
+   <div class="lesson-view-item"><small>Description</small><span>${esc(lesson.description || "—")}</span></div>
+   <div class="lesson-view-item"><small>Lesson Details</small><span>${esc(details)}</span></div>
+   <div class="lesson-view-item"><small>Student Performance</small><span>${esc(performance)}</span></div>
+   ${urlBlock}
+   <div class="lesson-view-item"><small>Class Date</small><span>${esc(lesson.class_date || "—")}</span></div>
+  `;
+ } catch(error){
+  console.error("Open previous lesson error:", error);
+  content.innerHTML = `<div class="today-empty">Unable to load lesson: ${String(error?.message || error).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}</div>`;
+ }
 };
-
 
 window.closeOpenLessonModal =
 function(){
