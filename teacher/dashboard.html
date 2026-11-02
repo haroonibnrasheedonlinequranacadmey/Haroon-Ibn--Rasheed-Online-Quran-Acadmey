@@ -598,6 +598,53 @@ body.dashboard .teacher-top-layout .card{
 <style id="teacher-final-inline-fix">
 *{box-sizing:border-box}.teacher-final-footer{background:linear-gradient(135deg,#062b3d,#073f55)!important;color:#dceef2!important;padding:48px 0 20px!important;margin-top:40px!important;width:100%!important;font-family:Arial,sans-serif!important}.teacher-final-footer .tf-container{max-width:1200px!important;margin:0 auto!important;padding:0 24px!important}.teacher-final-footer .tf-grid{display:grid!important;grid-template-columns:2fr 1fr 1fr 1fr!important;gap:30px!important}.teacher-final-footer h3{color:#fff!important;margin:0 0 12px!important;font-size:16px!important}.teacher-final-footer p,.teacher-final-footer li{color:#dceef2!important;line-height:1.6!important}.teacher-final-footer ul{list-style:none!important;padding:0!important;margin:0!important}.teacher-final-footer li{margin:8px 0!important}.teacher-final-footer a{color:#dceef2!important;text-decoration:none!important}.teacher-final-footer .tf-social{display:flex!important;gap:12px!important;align-items:center!important}.teacher-final-footer .tf-social a{width:40px!important;height:40px!important;border:1px solid rgba(255,255,255,.25)!important;border-radius:50%!important;display:grid!important;place-items:center!important}.teacher-final-footer .tf-social svg{width:20px!important;height:20px!important;fill:currentColor!important}.teacher-final-footer .tf-copy{border-top:1px solid rgba(255,255,255,.15)!important;margin-top:30px!important;padding-top:18px!important;text-align:center!important;font-size:12px!important}.teacher-whatsapp-fab{position:fixed!important;right:22px!important;bottom:22px!important;width:60px!important;height:60px!important;border-radius:50%!important;display:flex!important;align-items:center!important;justify-content:center!important;background:#25D366!important;color:#fff!important;text-decoration:none!important;box-shadow:0 8px 24px rgba(0,0,0,.28)!important;z-index:99999!important;border:3px solid #fff!important}.teacher-whatsapp-fab svg{width:34px!important;height:34px!important;fill:currentColor!important}.teacher-message-fab{position:fixed!important;right:22px!important;bottom:94px!important;z-index:99998!important}.teacher-message-panel{z-index:99999!important}@media(max-width:850px){.teacher-final-footer .tf-grid{grid-template-columns:1fr 1fr!important}}@media(max-width:600px){.teacher-final-footer .tf-grid{grid-template-columns:1fr!important}.teacher-whatsapp-fab{width:54px!important;height:54px!important;right:15px!important;bottom:15px!important}.teacher-whatsapp-fab svg{width:30px!important;height:30px!important}}
 </style>
+
+<style id="teacherChatStyles">
+.teacher-message-fab{border:0;cursor:pointer}
+.tchat-overlay{display:none;position:fixed;inset:0;z-index:100000;background:rgba(8,22,32,.28);align-items:flex-end;justify-content:flex-end;padding:24px}
+.tchat-overlay.open{display:flex}
+.tchat-window{width:min(940px,calc(100vw - 48px));height:min(680px,calc(100vh - 48px));background:#fff;border-radius:18px;box-shadow:0 18px 70px rgba(0,0,0,.28);overflow:hidden;display:flex;flex-direction:column;color:#172b35;font-family:inherit}
+.tchat-top{height:66px;flex:0 0 66px;background:linear-gradient(120deg,#087f9a,#079fc0);color:#fff;display:flex;align-items:center;gap:12px;padding:0 18px}
+.tchat-top-avatar{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.18);display:grid;place-items:center;font-size:21px}
+.tchat-top-title{display:flex;flex-direction:column;gap:3px;min-width:0}.tchat-top-title strong{font-size:15px}.tchat-top-title small{font-size:12px;opacity:.85}
+.tchat-close{margin-left:auto;border:0;background:transparent;color:#fff;font-size:30px;cursor:pointer;line-height:1}
+.tchat-main{display:grid;grid-template-columns:280px minmax(0,1fr);flex:1;min-height:0}
+.tchat-sidebar{border-right:1px solid #e4edf0;display:flex;flex-direction:column;min-height:0;background:#fbfdfe}
+.tchat-side-head{height:55px;flex:0 0 55px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;border-bottom:1px solid #e8eff2}
+.tchat-side-head button{border:0;border-radius:8px;padding:8px 10px;background:#e8f8fb;color:#087f9a;font-weight:700;cursor:pointer}
+.tchat-threads{overflow:auto;min-height:0}
+.tchat-thread{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid #edf2f4;background:#fff;padding:14px;cursor:pointer;color:#213943}
+.tchat-thread.active,.tchat-thread:hover{background:#eaf8fb}
+.tchat-thread strong{display:block;font-size:13px}.tchat-thread small{display:block;color:#7d9299;margin-top:5px;font-size:11px}
+.tchat-conversation{display:flex;flex-direction:column;min-width:0;min-height:0;background:#f5f9fa}
+.tchat-conversation-head{height:58px;flex:0 0 58px;display:flex;align-items:center;gap:12px;padding:0 16px;background:#fff;border-bottom:1px solid #e6eef0}
+.tchat-conversation-head div{display:flex;flex-direction:column;gap:3px}.tchat-conversation-head strong{font-size:14px}.tchat-conversation-head small{font-size:11px;color:#7d9299}
+.tchat-back{display:none;border:0;background:transparent;color:#087f9a;font-weight:700;font-size:14px;cursor:pointer}
+.tchat-messages{flex:1;min-height:0;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:9px;background-color:#eef4f5;background-image:radial-gradient(rgba(8,127,154,.07) 1px,transparent 1px);background-size:18px 18px}
+.tchat-bubble{max-width:min(76%,520px);padding:10px 13px;border-radius:14px;box-shadow:0 1px 2px rgba(0,0,0,.06);overflow-wrap:anywhere;cursor:pointer;white-space:pre-wrap;font-size:14px;line-height:1.45}
+.tchat-bubble.admin{align-self:flex-start;background:#fff;border:1px solid #e1e9eb;border-top-left-radius:4px}
+.tchat-bubble.teacher{align-self:flex-end;background:#d8f6e8;border:1px solid #c4ecd9;border-top-right-radius:4px}
+.tchat-bubble.selected{outline:3px solid #079fc0;outline-offset:1px}
+.tchat-bubble.deleted{font-style:italic;color:#71858c}
+.tchat-bubble small{display:block;margin-top:5px;font-size:10px;color:#73888f;text-align:right}
+.tchat-selectbar{display:none;gap:7px;align-items:center;flex-wrap:wrap;padding:9px 12px;background:#fff;border-top:1px solid #e6eef0}
+.tchat-selectbar.show{display:flex}.tchat-selectbar span{font-size:12px;font-weight:700;margin-right:auto}
+.tchat-selectbar button{border:0;border-radius:7px;padding:7px 9px;background:#e9f4f6;color:#31515c;font-weight:700;font-size:11px;cursor:pointer}
+.tchat-selectbar button:nth-of-type(2){background:#087f9a;color:#fff}
+.tchat-composer{display:flex;gap:10px;align-items:flex-end;padding:12px;background:#fff;border-top:1px solid #e6eef0}
+.tchat-composer textarea{flex:1;resize:none;max-height:110px;border:1px solid #d7e4e8;border-radius:22px;padding:11px 15px;font:inherit;font-size:14px;outline:none;min-height:42px;box-sizing:border-box}
+.tchat-composer textarea:focus{border-color:#079fc0}
+.tchat-composer button{width:43px;height:43px;flex:0 0 43px;border:0;border-radius:50%;background:#079fc0;color:#fff;font-size:21px;cursor:pointer}
+.tchat-status{min-height:0;padding:0 14px;color:#a13b2e;font-size:11px}
+.tchat-empty{margin:auto;text-align:center;padding:25px;color:#7e9299;font-size:13px}
+@media(max-width:680px){
+ .tchat-overlay{padding:0;align-items:stretch}.tchat-window{width:100%;height:100%;max-height:100%;border-radius:0}
+ .tchat-main{grid-template-columns:1fr}.tchat-sidebar{grid-column:1;grid-row:1}.tchat-conversation{display:none;grid-column:1;grid-row:1}
+ .tchat-window.chat-selected .tchat-sidebar{display:none}.tchat-window.chat-selected .tchat-conversation{display:flex}
+ .tchat-back{display:block}.tchat-bubble{max-width:88%}
+}
+</style>
+
 </head>
 <body class="dashboard" data-page="teacher-dashboard"><a class="skip-link" href="#main-content">Skip to main content</a>
 <header class="teacher-top-header">
@@ -607,7 +654,7 @@ body.dashboard .teacher-top-layout .card{
 <span class="teacher-brand-text"><span class="teacher-brand-name">Haroon Ibn Rasheed</span><span class="teacher-brand-sub">Online Quran Academy</span></span>
 </a>
 <div class="teacher-header-actions">
-<a aria-label="Messages" class="teacher-header-icon" href="messages.html" title="Admin Messages">🔔</a>
+<a aria-label="Messages" class="teacher-header-icon" href="#" title="Open chat with Admin">🔔</a>
 <a aria-label="Open teacher profile" class="teacher-profile-btn" href="profile.html" title="Profile">👤 <span>Teacher</span></a>
 </div>
 </div>
@@ -2980,9 +3027,152 @@ closeOpenLessonModal();
 </footer>
 
 
-<a aria-label="Open Admin chat" class="teacher-message-fab" href="messages.html" title="Message Admin">💬</a>
+<button aria-label="Open chat with Admin" class="teacher-message-fab" id="teacherMessageFab" type="button" title="Chat with Admin">💬</button>
 <a class="teacher-whatsapp-fab" href="https://wa.me/923189842581" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp 03189842581" title="WhatsApp: 03189842581"><svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M19.11 17.45c-.27-.14-1.58-.78-1.83-.87-.25-.09-.43-.14-.61.14-.18.27-.7.87-.86 1.05-.16.18-.32.2-.59.07-.27-.14-1.13-.42-2.15-1.34-.79-.7-1.33-1.56-1.49-1.83-.16-.27-.02-.42.12-.56.12-.12.27-.32.41-.48.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.48-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.61-.47-.16-.01-.34-.01-.52-.01-.18 0-.48.07-.73.34-.25.27-.96.94-.96 2.29s.98 2.66 1.12 2.84c.14.18 1.93 2.95 4.68 4.14.65.28 1.16.45 1.56.58.66.21 1.26.18 1.73.11.53-.08 1.58-.65 1.8-1.28.22-.63.22-1.17.16-1.28-.07-.11-.25-.18-.52-.32z"/><path fill="currentColor" d="M16.03 3C8.85 3 3.02 8.82 3.02 16c0 2.29.6 4.53 1.75 6.5L3 29l6.66-1.74A12.94 12.94 0 0 0 16.03 29C23.2 29 29 23.18 29 16S23.2 3 16.03 3zm0 23.7c-2.05 0-4.06-.55-5.82-1.6l-.42-.25-3.95 1.03 1.05-3.85-.27-.44A10.96 10.96 0 1 1 16.03 26.7z"/></svg></a>
 
+
+<div id="teacherChatOverlay" class="tchat-overlay" aria-hidden="true">
+  <section class="tchat-window" role="dialog" aria-modal="false" aria-label="Academy chat">
+    <header class="tchat-top">
+      <div class="tchat-top-avatar">💬</div>
+      <div class="tchat-top-title"><strong>Haroon Ibn Rasheed Online Quran Academy</strong><small>Private chat with Admin</small></div>
+      <button type="button" id="tchatClose" class="tchat-close" aria-label="Close chat">×</button>
+    </header>
+    <div class="tchat-main">
+      <aside class="tchat-sidebar" id="tchatSidebar">
+        <div class="tchat-side-head"><strong>Chats</strong><button type="button" id="tchatNew" title="New message">＋ New</button></div>
+        <div id="tchatThreads" class="tchat-threads"><div class="tchat-empty">Loading chats…</div></div>
+      </aside>
+      <section class="tchat-conversation">
+        <div id="tchatConversationHead" class="tchat-conversation-head"><button type="button" id="tchatBack" class="tchat-back">‹ Chats</button><div><strong>Admin</strong><small>Haroon Ibn Rasheed Online Quran Academy</small></div></div>
+        <div id="tchatMessages" class="tchat-messages"><div class="tchat-empty">Select a chat or start a new message.</div></div>
+        <div id="tchatSelectBar" class="tchat-selectbar">
+          <span id="tchatSelectedCount">1 selected</span>
+          <button type="button" id="tchatDeleteMe">Delete for me</button>
+          <button type="button" id="tchatDeleteEveryone">Delete for everyone</button>
+          <button type="button" id="tchatCancelSelect">Cancel</button>
+        </div>
+        <form id="tchatComposer" class="tchat-composer">
+          <textarea id="tchatText" rows="1" placeholder="Message Admin…" required></textarea>
+          <button type="submit" aria-label="Send message">➤</button>
+        </form>
+        <div id="tchatStatus" class="tchat-status" role="status"></div>
+      </section>
+    </div>
+  </section>
+</div>
+
 <script src="teacher-data.js"></script>
+
+<script id="teacherDashboardChat">
+(()=>{
+ const overlay=document.getElementById('teacherChatOverlay');
+ if(!overlay)return;
+ const $=id=>document.getElementById(id);
+ const win=overlay.querySelector('.tchat-window');
+ const db=window.academyDB;
+ let user=null,profile=null,threads=[],current=null,selected=new Set(),poll=null,lastAdminMessage='',firstLoad=true,busy=false;
+ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const status=t=>{$('tchatStatus').textContent=t||'';};
+ function openPanel(){overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');if(!user)initChat();else refresh(true);}
+ function closePanel(){overlay.classList.remove('open');overlay.setAttribute('aria-hidden','true');}
+ function showMobileChat(on){win.classList.toggle('chat-selected',!!on);}
+ function scrollBottom(){$('tchatMessages').scrollTop=$('tchatMessages').scrollHeight;}
+ function setSelection(){ $('tchatSelectBar').classList.toggle('show',selected.size>0);$('tchatSelectedCount').textContent=selected.size+' selected';}
+ function toggleMessage(id){if(selected.has(id))selected.delete(id);else selected.add(id);document.querySelectorAll('.tchat-bubble[data-id]').forEach(x=>x.classList.toggle('selected',selected.has(x.dataset.id)));setSelection();}
+ function renderThreads(){
+  $('tchatThreads').innerHTML=threads.length?threads.map(t=>`<button type="button" class="tchat-thread ${current?.id===t.id?'active':''}" data-thread="${esc(t.id)}"><strong>${esc(t.subject||'Teacher Message')}</strong><small>${esc(t.status||'open')} · ${new Date(t.updated_at).toLocaleString()}</small></button>`).join(''):'<div class="tchat-empty">No chats yet. Tap “＋ New” to message Admin.</div>';
+  $('tchatThreads').querySelectorAll('[data-thread]').forEach(b=>b.addEventListener('click',()=>selectThread(b.dataset.thread)));
+ }
+ async function refresh(auto=false){
+  if(!user||busy)return;busy=true;
+  try{
+   const r=await db.from('conversations').select('*').eq('conversation_type','teacher').eq('teacher_id',user.id).order('updated_at',{ascending:false});
+   if(r.error){$('tchatThreads').innerHTML=`<div class="tchat-empty">${esc(r.error.message)}</div>`;busy=false;return;}
+   const previous=current?.id;threads=r.data||[];
+   let newestAdmin='';
+   for(const t of threads){
+    const m=await db.from('messages').select('id,created_at,sender_type').eq('conversation_id',t.id).eq('sender_type','admin').order('created_at',{ascending:false}).limit(1);
+    if(m.data?.[0]&&(!newestAdmin||m.data[0].created_at>newestAdmin.created_at))newestAdmin=m.data[0];
+   }
+   if(newestAdmin&&!firstLoad&&newestAdmin.id!==lastAdminMessage){
+    if(typeof window.teacherMessageBeep==='function')window.teacherMessageBeep();
+    if(overlay.classList.contains('open'))status('New message from Admin');
+   }
+   if(newestAdmin)lastAdminMessage=newestAdmin.id;
+   firstLoad=false;
+   if(!current&&threads.length)current=threads[0];
+   else if(current)current=threads.find(t=>t.id===current.id)||null;
+   if(auto&&threads.length&&(!previous||!current))current=threads[0];
+   renderThreads();
+   if(current)await showThread(current.id);
+   else if(!$('tchatText').value)showEmpty();
+  }catch(err){status('Unable to load chats: '+(err.message||err));}
+  busy=false;
+ }
+ function showEmpty(){
+  selected.clear();setSelection();$('tchatConversationHead').querySelector('div').innerHTML='<strong>Admin</strong><small>Haroon Ibn Rasheed Online Quran Academy</small>';
+  $('tchatMessages').innerHTML='<div class="tchat-empty">No conversation yet. Write your first message to Admin below.</div>';
+ }
+ async function showThread(id){
+  const t=threads.find(x=>x.id===id);if(!t)return;current=t;selected.clear();setSelection();
+  $('tchatConversationHead').querySelector('div').innerHTML=`<strong>${esc(t.subject||'Admin')}</strong><small>Private conversation with Academy Admin</small>`;
+  const r=await db.from('messages').select('*').eq('conversation_id',id).order('created_at',{ascending:true});
+  if(r.error){status(r.error.message);return;}
+  const rows=(r.data||[]).filter(m=>!m.deleted_for_teacher);
+  $('tchatMessages').innerHTML=rows.map(m=>{
+   const gone=!!m.deleted_for_everyone;
+   return `<div class="tchat-bubble ${m.sender_type==='teacher'?'teacher':'admin'} ${gone?'deleted':''}" data-id="${esc(m.id)}"><div>${gone?'This message was deleted':esc(m.body)}</div><small>${m.sender_type==='teacher'?'You':'Admin'} · ${new Date(m.created_at).toLocaleString()}</small></div>`;
+  }).join('')||'<div class="tchat-empty">No messages yet. Start the conversation below.</div>';
+  $('tchatMessages').querySelectorAll('.tchat-bubble[data-id]').forEach(b=>b.addEventListener('click',()=>toggleMessage(b.dataset.id)));
+  scrollBottom();
+  await db.from('conversations').update({teacher_read_at:new Date().toISOString()}).eq('id',id).eq('teacher_id',user.id);
+ }
+ async function selectThread(id){current=threads.find(t=>t.id===id)||null;if(current){showMobileChat(true);await showThread(id);renderThreads();}}
+ async function initChat(){
+  if(!db){status('Chat service is not available. Please refresh the dashboard.');return;}
+  try{
+   const s=await db.auth.getSession();user=s.data?.session?.user;
+   if(!user){status('Please sign in again to use chat.');return;}
+   const p=await db.from('profiles').select('id,role,full_name').eq('id',user.id).maybeSingle();
+   if(p.error||String(p.data?.role||'').toLowerCase()!=='teacher'){status('Teacher account could not be verified.');return;}
+   profile=p.data;await refresh(true);
+   if(!poll)poll=setInterval(()=>{if(overlay.classList.contains('open'))refresh(false);},4000);
+  }catch(err){status('Chat could not start: '+(err.message||err));}
+ }
+ async function sendMessage(text){
+  if(!user||!text.trim()||busy)return;status('Sending…');
+  let r;
+  if(current){r=await db.rpc('add_teacher_message',{p_thread_id:current.id,p_message:text.trim()});if(r.error||r.data!==true){status(r.error?.message||'Message could not be sent. Check the messaging SQL.');return;}}
+  else{
+   r=await db.rpc('create_teacher_conversation',{p_name:profile?.full_name||user.email||'Teacher',p_email:user.email||'',p_subject:'Teacher Message',p_message:text.trim()});
+   if(r.error){status(r.error.message);return;}
+   const id=r.data?.id||r.data?.[0]?.id;
+   await refresh(true);
+   if(id){current=threads.find(t=>t.id===id)||current; if(current)await showThread(current.id);}
+  }
+  $('tchatText').value='';status('');await refresh(false);
+ }
+ async function deleteSelected(mode){
+  if(!selected.size||!current)return;
+  if(!confirm(mode==='everyone'?'Delete selected message(s) for everyone?':'Delete selected message(s) only for you?'))return;
+  const ids=[...selected];status('Deleting…');
+  for(const id of ids){const r=await db.rpc('delete_teacher_message',{p_message_id:id,p_mode:mode});if(r.error||r.data!==true){status(r.error?.message||'Delete failed. Make sure teacher-messaging.sql has been run.');return;}}
+  selected.clear();setSelection();status(mode==='everyone'?'Deleted for everyone.':'Deleted for you.');await showThread(current.id);
+ }
+ $('tchatComposer').addEventListener('submit',async ev=>{ev.preventDefault();await sendMessage($('tchatText').value);});
+ $('tchatNew').addEventListener('click',()=>{current=null;renderThreads();showEmpty();showMobileChat(true);$('tchatText').focus();});
+ $('tchatClose').addEventListener('click',closePanel);
+ $('tchatBack').addEventListener('click',()=>showMobileChat(false));
+ $('tchatDeleteMe').addEventListener('click',()=>deleteSelected('me'));
+ $('tchatDeleteEveryone').addEventListener('click',()=>deleteSelected('everyone'));
+ $('tchatCancelSelect').addEventListener('click',()=>{selected.clear();document.querySelectorAll('.tchat-bubble.selected').forEach(b=>b.classList.remove('selected'));setSelection();});
+ overlay.addEventListener('click',ev=>{if(ev.target===overlay)closePanel();});
+ document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&overlay.classList.contains('open'))closePanel();});
+ const fab=$('teacherMessageFab');if(fab)fab.addEventListener('click',ev=>{ev.preventDefault();openPanel();});
+ document.querySelectorAll('.teacher-header-icon').forEach(b=>b.addEventListener('click',ev=>{ev.preventDefault();openPanel();}));
+})();
+</script>
+
 </body>
 </html>
