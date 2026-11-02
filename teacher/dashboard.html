@@ -2568,6 +2568,32 @@ function(){
 setTimeout(
 function(){
 
+(async function(){
+ try{
+  const db = window.academyDB;
+  if(!db) return;
+  const auth = await db.auth.getUser();
+  const user = auth?.data?.user;
+  if(!user || auth?.error) return;
+  const cutoff = getTeacherNow().minus({days:4}).toFormat("yyyy-MM-dd");
+  const cleanup = await db.from("teacher_class_sessions")
+   .update({
+    juz_number:null,
+    page_number:null,
+    description:null,
+    lesson_name:null,
+    lesson_details:null,
+    student_performance:null,
+    teacher_page_url:null
+   })
+   .eq("teacher_id",user.id)
+   .lt("class_date",cutoff);
+  if(cleanup.error) console.warn("Automatic old lesson cleanup:",cleanup.error);
+ }catch(error){
+  console.warn("Automatic old lesson cleanup skipped:",error);
+ }
+})();
+
 loadTeacherToday();
 
 startDashboardRefresh();
@@ -2844,57 +2870,92 @@ async function(scheduleId, studentName){
  if(!modal) return;
  document.getElementById("openLessonStudentName").textContent = studentName || "Student";
  const content = document.getElementById("openLessonContent");
- content.innerHTML = '<div class="today-empty">Loading previous lesson...</div>';
+ content.innerHTML = '<div class="today-empty">Loading the last 5 days of lessons...</div>';
  modal.classList.add("show");
  modal.setAttribute("aria-hidden", "false");
 
  const db = window.academyDB;
  if(!db){ content.innerHTML='<div class="today-empty">Database connection is not ready.</div>'; return; }
+
  try {
   const auth = await db.auth.getUser();
   const user = auth?.data?.user;
   if(auth?.error || !user) throw new Error("Please sign in again.");
+
+  const today = todayISO();
+  const cutoff = getTeacherNow().minus({days:4}).toFormat("yyyy-MM-dd");
+
+  // Remove only old lesson details. Keep the session row, attendance,
+  // class status and timestamps intact.
+  const cleanup = await db.from("teacher_class_sessions")
+    .update({
+      juz_number: null,
+      page_number: null,
+      description: null,
+      lesson_name: null,
+      lesson_details: null,
+      student_performance: null,
+      teacher_page_url: null
+    })
+    .eq("teacher_id", user.id)
+    .lt("class_date", cutoff);
+  if(cleanup.error) console.warn("Old lesson cleanup could not run:", cleanup.error);
+
   const result = await db.from("teacher_class_sessions")
     .select("*")
     .eq("schedule_id", scheduleId)
     .eq("teacher_id", user.id)
+    .gte("class_date", cutoff)
+    .lte("class_date", today)
     .order("class_date", {ascending:false})
-    .limit(1)
-    .maybeSingle();
+    .order("started_at", {ascending:false});
   if(result.error) throw result.error;
-  const lesson = result.data;
-  if(!lesson){ content.innerHTML='<div class="today-empty">No previous lesson has been saved for this class yet.</div>'; return; }
+
+  const lessons = (result.data || []).filter(function(item){
+    return item.lesson_name || item.lesson_details || item.description ||
+      item.juz_number != null || item.page_number != null || item.teacher_page_url;
+  });
+
+  if(!lessons.length){
+    content.innerHTML = '<div class="today-empty">No lesson has been saved for this student during the last 5 days.</div>';
+    return;
+  }
 
   const esc = value => String(value ?? "—").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-  const lessonName = lesson.lesson_name || lesson.class || "—";
-  const details = lesson.lesson_details || lesson.session || "—";
-  const performance = lesson.student_performance || lesson.test || "—";
-  const pageUrl = String(lesson.teacher_page_url || "").trim();
-  const pageNo = lesson.page_number;
-  let openUrl = pageUrl;
-  if(pageUrl){
-   try {
-    const parsed = new URL(pageUrl);
-    if(pageNo && (/\.pdf$/i.test(parsed.pathname) || /\.pdf(?:$|[?#])/i.test(pageUrl))){
-      parsed.hash = "page=" + encodeURIComponent(pageNo);
-      openUrl = parsed.toString();
+  content.innerHTML = lessons.map(function(lesson, index){
+    const lessonName = lesson.lesson_name || "—";
+    const details = lesson.lesson_details || "—";
+    const performance = lesson.student_performance || "—";
+    const pageUrl = String(lesson.teacher_page_url || "").trim();
+    const pageNo = lesson.page_number;
+    let openUrl = "";
+    if(pageUrl){
+      try {
+        const parsed = new URL(pageUrl);
+        if(parsed.protocol === "http:" || parsed.protocol === "https:"){
+          if(pageNo && (/\.pdf$/i.test(parsed.pathname) || /\.pdf(?:$|[?#])/i.test(pageUrl))){
+            parsed.hash = "page=" + encodeURIComponent(pageNo);
+          }
+          openUrl = parsed.toString();
+        }
+      } catch(_) {}
     }
-   } catch(_) { openUrl = ""; }
-  }
-  const urlBlock = pageUrl && openUrl
-   ? `<div class="lesson-view-item"><small>Teacher Page URL</small><span><a href="${esc(openUrl)}" target="_blank" rel="noopener noreferrer">Open saved page ↗</a></span><small>${esc(pageUrl)}</small></div>`
-   : `<div class="lesson-view-item"><small>Teacher Page URL</small><span>Not added</span></div>`;
+    const urlBlock = openUrl
+      ? `<div class="lesson-view-item"><small>Teacher Page URL</small><span><a href="${esc(openUrl)}" target="_blank" rel="noopener noreferrer">Open saved page ↗</a></span><small>${esc(pageUrl)}</small></div>`
+      : `<div class="lesson-view-item"><small>Teacher Page URL</small><span>Not added</span></div>`;
 
-  content.innerHTML = `
-   <div class="lesson-view-item"><small>Lesson / Subject</small><strong>${esc(lessonName)}</strong></div>
-   <div class="lesson-view-item"><small>Juz Number</small><span>${esc(lesson.juz_number ?? "—")}</span></div>
-   <div class="lesson-view-item"><small>Page Number</small><span>${esc(pageNo ?? "—")}</span></div>
-   <div class="lesson-view-item"><small>Description</small><span>${esc(lesson.description || "—")}</span></div>
-   <div class="lesson-view-item"><small>Lesson Details</small><span>${esc(details)}</span></div>
-   <div class="lesson-view-item"><small>Student Performance</small><span>${esc(performance)}</span></div>
-   ${urlBlock}
-   <div class="lesson-view-item"><small>Class Date</small><span>${esc(lesson.class_date || "—")}</span></div>
-  `;
+    return `
+      <section class="lesson-view-box" style="margin-bottom:14px;padding:14px;">
+        <div class="lesson-view-item"><small>Lesson Date</small><strong>${esc(lesson.class_date || "—")}</strong></div>
+        <div class="lesson-view-item"><small>Lesson / Subject</small><strong>${esc(lessonName)}</strong></div>
+        <div class="lesson-view-item"><small>Juz Number</small><span>${esc(lesson.juz_number ?? "—")}</span></div>
+        <div class="lesson-view-item"><small>Page Number</small><span>${esc(pageNo ?? "—")}</span></div>
+        <div class="lesson-view-item"><small>Description</small><span>${esc(lesson.description || "—")}</span></div>
+        <div class="lesson-view-item"><small>Lesson Details</small><span>${esc(details)}</span></div>
+        <div class="lesson-view-item"><small>Student Performance</small><span>${esc(performance)}</span></div>
+        ${urlBlock}
+      </section>`;
+  }).join("");
  } catch(error){
   console.error("Open previous lesson error:", error);
   content.innerHTML = `<div class="today-empty">Unable to load lesson: ${String(error?.message || error).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}</div>`;
