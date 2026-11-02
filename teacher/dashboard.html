@@ -2789,10 +2789,8 @@ try {
    status: "completed",
    started_at: existingResult.data?.started_at || now,
    completed_at: now,
-   // Legacy fields are also filled so existing dashboard/attendance screens keep working.
-   class: lessonName,
-   session: lessonDetails,
-   test: performance,
+   // Use the dedicated lesson columns. The current table does not have
+   // legacy class/session/test columns, so do not send those fields.
    // Detailed lesson fields (added by lesson-columns.sql).
    juz_number: Number(juzValue),
    page_number: Number(pageValue),
