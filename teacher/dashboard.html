@@ -2882,8 +2882,24 @@ async function(scheduleId, studentName){
   const user = auth?.data?.user;
   if(auth?.error || !user) throw new Error("Please sign in again.");
 
-  const today = todayISO();
-  const cutoff = getTeacherNow().minus({days:4}).toFormat("yyyy-MM-dd");
+  // Use a self-contained Pakistan-local date calculation here.
+  // The previous version depended on todayISO() from another scope,
+  // which caused "todayISO is not defined" when opening Previous Lesson.
+  const dateInPakistan = function(date){
+    const parts = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Karachi",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    }).formatToParts(date);
+    const values = {};
+    parts.forEach(part => { if(part.type !== "literal") values[part.type] = part.value; });
+    return values.year + "-" + values.month + "-" + values.day;
+  };
+  const today = dateInPakistan(new Date());
+  const cutoffDate = new Date();
+  cutoffDate.setDate(cutoffDate.getDate() - 4);
+  const cutoff = dateInPakistan(cutoffDate);
 
   // Remove only old lesson details. Keep the session row, attendance,
   // class status and timestamps intact.
