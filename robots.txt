@@ -3,5 +3,8 @@ Allow: /
 Disallow: /admin/
 Disallow: /student/
 Disallow: /teacher/
+Disallow: /portal-login.html
+Disallow: /register.html
+Disallow: /system-check.html
 
 Sitemap: https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/sitemap.xml
