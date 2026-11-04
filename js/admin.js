@@ -8,7 +8,15 @@
  window.logout=async function(){await db.auth.signOut();location.href='login.html';};
  async function guard(){const {data:{session}}=await db.auth.getSession();if(!session){location.href='login.html';return null;}const {data:p,error}=await db.from('profiles').select('role,full_name').eq('id',session.user.id).single();if(error||!p||p.role!=='admin'){await db.auth.signOut();location.href='login.html';return null;}document.querySelectorAll('[data-admin-name]').forEach(e=>e.textContent=p.full_name||session.user.email);return {session,p};}
  window.adminGuard=guard;
-})();
 
-/* Global floating message assistant */
-(function(){try{var base=document.currentScript&&document.currentScript.src; if(!base)return; var u=new URL("floating-messages.js",base); if(!document.querySelector("script[data-hr-floating-loader]")){var x=document.createElement("script");x.src=u.href;x.dataset.hrFloatingLoader="1";document.head.appendChild(x);}}catch(e){}})();
+ function enhanceAdminShell(){
+   if(document.body.classList.contains('login-page')) return;
+   if(document.querySelector('.admin-topbar')) return;
+   const bar=document.createElement('header');
+   bar.className='admin-topbar';
+   bar.innerHTML=`<a class="admin-brand" href="dashboard.html"><img src="../assets/hr-logo-round.png" alt="Haroon Ibn Rasheed Online Quran Academy"><span><strong>Haroon Ibn Rasheed</strong><small>Online Quran Academy • Admin</small></span></a><div class="admin-top-actions"><a href="dashboard.html">⌂ Dashboard</a><a href="../index.html" target="_blank" rel="noopener">🌐 Website</a><button type="button" onclick="logout()" class="logout">↪ Logout</button></div>`;
+   document.body.prepend(bar);
+ }
+ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',enhanceAdminShell); else enhanceAdminShell();
+})();
+(function(){if(!document.querySelector('script[data-floating-messages]')){const s=document.createElement('script');s.src='../js/floating-messages.js';s.dataset.floatingMessages='1';document.head.appendChild(s)}})();
