@@ -713,7 +713,7 @@ item.classList.toggle("open");
   }
 
   function cleanOldRuntime(){
-    /* Keep the real-photo headers/slideshow inserted by public-headers.js. */
+    document.querySelectorAll('.page-public-header,.public-home-slideshow').forEach(function(el){el.remove();});
     var runtime=document.getElementById('publicHeaderRuntimeStyles');
     if(runtime) runtime.remove();
     if(originalBrand && originalBrandHTML) originalBrand.innerHTML=originalBrandHTML;
@@ -723,9 +723,13 @@ item.classList.toggle("open");
   function init(){
     /* The existing JS may have inserted its old SVG headers; remove only those headers. */
     cleanOldRuntime();
-    /* Header photography is managed by js/public-headers.js to avoid duplicate/conflicting slideshows. */
+    makeAboutHero();
+    Object.keys(REAL_HEADER_PHOTOS).forEach(setupHero);
   }
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
   else init();
 })();
+
+/* Global floating message assistant */
+(function(){try{var base=document.currentScript&&document.currentScript.src; if(!base)return; var u=new URL("floating-messages.js",base); if(!document.querySelector("script[data-hr-floating-loader]")){var x=document.createElement("script");x.src=u.href;x.dataset.hrFloatingLoader="1";document.head.appendChild(x);}}catch(e){}})();

@@ -8,14 +8,7 @@
  window.logout=async function(){await db.auth.signOut();location.href='login.html';};
  async function guard(){const {data:{session}}=await db.auth.getSession();if(!session){location.href='login.html';return null;}const {data:p,error}=await db.from('profiles').select('role,full_name').eq('id',session.user.id).single();if(error||!p||p.role!=='admin'){await db.auth.signOut();location.href='login.html';return null;}document.querySelectorAll('[data-admin-name]').forEach(e=>e.textContent=p.full_name||session.user.email);return {session,p};}
  window.adminGuard=guard;
-
- // Modern no-sidebar navigation: keep every existing admin page reachable without the old sidebar.
- document.addEventListener('DOMContentLoaded',()=>{
-   if(!document.querySelector('.admin-layout') || document.body.dataset.adminNav==='off') return;
-   if(document.querySelector('.modern-admin-nav')) return;
-   const nav=document.createElement('div');
-   nav.className='modern-admin-nav';
-   nav.innerHTML='<a href="dashboard.html">⌂ Dashboard</a><a href="../index.html">🌐 Website</a><a href="#" onclick="logout();return false">↪ Logout</a>';
-   document.body.appendChild(nav);
- });
 })();
+
+/* Global floating message assistant */
+(function(){try{var base=document.currentScript&&document.currentScript.src; if(!base)return; var u=new URL("floating-messages.js",base); if(!document.querySelector("script[data-hr-floating-loader]")){var x=document.createElement("script");x.src=u.href;x.dataset.hrFloatingLoader="1";document.head.appendChild(x);}}catch(e){}})();
