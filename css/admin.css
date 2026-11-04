@@ -38,3 +38,16 @@ a{text-decoration:none;color:inherit}
 .modern-admin-nav a{padding:9px 12px;border-radius:11px;color:#eaf4ff;font-size:12px;font-weight:800;border:1px solid rgba(123,170,255,.12)}
 .modern-admin-nav a:hover{background:rgba(46,167,255,.18);border-color:rgba(61,226,255,.3)}
 @media(max-width:600px){.modern-admin-nav{left:12px;right:12px;bottom:12px;justify-content:center}.modern-admin-nav a{flex:1;text-align:center;padding:9px 5px}}
+/* Final logo-size correction: keep any existing academy logo compact on the Admin dashboard. */
+.admin-layout .brand,
+.admin-layout .brand img,
+.admin-layout .sidebar .brand,
+.admin-layout .sidebar .brand img{max-width:72px!important;max-height:72px!important;width:72px!important;height:72px!important;object-fit:contain!important;overflow:hidden!important}
+.admin-layout .main > img,
+.admin-layout .main > a > img,
+.admin-layout .main .top img,
+.admin-layout .main .hero img{width:56px!important;height:56px!important;max-width:56px!important;max-height:56px!important;object-fit:contain!important}
+.admin-layout .top:before{width:46px!important;height:46px!important;min-width:46px!important;font-size:17px!important;border-radius:14px!important}
+.admin-layout .top{min-height:76px!important}
+/* Prevent a legacy oversized branding block from occupying the top of the page. */
+.admin-layout .legacy-brand,.admin-layout .large-brand,.admin-layout .brand-banner{max-height:78px!important;overflow:hidden!important}
