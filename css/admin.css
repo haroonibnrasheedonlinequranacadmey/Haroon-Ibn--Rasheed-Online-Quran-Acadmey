@@ -207,3 +207,158 @@ body > .large-brand,
 .admin-layout input[type="radio"]{
   accent-color:#20bff2 !important;
 }
+
+/* =========================================================
+   LIGHT PANEL TEXT FIX
+   Some Admin pages use white/light content panels. The global
+   dark-theme label rule above must not make their labels white.
+   ========================================================= */
+
+/* Blog / Articles */
+.admin-layout .article-section,
+.admin-layout .article-section * {
+  --panel-text:#173c4b;
+}
+.admin-layout .article-section h2,
+.admin-layout .article-section h3,
+.admin-layout .article-section h4,
+.admin-layout .article-section label,
+.admin-layout .article-section .field label,
+.admin-layout .article-section .help-text,
+.admin-layout .article-section small,
+.admin-layout .article-section p,
+.admin-layout .article-section .checkbox-row label {
+  color:#173c4b !important;
+}
+.admin-layout .article-section input,
+.admin-layout .article-section select,
+.admin-layout .article-section textarea {
+  color:#173c4b !important;
+  background:#fff !important;
+  border-color:#d8e1e5 !important;
+}
+.admin-layout .article-section input::placeholder,
+.admin-layout .article-section textarea::placeholder {
+  color:#718096 !important;
+  opacity:1 !important;
+}
+.admin-layout .article-section .checkbox-row label {
+  color:#173c4b !important;
+}
+
+/* Blog / Videos */
+.admin-layout .video-card,
+.admin-layout .video-card * {
+  --panel-text:#173c4b;
+}
+.admin-layout .video-card h2,
+.admin-layout .video-card h3,
+.admin-layout .video-card h4,
+.admin-layout .video-card label,
+.admin-layout .video-card .field label,
+.admin-layout .video-card .help-text,
+.admin-layout .video-card small,
+.admin-layout .video-card p,
+.admin-layout .video-card .checkbox-row label {
+  color:#173c4b !important;
+}
+.admin-layout .video-card input,
+.admin-layout .video-card select,
+.admin-layout .video-card textarea {
+  color:#173c4b !important;
+  background:#fff !important;
+  border-color:#d8e1e5 !important;
+}
+.admin-layout .video-card input::placeholder,
+.admin-layout .video-card textarea::placeholder {
+  color:#718096 !important;
+  opacity:1 !important;
+}
+
+/* Courses */
+.admin-layout .course-form-box,
+.admin-layout .course-form-box * {
+  --panel-text:#173c4b;
+}
+.admin-layout .course-form-box h2,
+.admin-layout .course-form-box h3,
+.admin-layout .course-form-box h4,
+.admin-layout .course-form-box label,
+.admin-layout .course-form-box .form-group label,
+.admin-layout .course-form-box small,
+.admin-layout .course-form-box p {
+  color:#173c4b !important;
+}
+.admin-layout .course-form-box input,
+.admin-layout .course-form-box select,
+.admin-layout .course-form-box textarea {
+  color:#173c4b !important;
+  background:#fff !important;
+  border-color:#d8e1e5 !important;
+}
+.admin-layout .course-form-box input::placeholder,
+.admin-layout .course-form-box textarea::placeholder {
+  color:#718096 !important;
+  opacity:1 !important;
+}
+
+/* Fees / summary panels */
+.admin-layout .summary-card,
+.admin-layout .summary-card * {
+  --panel-text:#173c4b;
+}
+.admin-layout .summary-card .summary-label,
+.admin-layout .summary-card .summary-value,
+.admin-layout .summary-card .summary-note,
+.admin-layout .summary-card h2,
+.admin-layout .summary-card h3,
+.admin-layout .summary-card p,
+.admin-layout .summary-card small {
+  color:#173c4b !important;
+}
+.admin-layout .summary-card .summary-label,
+.admin-layout .summary-card .summary-note {
+  color:#718096 !important;
+}
+
+/* Schedule: white day buttons and white preview/slot panels */
+.admin-layout .day-check label {
+  color:#173c4b !important;
+  background:#fff !important;
+  border-color:#d8e1e5 !important;
+}
+.admin-layout .day-check input:checked + label {
+  color:#fff !important;
+  background:linear-gradient(145deg,#159fe6,#0c6fc2) !important;
+  border-color:#48dfff !important;
+}
+.admin-layout .slot:not(.has-class),
+.admin-layout .weekly-grid td:not(.time-col) {
+  color:#173c4b !important;
+}
+.admin-layout .weekly-grid .time-col {
+  color:#173c4b !important;
+}
+
+/* Generic white panels used by Admin pages: headings/labels/text stay visible. */
+.admin-layout .white-panel label,
+.admin-layout .white-panel h2,
+.admin-layout .white-panel h3,
+.admin-layout .white-panel h4,
+.admin-layout .white-panel p,
+.admin-layout .white-panel small,
+.admin-layout .light-panel label,
+.admin-layout .light-panel h2,
+.admin-layout .light-panel h3,
+.admin-layout .light-panel h4,
+.admin-layout .light-panel p,
+.admin-layout .light-panel small {
+  color:#173c4b !important;
+}
+
+/* Native form controls on light panels */
+.admin-layout .article-section input[type="checkbox"],
+.admin-layout .video-card input[type="checkbox"],
+.admin-layout .course-form-box input[type="checkbox"] {
+  accent-color:#0b9fbb !important;
+}
