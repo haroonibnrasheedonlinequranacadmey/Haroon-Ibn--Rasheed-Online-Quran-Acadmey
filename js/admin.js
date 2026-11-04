@@ -19,4 +19,6 @@
  }
  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',enhanceAdminShell); else enhanceAdminShell();
 })();
+
+/* Floating messages: Admin only; loader does not modify Student/Public pages. */
 (function(){if(!document.querySelector('script[data-floating-messages]')){const s=document.createElement('script');s.src='../js/floating-messages.js';s.dataset.floatingMessages='1';document.head.appendChild(s)}})();

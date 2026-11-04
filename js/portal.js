@@ -4928,4 +4928,6 @@ if(
 
 
 })();
-(function(){if(location.pathname.includes('/teacher/')){const s=document.createElement('script');s.src='../js/floating-messages.js';document.head.appendChild(s)}})();
+
+/* Floating messages: Teacher only; loader is guarded by pathname. */
+(function(){try{var base=document.currentScript&&document.currentScript.src;if(!base)return;var u=new URL('floating-messages.js',base);if(!document.querySelector('script[data-hr-floating-loader]')){var x=document.createElement('script');x.src=u.href;x.dataset.hrFloatingLoader='1';document.head.appendChild(x)}}catch(e){}})();
