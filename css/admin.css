@@ -51,3 +51,159 @@ a{text-decoration:none;color:inherit}
 .admin-layout .top{min-height:76px!important}
 /* Prevent a legacy oversized branding block from occupying the top of the page. */
 .admin-layout .legacy-brand,.admin-layout .large-brand,.admin-layout .brand-banner{max-height:78px!important;overflow:hidden!important}
+
+/* FINAL: compact academy logo only — do not affect dashboard cards/charts */
+body > img,
+body > a > img,
+body > header img,
+body > .header img,
+.admin-layout header img,
+.admin-layout .header img,
+.admin-layout .brand img,
+.admin-layout .brand-logo,
+.admin-layout .top img,
+.admin-layout .hero img,
+.admin-layout img.logo-img,
+.admin-layout img[src*="logo" i],
+.admin-layout img[src*="hr-logo" i],
+.admin-layout img[alt*="logo" i] {
+  width:72px !important;
+  height:72px !important;
+  max-width:72px !important;
+  max-height:72px !important;
+  min-width:0 !important;
+  min-height:0 !important;
+  object-fit:contain !important;
+  display:block !important;
+}
+
+/* If the logo is a direct branding block, keep that block compact too. */
+body > .brand,
+body > .logo,
+body > .brand-banner,
+body > .large-brand,
+.admin-layout .brand-banner,
+.admin-layout .large-brand {
+  width:100% !important;
+  max-width:100% !important;
+  height:82px !important;
+  max-height:82px !important;
+  min-height:0 !important;
+  overflow:hidden !important;
+}
+
+/* =========================================================
+   FINAL FORM READABILITY FIX
+   Keeps the existing dark admin design but fixes low-contrast
+   labels, day buttons, previews, selects and form controls.
+   ========================================================= */
+.admin-layout .field > label,
+.admin-layout label,
+.admin-layout .form-grid label,
+.admin-layout .schedule-form label{
+  color:#f2f7ff !important;
+  font-weight:800 !important;
+}
+
+.admin-layout input,
+.admin-layout select,
+.admin-layout textarea,
+.admin-layout .input{
+  background:rgba(6,18,42,.92) !important;
+  color:#f4f8ff !important;
+  border-color:rgba(123,170,255,.35) !important;
+  caret-color:#fff !important;
+}
+
+.admin-layout input::placeholder,
+.admin-layout textarea::placeholder,
+.admin-layout .input::placeholder{
+  color:#aebed6 !important;
+  opacity:1 !important;
+}
+
+.admin-layout select option{
+  background:#0b1d3b !important;
+  color:#f4f8ff !important;
+}
+
+.admin-layout input[type="date"],
+.admin-layout input[type="time"],
+.admin-layout input[type="datetime-local"]{
+  color-scheme:dark !important;
+}
+
+/* Weekly class-day selector */
+.admin-layout .day-check label,
+.admin-layout .day-check > label{
+  background:linear-gradient(145deg,#173d78,#102d5a) !important;
+  color:#edf6ff !important;
+  border:1px solid rgba(123,170,255,.42) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08) !important;
+}
+.admin-layout .day-check input:checked + label{
+  background:linear-gradient(145deg,#159fe6,#0c6fc2) !important;
+  color:#fff !important;
+  border-color:#48dfff !important;
+  box-shadow:0 8px 20px rgba(20,159,230,.28) !important;
+}
+
+/* Schedule preview / timezone search */
+.admin-layout .timezone-preview,
+.admin-layout .timezone-preview-card .timezone-preview{
+  background:linear-gradient(145deg,rgba(20,46,91,.92),rgba(8,24,51,.92)) !important;
+  color:#edf6ff !important;
+  border:1px solid rgba(123,170,255,.32) !important;
+}
+.admin-layout .preview-title,
+.admin-layout .preview-row,
+.admin-layout .preview-row span,
+.admin-layout .preview-row strong,
+.admin-layout .timezone-value,
+.admin-layout .tz-selected{
+  color:#edf6ff !important;
+}
+.admin-layout .preview-row strong{color:#9fdfff !important}
+.admin-layout .tz-results{
+  background:#0b1d3b !important;
+  color:#edf6ff !important;
+  border-color:rgba(123,170,255,.35) !important;
+}
+.admin-layout .tz-result{
+  background:#0b1d3b !important;
+  color:#edf6ff !important;
+  border-bottom-color:rgba(123,170,255,.18) !important;
+}
+.admin-layout .tz-result:hover{background:#15376b !important}
+.admin-layout .tz-result-sub{color:#aebed6 !important}
+
+/* Buttons and clickable controls should never render as white-on-white. */
+.admin-layout button,
+.admin-layout .btn,
+.admin-layout .refresh-btn{
+  color:#fff !important;
+}
+.admin-layout button:disabled,
+.admin-layout .btn:disabled{
+  color:#b8c7db !important;
+  opacity:.7 !important;
+}
+
+/* Generic light inline blocks that appear on dark admin pages. */
+.admin-layout .note,
+.admin-layout .preview,
+.admin-layout .preview-card,
+.admin-layout .info-box,
+.admin-layout .timezone-preview-card > div{
+  color:#edf6ff !important;
+}
+
+/* Tables and links remain readable on dark cards. */
+.admin-layout a{color:#72dfff}
+.admin-layout .table a{color:#72dfff !important}
+
+/* Keep native checkboxes/radios visible. */
+.admin-layout input[type="checkbox"],
+.admin-layout input[type="radio"]{
+  accent-color:#20bff2 !important;
+}
