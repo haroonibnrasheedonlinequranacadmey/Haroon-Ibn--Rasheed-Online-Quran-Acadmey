@@ -362,3 +362,4 @@ body > .large-brand,
 .admin-layout .course-form-box input[type="checkbox"] {
   accent-color:#0b9fbb !important;
 }
+.admin-dashboard-actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin:0 0 14px}.admin-dashboard-actions a{display:inline-flex;align-items:center;gap:6px;padding:9px 13px;border-radius:12px;border:1px solid rgba(255,255,255,.15);background:linear-gradient(145deg,rgba(24,72,130,.95),rgba(9,31,67,.95));color:#eef5ff;font-weight:800;font-size:13px;box-shadow:0 8px 22px rgba(0,0,0,.18)}.admin-dashboard-actions a:hover{transform:translateY(-1px);border-color:rgba(61,226,255,.45)}
