@@ -1,101 +1,51 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Admin Dashboard | Haroon Ibn Rasheed Online Quran Academy</title>
 <link rel="stylesheet" href="../css/admin.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="../js/config.js"></script>
-<script src="../js/admin.js"></script>
+<script src="../js/config.js"></script><script src="../js/admin.js"></script>
+<style>
+.hero{position:relative;overflow:hidden;min-height:190px;padding:28px 30px;border-radius:26px;margin-bottom:20px;background:radial-gradient(circle at 80% 20%,rgba(61,226,255,.24),transparent 28%),linear-gradient(135deg,#102e64,#081735 70%);border:1px solid rgba(109,180,255,.25);box-shadow:0 25px 70px rgba(0,0,0,.32)}
+.hero:before,.hero:after{content:'';position:absolute;border-radius:50%;filter:blur(1px);opacity:.5}.hero:before{width:230px;height:230px;right:-70px;top:-120px;border:35px solid rgba(61,226,255,.08)}.hero:after{width:150px;height:150px;right:100px;bottom:-95px;border:25px solid rgba(255,198,90,.07)}
+.hero h2{margin:0 0 8px;font-size:30px}.hero p{margin:0;color:#a9bddf;max-width:680px;line-height:1.6}.hero-chip{display:inline-flex;margin-top:18px;padding:8px 12px;border-radius:999px;background:rgba(61,226,255,.1);border:1px solid rgba(61,226,255,.2);color:#72eaff;font-size:12px;font-weight:800}
+.visual-grid{display:grid;grid-template-columns:1.3fr .7fr;gap:20px;margin-bottom:20px}.chart-card{min-height:270px}.bars{display:flex;align-items:flex-end;gap:14px;height:180px;padding:18px 6px 4px}.bar{flex:1;min-width:22px;border-radius:10px 10px 4px 4px;background:linear-gradient(180deg,#3de2ff,#1675c5);box-shadow:0 10px 25px rgba(46,167,255,.18);position:relative}.bar span{position:absolute;bottom:-24px;left:50%;transform:translateX(-50%);font-size:11px;color:#8fa8cf}.ring-wrap{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:center;height:200px}.ring{width:130px;height:130px;margin:auto;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#3de2ff var(--pct),rgba(255,255,255,.08) 0);position:relative;box-shadow:0 12px 30px rgba(0,0,0,.25)}.ring:after{content:'';position:absolute;inset:12px;border-radius:50%;background:#102852}.ring strong{position:relative;z-index:1;font-size:26px}.ring small{position:absolute;z-index:1;bottom:28px;color:#9eb1d2;font-size:10px}
+.section-title{font-size:15px;color:#cfe0fa;font-weight:800;margin-bottom:10px}
+@media(max-width:900px){.visual-grid{grid-template-columns:1fr}.ring-wrap{height:auto;padding:15px 0}}
+</style>
 </head>
-<body class="admin-dashboard-page">
-<div class="admin-layout">
-  <aside class="sidebar">
-<div class="brand">HR Admin<span>Haroon Ibn Rasheed Online Quran Academy</span></div>
-<nav class="nav"><a class="active" href="dashboard.html">Dashboard</a><a href="admissions.html">Admissions / Leads</a><a href="users.html">Portal Users</a><a href="students.html">Students</a><a href="enrollments.html">Enrollments</a><a href="teachers.html">Teachers</a><a href="schedule.html">Schedule</a><a href="classes.html">Classes</a><a href="attendance.html">Attendance</a><a href="payments.html">Payments</a><a href="leaves.html">Leaves</a><a href="salaries.html">Salaries</a><a href="courses.html">Courses</a><a href="fees.html">Fees</a><a href="payment-methods.html">Payment Methods</a><a href="messages.html">Messages</a><a href="testimonials.html">Testimonials</a><a href="articles.html">Blog / Articles</a><a href="blog-videos.html">Blog / Videos</a><a href="notifications.html">Notifications</a><a href="faqs.html">FAQs</a><a href="content.html">Website Content</a><a href="settings.html">Settings</a><a href="admin-accounts.html">Account Credentials</a><a href="../index.html">View Website</a><a href="#" onclick="logout();return false">Logout</a></nav></aside>
-  <main class="main">
-    <div class="admin-dashboard-shell">
-      <section class="dashboard-hero">
-        <div class="hero-glow"></div>
-        <div class="hero-copy">
-          <div class="hero-kicker">Bismillah • Academy Management</div>
-          <h1>Welcome to Admin Panel</h1>
-          <p>Haroon Ibn Rasheed Online Quran Academy</p>
-          <span class="hero-sub">Manage, monitor and grow your academy from one professional dashboard.</span>
-        </div>
-        <div class="hero-ornament" aria-hidden="true">☾ ✦ 📖 ✦ ☽</div>
-        <div class="hero-date"><span>Today</span><strong id="todayText">Loading...</strong></div>
-      </section>
-
-      <div id="dashboardMsg" class="msg"></div>
-
-      <section class="dashboard-stats">
-        <div class="neo-stat blue"><div class="neo-icon">👨‍🎓</div><div><span>Total Students</span><strong id="totalStudents">0</strong><small>Active students</small></div></div>
-        <div class="neo-stat green"><div class="neo-icon">👨‍🏫</div><div><span>Total Teachers</span><strong id="totalTeachers">0</strong><small>Active teachers</small></div></div>
-        <div class="neo-stat purple"><div class="neo-icon">📚</div><div><span>Total Courses</span><strong id="totalCourses">0</strong><small>Active courses</small></div></div>
-        <div class="neo-stat orange"><div class="neo-icon">🗓️</div><div><span>Today's Classes</span><strong id="todayClasses">0</strong><small>Scheduled today</small></div></div>
-        <div class="neo-stat cyan"><div class="neo-icon">📩</div><div><span>Total Leads</span><strong id="totalLeads">0</strong><small>Admission enquiries</small></div></div>
-        <div class="neo-stat pink"><div class="neo-icon">🆕</div><div><span>New Leads</span><strong id="newLeads">0</strong><small>New admissions</small></div></div>
-        <div class="neo-stat gold"><div class="neo-icon">💰</div><div><span>Pending Payments</span><strong id="pendingPayments">0</strong><small>Student payments</small></div></div>
-        <div class="neo-stat red"><div class="neo-icon">💵</div><div><span>Pending Salary</span><strong id="pendingSalary">0</strong><small>Teacher salary records</small></div></div>
-      </section>
-
-      <section class="dashboard-section-head"><div><span>ACADEMY CONTROL CENTER</span><h2>All Admin Sections</h2></div><button class="refresh-btn" id="refreshBtn">↻ Refresh Data</button></section>
-      <section class="admin-shortcuts">
-        <a class="shortcut blue" href="students.html"><i>👨‍🎓</i><b>Students</b><small>Manage Students</small><em>→</em></a>
-        <a class="shortcut green" href="teachers.html"><i>👨‍🏫</i><b>Teachers</b><small>Manage Teachers</small><em>→</em></a>
-        <a class="shortcut purple" href="courses.html"><i>📚</i><b>Courses</b><small>Manage Courses</small><em>→</em></a>
-        <a class="shortcut orange" href="classes.html"><i>🏫</i><b>Classes</b><small>Manage Classes</small><em>→</em></a>
-        <a class="shortcut cyan" href="messages.html"><i>💬</i><b>Messages</b><small>Admin Messages</small><em>→</em></a>
-        <a class="shortcut teal" href="payments.html"><i>💳</i><b>Payments</b><small>Student Payments</small><em>→</em></a>
-        <a class="shortcut indigo" href="attendance.html"><i>📅</i><b>Attendance</b><small>Manage Attendance</small><em>→</em></a>
-        <a class="shortcut rose" href="leaves.html"><i>🌿</i><b>Leaves</b><small>Manage Leaves</small><em>→</em></a>
-        <a class="shortcut violet" href="salaries.html"><i>💰</i><b>Salaries</b><small>Teacher Salaries</small><em>→</em></a>
-        <a class="shortcut lime" href="schedule.html"><i>🕒</i><b>Schedule</b><small>Class Schedule</small><em>→</em></a>
-        <a class="shortcut sky" href="admissions.html"><i>📝</i><b>Admissions</b><small>Leads & Enquiries</small><em>→</em></a>
-        <a class="shortcut magenta" href="articles.html"><i>📊</i><b>Articles & Reports</b><small>Content & Insights</small><em>→</em></a>
-        <a class="shortcut navy" href="settings.html"><i>⚙️</i><b>Settings</b><small>Admin Settings</small><em>→</em></a>
-        <a class="shortcut gold2" href="content.html"><i>📝</i><b>Content</b><small>Website Content</small><em>→</em></a>
-        <a class="shortcut emerald" href="notifications.html"><i>🔔</i><b>Notifications</b><small>Manage Alerts</small><em>→</em></a>
-        <a class="shortcut slate" href="users.html"><i>👥</i><b>Portal Users</b><small>Student & Teacher Users</small><em>→</em></a>
-        <a class="shortcut violet2" href="enrollments.html"><i>🎓</i><b>Enrollments</b><small>Student Enrollments</small><em>→</em></a>
-        <a class="shortcut blue2" href="fees.html"><i>🧾</i><b>Fees</b><small>Fee Management</small><em>→</em></a>
-        <a class="shortcut green2" href="payment-methods.html"><i>🏦</i><b>Payment Methods</b><small>Payment Settings</small><em>→</em></a>
-        <a class="shortcut orange2" href="articles.html"><i>✍️</i><b>Articles</b><small>Blog Articles</small><em>→</em></a>
-        <a class="shortcut cyan2" href="blog-videos.html"><i>🎬</i><b>Blog / Videos</b><small>Media Content</small><em>→</em></a>
-        <a class="shortcut pink2" href="faqs.html"><i>❓</i><b>FAQs</b><small>Manage FAQs</small><em>→</em></a>
-        <a class="shortcut yellow2" href="testimonials.html"><i>⭐</i><b>Testimonials</b><small>Student Reviews</small><em>→</em></a>
-        <a class="shortcut red2" href="admin-accounts.html"><i>🔐</i><b>Admin Accounts</b><small>Credentials & Access</small><em>→</em></a>
-      </section>
-
-      <section class="dashboard-columns">
-        <div class="card neon-panel">
-          <div class="section-head"><div><span class="panel-kicker">LIVE ACADEMY DATA</span><h2>Today's Classes</h2></div><span class="muted" id="classCountText">0 classes</span></div>
-          <div class="table-wrap"><table class="table"><thead><tr><th>Student</th><th>Teacher</th><th>Course</th><th>Time</th><th>Duration</th><th>Status</th></tr></thead><tbody id="todayClassRows"><tr><td colspan="6" class="empty">Loading today's classes...</td></tr></tbody></table></div>
-        </div>
-        <div class="card neon-panel message-panel">
-          <div class="section-head"><div><span class="panel-kicker">ADMISSIONS</span><h2>Recent Admissions</h2></div><a class="btn" href="admissions.html">View All</a></div>
-          <div class="table-wrap"><table class="table"><thead><tr><th>Student</th><th>Course</th><th>WhatsApp</th><th>Status</th><th>Date</th></tr></thead><tbody id="admissionRows"><tr><td colspan="5" class="empty">Loading...</td></tr></tbody></table></div>
-        </div>
-      </section>
-
-      <section class="dashboard-columns">
-        <div class="card neon-panel"><div class="section-head"><div><span class="panel-kicker">FINANCE</span><h2>Student Payments</h2></div><a class="btn" href="payments.html">Manage</a></div><table class="table"><thead><tr><th>Status</th><th>Records</th><th>Amount</th></tr></thead><tbody><tr><td><span class="badge badge-paid">Paid</span></td><td id="paidPaymentCount">0</td><td class="money" id="paidPaymentAmount">0</td></tr><tr><td><span class="badge badge-pending">Pending</span></td><td id="pendingPaymentCount">0</td><td class="money" id="pendingPaymentAmount">0</td></tr></tbody></table></div>
-        <div class="card neon-panel"><div class="section-head"><div><span class="panel-kicker">PAYROLL</span><h2>Teacher Salary</h2></div><a class="btn" href="salaries.html">Manage</a></div><table class="table"><thead><tr><th>Status</th><th>Records</th><th>Amount</th></tr></thead><tbody><tr><td><span class="badge badge-paid">Paid</span></td><td id="paidSalaryCount">0</td><td class="money" id="paidSalaryAmount">0</td></tr><tr><td><span class="badge badge-pending">Pending</span></td><td id="pendingSalaryCount">0</td><td class="money" id="pendingSalaryAmount">0</td></tr></tbody></table></div>
-      </section>
-
-      <section class="overview-strip">
-        <div><span>Students</span><b id="overviewStudents">0</b><a href="students.html">Open →</a></div>
-        <div><span>Teachers</span><b id="overviewTeachers">0</b><a href="teachers.html">Open →</a></div>
-        <div><span>Courses</span><b id="overviewCourses">0</b><a href="courses.html">Open →</a></div>
-        <div><span>Active Schedules</span><b id="overviewSchedules">0</b><a href="schedule.html">Open →</a></div>
-        <div><span>Notifications</span><b id="overviewNotifications">0</b><a href="notifications.html">Open →</a></div>
-      </section>
-
-      <footer class="admin-footer">© 2026 Haroon Ibn Rasheed Online Quran Academy. All Rights Reserved. <span>Learn Quran • Spread Knowledge</span></footer>
-    </div>
-  </main>
+<body>
+<div class="admin-layout"><main class="main">
+<div class="top"><div><h1>HR Admin</h1><span class="muted">Haroon Ibn Rasheed Online Quran Academy • <b data-admin-name>Admin</b></span></div><button class="refresh-btn" id="refreshBtn">↻ Refresh</button></div>
+<section class="hero"><h2>Academy Management Center</h2><p>Manage students, teachers, courses, classes, admissions, payments, attendance, messages and the complete academy system from one professional dashboard.</p><span class="hero-chip" id="todayText">Loading...</span></section>
+<div id="dashboardMsg" class="msg"></div>
+<div class="dashboard-grid">
+<div class="card stat"><div class="stat-title"><small>Total Leads</small><div class="stat-icon">📩</div></div><div class="stat-value" id="totalLeads">0</div><span class="stat-sub">All admission enquiries</span></div>
+<div class="card stat"><div class="stat-title"><small>New Leads</small><div class="stat-icon">🆕</div></div><div class="stat-value" id="newLeads">0</div><span class="stat-sub">New admissions</span></div>
+<div class="card stat"><div class="stat-title"><small>Students</small><div class="stat-icon">👨‍🎓</div></div><div class="stat-value" id="totalStudents">0</div><span class="stat-sub">Active students</span></div>
+<div class="card stat"><div class="stat-title"><small>Teachers</small><div class="stat-icon">👨‍🏫</div></div><div class="stat-value" id="totalTeachers">0</div><span class="stat-sub">Active teachers</span></div>
+<div class="card stat"><div class="stat-title"><small>Courses</small><div class="stat-icon">📚</div></div><div class="stat-value" id="totalCourses">0</div><span class="stat-sub">Active courses</span></div>
+<div class="card stat"><div class="stat-title"><small>Today's Classes</small><div class="stat-icon">🗓️</div></div><div class="stat-value" id="todayClasses">0</div><span class="stat-sub">Scheduled today</span></div>
+<div class="card stat"><div class="stat-title"><small>Pending Payments</small><div class="stat-icon">💳</div></div><div class="stat-value" id="pendingPayments">0</div><span class="stat-sub">Student payment records</span></div>
+<div class="card stat"><div class="stat-title"><small>Pending Salary</small><div class="stat-icon">💰</div></div><div class="stat-value" id="pendingSalary">0</div><span class="stat-sub">Teacher salary records</span></div>
 </div>
-{script}
-</body></html>
+<div class="visual-grid">
+<div class="card chart-card"><div class="section-head"><h2>Academy Activity</h2><span class="muted">Live database overview</span></div><div class="bars"><div class="bar" id="barStudents" style="height:70%"><span>Students</span></div><div class="bar" id="barTeachers" style="height:48%"><span>Teachers</span></div><div class="bar" id="barCourses" style="height:35%"><span>Courses</span></div><div class="bar" id="barClasses" style="height:60%"><span>Classes</span></div><div class="bar" id="barLeads" style="height:45%"><span>Leads</span></div><div class="bar" id="barPayments" style="height:30%"><span>Payments</span></div></div></div>
+<div class="card chart-card"><div class="section-head"><h2>Quick Health</h2><span class="muted">Current</span></div><div class="ring-wrap"><div class="ring" id="studentRing" style="--pct:0%"><strong id="studentRingText">0</strong><small>STUDENTS</small></div><div class="ring" id="teacherRing" style="--pct:0%"><strong id="teacherRingText">0</strong><small>TEACHERS</small></div></div></div>
+</div>
+<div class="card"><div class="section-head"><h2>Management Center</h2><span class="muted">Select a section</span></div><div class="quick-grid">
+<a class="quick-btn" href="admissions.html">📥 Admissions / Leads</a><a class="quick-btn" href="users.html">👤 Portal Users</a><a class="quick-btn" href="students.html">🎓 Students</a><a class="quick-btn" href="enrollments.html">📝 Enrollments</a><a class="quick-btn" href="teachers.html">🧑‍🏫 Teachers</a><a class="quick-btn" href="schedule.html">📅 Schedule</a><a class="quick-btn" href="classes.html">🏫 Classes</a><a class="quick-btn" href="attendance.html">✅ Attendance</a><a class="quick-btn" href="payments.html">💳 Payments</a><a class="quick-btn" href="fees.html">🧾 Fees</a><a class="quick-btn" href="leaves.html">🌿 Leaves</a><a class="quick-btn" href="salaries.html">💰 Salaries</a><a class="quick-btn" href="courses.html">📚 Courses</a><a class="quick-btn" href="payment-methods.html">🏦 Payment Methods</a><a class="quick-btn" href="messages.html">💬 Messages</a><a class="quick-btn" href="testimonials.html">⭐ Testimonials</a><a class="quick-btn" href="articles.html">📝 Blog / Articles</a><a class="quick-btn" href="blog-videos.html">🎬 Blog / Videos</a><a class="quick-btn" href="notifications.html">🔔 Notifications</a><a class="quick-btn" href="faqs.html">❓ FAQs</a><a class="quick-btn" href="content.html">🌐 Website Content</a><a class="quick-btn" href="settings.html">⚙️ Settings</a><a class="quick-btn" href="admin-accounts.html">🔐 Account Credentials</a><a class="quick-btn" href="../index.html">🌍 View Website</a><a class="quick-btn" href="#" onclick="logout();return false">🚪 Logout</a>
+</div></div>
+<div class="card"><div class="section-head"><h2>Today's Classes</h2><span class="muted" id="classCountText">0 classes</span></div><div class="table-wrap"><table class="table"><thead><tr><th>Student</th><th>Teacher</th><th>Course</th><th>Time</th><th>Duration</th><th>Status</th></tr></thead><tbody id="todayClassRows"><tr><td colspan="6" class="empty">Loading today's classes...</td></tr></tbody></table></div></div>
+<div class="dashboard-two"><div class="card"><div class="section-head"><h2>Recent Admissions</h2><a class="btn" href="admissions.html">View All</a></div><div class="table-wrap"><table class="table"><thead><tr><th>Student</th><th>Course</th><th>WhatsApp</th><th>Status</th><th>Date</th></tr></thead><tbody id="admissionRows"><tr><td colspan="5" class="empty">Loading...</td></tr></tbody></table></div></div>
+<div class="card"><div class="section-head"><h2>Student Payments</h2><a class="btn" href="payments.html">Manage</a></div><div class="table-wrap"><table class="table"><thead><tr><th>Status</th><th>Records</th><th>Amount</th></tr></thead><tbody><tr><td><span class="badge badge-paid">Paid</span></td><td id="paidPaymentCount">0</td><td class="money" id="paidPaymentAmount">0</td></tr><tr><td><span class="badge badge-pending">Pending</span></td><td id="pendingPaymentCount">0</td><td class="money" id="pendingPaymentAmount">0</td></tr></tbody></table></div></div></div>
+<div class="dashboard-two"><div class="card"><div class="section-head"><h2>Teacher Salary</h2><a class="btn" href="salaries.html">Manage</a></div><div class="table-wrap"><table class="table"><thead><tr><th>Status</th><th>Records</th><th>Amount</th></tr></thead><tbody><tr><td><span class="badge badge-paid">Paid</span></td><td id="paidSalaryCount">0</td><td class="money" id="paidSalaryAmount">0</td></tr><tr><td><span class="badge badge-pending">Pending</span></td><td id="pendingSalaryCount">0</td><td class="money" id="pendingSalaryAmount">0</td></tr></tbody></table></div></div>
+<div class="card"><div class="section-head"><h2>Academy Overview</h2></div><div class="table-wrap"><table class="table"><tbody><tr><td>Students</td><td id="overviewStudents">0</td><td><a class="btn" href="students.html">Open</a></td></tr><tr><td>Teachers</td><td id="overviewTeachers">0</td><td><a class="btn" href="teachers.html">Open</a></td></tr><tr><td>Courses</td><td id="overviewCourses">0</td><td><a class="btn" href="courses.html">Open</a></td></tr><tr><td>Active Schedules</td><td id="overviewSchedules">0</td><td><a class="btn" href="schedule.html">Open</a></td></tr><tr><td>Notifications</td><td id="overviewNotifications">0</td><td><a class="btn" href="notifications.html">Open</a></td></tr></tbody></table></div></div></div>
+</main></div>
+<script>
+(async()=>{const $=id=>document.getElementById(id),set=(id,v)=>{const e=$(id);if(e)e.textContent=v??0};const money=(n,c='')=>Number(n||0).toLocaleString(undefined,{maximumFractionDigits:2})+(c?' '+c:'');const esc=v=>window.escapeHtml?escapeHtml(v):String(v??'');const date=v=>v?new Date(v).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric',timeZone:'Asia/Karachi'}):'';const time=v=>{if(!v)return'';let [h,m]=String(v).split(':');h=Number(h);return `${h%12||12}:${m||'00'} ${h>=12?'PM':'AM'}`};const days=v=>Array.isArray(v)?v:(String(v||'').replace(/[{}[\]"]/g,'').split(',').map(x=>x.trim()).filter(Boolean));const today=()=>new Intl.DateTimeFormat('en-US',{weekday:'long',timeZone:'Asia/Karachi'}).format(new Date()).toLowerCase();if(!window.db){location.href='login.html';return}if(!(await adminGuard()))return;set('todayText',new Intl.DateTimeFormat('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric',timeZone:'Asia/Karachi'}).format(new Date()));async function load(){try{const [a,n,s,t,c,sc,no]=await Promise.all([db.from('admissions').select('id',{count:'exact',head:true}),db.from('admissions').select('id',{count:'exact',head:true}).eq('status','new'),db.from('students').select('id',{count:'exact',head:true}).eq('status','active'),db.from('teachers').select('id',{count:'exact',head:true}).eq('active',true),db.from('courses').select('id',{count:'exact',head:true}).or('active.eq.true,is_active.eq.true'),db.from('class_schedules').select('id',{count:'exact',head:true}).eq('active',true),db.from('notifications').select('id',{count:'exact',head:true}).is('read_at',null)]);set('totalLeads',a.count||0);set('newLeads',n.count||0);set('totalStudents',s.count||0);set('totalTeachers',t.count||0);set('totalCourses',c.count||0);set('overviewStudents',s.count||0);set('overviewTeachers',t.count||0);set('overviewCourses',c.count||0);set('overviewSchedules',sc.count||0);set('overviewNotifications',no.count||0);const max=Math.max(s.count||0,t.count||0,c.count||0,sc.count||0,a.count||0,1);[['barStudents',s.count],['barTeachers',t.count],['barCourses',c.count],['barClasses',sc.count],['barLeads',a.count]].forEach(([id,v])=>{const e=$(id);if(e)e.style.height=`${Math.max(10,Math.round((v||0)/max*88))}%`});const pct=v=>Math.min(100,Math.round(((v||0)/max)*100));$('studentRing').style.setProperty('--pct',pct(s.count)+'%');$('teacherRing').style.setProperty('--pct',pct(t.count)+'%');set('studentRingText',s.count||0);set('teacherRingText',t.count||0);
+const sr=await db.from('class_schedules').select('id,student_id,teacher_id,course,class_days,class_time,duration_minutes,active').eq('active',true).order('class_time',{ascending:true});let todayRows=(sr.data||[]).filter(x=>days(x.class_days).some(d=>String(d).toLowerCase().startsWith(today().slice(0,3))));set('todayClasses',todayRows.length);set('classCountText',`${todayRows.length} class${todayRows.length===1?'':'es'}`);const ids=[...new Set(todayRows.map(x=>x.student_id).filter(Boolean))],tids=[...new Set(todayRows.map(x=>x.teacher_id).filter(Boolean))];const sm={},tm={};if(ids.length){const r=await db.from('students').select('id,full_name').in('id',ids);(r.data||[]).forEach(x=>sm[x.id]=x)}if(tids.length){const r=await db.from('teachers').select('id,name').in('id',tids);(r.data||[]).forEach(x=>tm[x.id]=x)}$('todayClassRows').innerHTML=todayRows.length?todayRows.map(x=>`<tr><td><strong>${esc(sm[x.student_id]?.full_name||'Unknown Student')}</strong></td><td>${esc(tm[x.teacher_id]?.name||'Unknown Teacher')}</td><td>${esc(x.course||'-')}</td><td>${esc(time(x.class_time))}</td><td>${esc(String(x.duration_minutes||30))} min</td><td><span class="badge badge-upcoming">Scheduled</span></td></tr>`).join(''):`<tr><td colspan="6" class="empty">No classes scheduled for today.</td></tr>`;
+const ar=await db.from('admissions').select('id,student_name,course,phone,status,created_at').order('created_at',{ascending:false}).limit(10);$('admissionRows').innerHTML=ar.data?.length?ar.data.map(x=>`<tr><td>${esc(x.student_name||'-')}</td><td>${esc(x.course||'-')}</td><td>${esc(x.phone||'-')}</td><td><span class="badge badge-new">${esc(x.status||'new')}</span></td><td>${esc(date(x.created_at))}</td></tr>`).join(''):`<tr><td colspan="5" class="empty">No admissions yet.</td></tr>`;
+const pr=await db.from('student_payments').select('amount,currency,status');let pc=0,pp=0,pa=0,ppa=0,cur='';(pr.data||[]).forEach(x=>{const a=Number(x.amount||0);cur=cur||x.currency||'';if(String(x.status).toLowerCase()==='paid'){pc++;pa+=a}else{pp++;ppa+=a}});set('paidPaymentCount',pc);set('pendingPaymentCount',pp);set('paidPaymentAmount',money(pa,cur));set('pendingPaymentAmount',money(ppa,cur));set('pendingPayments',pp);const yr=await db.from('teacher_salaries').select('amount,currency,status');let yc=0,yp=0,ya=0,ypa=0,ycur='';(yr.data||[]).forEach(x=>{const a=Number(x.amount||0);ycur=ycur||x.currency||'';if(String(x.status).toLowerCase()==='paid'){yc++;ya+=a}else{yp++;ypa+=a}});set('paidSalaryCount',yc);set('pendingSalaryCount',yp);set('paidSalaryAmount',money(ya,ycur));set('pendingSalaryAmount',money(ypa,ycur));set('pendingSalary',yp);showMsg('dashboardMsg','Dashboard updated successfully.','ok')}catch(e){console.error(e);showMsg('dashboardMsg',e.message||'Dashboard loading failed.','error')}finally{$('refreshBtn').disabled=false;$('refreshBtn').textContent='↻ Refresh'}}$('refreshBtn').onclick=load;await load()})();
+</script></body></html>
