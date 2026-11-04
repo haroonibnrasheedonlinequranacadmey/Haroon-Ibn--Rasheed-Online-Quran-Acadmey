@@ -1,0 +1,93 @@
+:root{
+  --bg:#07142d;--bg2:#0b1e40;--panel:rgba(17,35,70,.78);--panel2:rgba(22,47,92,.68);
+  --line:rgba(123,170,255,.22);--text:#eef5ff;--muted:#9eb1d2;--blue:#2ea7ff;--cyan:#3de2ff;
+  --green:#55e6a5;--gold:#ffc65a;--pink:#ff6b9d;--danger:#ff6b6b;
+  --shadow:0 20px 60px rgba(0,0,0,.32)
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:radial-gradient(circle at 15% 10%,rgba(46,167,255,.18),transparent 28%),radial-gradient(circle at 85% 15%,rgba(61,226,255,.12),transparent 25%),linear-gradient(145deg,#061126,#0b1c3c 55%,#07142d);color:var(--text);min-height:100vh}
+a{text-decoration:none;color:inherit}
+.admin-layout{display:block;min-height:100vh}
+.sidebar{display:none!important}
+.main{margin:0!important;width:100%!important;max-width:1500px;margin-inline:auto!important;padding:24px clamp(16px,3vw,42px) 50px!important}
+.top{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-bottom:22px;padding:16px 20px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(135deg,rgba(20,46,91,.88),rgba(10,25,53,.78));box-shadow:var(--shadow);backdrop-filter:blur(18px)}
+.top h1{margin:0;font-size:28px;letter-spacing:.2px}.top .muted{color:var(--muted)}
+.top:before{content:'HR';display:grid;place-items:center;width:54px;height:54px;border-radius:16px;margin-right:auto;background:linear-gradient(145deg,#163d78,#0b8fdc);border:1px solid rgba(255,255,255,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 10px 25px rgba(0,137,255,.25);font-weight:900;font-size:20px}
+.top>div{margin-right:auto}.refresh-btn,.btn{border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:10px 15px;background:linear-gradient(145deg,#148fe0,#1167b7);color:#fff;font-weight:800;cursor:pointer;box-shadow:0 10px 24px rgba(20,143,224,.25)}
+.btn.gold{background:linear-gradient(145deg,#ffd36d,#d99324);color:#201500}.btn.danger{background:linear-gradient(145deg,#ff6b6b,#c93552)}
+.card{background:linear-gradient(145deg,rgba(24,51,99,.82),rgba(11,27,58,.82));border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:var(--shadow);backdrop-filter:blur(18px);margin-bottom:20px}
+.dashboard-note{padding:15px 18px;border-radius:18px;background:linear-gradient(135deg,rgba(61,226,255,.12),rgba(46,167,255,.08));border:1px solid rgba(61,226,255,.2);color:#d7f8ff;margin-bottom:20px}
+.dashboard-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}.dashboard-grid .stat{min-height:145px;position:relative;overflow:hidden}.dashboard-grid .stat:after{content:'';position:absolute;width:120px;height:120px;border-radius:50%;right:-45px;bottom:-55px;background:radial-gradient(circle,rgba(61,226,255,.18),transparent 68%)}
+.stat-title{display:flex;align-items:center;justify-content:space-between;gap:10px}.stat-title small{color:#c9d7f0;font-size:13px;font-weight:700}.stat-icon{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(145deg,rgba(46,167,255,.95),rgba(30,91,181,.72));font-size:23px;box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 12px 25px rgba(0,120,255,.2)}
+.stat-value{margin-top:18px;font-size:34px;font-weight:900;color:#fff}.stat-sub{display:block;margin-top:5px;color:var(--muted);font-size:12px}
+.dashboard-two{display:grid;grid-template-columns:1.35fr .65fr;gap:20px}.quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.quick-btn{display:flex;align-items:center;gap:10px;min-height:70px;padding:14px;border:1px solid var(--line);border-radius:17px;background:linear-gradient(145deg,rgba(31,70,133,.7),rgba(12,31,64,.8));font-weight:800;color:#edf6ff;box-shadow:inset 0 1px 0 rgba(255,255,255,.08);transition:.18s}.quick-btn:hover{transform:translateY(-3px);border-color:rgba(61,226,255,.6);box-shadow:0 15px 30px rgba(0,0,0,.25)}
+.section-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:15px}.section-head h2{margin:0;font-size:18px}.muted{color:var(--muted)}
+.table-wrap{overflow:auto;border-radius:15px}.table{width:100%;border-collapse:collapse}.table th,.table td{padding:12px;border-bottom:1px solid rgba(123,170,255,.14);text-align:left;white-space:nowrap}.table th{background:rgba(46,167,255,.1);color:#cfe0fa}.table td{color:#eaf2ff}.table tr:hover td{background:rgba(255,255,255,.025)}
+.badge{display:inline-block;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:800}.badge-new,.badge-upcoming{background:rgba(46,167,255,.14);color:#6ec5ff}.badge-contacted,.badge-pending{background:rgba(255,198,90,.14);color:#ffd36f}.badge-enrolled,.badge-paid,.badge-active{background:rgba(85,230,165,.14);color:#67efb0}.badge-late{background:rgba(255,107,107,.14);color:#ff8b8b}.empty{text-align:center;padding:25px;color:var(--muted)}
+.money{font-weight:900}.msg{padding:10px 14px;border-radius:12px;margin:10px 0;display:none}.msg.show{display:block}.msg.error{background:rgba(255,107,107,.12);color:#ff9c9c}.msg.ok{background:rgba(85,230,165,.12);color:#76efba}
+.input,select,textarea{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;font:inherit;background:rgba(8,21,45,.7);color:var(--text)}.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px}.field label{display:block;font-weight:700;margin-bottom:6px;color:#d7e4fa}.field.full{grid-column:1/-1}
+.login-page{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(135deg,#061126,#0b4b80)}.login-card{width:min(430px,100%);background:rgba(13,31,65,.92);border:1px solid var(--line);border-radius:24px;padding:32px;box-shadow:0 30px 80px rgba(0,0,0,.4)}.logo-img{width:82px;height:82px;display:block;margin:0 auto 15px;object-fit:contain}.logo{width:75px;height:75px;border-radius:50%;display:grid;place-items:center;margin:0 auto 15px;background:linear-gradient(145deg,#0b9fbb,#07394a);border:3px solid var(--gold);color:#fff;font-weight:900;font-size:25px}.login-card h1{text-align:center;color:#fff}
+.message-layout{display:grid;grid-template-columns:360px 1fr;gap:20px}.thread-item{display:block;width:100%;text-align:left;border:1px solid var(--line);background:rgba(10,27,57,.75);color:var(--text);border-radius:12px;padding:12px;margin:8px 0;cursor:pointer}.thread-item:hover{border-color:var(--cyan);background:rgba(31,70,133,.45)}.thread-item b,.thread-item span,.thread-item small{display:block}.thread-item span{margin-top:3px;color:var(--cyan);font-weight:700}.thread-item small{margin-top:5px;color:var(--muted)}.thread-body{height:430px;overflow:auto;padding:15px;background:rgba(5,17,38,.65);border-radius:14px;margin-top:15px}.admin-msg{max-width:75%;background:rgba(20,46,91,.9);border:1px solid var(--line);color:#fff;border-radius:12px;padding:10px 13px;margin:8px 0}.admin-msg.out{margin-left:auto;background:#117fc8;border-color:#117fc8}.admin-msg small{display:block;opacity:.7;margin-top:5px;font-size:10px}
+/* On inner admin pages the old sidebar stays hidden; this keeps the content full-width. */
+.admin-layout .main{min-height:100vh}
+@media(max-width:1100px){.dashboard-grid{grid-template-columns:repeat(2,1fr)}.dashboard-two{grid-template-columns:1fr}.quick-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.dashboard-grid{grid-template-columns:1fr}.quick-grid{grid-template-columns:1fr}.top{align-items:flex-start;flex-wrap:wrap}.top:before{margin-right:0}.top>div{flex:1;min-width:190px}.form-grid{grid-template-columns:1fr}.message-layout{grid-template-columns:1fr}.thread-body{height:320px}}
+.modern-admin-nav{position:fixed;right:22px;bottom:20px;z-index:1000;display:flex;gap:7px;padding:7px;border:1px solid rgba(123,170,255,.25);border-radius:16px;background:rgba(7,20,45,.86);backdrop-filter:blur(18px);box-shadow:0 18px 45px rgba(0,0,0,.35)}
+.modern-admin-nav a{padding:9px 12px;border-radius:11px;color:#eaf4ff;font-size:12px;font-weight:800;border:1px solid rgba(123,170,255,.12)}
+.modern-admin-nav a:hover{background:rgba(46,167,255,.18);border-color:rgba(61,226,255,.3)}
+@media(max-width:600px){.modern-admin-nav{left:12px;right:12px;bottom:12px;justify-content:center}.modern-admin-nav a{flex:1;text-align:center;padding:9px 5px}}
+/* Final logo-size correction: keep any existing academy logo compact on the Admin dashboard. */
+.admin-layout .brand,
+.admin-layout .brand img,
+.admin-layout .sidebar .brand,
+.admin-layout .sidebar .brand img{max-width:72px!important;max-height:72px!important;width:72px!important;height:72px!important;object-fit:contain!important;overflow:hidden!important}
+.admin-layout .main > img,
+.admin-layout .main > a > img,
+.admin-layout .main .top img,
+.admin-layout .main .hero img{width:56px!important;height:56px!important;max-width:56px!important;max-height:56px!important;object-fit:contain!important}
+.admin-layout .top:before{width:46px!important;height:46px!important;min-width:46px!important;font-size:17px!important;border-radius:14px!important}
+.admin-layout .top{min-height:76px!important}
+/* Prevent a legacy oversized branding block from occupying the top of the page. */
+.admin-layout .legacy-brand,.admin-layout .large-brand,.admin-layout .brand-banner{max-height:78px!important;overflow:hidden!important}
+
+/* FINAL: compact academy logo only — do not affect dashboard cards/charts */
+body > img,
+body > a > img,
+body > header img,
+body > .header img,
+.admin-layout header img,
+.admin-layout .header img,
+.admin-layout .brand img,
+.admin-layout .brand-logo,
+.admin-layout .top img,
+.admin-layout .hero img,
+.admin-layout img.logo-img,
+.admin-layout img[src*="logo" i],
+.admin-layout img[src*="hr-logo" i],
+.admin-layout img[alt*="logo" i] {
+  width:72px !important;
+  height:72px !important;
+  max-width:72px !important;
+  max-height:72px !important;
+  min-width:0 !important;
+  min-height:0 !important;
+  object-fit:contain !important;
+  display:block !important;
+}
+
+/* If the logo is a direct branding block, keep that block compact too. */
+body > .brand,
+body > .logo,
+body > .brand-banner,
+body > .large-brand,
+.admin-layout .brand-banner,
+.admin-layout .large-brand {
+  width:100% !important;
+  max-width:100% !important;
+  height:82px !important;
+  max-height:82px !important;
+  min-height:0 !important;
+  overflow:hidden !important;
+}
