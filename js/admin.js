@@ -8,6 +8,13 @@
  window.logout=async function(){await db.auth.signOut();location.href='login.html';};
  async function guard(){const {data:{session}}=await db.auth.getSession();if(!session){location.href='login.html';return null;}const {data:p,error}=await db.from('profiles').select('role,full_name').eq('id',session.user.id).single();if(error||!p||p.role!=='admin'){await db.auth.signOut();location.href='login.html';return null;}document.querySelectorAll('[data-admin-name]').forEach(e=>e.textContent=p.full_name||session.user.email);return {session,p};}
  window.adminGuard=guard;
+ async function loadAdminSettings(){try{const r=await db.from('site_settings').select('setting_key,setting_value');return (r.data||[]).reduce((o,x)=>(o[x.setting_key]=x.setting_value,o),{});}catch(e){return {};}}
+ async function enforceAdminSettings(){
+   const s=await loadAdminSettings();
+   if(s.admin_panel_enabled==='false' && !location.pathname.endsWith('/settings.html') && !location.pathname.endsWith('/login.html')){await db.auth.signOut();location.href='login.html';return;}
+   const mins=parseInt(s.admin_session_minutes||'120',10); if(Number.isFinite(mins)&&mins>0){let timer;const reset=()=>{clearTimeout(timer);timer=setTimeout(async()=>{await db.auth.signOut();location.href='login.html?timeout=1';},mins*60000)};['click','keydown','mousemove','touchstart'].forEach(ev=>window.addEventListener(ev,reset,{passive:true}));reset();}
+ }
+ window.addEventListener('load',()=>{if(window.db)enforceAdminSettings();});
 })();
 
 /* Global floating message assistant */
