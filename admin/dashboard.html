@@ -14,13 +14,13 @@
 .section-title{font-size:15px;color:#cfe0fa;font-weight:800;margin-bottom:10px}
 @media(max-width:900px){.visual-grid{grid-template-columns:1fr}.ring-wrap{height:auto;padding:15px 0}}
 </style>
-</head>
+<script src="../js/academy-settings.js"></script></head>
 <body>
 <div class="admin-layout"><main class="main">
 <div class="top"><div><h1>HR Admin</h1><span class="muted">Haroon Ibn Rasheed Online Quran Academy • <b data-admin-name>Admin</b></span></div><button class="refresh-btn" id="refreshBtn">↻ Refresh</button></div>
 <section class="hero"><h2>Academy Management Center</h2><p>Manage students, teachers, courses, classes, admissions, payments, attendance, messages and the complete academy system from one professional dashboard.</p><span class="hero-chip" id="todayText">Loading...</span></section>
 <div id="dashboardMsg" class="msg"></div>
-<div class="dashboard-grid">
+<div class="dashboard-grid" data-admin-stats>
 <div class="card stat"><div class="stat-title"><small>Total Leads</small><div class="stat-icon">📩</div></div><div class="stat-value" id="totalLeads">0</div><span class="stat-sub">All admission enquiries</span></div>
 <div class="card stat"><div class="stat-title"><small>New Leads</small><div class="stat-icon">🆕</div></div><div class="stat-value" id="newLeads">0</div><span class="stat-sub">New admissions</span></div>
 <div class="card stat"><div class="stat-title"><small>Students</small><div class="stat-icon">👨‍🎓</div></div><div class="stat-value" id="totalStudents">0</div><span class="stat-sub">Active students</span></div>
