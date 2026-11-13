@@ -1,0 +1,26 @@
+{
+  "id": "./",
+  "name": "Haroon Ibn Rasheed Online Quran Academy",
+  "short_name": "Haroon Quran",
+  "description": "Online Quran classes, student portal and teacher portal.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#071a35",
+  "theme_color": "#0b1f3a",
+  "icons": [
+    {
+      "src": "assets/hr-logo-round.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/hr-logo-round.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

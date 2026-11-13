@@ -1,0 +1,32 @@
+HAROON IBN RASHEED ACADEMY — PWA UPDATE
+
+WHAT CHANGED
+- Added manifest.webmanifest for installable app identity and icon.
+- Added service-worker.js and registered it across the website pages.
+- Added mobile app metadata and the existing academy round logo as the app icon.
+- Existing HTML pages, teacher/student/admin portals, login code and database configuration are retained.
+
+DEPLOYMENT
+1. Extract this ZIP.
+2. Upload the CONTENTS of the folder Haroon-Ibn--Rasheed-Online-Quran-Acadmey-main to the ROOT of the same GitHub Pages repository, replacing the old files.
+3. Keep the repository's existing GitHub Pages source/branch settings unchanged.
+4. Wait for GitHub Pages to publish, then open the website URL in Chrome.
+
+INSTALL ON ANDROID
+1. Open the academy website in Google Chrome.
+2. Tap Chrome's three-dot menu.
+3. Choose "Install app" or "Add to Home screen" (the wording can vary).
+4. Confirm. The academy app icon will appear on the phone.
+5. Open it and sign in with the same Student or Teacher account.
+
+INSTALL ON COMPUTER
+- Open the website in Chrome or Edge and use the browser's Install app option (if shown).
+
+IPHONE
+- Open the website in Safari, tap Share, then "Add to Home Screen".
+
+IMPORTANT
+- This is a PWA, not a Play Store APK. It uses the existing website and same accounts; it does not create separate accounts.
+- Internet is required for login, live classes, schedules and database features.
+- Private portal pages and account/API responses are deliberately NOT cached offline, to avoid showing stale or private data.
+- The install option appears only after the updated website is published over HTTPS. Browser/device support and eligibility affect whether Chrome shows "Install app".
