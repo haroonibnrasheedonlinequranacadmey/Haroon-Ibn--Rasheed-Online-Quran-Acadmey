@@ -1,0 +1,12 @@
+{
+  "appId": "com.haroonibnrasheed.academy",
+  "appName": "Haroon Quran Academy",
+  "webDir": "www",
+  "server": {
+    "url": "https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/",
+    "cleartext": false,
+    "allowNavigation": [
+      "haroonibnrasheedonlinequranacadmey.github.io"
+    ]
+  }
+}
