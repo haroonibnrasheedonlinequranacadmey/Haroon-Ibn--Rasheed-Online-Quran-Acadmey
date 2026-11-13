@@ -6,8 +6,8 @@
   "author": "Haroon Ibn Rasheed Online Quran Academy",
   "scripts": {
     "start": "electron .",
-    "dist:win": "electron-builder --win nsis",
-    "dist:mac": "electron-builder --mac dmg"
+    "dist:win": "electron-builder --win nsis --publish never",
+    "dist:mac": "electron-builder --mac dmg --publish never"
   },
   "devDependencies": {
     "electron": "^35.0.0",
@@ -49,13 +49,6 @@
       ],
       "artifactName": "Haroon-Academy-macOS.dmg",
       "category": "public.app-category.education"
-    },
-    "publish": [
-      {
-        "provider": "github",
-        "owner": "haroonibnrasheedonlinequranacadmey",
-        "repo": "Haroon-Ibn--Rasheed-Online-Quran-Acadmey"
-      }
-    ]
+    }
   }
 }
