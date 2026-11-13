@@ -1,0 +1,26 @@
+Haroon Ibn Rasheed Online Quran Academy — Upgrade Notes
+
+What this package changes:
+- Applies explicit Supabase Auth persistent-session settings to existing SDK clients.
+- Removes the hard-coded 120-minute inactivity logout from the Admin guard. Supabase Auth token expiry/refresh remains in control.
+- Adds an additive Supabase SQL migration for a new private-chat data model, participant/assignment authorization, private Storage bucket and Realtime publication.
+
+Important architecture finding:
+This project is configured for Supabase (URL and publishable anon key in js/config.js), not Firebase. No Firebase project was found in the inspected project structure. The migration therefore targets the existing Supabase project and does not switch providers.
+
+Deployment:
+1. Keep your original ZIP backup.
+2. Upload this project to a separate GitHub branch/repository first.
+3. In Supabase Dashboard, take a database backup.
+4. Open SQL Editor and run supabase/2026-11-private-chat-migration.sql. Do not run it against a different project.
+5. Deploy the static website as usual. Existing APK/Windows/macOS workflow files were preserved.
+6. Test with separate Admin, Teacher A, Teacher B, Student A and Student B accounts. Confirm Student A has an active student_enrollments row for Teacher A before testing the new chat authorization.
+
+Not yet delivered/verified:
+- The existing screens are not yet wired to the new private-chat tables.
+- WhatsApp-style UI, live typing/receipts/unread counters, image/PDF/audio upload and playback, device download/cache/offline queue, push notifications, and full cross-device workflow tests are not implemented or verified in this incremental package.
+- Android, Windows and macOS installers have not been built in this environment. GitHub Actions workflows are unchanged.
+- No Firebase configuration or Firebase Security Rules are included because the project uses Supabase.
+
+Security note:
+The SQL migration is additive and does not delete legacy messages or academy records. Review the migration and take a backup before running it.
