@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Private Messages | Haroon Ibn Rasheed Online Quran Academy</title>
+<link rel="stylesheet" href="../css/portal.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f7fb;color:#172b40;font-family:Arial,sans-serif}
+.wrap{max-width:1150px;margin:24px auto;padding:0 16px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#082b4c;color:#fff;border-radius:16px;padding:18px 22px}
+.top h1{font-size:22px;margin:0 0 5px}.top p{margin:0;color:#b9d9ed;font-size:13px}.top a{color:#fff;text-decoration:none;background:#174e73;padding:10px 14px;border-radius:9px}
+.layout{display:grid;grid-template-columns:300px 1fr;gap:16px;margin-top:16px}.panel{background:#fff;border:1px solid #e0e9f0;border-radius:15px;padding:16px;box-shadow:0 5px 20px #0a31570c}
+.panel h2{font-size:17px;margin:0 0 12px}.contact-list{display:grid;gap:7px;max-height:65vh;overflow:auto}.contact{width:100%;border:1px solid #e4ebf1;background:#fff;border-radius:11px;padding:10px;display:flex;align-items:center;gap:10px;text-align:left;cursor:pointer;color:#17334c}.contact.active,.contact:hover{border-color:#1685ad;background:#eff9fd}.avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#dff2fa;color:#075878;font-weight:bold}.contact-info{display:grid;gap:3px;flex:1}.contact-info small,.muted{color:#718293;font-size:12px}.chev{font-size:22px;color:#7a91a2}
+.chat-head{border-bottom:1px solid #e8eef3;padding-bottom:12px;margin-bottom:12px}.chat-head strong{display:block;font-size:18px}.chat-head small{color:#738597}.messages{height:430px;overflow:auto;background:#f7fafc;border:1px solid #e8eef3;border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:9px}.bubble{max-width:82%;padding:10px 12px;border-radius:13px;overflow-wrap:anywhere}.bubble small{display:block;margin-top:6px;font-size:10px;opacity:.7}.mine{align-self:flex-end;background:#dff4e8;border-bottom-right-radius:4px}.theirs{align-self:flex-start;background:#fff;border:1px solid #e5edf2;border-bottom-left-radius:4px}.empty-chat{margin:auto;color:#8191a0;font-size:13px}
+form.send{display:flex;gap:8px;margin-top:10px}textarea{resize:vertical;min-height:48px;max-height:130px;flex:1;border:1px solid #d6e1e9;border-radius:10px;padding:12px;font:inherit}button{cursor:pointer}.send button,.primary{border:0;border-radius:10px;background:#08779d;color:#fff;padding:0 18px;font-weight:bold}button:disabled{opacity:.5;cursor:not-allowed}.notice{margin-top:10px;color:#126a43;font-size:13px;min-height:18px}.notice.bad{color:#b42318}
+#homeworkPanel{margin-top:16px}.upload{display:inline-flex;align-items:center;gap:8px;background:#edf7fc;border:1px dashed #4a9abb;color:#075878;border-radius:10px;padding:10px 13px;font-weight:bold;cursor:pointer}.upload input{display:none}.file-row{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid #edf1f4}.file-icon{font-size:20px}.file-meta{display:grid;gap:3px;min-width:0;flex:1}.file-meta b{font-size:13px;overflow-wrap:anywhere}.file-meta small{font-size:11px;color:#718293}.small-btn{border:1px solid #d4e2eb;background:#fff;border-radius:8px;padding:7px 9px;color:#075878}.small-btn.danger{color:#b42318}.hint{background:#fff8e8;border:1px solid #f0dfb7;color:#77541a;padding:10px 12px;border-radius:10px;font-size:12px;line-height:1.5;margin-top:10px}
+@media(max-width:760px){.layout{grid-template-columns:1fr}.contact-list{max-height:220px}.messages{height:48vh;min-height:300px}.top{align-items:flex-start}.top h1{font-size:18px}.wrap{margin:12px auto}form.send button{padding:0 12px}}
+</style>
+</head>
+<body data-chat-role="admin">
+<div class="wrap">
+<header class="top"><div><h1>💬 Admin Private Messages</h1><p>Private academy messages · Signed in as <b id="signedInAs">Loading…</b></p></div><a href="dashboard.html">← Dashboard</a></header>
+<div class="layout">
+<aside class="panel"><h2>Students & Teachers</h2><div id="contactList" class="contact-list"><p class="muted">Loading contacts…</p></div></aside>
+<main class="panel">
+<div class="chat-head"><strong id="chatTitle">Choose a contact</strong><small id="chatSubtitle">Your private conversation appears here.</small></div>
+<div id="messageList" class="messages"><div class="empty-chat">Select a contact to start chatting.</div></div>
+<form id="messageForm" class="send"><textarea id="messageInput" placeholder="Write a message…" disabled maxlength="10000"></textarea><button id="sendButton" type="submit" disabled>Send</button></form>
+<div id="chatNotice" class="notice"></div>
+</main>
+</div>
+<section class="panel" id="homeworkPanel" hidden>
+<h2>📎 Homework files on this device</h2>
+<p class="muted">Save a photo or PDF here, then tap Share. WhatsApp will appear in your phone's share menu if installed.</p>
+<label class="upload">＋ Save Homework File<input id="homeworkInput" type="file" accept="image/*,.pdf,.doc,.docx" multiple></label>
+<div id="localFiles" style="margin-top:12px"></div>
+<div class="hint"><b>Important:</b> These files stay on this device only. They are not uploaded to Supabase and do not automatically appear in the chat or on another person's device. Use Share to send the selected file separately through WhatsApp or another app. Clearing app/browser data or uninstalling the app may delete local copies.</div>
+</section>
+</div>
+<script src="../js/academy-private-chat.js"></script>
+</body></html>
