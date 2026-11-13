@@ -56,4 +56,19 @@
   ]
 }
 </script>
-<script src="js/academy-settings.js"></script></head><body><h1>Haroon Ibn Rasheed Online Quran Academy</h1><p>This page verifies that the static package is present. Supabase authentication/database checks require a signed-in user and the deployed Supabase project.</p><ul><li class="ok">Public website: present</li><li class="ok">Admin portal: present</li><li class="ok">Teacher portal: present</li><li class="ok">Student portal: present</li><li class="ok">Supabase schema: present</li><li class="ok">Public WhatsApp/message buttons: retained</li></ul><p>After deployment, run <code>supabase/schema.sql</code> in Supabase SQL Editor.</p></body></html>
+<script src="js/academy-settings.js"></script>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0b1f3a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Haroon Quran">
+<link rel="apple-touch-icon" href="assets/hr-logo-round.png">
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("service-worker.js", { scope: "" })
+      .catch(function (error) { console.warn("App setup unavailable:", error); });
+  });
+}
+</script>
+</head><body><h1>Haroon Ibn Rasheed Online Quran Academy</h1><p>This page verifies that the static package is present. Supabase authentication/database checks require a signed-in user and the deployed Supabase project.</p><ul><li class="ok">Public website: present</li><li class="ok">Admin portal: present</li><li class="ok">Teacher portal: present</li><li class="ok">Student portal: present</li><li class="ok">Supabase schema: present</li><li class="ok">Public WhatsApp/message buttons: retained</li></ul><p>After deployment, run <code>supabase/schema.sql</code> in Supabase SQL Editor.</p></body></html>
