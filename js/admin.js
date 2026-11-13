@@ -12,7 +12,7 @@
  async function enforceAdminSettings(){
    const s=await loadAdminSettings();
    if(s.admin_panel_enabled==='false' && !location.pathname.endsWith('/settings.html') && !location.pathname.endsWith('/login.html')){await db.auth.signOut();location.href='login.html';return;}
-   const mins=parseInt(s.admin_session_minutes||'120',10); if(Number.isFinite(mins)&&mins>0){let timer;const reset=()=>{clearTimeout(timer);timer=setTimeout(async()=>{await db.auth.signOut();location.href='login.html?timeout=1';},mins*60000)};['click','keydown','mousemove','touchstart'].forEach(ev=>window.addEventListener(ev,reset,{passive:true}));reset();}
+   // Persistent login: rely on Supabase Auth refresh and configured token/session expiry.
  }
  window.addEventListener('load',()=>{if(window.db)enforceAdminSettings();});
 })();
