@@ -1,531 +1,1421 @@
-<!DOCTYPE html>
-<!DOCTYPE html>
-
-<!DOCTYPE html>
-
-<!DOCTYPE html>
-
-<!DOCTYPE html>
-
-<!DOCTYPE html>
-
-<!DOCTYPE html>
-
-<!DOCTYPE html>
-
+<!doctype html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Online Quran Courses | Tajweed, Hifz &amp; Noorani Qaida</title>  content="Haroon Ibn Rasheed Online Quran Academy offers online Quran classes with Tajweed, Nazra, Hifz, Qirat, Quran Translation, Tafseer and Islamic Studies. Also known as Haroon Rasheed Online Quran Academy and Haroon Online Quran Academy."&gt; content="Haroon Ibn Rasheed Online Quran Academy offers one-to-one online Quran classes with qualified tutors. Learn Quran with Tajweed, Nazra, Hifz, Translation and Islamic Studies."&gt;
+
+<meta charset="utf-8">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>
+Courses | Admin | Haroon Ibn Rasheed Online Quran Academy
+</title>
+
+<link rel="stylesheet"
+href="../css/admin.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="../js/config.js"></script>
+
+<script src="../js/admin.js"></script>
 
 
+<style>
 
+/* ================================
+   COURSE MANAGEMENT
+================================ */
 
-\n\n
+.courses-toolbar{
 
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:15px;
+flex-wrap:wrap;
+margin-top:25px;
+margin-bottom:20px;
 
-
-
-
-<link href="assets/hr-logo-round.png" rel="icon" type="image/png"/><meta name="description" content="Explore online Quran courses for children and adults, including Noorani Qaida, Quran reading, Tajweed, Hifz, Quran memorization, translation and Islamic Studies."><link rel="canonical" href="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/courses.html"><meta content="website" property="og:type"/><meta content="Online Quran Courses &amp; Tajweed | Haroon Ibn Rasheed" property="og:title"/><meta content="Explore online Quran courses including Noorani Qaida, Quran reading, Tajweed, Hifz and Islamic studies for children and adults." property="og:description"/><meta content="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/courses.html" property="og:url"/><meta content="summary" name="twitter:card"/><meta content="Online Quran Courses &amp; Tajweed | Haroon Ibn Rasheed" name="twitter:title"/><meta content="Explore online Quran courses including Noorani Qaida, Quran reading, Tajweed, Hifz and Islamic studies for children and adults." name="twitter:description"/><script type="application/ld+json">{"@context": "https://schema.org", "@type": "EducationalOrganization", "name": "Haroon Ibn Rasheed Online Quran Academy", "url": "https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/", "description": "Explore online Quran courses including Noorani Qaida, Quran reading, Tajweed, Hifz and Islamic studies for children and adults.", "email": "easyquranlearning10@gmail.com", "telephone": "+9231898425581", "sameAs": ["https://www.youtube.com/@Haroon-Ibn-Rasheed", "https://www.facebook.com/share/1D97jipXyu/", "https://www.instagram.com/haroonibnrasheedonoinequran?mdxt=MXJndWdvYmZ1ZGMycA==", "https://www.tiktok.com/@its.haroon.ibn.ra"]}</script><link href="css/public.css" rel="stylesheet"/>
-    <!-- SEO-2026-11 -->
-    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-    <meta name="author" content="Haroon Ibn Rasheed Online Quran Academy">
-    <meta name="application-name" content="Haroon Ibn Rasheed Online Quran Academy">
-    <meta name="theme-color" content="#0b5d4b">
-    <link rel="icon" type="image/png" sizes="192x192" href="assets/hr-logo-round.png">
-    <link rel="apple-touch-icon" href="assets/hr-logo-round.png">
-    <meta property="og:site_name" content="Haroon Ibn Rasheed Online Quran Academy">
-    <meta property="og:locale" content="en_US">
-    <meta property="og:image" content="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/assets/hr-logo-round.png">
-    <meta property="og:image:alt" content="Haroon Ibn Rasheed Online Quran Academy logo">
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:image" content="https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/assets/hr-logo-round.png">
-  <!-- SEO-JSONLD-2026 -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": "https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/#organization",
-      "name": "Haroon Ibn Rasheed Online Quran Academy",
-      "url": "https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/assets/hr-logo-round.png"
-      },
-      "telephone": "+923189842581",
-      "email": "easyquranlearning10@gmail.com",
-      "sameAs": [
-        "https://www.youtube.com/@Haroon-Ibn-Rasheed",
-        "https://www.facebook.com/profile.php?id=61554907743273",
-        "https://www.instagram.com/haroon.rasheed.officiall",
-        "https://www.tiktok.com/@haroonibnrasheed"
-      ]
-    },
-    {
-      "@type": "WebPage",
-      "@id": "https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/courses.html#webpage",
-      "url": "https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/courses.html",
-      "name": "Online Quran Courses | Tajweed, Hifz & Noorani Qaida",
-      "description": "Explore online Quran courses for children and adults, including Noorani Qaida, Quran reading, Tajweed, Hifz, Quran memorization, translation and Islamic Studies.",
-      "isPartOf": {
-        "@id": "https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/#website"
-      },
-      "about": {
-        "@id": "https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/#organization"
-      }
-    },
-    {
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Home",
-          "item": "https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/"
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "name": "Online Quran Courses",
-          "item": "https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/courses.html"
-        }
-      ]
-    },
-    {
-      "@type": "ItemList",
-      "name": "Online Quran Courses",
-      "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "item": {
-            "@type": "Course",
-            "name": "Noorani Qaida Course",
-            "description": "Foundational Arabic letters and Quran reading skills.",
-            "provider": {
-              "@type": "Organization",
-              "name": "Haroon Ibn Rasheed Online Quran Academy",
-              "sameAs": "https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/"
-            }
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "item": {
-            "@type": "Course",
-            "name": "Quran Reading Course",
-            "description": "Guided Quran reading and recitation practice.",
-            "provider": {
-              "@type": "Organization",
-              "name": "Haroon Ibn Rasheed Online Quran Academy",
-              "sameAs": "https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/"
-            }
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 3,
-          "item": {
-            "@type": "Course",
-            "name": "Rules of Tajweed Course",
-            "description": "Learn essential Tajweed rules for clearer Quran recitation.",
-            "provider": {
-              "@type": "Organization",
-              "name": "Haroon Ibn Rasheed Online Quran Academy",
-              "sameAs": "https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/"
-            }
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 4,
-          "item": {
-            "@type": "Course",
-            "name": "Quran Memorization / Hifz",
-            "description": "Structured Quran memorization and revision support.",
-            "provider": {
-              "@type": "Organization",
-              "name": "Haroon Ibn Rasheed Online Quran Academy",
-              "sameAs": "https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/"
-            }
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 5,
-          "item": {
-            "@type": "Course",
-            "name": "Quran Translation Course",
-            "description": "Study Quran meanings and translation with guidance.",
-            "provider": {
-              "@type": "Organization",
-              "name": "Haroon Ibn Rasheed Online Quran Academy",
-              "sameAs": "https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/"
-            }
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 6,
-          "item": {
-            "@type": "Course",
-            "name": "Islamic Studies for Kids",
-            "description": "Age-appropriate Islamic education for children.",
-            "provider": {
-              "@type": "Organization",
-              "name": "Haroon Ibn Rasheed Online Quran Academy",
-              "sameAs": "https://haroonibnrasheedonlinequranacadmey.github.io/Haroon-Ibn--Rasheed-Online-Quran-Acadmey/"
-            }
-          }
-        }
-      ]
-    }
-  ]
 }
-</script>
-<script src="js/academy-settings.js"></script>
-<link rel="manifest" href="manifest.webmanifest">
+
+.add-course-btn{
+
+border:0;
+background:#0b9fbb;
+color:#fff;
+padding:12px 18px;
+border-radius:10px;
+font-weight:700;
+cursor:pointer;
+font-size:14px;
+
+}
+
+.add-course-btn:hover{
+
+background:#087f97;
+
+}
+
+
+/* ================================
+   FORM
+================================ */
+
+.course-form-box{
+
+display:none;
+
+background:#fff;
+border:1px solid #e5e7eb;
+border-radius:16px;
+padding:22px;
+margin-bottom:25px;
+box-shadow:0 5px 18px rgba(0,0,0,.07);
+
+}
+
+.course-form-box.show{
+
+display:block;
+
+}
+
+.course-form-box h2{
+
+margin-top:0;
+color:#07394a;
+
+}
+
+.form-grid{
+
+display:grid;
+grid-template-columns:
+repeat(2,minmax(0,1fr));
+
+gap:16px;
+
+}
+
+.form-group{
+
+display:flex;
+flex-direction:column;
+gap:6px;
+
+}
+
+.form-group.full{
+
+grid-column:1/-1;
+
+}
+
+.form-group label{
+
+font-size:14px;
+font-weight:700;
+color:#334155;
+
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select{
+
+width:100%;
+box-sizing:border-box;
+padding:11px 12px;
+border:1px solid #cbd5e1;
+border-radius:9px;
+font-size:14px;
+outline:none;
+
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus{
+
+border-color:#0b9fbb;
+
+}
+
+.form-group textarea{
+
+min-height:100px;
+resize:vertical;
+
+}
+
+.form-buttons{
+
+display:flex;
+gap:10px;
+margin-top:18px;
+flex-wrap:wrap;
+
+}
+
+.save-btn{
+
+border:0;
+background:#0b9fbb;
+color:#fff;
+padding:11px 18px;
+border-radius:9px;
+font-weight:700;
+cursor:pointer;
+
+}
+
+.cancel-btn{
+
+border:0;
+background:#e2e8f0;
+color:#334155;
+padding:11px 18px;
+border-radius:9px;
+font-weight:700;
+cursor:pointer;
+
+}
+
+
+/* ================================
+   COURSES GRID
+================================ */
+
+.courses-grid{
+
+display:grid;
+
+grid-template-columns:
+repeat(auto-fit,minmax(260px,1fr));
+
+gap:22px;
+
+}
+
+
+/* ================================
+   CARD
+================================ */
+
+.course-card{
+
+background:#fff;
+
+border-radius:16px;
+
+overflow:hidden;
+
+border:1px solid #e5e7eb;
+
+box-shadow:
+0 5px 18px rgba(0,0,0,.07);
+
+transition:
+transform .2s ease,
+box-shadow .2s ease;
+
+}
+
+.course-card:hover{
+
+transform:translateY(-4px);
+
+box-shadow:
+0 10px 25px rgba(0,0,0,.12);
+
+}
+
+
+/* ================================
+   IMAGE
+================================ */
+
+.course-image{
+
+width:100%;
+height:180px;
+object-fit:cover;
+display:block;
+background:#eef9fb;
+
+}
+
+
+/* ================================
+   CONTENT
+================================ */
+
+.course-content{
+
+padding:18px;
+
+}
+
+.course-content h3{
+
+margin:0 0 8px;
+font-size:20px;
+color:#07394a;
+
+}
+
+.course-content p{
+
+margin:0 0 15px;
+font-size:14px;
+line-height:1.5;
+color:#64748b;
+
+}
+
+
+/* ================================
+   STATUS
+================================ */
+
+.status{
+
+display:inline-block;
+padding:5px 9px;
+border-radius:20px;
+font-size:12px;
+font-weight:700;
+margin-bottom:14px;
+
+}
+
+.status.active{
+
+background:#dcfce7;
+color:#166534;
+
+}
+
+.status.inactive{
+
+background:#fee2e2;
+color:#991b1b;
+
+}
+
+
+/* ================================
+   BUTTONS
+================================ */
+
+.course-actions{
+
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+
+}
+
+.course-actions button,
+.course-actions a{
+
+border:0;
+padding:9px 12px;
+border-radius:8px;
+font-size:13px;
+font-weight:700;
+cursor:pointer;
+text-decoration:none;
+display:inline-block;
+
+}
+
+.open-btn{
+
+background:#0b9fbb;
+color:#fff;
+
+}
+
+.edit-btn{
+
+background:#f1f5f9;
+color:#334155;
+
+}
+
+.delete-btn{
+
+background:#fee2e2;
+color:#b91c1c;
+
+}
+
+.open-btn:hover{
+
+background:#087f97;
+
+}
+
+.edit-btn:hover{
+
+background:#e2e8f0;
+
+}
+
+.delete-btn:hover{
+
+background:#fecaca;
+
+}
+
+
+/* ================================
+   EMPTY
+================================ */
+
+.empty-box{
+
+background:#fff;
+border:1px dashed #cbd5e1;
+padding:35px;
+text-align:center;
+border-radius:15px;
+color:#64748b;
+
+}
+
+
+/* ================================
+   LOADING
+================================ */
+
+.loading{
+
+padding:30px;
+text-align:center;
+color:#64748b;
+
+}
+
+
+/* ================================
+   MOBILE
+================================ */
+
+@media(max-width:700px){
+
+.form-grid{
+
+grid-template-columns:1fr;
+
+}
+
+.form-group.full{
+
+grid-column:auto;
+
+}
+
+.course-image{
+
+height:200px;
+
+}
+
+}
+
+</style>
+
+<script src="../js/academy-settings.js"></script>
+<link rel="manifest" href="../manifest.webmanifest">
 <meta name="theme-color" content="#0b1f3a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Haroon Quran">
-<link rel="apple-touch-icon" href="assets/hr-logo-round.png">
+<link rel="apple-touch-icon" href="../assets/hr-logo-round.png">
 <script>
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function () {
-    navigator.serviceWorker.register("service-worker.js", { scope: "" })
+    navigator.serviceWorker.register("../service-worker.js", { scope: "../" })
       .catch(function (error) { console.warn("App setup unavailable:", error); });
   });
 }
 </script>
 </head>
-<body><a class="skip-link" href="#main-content">Skip to main content</a>
-<header>
-<div class="container nav" id="nav">
-<a class="brand" href="index.html">
-<div aria-label="Haroon Ibn Rasheed Online Quran Academy logo" class="logo"></div>
-<div class="brand-copy">
-<span class="brand-title">Haroon Ibn Rasheed</span>
-<span class="brand-subtitle">Online Quran Academy</span>
-</div>
-</a>
-<button class="mobile" onclick="toggleMenu()">☰ Menu</button>
-<nav class="menu">
-<a data-page="home" href="index.html">Home</a>
-<a data-page="about" href="about.html">About Us</a>
-<a class="active" data-page="courses" href="courses.html">Courses</a>
-<a data-page="teachers" href="teachers.html">Teachers</a>
-<a data-page="fees" href="fees.html">Fees</a>
-<a data-page="contact" href="contact.html">Contact Us</a>
-<a data-page="faq" href="faq.html">FAQs</a><a data-page="blog" href="blog.html">Blog</a><a data-page="reviews" href="reviews.html">Reviews</a>
-<a class="login-link" href="portal-login.html" style="display:inline-block;padding:10px 14px;font-weight:bold;color:var(--dark);border:1px solid #d9edf1;border-radius:20px;">Student/Teacher Login</a><a class="login-link" href="admin/login.html" style="display:inline-block;padding:10px 14px;font-weight:bold;color:var(--dark);border:1px solid #d9edf1;border-radius:20px;">Login</a>
-<button class="trial" onclick="openForm()">Book a Free Trial</button>
-</nav>
-</div>
-</header>
-<!-- =========================
-HOME PAGE
-========================= -->
-<!-- =========================
-ABOUT US PAGE
-========================= -->
-<!-- =========================
-COURSES PAGE
-========================= -->
-<main class="page" id="main-content">
-<section class="page-hero" data-hero="courses"><div class="page-hero-slides"></div><div class="page-hero-content"><div class="eyebrow">Our Quran Courses</div><h1>Learn With a Clear, Personal Path</h1><p>Explore Quran reading, Tajweed, Hifz, translation and Islamic studies.</p><div class="page-hero-dots"></div></div></section>
-<section>
-<div class="container">
-<div class="heading">
-<small>Page 2 • Courses</small>
-<h2>📚 Our Quran Courses</h2>
-<p>
-Explore our Quran and Islamic education courses in detail.
-</p>
-<div style="max-width:650px;margin:20px auto 0"><input aria-label="🔎 search courses..." id="courseSearch" oninput="filterCourses()" placeholder="🔎 Search courses..." style="width:100%;padding:14px 16px;border:1px solid #cfe4e9;border-radius:12px;font:inherit"/></div>
-</div>
-<div class="grid" id="courseGrid">
-<div class="card course-card">
-<img alt="Haroon Ibn Rasheed Online Quran Academy online Quran learning" decoding="async" loading="lazy" src="https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&amp;fit=crop&amp;w=900&amp;q=85"/>
-<div class="card-body">
-<h3>1. 📘 Noorani Qaida Course</h3>
-<p>
-This course is designed for kids and beginners. Students learn Arabic letters, pronunciation, joining letters and the basic foundation required for Quran reading.
-</p>
-<ul class="checks">
-<li>Arabic letters</li>
-<li>Basic pronunciation</li>
-<li>Reading practice</li>
-<li>Suitable for beginners</li>
-</ul>
-<a class="course-link" href="https://drive.google.com/drive/folders/1Q2F3Nwy9BLt6Luj8nNEy9caXQxnFpqLU" rel="noreferrer noopener" target="_blank">
-Open Course →
-</a>
-</div>
-</div>
-<div class="card course-card">
-<img alt="Haroon Ibn Rasheed Online Quran Academy online Quran learning" decoding="async" loading="lazy" src="https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?auto=format&amp;fit=crop&amp;w=900&amp;q=85"/>
-<div class="card-body">
-<h3>2. 🧠 Quran Memorization / Hifz</h3>
-<p>
-Learn Step-by-step Hifz ul Quran with daily revision and guidance. Students receive personalized support according to their memorization level.
-</p>
-<ul class="checks">
-<li>Step-by-step memorization</li>
-<li>Daily revision</li>
-<li>Personalized guidance</li>
-<li>Suitable for kids and adults</li>
-</ul>
-<a class="course-link" href="https://drive.google.com/drive/folders/1Fg46DCutB-ybHsU4ST-7O5Zye3bRZ43U" rel="noreferrer noopener" target="_blank">
-Open Course →
-</a>
-</div>
-</div>
-<div class="card course-card">
-<img alt="Haroon Ibn Rasheed Online Quran Academy online Quran learning" decoding="async" loading="lazy" src="https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&amp;fit=crop&amp;w=900&amp;q=85"/>
-<div class="card-body">
-<h3>3. 🧒 Islamic Studies for Kids</h3>
-<p>
-Provides basic and essential Islamic education to children in a simple and age-appropriate learning environment.
-</p>
-<ul class="checks">
-<li>Basic Islamic knowledge</li>
-<li>Islamic manners</li>
-<li>Essential duas</li>
-<li>Basic teachings of Islam</li>
-</ul>
-<a class="course-link" href="register.html">
-Register / Enquire →
-</a>
-</div>
-</div>
-<div class="card course-card">
-<img alt="Haroon Ibn Rasheed Online Quran Academy online Quran learning" decoding="async" loading="lazy" src="https://images.unsplash.com/photo-1504052434569-70ad5836ab65?auto=format&amp;fit=crop&amp;w=900&amp;q=85"/>
-<div class="card-body">
-<h3>4. 📜 Rules of Tajweed</h3>
-<p>
-Teaches the rules of Tajweed for proper pronunciation and beautiful Quran recitation.
-</p>
-<ul class="checks">
-<li>Tajweed rules</li>
-<li>Correct pronunciation</li>
-<li>Recitation practice</li>
-<li>Improvement of reading</li>
-</ul>
-<a class="course-link" href="https://drive.google.com/drive/folders/1LGD8WuSRryACGP0D-4CVbB0GWPIpyAOv" rel="noreferrer noopener" target="_blank">
-Open Course →
-</a>
-</div>
-</div>
-<div class="card course-card">
-<img alt="Haroon Ibn Rasheed Online Quran Academy online Quran learning" decoding="async" loading="lazy" src="https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&amp;fit=crop&amp;w=900&amp;q=85"/>
-<div class="card-body">
-<h3>5. 🌍 Quran Translation Course</h3>
-<p>
-Aims to help students understand the Quran verse by verse in Urdu and develop a deeper understanding of Quranic meanings.
-</p>
-<ul class="checks">
-<li>Verse-by-verse understanding</li>
-<li>Quranic meanings</li>
-<li>Urdu translation</li>
-<li>Better understanding of Quran</li>
-</ul>
-<a class="course-link" href="https://quran.com/" rel="noreferrer noopener" target="_blank">
-Open Quran.com →
-</a>
-</div>
-</div>
-<div class="card course-card">
-<img alt="Haroon Ibn Rasheed Online Quran Academy online Quran learning" decoding="async" loading="lazy" src="https://images.unsplash.com/photo-1585036156171-384164a8c675?auto=format&amp;fit=crop&amp;w=900&amp;q=85"/>
-<div class="card-body">
-<h3>6. 📖 Quran Reading Course</h3>
-<p>
-Learn to read the Quran fluently with proper Tajweed rules, pronunciation and confidence.
-</p>
-<ul class="checks">
-<li>Quran reading</li>
-<li>Fluency improvement</li>
-<li>Pronunciation</li>
-<li>Tajweed practice</li>
-</ul>
-<a class="course-link" href="https://drive.google.com/drive/folders/1Fg46DCutB-ybHsU4ST-7O5Zye3bRZ43U" rel="noreferrer noopener" target="_blank">
-Open Course →
-</a>
-</div>
-</div>
-</div>
-</div>
-</section>
-<div class="page-social">
-<p>Follow Us</p>
-<div class="social">
-<a aria-label="YouTube" href="https://www.youtube.com/@Haroon-Ibn-Rasheed" rel="noreferrer noopener" target="_blank">
-<svg viewbox="0 0 24 24"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4l6.2 3.6-6.2 3.6z"></path></svg>
-</a>
-<a aria-label="Facebook Page" href="https://www.facebook.com/profile.php?id=61554907743273" rel="noreferrer noopener" target="_blank">
-<svg viewbox="0 0 24 24"><path d="M14 8h3V4h-3c-3.3 0-5 2-5 5v3H6v4h3v8h4v-8h3.2l.8-4H13V9c0-.7.3-1 1-1z"></path></svg>
-</a>
-<a aria-label="Instagram" href="https://www.instagram.com/haroon.rasheed.officiall" rel="noreferrer noopener" target="_blank">
-<svg viewbox="0 0 24 24"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7zm5 3.5A4.5 4.5 0 1 1 12 16.5 4.5 4.5 0 0 1 12 7.5zm0 2A2.5 2.5 0 1 0 12 14.5 2.5 2.5 0 0 0 12 9.5zM17.5 6A1.5 1.5 0 1 1 17.5 9 1.5 1.5 0 0 1 17.5 6z"></path></svg>
-</a>
-<a aria-label="TikTok" href="https://www.tiktok.com/@haroonibnrasheed" rel="noreferrer noopener" target="_blank">
-<svg viewbox="0 0 24 24"><path d="M16 2h3c.2 2.1 1.4 3.8 3 4.8v3.2c-1.9-.1-3.7-.7-5-1.8v7.2a6.6 6.6 0 1 1-6.6-6.6c.5 0 1 .1 1.4.2v3.4a3.2 3.2 0 1 0 1.8 3V2z"></path></svg>
-</a>
-</div>
-</div>
-</main>
-<!-- =========================
-TEACHERS PAGE
-========================= -->
-<!-- =========================
-BLOG / ARTICLES + VIDEOS PAGE
-========================= -->
-<!-- =========================
-REVIEWS PAGE
-========================= -->
-<!-- =========================
-FEES PAGE
-========================= -->
-<!-- =========================
-CONTACT PAGE
-========================= -->
-<!-- =========================
-FAQ PAGE
-========================= -->
-<!-- =========================
-FOOTER
-========================= -->
 
-<!-- SEO-TOPICAL-CONTENT-2026 -->
-<section class="container" aria-labelledby="seo-topic-heading" style="padding-top:45px;padding-bottom:45px">
-  <h2 id="seo-topic-heading">Quran courses for different learning goals</h2>
-  <p>Students can choose a course according to their current level, age and goals, from foundational reading to Tajweed, Hifz and Islamic Studies.</p>
-  <p>Families searching for <strong>Noorani Qaida course</strong> can explore a practical route to online Noorani Qaida course. The academy also supports Noorani Qaida lessons, Noorani Qaida classes, and Qaida reading online, while Qaida for children and Qaida for beginners can be adapted for different ages. Learners who want learn Arabic letters, Quran reading foundation, or Quran basics course can discuss their goals before starting.</p><p>For learners interested in Quran reading course, the academy can provide guidance around online Quran reading course and Quran recitation course. Families can also ask about learn Quran recitation, Quran reading lessons, and Quran reading practice. This makes it easier to compare Quran fluency course, Quran pronunciation course, Quran reading for adults, and Quran reading for kids according to the student’s level and learning goals.</p><p>For learners interested in Tajweed course online, the academy can provide guidance around Quran Tajweed course and Tajweed rules course. Families can also ask about Tajweed lessons for kids, Tajweed lessons for adults, and Quran recitation with Tajweed. This makes it easier to compare learn Quran Tajweed, advanced Tajweed lessons, basic Tajweed lessons, and Tajweed practice online according to the student’s level and learning goals.</p><p>For learners interested in Hifz Quran course, the academy can provide guidance around online Hifz Quran course and Quran memorization course. Families can also ask about Quran Hifz program, Hifz classes for children, and Hifz classes for adults. This makes it easier to compare Quran memorization for beginners, Quran revision program, daily Hifz lessons, and Quran memorization tutor online according to the student’s level and learning goals.</p><p>For learners interested in Quran translation course, the academy can provide guidance around online Quran translation and Quran meaning course. Families can also ask about understand Quran online, Quran translation lessons, and Quran explanation for beginners. This makes it easier to compare Quran study and meaning, Quran vocabulary course, Quran comprehension lessons, and Quran understanding program according to the student’s level and learning goals.</p><p>For learners interested in Islamic Studies course, the academy can provide guidance around online Islamic Studies course and Islamic education classes. Families can also ask about Islamic Studies for kids, Islamic Studies for adults, and basic Islamic knowledge. This makes it easier to compare Islamic learning program, Islamic manners for children, Seerah learning online, and Islamic education for families according to the student’s level and learning goals.</p><p>For learners interested in Arabic Quran course, the academy can provide guidance around Arabic for Quran reading and Quran Arabic course. Families can also ask about learn Quranic Arabic, Quranic Arabic online, and Arabic letters course. This makes it easier to compare Arabic pronunciation for Quran, Quran vocabulary lessons, Quran Arabic for beginners, and Arabic Quran tutor according to the student’s level and learning goals.</p><p>For learners interested in Quran course for kids, the academy can provide guidance around Quran course for adults and Quran courses for beginners. Families can also ask about Quran classes for sisters, Quran classes for brothers, and Quran lessons for children. This makes it easier to compare Quran lessons for adults, private Quran course, one to one Quran course, and flexible Quran course according to the student’s level and learning goals.</p>
-</section>
-<footer>
-<div class="container">
-<div class="footer-grid">
-<div>
-<h3>Haroon Ibn Rasheed Online Quran Academy</h3>
-<p>
-Learn Quran online with personalized one-to-one classes for children and adults.
-</p>
-<div class="social">
-<a aria-label="YouTube" href="https://www.youtube.com/@Haroon-Ibn-Rasheed" rel="noopener noreferrer" target="_blank"><svg viewbox="0 0 24 24"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4l6.2 3.6-6.2 3.6z"></path></svg></a>
-<a aria-label="Facebook Page" href="https://www.facebook.com/share/1D97jipXyu/" rel="noopener noreferrer" target="_blank"><svg viewbox="0 0 24 24"><path d="M14 8h3V4h-3c-3.3 0-5 2-5 5v3H6v4h3v8h4v-8h3.2l.8-4H13V9c0-.7.3-1 1-1z"></path></svg></a>
-<a aria-label="Instagram" href="https://www.instagram.com/haroonibnrasheedonoinequran?mdxt=MXJndWdvYmZ1ZGMycA==" rel="noopener noreferrer" target="_blank"><svg viewbox="0 0 24 24"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7zm5 3.5A4.5 4.5 0 1 1 12 16.5 4.5 4.5 0 0 1 12 7.5zm0 2A2.5 2.5 0 1 0 12 14.5 2.5 2.5 0 0 0 12 9.5zM17.5 6A1.5 1.5 0 1 1 17.5 9 1.5 1.5 0 0 1 17.5 6z"></path></svg></a>
-<a aria-label="TikTok" href="https://www.tiktok.com/@its.haroon.ibn.ra" rel="noopener noreferrer" target="_blank"><svg viewbox="0 0 24 24"><path d="M16 2h3c.2 2.1 1.4 3.8 3 4.8v3.2c-1.9-.1-3.7-.7-5-1.8v7.2a6.6 6.6 0 1 1-6.6-6.6c.5 0 1 .1 1.4.2v3.4a3.2 3.2 0 0 0 1.8 3V2z"></path></svg></a>
+
+<body>
+
+
+<div class="admin-layout">
+
+
+<!-- =====================================
+     SIDEBAR
+===================================== -->
+
+<aside class="sidebar">
+
+<div class="brand">
+
+HR Admin
+
+<span>
+Haroon Ibn Rasheed Online Quran Academy
+</span>
+
 </div>
-</div>
-<div>
-<h3>OUR TUTORS</h3>
-<ul>
-<li>Noorani Qaida Tutors for Kids</li>
-<li>Online Quran Tutors for Kids</li>
-<li>Quran Memorization Tutors</li>
-<li>Quran Translation Tutors</li>
-<li>Islamic Studies Tutors for Kids</li>
-</ul>
-</div>
-<div>
-<h3>QURAN CLASSES</h3>
-<ul>
-<li>Noorani Qaida Classes for Kids</li>
-<li>Quran Reading Classes for Kids</li>
-<li>Quran Memorization Classes</li>
-<li>Quran Translation Classes</li>
-<li>Islamic Studies Classes for Kids</li>
-</ul>
-</div>
-<div>
-<h3>CONTACT US</h3>
-<ul>
-<li>📧 easyquranlearning10@gmail.com</li>
-<li>📱 +92-3189842581</li>
-<li>📱 +92-3478140162</li>
-<li>
-<a href="https://wa.me/923189842581" rel="noreferrer noopener" target="_blank">
-WhatsApp Us
+
+
+<nav class="nav">
+
+<a href="dashboard.html">
+Dashboard
 </a>
-</li>
-</ul>
-</div>
-</div>
-<div class="copy">
-© 2026 Haroon Ibn Rasheed Online Quran Academy. All Rights Reserved.
-</div>
-</div>
-</footer>
-<!-- =========================
-GLOBAL MESSAGE / SMS BUTTON
-========================= -->
-<button aria-label="Send a message" class="academy-chat-fab" id="academyChatFab" type="button">💬</button>
-<div aria-hidden="true" class="academy-chat-panel" id="academyChatPanel">
-<div class="academy-chat-head"><div><strong>Send us a Message</strong><small>Haroon Ibn Rasheed Online Quran Academy</small></div><button onclick="closeAcademyChat()" type="button">×</button></div>
-<div class="academy-chat-messages" id="academyChatMessages"></div>
-<form class="academy-chat-form" id="academyChatForm">
-<input aria-label="Your name" id="chatName" placeholder="Your Name" required=""/>
-<input aria-label="Email (optional)" id="chatEmail" placeholder="Email (optional)" type="email"/>
-<input aria-label="Course / subject" id="chatSubject" placeholder="Course / Subject"/>
-<textarea aria-label="Write your message..." id="chatBody" placeholder="Write your message..." required="" rows="4"></textarea>
-<button type="submit">Send Message</button>
-<div id="chatStatus"></div>
-</form>
-</div>
-<!-- Admission Form Added -->
-<div id="admissionBox" style="display:none; padding:40px 0; background:#008000;">
-<div class="form-card">
-<a class="top-whatsapp-button" href="https://wa.me/923189842581" rel="noreferrer noopener" target="_blank">
-WhatsApp Contact
+
+<a href="admissions.html">
+Admissions / Leads
 </a>
-<a class="whatsapp" href="https://wa.me/923189842581" rel="noreferrer noopener" target="_blank">
-Contact on WhatsApp
+
+<a href="users.html">
+Portal Users
 </a>
-<div aria-label="Haroon Ibn Rasheed Online Quran Academy logo" class="form-logo"></div>
-<h2>
-Haroon Ibn Rasheed<br/>
-Online Quran Academy
+
+<a href="students.html">
+Students
+</a>
+
+<a href="enrollments.html">
+Enrollments
+</a>
+
+<a href="teachers.html">
+Teachers
+</a>
+
+<a href="schedule.html">
+Schedule
+</a>
+
+<a href="classes.html">
+Classes
+</a>
+
+<a href="attendance.html">
+Attendance
+</a>
+
+<a href="payments.html">
+Payments
+</a>
+
+<a href="leaves.html">
+Leaves
+</a>
+
+<a href="salaries.html">
+Salaries
+</a>
+
+<a href="courses.html" class="active">
+Courses
+</a>
+
+<a href="fees.html">
+Fees
+</a>
+
+<a href="payment-methods.html">
+Payment Methods
+</a>
+
+<a href="messages.html">
+Messages
+</a>
+
+<a href="testimonials.html">
+Testimonials
+</a>
+
+<a href="articles.html">
+Blog / Articles
+</a>
+
+<a href="notifications.html">
+Notifications
+</a>
+
+<a href="faqs.html">
+FAQs
+</a>
+
+<a href="content.html">
+Website Content
+</a>
+
+<a href="settings.html">
+Settings
+</a>
+
+<a href="admin-accounts.html">
+🔐 Account Credentials
+</a>
+
+<a href="../index.html">
+View Website
+</a>
+
+<a href="#"
+onclick="logout();return false">
+Logout
+</a>
+
+</nav>
+
+</aside>
+
+
+<!-- =====================================
+     MAIN
+===================================== -->
+
+<main class="main">
+
+
+<div class="top">
+
+<div>
+
+<h1>
+Courses
+</h1>
+
+<span class="muted">
+Add, edit, delete and manage academy courses
+</span>
+
+</div>
+
+</div>
+
+
+<!-- =====================================
+     TOOLBAR
+===================================== -->
+
+<div class="courses-toolbar">
+
+<div>
+<strong id="courseCount">
+Loading courses...
+</strong>
+</div>
+
+<button
+class="add-course-btn"
+onclick="openAddCourse()">
+
+＋ Add New Course
+
+</button>
+
+</div>
+
+
+<!-- =====================================
+     ADD / EDIT FORM
+===================================== -->
+
+<div
+id="courseFormBox"
+class="course-form-box">
+
+
+<h2 id="formTitle">
+Add New Course
 </h2>
-<p>Student Admission Form</p>
-<form id="admissionForm" method="POST">
-<input aria-label="Student name" name="Student Name" placeholder="Student Name" required="" type="text"/>
-<input aria-label="Father name" name="Father Name" placeholder="Father Name" required="" type="text"/>
-<input aria-label="Age" name="Age" placeholder="Age" required="" type="number"/>
-<input aria-label="Whatsapp number" name="Phone Number" placeholder="WhatsApp Number" required="" type="tel"/>
-<input aria-label="Email address" name="Email" placeholder="Email Address" type="email"/>
-<select aria-label="Course" name="Course">
-<option>Quran Nazra</option>
-<option>Hifz Quran</option>
-<option>Tajweed</option>
-<option>Islamic Studies</option>
-<option>40 Hadith</option>
-<option>Qirat Course</option>
+
+
+<div class="form-grid">
+
+
+<div class="form-group">
+
+<label>
+Course Name *
+</label>
+
+<input
+type="text"
+id="courseTitle"
+placeholder="Example: Noorani Qaida">
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+Status
+</label>
+
+<select id="courseStatus">
+
+<option value="active">
+Active
+</option>
+
+<option value="inactive">
+Inactive
+</option>
+
 </select>
-<textarea aria-label="Your message" name="Message" placeholder="Your Message"></textarea>
-<div id="formStatus" style="margin:10px 0;font-weight:bold;"></div>
-<button type="submit">Submit Admission</button>
-</form>
+
 </div>
+
+
+<div class="form-group full">
+
+<label>
+Course Description
+</label>
+
+<textarea
+id="courseDescription"
+placeholder="Write course description..."></textarea>
+
 </div>
-<script defer="True" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script defer="True" src="js/config.js"></script>
-<script defer="True" src="js/public-headers.js"></script>
-<script defer="True" src="js/public.js"></script>
-<script defer="True" src="js/chat.js"></script>
-<script defer="True" src="js/payments-public.js"></script>
-<!-- =====================================================
-     SINGLE-PAGE PUBLIC CONTENT SYSTEM
-     Articles, Videos and Reviews all work inside index.html
-===================================================== -->
-<!-- =====================================================
-     FINAL REAL-PHOTO PUBLIC HEADERS
-     Header-only override: keeps all existing page content,
-     branding, Supabase and navigation unchanged.
-===================================================== -->
-<script defer="True" src="js/public-runtime.js"></script></body>
-</html>
+
+
+<div class="form-group">
+
+<label>
+Course Image URL
+</label>
+
+<input
+type="text"
+id="courseImage"
+placeholder="https://example.com/course.jpg">
+
+</div>
+
+
+<div class="form-group">
+
+<label>
+Course Link / URL
+</label>
+
+<input
+type="text"
+id="courseUrl"
+placeholder="https://...">
+
+</div>
+
+
+</div>
+
+
+<div class="form-buttons">
+
+<button
+class="save-btn"
+onclick="saveCourse()"
+id="saveCourseBtn">
+
+Save Course
+
+</button>
+
+
+<button
+class="cancel-btn"
+onclick="closeCourseForm()">
+
+Cancel
+
+</button>
+
+</div>
+
+
+</div>
+
+
+<!-- =====================================
+     COURSES
+===================================== -->
+
+<div
+id="coursesGrid"
+class="courses-grid">
+
+<div class="loading">
+
+Loading courses...
+
+</div>
+
+</div>
+
+
+</main>
+
+</div>
+
+
+<script>
+
+/* =====================================
+   SUPABASE
+===================================== */
+
+let db;
+
+let editingCourseId = null;
+
+
+/* =====================================
+   INIT
+===================================== */
+
+(async()=>{
+
+try{
+
+if(!window.db){
+
+window.db =
+supabase.createClient(
+window.SUPABASE_CONFIG.url,
+window.SUPABASE_CONFIG.anonKey
+);
+
+}
+
+db = window.db;
+
+
+/* ADMIN GUARD */
+
+if(typeof adminGuard === "function"){
+
+const ok =
+await adminGuard();
+
+if(!ok)return;
+
+}
+
+
+/* LOAD */
+
+await loadCourses();
+
+}catch(error){
+
+console.error(error);
+
+document.getElementById("coursesGrid").innerHTML = `
+
+<div class="empty-box">
+
+Unable to load courses.
+
+<br><br>
+
+${escapeHtml(error.message || "")}
+
+</div>
+
+`;
+
+}
+
+})();
+
+
+/* =====================================
+   LOAD COURSES
+===================================== */
+
+async function loadCourses(){
+
+const grid =
+document.getElementById("coursesGrid");
+
+grid.innerHTML = `
+
+<div class="loading">
+Loading courses...
+</div>
+
+`;
+
+
+const {data,error} =
+await db
+.from("courses")
+.select("*")
+.order("created_at",{ascending:true});
+
+
+if(error){
+
+console.error(error);
+
+grid.innerHTML = `
+
+<div class="empty-box">
+
+<strong>Courses could not be loaded.</strong>
+
+<br><br>
+
+${escapeHtml(error.message)}
+
+</div>
+
+`;
+
+return;
+
+}
+
+
+const courses = data || [];
+
+
+document.getElementById("courseCount").textContent =
+courses.length + " course" +
+(courses.length === 1 ? "" : "s");
+
+
+if(!courses.length){
+
+grid.innerHTML = `
+
+<div class="empty-box">
+
+No courses found.
+
+<br><br>
+
+Click <strong>Add New Course</strong>
+to create your first course.
+
+</div>
+
+`;
+
+return;
+
+}
+
+
+grid.innerHTML =
+courses.map(course => createCourseCard(course)).join("");
+
+}
+
+
+/* =====================================
+   COURSE CARD
+===================================== */
+
+function createCourseCard(course){
+
+const title =
+escapeHtml(course.title || "Untitled Course");
+
+const description =
+escapeHtml(
+course.description ||
+"No description available."
+);
+
+
+const image =
+course.image_url ||
+"../assets/hr-logo.svg";
+
+
+const status =
+course.status || "active";
+
+
+let openButton = "";
+
+if(course.course_url){
+
+openButton = `
+
+<a
+class="open-btn"
+href="${safeUrl(course.course_url)}"
+target="_blank"
+rel="noopener">
+
+Open
+
+</a>
+
+`;
+
+}else{
+
+openButton = `
+
+<button
+class="open-btn"
+disabled
+style="opacity:.55;cursor:not-allowed">
+
+No Link
+
+</button>
+
+`;
+
+}
+
+
+return `
+
+<div class="course-card">
+
+
+<img
+class="course-image"
+src="${safeImage(image)}"
+alt="${title}"
+onerror="this.src='../assets/hr-logo.svg'"
+>
+
+
+<div class="course-content">
+
+
+<h3>
+${title}
+</h3>
+
+
+<p>
+${description}
+</p>
+
+
+<span
+class="status ${status === "active" ? "active" : "inactive"}">
+
+${status === "active" ? "Active" : "Inactive"}
+
+</span>
+
+
+<div class="course-actions">
+
+${openButton}
+
+
+<button
+class="edit-btn"
+onclick='editCourse(${JSON.stringify(course).replace(/'/g,"&#39;")})'>
+
+✏️ Edit
+
+</button>
+
+
+<button
+class="delete-btn"
+onclick="deleteCourse('${course.id}')">
+
+🗑️ Delete
+
+</button>
+
+</div>
+
+
+</div>
+
+</div>
+
+`;
+
+}
+
+
+/* =====================================
+   OPEN ADD
+===================================== */
+
+function openAddCourse(){
+
+editingCourseId = null;
+
+document.getElementById("formTitle").textContent =
+"Add New Course";
+
+document.getElementById("saveCourseBtn").textContent =
+"Save Course";
+
+clearForm();
+
+document
+.getElementById("courseFormBox")
+.classList.add("show");
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+}
+
+
+/* =====================================
+   EDIT
+===================================== */
+
+function editCourse(course){
+
+editingCourseId = course.id;
+
+
+document.getElementById("formTitle").textContent =
+"Edit Course";
+
+
+document.getElementById("saveCourseBtn").textContent =
+"Update Course";
+
+
+document.getElementById("courseTitle").value =
+course.title || "";
+
+
+document.getElementById("courseDescription").value =
+course.description || "";
+
+
+document.getElementById("courseImage").value =
+course.image_url || "";
+
+
+document.getElementById("courseUrl").value =
+course.course_url || "";
+
+
+document.getElementById("courseStatus").value =
+course.status || "active";
+
+
+document
+.getElementById("courseFormBox")
+.classList.add("show");
+
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+}
+
+
+/* =====================================
+   SAVE / UPDATE
+===================================== */
+
+async function saveCourse(){
+
+const title =
+document.getElementById("courseTitle")
+.value.trim();
+
+
+const description =
+document.getElementById("courseDescription")
+.value.trim();
+
+
+const image =
+document.getElementById("courseImage")
+.value.trim();
+
+
+const url =
+document.getElementById("courseUrl")
+.value.trim();
+
+
+const status =
+document.getElementById("courseStatus")
+.value;
+
+
+if(!title){
+
+alert("Please enter the course name.");
+
+return;
+
+}
+
+
+const btn =
+document.getElementById("saveCourseBtn");
+
+
+btn.disabled = true;
+
+btn.textContent = "Saving...";
+
+
+try{
+
+
+/* UPDATE */
+
+if(editingCourseId){
+
+const {error} =
+await db
+.from("courses")
+.update({
+
+title:title,
+description:description,
+image_url:image || null,
+course_url:url || null,
+status:status,
+updated_at:new Date().toISOString()
+
+})
+.eq("id",editingCourseId);
+
+
+if(error)throw error;
+
+
+alert("Course updated successfully.");
+
+
+}else{
+
+
+/* INSERT */
+
+const {error} =
+await db
+.from("courses")
+.insert({
+
+title:title,
+description:description,
+image_url:image || null,
+course_url:url || null,
+status:status
+
+});
+
+
+if(error)throw error;
+
+
+alert("New course added successfully.");
+
+}
+
+
+closeCourseForm();
+
+await loadCourses();
+
+
+}catch(error){
+
+console.error(error);
+
+alert(
+"Course could not be saved:\n\n" +
+(error.message || "Unknown error")
+);
+
+}finally{
+
+btn.disabled = false;
+
+btn.textContent =
+editingCourseId ?
+"Update Course" :
+"Save Course";
+
+}
+
+}
+
+
+/* =====================================
+   DELETE
+===================================== */
+
+async function deleteCourse(id){
+
+const confirmed =
+confirm(
+"Are you sure you want to delete this course?\n\n" +
+"This course will be removed from the central Courses list."
+);
+
+
+if(!confirmed)return;
+
+
+try{
+
+const {error} =
+await db
+.from("courses")
+.delete()
+.eq("id",id);
+
+
+if(error)throw error;
+
+
+alert("Course deleted successfully.");
+
+
+await loadCourses();
+
+
+}catch(error){
+
+console.error(error);
+
+alert(
+"Course could not be deleted:\n\n" +
+(error.message || "Unknown error")
+);
+
+}
+
+}
+
+
+/* =====================================
+   CLOSE FORM
+===================================== */
+
+function closeCourseForm(){
+
+document
+.getElementById("courseFormBox")
+.classList.remove("show");
+
+editingCourseId = null;
+
+clearForm();
+
+}
+
+
+/* =====================================
+   CLEAR FORM
+===================================== */
+
+function clearForm(){
+
+document.getElementById("courseTitle").value = "";
+
+document.getElementById("courseDescription").value = "";
+
+document.getElementById("courseImage").value = "";
+
+document.getElementById("courseUrl").value = "";
+
+document.getElementById("courseStatus").value = "active";
+
+document.getElementById("formTitle").textContent =
+"Add New Course";
+
+document.getElementById("saveCourseBtn").textContent =
+"Save Course";
+
+}
+
+
+/* =====================================
+   SECURITY HELPERS
+===================================== */
+
+function escapeHtml(value){
+
+return String(value)
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
+}
+
+
+function safeUrl(url){
+
+const value =
+String(url || "").trim();
+
+
+if(
+value.startsWith("https://") ||
+value.startsWith("http://")
+){
+
+return escapeHtml(value);
+
+}
+
+
+return "#";
+
+}
+
+
+function safeImage(url){
+
+const value =
+String(url || "").trim();
+
+
+if(
+value.startsWith("https://") ||
+value.startsWith("http://") ||
+value.startsWith("../")
+){
+
+return escapeHtml(value);
+
+}
+
+
+return "../assets/hr-logo.svg";
+
+}
+
+</script>
+
+
+</body>
+
+   </html>
