@@ -1,0 +1,61 @@
+{
+  "name": "haroon-ibn-rasheed-academy",
+  "version": "1.0.0",
+  "description": "Haroon Ibn Rasheed Online Quran Academy desktop app",
+  "main": "main.js",
+  "author": "Haroon Ibn Rasheed Online Quran Academy",
+  "scripts": {
+    "start": "electron .",
+    "dist:win": "electron-builder --win nsis",
+    "dist:mac": "electron-builder --mac dmg"
+  },
+  "devDependencies": {
+    "electron": "^35.0.0",
+    "electron-builder": "^26.0.0"
+  },
+  "build": {
+    "appId": "com.haroonibnrasheed.academy",
+    "productName": "Haroon Ibn Rasheed Academy",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "Haroon-Academy-Windows-Setup.exe"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "universal"
+          ]
+        }
+      ],
+      "artifactName": "Haroon-Academy-macOS.dmg",
+      "category": "public.app-category.education"
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "haroonibnrasheedonlinequranacadmey",
+        "repo": "Haroon-Ibn--Rasheed-Online-Quran-Acadmey"
+      }
+    ]
+  }
+}
