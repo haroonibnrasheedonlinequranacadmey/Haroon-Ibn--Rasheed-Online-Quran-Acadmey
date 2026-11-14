@@ -17,7 +17,7 @@ const editions={
  de:{id:"de.bubenheim",label:"Deutsch — Bubenheim & Elyas",dir:"ltr"},
  es:{id:"es.cortes",label:"Español — Julio Cortés",dir:"ltr"}
 };
-let root, currentSurah=1, verses=[], translations={}, metaCache={}, juzCache={}, audio=null;
+let root, currentSurah=1, verses=[], translations={}, metaCache={}, juzCache={}, audio=null, readerMode="quran";
 let settings=loadSettings();
 let audioQueue=[], queueIndex=0, repeatMode="none", repeatFrom=null, repeatTo=null, autoScroll=true, practiceMode=false;
 
@@ -38,7 +38,8 @@ function bookmarks(){try{return JSON.parse(localStorage.getItem("lml-quran-bookm
 function saveBookmarks(a){localStorage.setItem("lml-quran-bookmarks-v1",JSON.stringify(a))}
 function isBookmarked(k){return bookmarks().includes(k)}
 function toggleBookmark(k){let b=bookmarks();b=b.includes(k)?b.filter(x=>x!==k):[...b,k];saveBookmarks(b);renderVerseActions(k)}
-function quranHTML(){return `<div id="quranLibrary"></div>`}
+function quranHTML(){return `<div id="quranLibrary" data-reader-mode="quran"></div>`}
+function setMode(mode){readerMode=mode==="tafsir"?"tafsir":"quran"; if(root)applyReaderMode()}
 
 async function mount(){
  root=document.getElementById("quranLibrary");if(!root)return;
@@ -50,7 +51,7 @@ async function mount(){
 }
 function renderShell(){
  root.innerHTML=`<section class="quran-app">
-  <div class="quran-hero"><div><span class="quran-eyebrow">﷽ LITTLE MUSLIM LEARNERS</span><h2>Quran Library</h2><p>Read, listen, learn and memorize the Qur'an with a respectful, child-friendly study experience.</p></div><div class="quran-progress-box"><b id="qProgressText">Continue reading</b><span id="qProgressKey"></span><button id="continueBtn">▶ Continue</button></div></div>
+  <div class="quran-hero"><div class="quran-hero-copy"><span class="quran-eyebrow">AL-BAYAN · QURAN & ISLAMIC LEARNING</span><h2 id="readerHeading">Quran Reader</h2><p id="readerSubheading">A calm, focused space to read, listen, reflect and study the Qur'an.</p><div class="quran-mode-switch" role="tablist" aria-label="Quran study mode"><button type="button" id="modeQuran" role="tab">Quran Reading</button><button type="button" id="modeTafseer" role="tab">Tafseer Study</button></div></div><div class="quran-progress-box"><b id="qProgressText">Continue reading</b><span id="qProgressKey"></span><button id="continueBtn">Continue Reading</button></div></div>
   <div class="quran-toolbar">
    <label>Surah <select id="surahSelect">${LML_QURAN.surahs.map(s=>`<option value="${s.number}">${s.number}. ${esc(s.name)} — ${s.ayahs}</option>`).join("")}</select></label>
    <label>Juz <select id="juzSelect"><option value="">Choose Juz</option>${Array.from({length:30},(_,i)=>`<option value="${i+1}">Juz ${i+1}</option>`).join("")}</select></label><label>Hizb <select id="hizbSelect"><option value="">Choose Hizb</option>${Array.from({length:60},(_,i)=>`<option value="${i+1}">Hizb ${i+1}</option>`).join("")}</select></label><label>Page <input id="pageJump" type="number" min="1" max="604" placeholder="1–604"></label><button id="pageBtn">Go</button>
@@ -61,15 +62,29 @@ function renderShell(){
   </div>
   <div class="quran-search"><input id="qSearch" placeholder="Search Arabic, English or Urdu…"><select id="searchScope"><option value="local">Arabic in full Quran</option><option value="en">English translation</option><option value="ur">Urdu translation</option></select><button id="searchBtn">Search</button></div>
   <div id="quranStatus" class="quran-status" role="status"></div>
+  <section id="tafsirStudio" class="tafsir-studio" aria-label="Tafseer study workspace">
+   <div class="tafsir-studio-head"><span class="tafsir-kicker">AL-BAYAN · TAFSEER</span><h3>Study an Ayah in depth</h3><p>Select a Surah and Ayah to view the existing source-based Tafseer. Quran text and source content are not rewritten.</p></div>
+   <div class="tafsir-selectors"><label>Surah<select id="tafsirSurahSelect">${LML_QURAN.surahs.map(s=>`<option value="${s.number}">${s.number}. ${esc(s.name)}</option>`).join("")}</select></label><label>Ayah number<input id="tafsirAyahSelect" type="number" min="1" value="1"></label><label>Language<select id="tafsirLanguage"><option value="ur">اردو</option><option value="en">English</option><option value="hi">हिन्दी</option></select></label><button type="button" id="loadTafseerStudio">Open Tafseer</button></div>
+   <div id="tafsirAyahPreview" class="tafsir-ayah-preview" aria-live="polite"></div>
+   <div id="tafsirStudioContent" class="tafsir-studio-content"><div class="tafsir-empty"><span>۞</span><b>Select an Ayah to begin</b><p>Your existing Tafseer source will appear here when available.</p></div></div>
+  </section>
   <div id="surahHead"></div><div id="quranList"></div>
-  <div class="audio-dock"><b>🎧 Mishary Rashid Alafasy</b><button id="prevAudio">← Ayah</button><button id="nextAudio">Ayah →</button><button id="pauseAudio">Ⅱ Pause</button><button id="repeatAyah">↻ Ayah</button><button id="repeatOff">↻ Off</button><label>Speed <select id="audioSpeed"><option>0.75</option><option selected>1</option><option>1.25</option><option>1.5</option></select></label><label>Volume <input id="audioVolume" type="range" min="0" max="1" step=".05" value="1"></label><label><input id="audioScroll" type="checkbox" ${autoScroll?"checked":""}> Auto-scroll</label></div>
+  <div class="audio-dock"><b>Audio Recitation · Mishary Rashid Alafasy</b><button id="prevAudio">← Ayah</button><button id="nextAudio">Ayah →</button><button id="pauseAudio">Ⅱ Pause</button><button id="repeatAyah">↻ Ayah</button><button id="repeatOff">↻ Off</button><label>Speed <select id="audioSpeed"><option>0.75</option><option selected>1</option><option>1.25</option><option>1.5</option></select></label><label>Volume <input id="audioVolume" type="range" min="0" max="1" step=".05" value="1"></label><label><input id="audioScroll" type="checkbox" ${autoScroll?"checked":""}> Auto-scroll</label></div>
   <div class="quran-bottom"><button id="prevSurah">← Previous Surah</button><button id="nextSurah">Next Surah →</button></div>
-  <div class="quran-credit">Qur'an text: Tanzil/Uthmani source supplied for this project. Translations and recitation are streamed from AlQuran Cloud / Islamic Network. Tafsir is sourced from the spa5k Quran.com tafsir dataset. Translation copyrights remain with their respective translators.</div>
+  <div class="quran-credit">Qur'an text: local Tanzil/Uthmani dataset supplied with this project. Translations and recitation are streamed from AlQuran Cloud / Islamic Network. Tafseer source: existing spa5k Quran.com tafsir dataset. Translation copyrights remain with their respective translators.</div>
  </section>`;
  bindShell();
 }
 function bindShell(){
  $("#surahSelect").value=String(currentSurah);
+ $("#tafsirSurahSelect").value=String(currentSurah);
+ $("#tafsirLanguage").value=settings.language==="ur"?"ur":settings.language==="hi"?"hi":"en";
+ $("#modeQuran").onclick=()=>setMode("quran");
+ $("#modeTafseer").onclick=()=>setMode("tafsir");
+ $("#loadTafseerStudio").onclick=loadTafseerStudio;
+ $("#tafsirSurahSelect").onchange=()=>{const sn=+$("#tafsirSurahSelect").value;$("#tafsirAyahSelect").max=getSurah(sn).ayahs;$("#tafsirAyahSelect").value=1};
+ $("#tafsirLanguage").onchange=e=>{settings.language=e.target.value;saveSettings()};
+ applyReaderMode();
  $("#surahSelect").onchange=()=>loadSurah(+$("#surahSelect").value,1);
  $("#juzSelect").onchange=async e=>{if(e.target.value)await loadJuz(+e.target.value)};
  $("#hizbSelect").onchange=async e=>{if(e.target.value)await loadHizb(+e.target.value)};
@@ -92,11 +107,26 @@ function bindShell(){
  $("#prevSurah").onclick=()=>currentSurah>1&&loadSurah(currentSurah-1,1);
  $("#nextSurah").onclick=()=>currentSurah<114&&loadSurah(currentSurah+1,1);
 }
+function applyReaderMode(){
+ if(!root)return;
+ const taf=readerMode==="tafsir";
+ root.classList.toggle("is-tafsir-mode",taf);
+ const q=$("#modeQuran"),t=$("#modeTafseer");
+ if(q){q.classList.toggle("active",!taf);q.setAttribute("aria-selected",String(!taf))}
+ if(t){t.classList.toggle("active",taf);t.setAttribute("aria-selected",String(taf))}
+ $("#readerHeading").textContent=taf?"Tafseer Study":"Quran Reader";
+ $("#readerSubheading").textContent=taf?"Explore the meaning of selected Ayat through the existing source-based Tafseer.":"A calm, focused space to read, listen, reflect and study the Qur'an.";
+ const studio=$("#tafsirStudio"),list=$("#quranList"),head=$("#surahHead"),search=$(".quran-search");
+ if(studio)studio.hidden=!taf;
+ if(list)list.hidden=taf;
+ if(head)head.hidden=taf;
+ if(search)search.hidden=taf;
+}
 function status(t,type=""){let el=$("#quranStatus");if(el){el.textContent=t;el.className="quran-status "+type}}
 function setProgressUI(){let p=readProgress();$("#qProgressKey").textContent=p;$("#qProgressText").textContent=`Last position: ${p}`}
 
 async function loadSurah(n,focusAyah=1){
- currentSurah=n;$("#surahSelect").value=String(n);setProgressUI();status("Loading Surah…");
+ currentSurah=n;$("#surahSelect").value=String(n);if($("#tafsirSurahSelect")){$("#tafsirSurahSelect").value=String(n);$("#tafsirAyahSelect").max=getSurah(n).ayahs}setProgressUI();status("Loading Surah…");
  const s=getSurah(n); verses=surahVerses(n);translations={};
  // Render the complete local Arabic Quran immediately. External translations must never block the reader.
  renderHeader(s);renderVerses();
@@ -138,7 +168,7 @@ function verseHTML(v){
  <div class="ayah-arabic" style="font-size:${settings.fontSize}px" dir="rtl">${v.text}</div>
  ${settings.showTranslations?`<div class="translations" style="font-size:${settings.translationSize}px">${trs||`<div class="translation muted">Translation is unavailable for this passage.</div>`}</div>`:""}
  <div class="ayah-actions">
-  <button data-action="play">▶ Listen</button>${settings.showWordByWord?`<button data-action="word">🔤 Word-by-word</button>`:""}${settings.showTafsir?`<button data-action="tafsir">📚 Tafsir</button>`:""}<button data-action="practice">🎯 Practice</button>
+  <button data-action="play">▶ Listen</button>${settings.showWordByWord?`<button data-action="word">🔤 Word-by-word</button>`:""}${settings.showTafsir?`<button data-action="tafsir">📚 Tafseer</button>`:""}<button data-action="practice">🎯 Practice</button>
   <button data-action="bookmark">${isBookmarked(v.key)?"🔖 Saved":"🔖 Bookmark"}</button><button data-action="copy">⧉ Copy</button><button data-action="share">↗ Share</button>
  </div><div class="ayah-extra" id="extra-${v.key.replace(":","-")}"></div></article>`;
 }
@@ -191,10 +221,21 @@ async function showWords(k){
   box.innerHTML=`<div class="word-panel ${lang!=="en"?"rtl-soft":""}"><b>Word-by-word — ${label}</b><div class="word-grid">${words.filter(w=>w.char_type_name==="word"||!w.char_type_name).map(w=>`<span><strong>${esc(w.text_uthmani||w.text)}</strong><small>${esc(w.translation?.text||w.translation_en||w.translation?.[lang]||"")}</small></span>`).join("")}</div><small>Source: Quran.com/QDC word data.</small></div>`;
  }catch(e){box.innerHTML=`<div class="quran-error">Word-by-word data is temporarily unavailable for this language. Arabic and the selected verse translation remain available.</div>`}
 }
-async function showTafsir(k){
- const box=document.querySelector("#extra-"+k.replace(":","-"));if(!box)return;
+async function loadTafseerStudio(){
+ const sn=+$("#tafsirSurahSelect").value,an=+$("#tafsirAyahSelect").value,lang=$("#tafsirLanguage").value;
+ if(!sn||!an||an<1||an>getSurah(sn).ayahs){status("Please choose a valid Surah and Ayah number.","warn");return}
+ settings.language=lang;saveSettings();
+ const v=BYKEY.get(`${sn}:${an}`);const preview=$("#tafsirAyahPreview");
+ preview.innerHTML=`<div class="tafsir-preview-ref">SURAH ${sn} · AYAH ${an}</div><div class="tafsir-preview-arabic" dir="rtl">${v?.text||""}</div>`;
+ const box=$("#tafsirStudioContent");box.innerHTML=`<div class="loading">Loading the existing Tafseer source…</div>`;
+ if(sn!==currentSurah)await loadSurah(sn,an);else rememberProgress(`${sn}:${an}`);
+ await showTafsir(`${sn}:${an}`,box);
+ status(`Tafseer request: ${getSurah(sn).name} · Ayah ${an}`,"ok");
+}
+async function showTafsir(k,targetBox=null){
+ const box=targetBox||document.querySelector("#extra-"+k.replace(":","-"));if(!box)return;
  const lang=settings.language||"en";
- box.innerHTML=`<div class="loading">Loading verified Tafsir…</div>`;
+ box.innerHTML=`<div class="loading">Loading verified Tafseer…</div>`;
  try{
   const [sn,an]=k.split(":").map(Number);
   let title="",txt="",source="";
@@ -204,11 +245,11 @@ async function showTafsir(k){
   }else{
    const slug=lang==="ur"?"tafseer-ibn-e-kaseer-urdu":"en-tafisr-ibn-kathir";
    const j=await fetch(`${TAFSIR}/${slug}/${sn}/${an}.json`).then(r=>{if(!r.ok)throw new Error("not found");return r.json()});
-   txt=typeof j==="string"?j:(j.text||j.tafsir||j.content||j.ayah||""); title=lang==="ur"?"Tafsir Ibn Kathir — اردو":"Tafsir Ibn Kathir — English"; source="spa5k tafsir dataset, sourced from Quran.com";
+   txt=typeof j==="string"?j:(j.text||j.tafsir||j.content||j.ayah||""); title=lang==="ur"?"Tafseer Ibn Kathir — اردو":"Tafseer Ibn Kathir — English"; source="spa5k tafsir dataset, sourced from Quran.com";
   }
   if(!txt)throw new Error("empty");
-  box.innerHTML=`<div class="tafsir-panel ${lang==="ur"||lang==="hi"?"rtl":""}"><b>${title}</b><p>${esc(txt)}</p><small>Source: ${esc(source)}. Tafsir is displayed as source text and is not AI-generated.</small></div>`;
- }catch(e){box.innerHTML=`<div class="quran-error">Verified Tafsir text could not be loaded right now. No generated explanation is shown.</div>`}
+  box.innerHTML=`<div class="tafsir-panel ${lang==="ur"||lang==="hi"?"rtl":""}"><b>${title}</b><p>${esc(txt)}</p><small>Source: ${esc(source)}. Tafseer is displayed as source text and is not AI-generated.</small></div>`;
+ }catch(e){box.innerHTML=`<div class="quran-error">Verified Tafseer text could not be loaded right now. No generated explanation is shown.</div>`}
 }
 function showPractice(k){
  const box=document.querySelector("#extra-"+k.replace(":","-"));if(!box)return;
@@ -319,15 +360,15 @@ function renderBookmarks(){
 }
 function openSettings(){
  const d=document.createElement("dialog");d.className="quran-settings";d.innerHTML=`<form method="dialog" class="settings-form">
-  <div class="settings-head"><div><span class="settings-kicker">LITTLE MUSLIM LEARNERS</span><h3>Quran Reader Settings</h3><p>Personal settings — saved only on this browser/device.</p></div><button value="cancel" class="settings-x">×</button></div>
+  <div class="settings-head"><div><span class="settings-kicker">AL-BAYAN · QURAN & ISLAMIC LEARNING</span><h3>Al-Bayan Reading Settings</h3><p>Personal settings — saved only on this browser/device.</p></div><button value="cancel" class="settings-x">×</button></div>
   <div class="settings-tabs"><button type="button" class="settings-tab active" data-panel="reading">📖 Reading</button><button type="button" class="settings-tab" data-panel="audio">🎧 Audio</button><button type="button" class="settings-tab" data-panel="display">✨ Display</button><button type="button" class="settings-tab" data-panel="personal">🔖 Personal</button></div>
   <div class="settings-panel active" data-panel="reading">
    <div class="setting-grid">
-    <label class="setting-card"><span>Reading language</span><select id="readerLang"><option value="en" ${settings.language==="en"?"selected":""}>English</option><option value="ur" ${settings.language==="ur"?"selected":""}>اردو</option><option value="hi" ${settings.language==="hi"?"selected":""}>हिन्दी</option></select><small>Translation, Tafsir and word-by-word follow this language.</small></label>
+    <label class="setting-card"><span>Reading language</span><select id="readerLang"><option value="en" ${settings.language==="en"?"selected":""}>English</option><option value="ur" ${settings.language==="ur"?"selected":""}>اردو</option><option value="hi" ${settings.language==="hi"?"selected":""}>हिन्दी</option></select><small>Translation, Tafseer and word-by-word follow this language.</small></label>
     <label class="setting-card"><span>Translation</span><select id="primaryTranslation"><option value="auto">Use selected language</option>${Object.entries(editions).map(([k,e])=>`<option value="${k}" ${settings.selected.includes(k)&&settings.selected.length===1?"selected":""}>${esc(e.label)}</option>`).join("")}</select></label>
    </div>
    <label class="switch-row"><span><b>Show translation</b><small>Display the selected language translation below Arabic.</small></span><input id="showTrans" type="checkbox" ${settings.showTranslations?"checked":""}></label>
-   <label class="switch-row"><span><b>Show Tafsir button</b><small>Open verified source-based Tafsir for each Ayah.</small></span><input id="showTafsir" type="checkbox" ${settings.showTafsir?"checked":""}></label>
+   <label class="switch-row"><span><b>Show Tafseer button</b><small>Open verified source-based Tafseer for each Ayah.</small></span><input id="showTafsir" type="checkbox" ${settings.showTafsir?"checked":""}></label>
    <label class="switch-row"><span><b>Show Word-by-Word</b><small>Enable word-by-word meaning for the selected language.</small></span><input id="showWord" type="checkbox" ${settings.showWordByWord?"checked":""}></label>
   </div>
   <div class="settings-panel" data-panel="audio">
@@ -339,7 +380,7 @@ function openSettings(){
    <div class="setting-grid">
     <label class="setting-card"><span>Arabic font size <output id="arabicOut">${settings.fontSize}px</output></span><input id="fontSize" type="range" min="24" max="58" value="${settings.fontSize}"></label>
     <label class="setting-card"><span>Translation size <output id="transOut">${settings.translationSize}px</output></span><input id="translationSize" type="range" min="14" max="30" value="${settings.translationSize}"></label>
-    <label class="setting-card"><span>Tafsir size <output id="tafsirOut">${settings.tafsirSize}px</output></span><input id="tafsirSize" type="range" min="13" max="28" value="${settings.tafsirSize}"></label>
+    <label class="setting-card"><span>Tafseer size <output id="tafsirOut">${settings.tafsirSize}px</output></span><input id="tafsirSize" type="range" min="13" max="28" value="${settings.tafsirSize}"></label>
     <label class="setting-card"><span>Reading layout</span><select id="readerLayout"><option value="cards" ${settings.layout==="cards"?"selected":""}>Ayah cards</option><option value="continuous" ${settings.layout==="continuous"?"selected":""}>Continuous reading</option></select></label>
    </div>
   </div>
@@ -360,5 +401,5 @@ function openSettings(){
  };
 }
 
-window.QuranLibrary={mount,quranHTML,validate:()=>({surahs:LML_QURAN.surahs.length,ayahs:QVERSES.length,ok:LML_QURAN.surahs.length===114&&QVERSES.length===6236})};
+window.QuranLibrary={mount,quranHTML,setMode,validate:()=>({surahs:LML_QURAN.surahs.length,ayahs:QVERSES.length,ok:LML_QURAN.surahs.length===114&&QVERSES.length===6236})};
 })();

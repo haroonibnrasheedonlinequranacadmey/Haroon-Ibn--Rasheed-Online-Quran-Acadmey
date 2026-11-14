@@ -1,11 +1,11 @@
 {
-  "name": "Little Muslim Learners",
-  "short_name": "Muslim Learners",
+  "name": "Al-Bayan – Quran & Islamic Learning",
+  "short_name": "Al-Bayan",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#f4f8f5",
-  "theme_color": "#092b4b",
+  "background_color": "#f7f4ec",
+  "theme_color": "#102b46",
   "icons": [
     {
       "src": "../assets/hr-logo-round.png",
