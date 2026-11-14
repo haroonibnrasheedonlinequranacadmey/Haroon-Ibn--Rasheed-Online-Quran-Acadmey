@@ -3,11 +3,13 @@ const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const API="https://api.alquran.cloud/v1";
 const QDC="https://api.qurancdn.com/api/qdc";
 const TAFSIR="https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@main/tafsir";
+const QENC="https://quranenc.com/api/v1";
 const AUDIO="https://cdn.islamic.network/quran/audio/128/ar.alafasy";
 const META_KEY="lml-quran-meta-v1", SETTINGS_KEY="lml-quran-settings-v1";
 const editions={
  en:{id:"en.sahih",label:"English — Saheeh International",dir:"ltr"},
  ur:{id:"ur.jalandhry",label:"اردو — فتح محمد جالندھری",dir:"rtl"},
+ hi:{id:"hi.hindi",label:"हिन्दी — Suhel Farooq Khan & Saifur Rahman Nadwi",dir:"ltr"},
  bn:{id:"bn.bengali",label:"বাংলা — Muhiuddin Khan",dir:"ltr"},
  fr:{id:"fr.hamidullah",label:"Français — Muhammad Hamidullah",dir:"ltr"},
  id:{id:"id.indonesian",label:"Bahasa Indonesia",dir:"ltr"},
@@ -20,7 +22,10 @@ let settings=loadSettings();
 let audioQueue=[], queueIndex=0, repeatMode="none", repeatFrom=null, repeatTo=null, autoScroll=true, practiceMode=false;
 
 function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
-function loadSettings(){try{return {...{fontSize:34,showTranslations:true,showTafsir:false,autoScroll:true,layout:"cards",language:"en",selected:["en","ur"]},...JSON.parse(localStorage.getItem(SETTINGS_KEY)||"{}")}}catch{return {fontSize:34,showTranslations:true,showTafsir:false,autoScroll:true,layout:"cards",language:"en",selected:["en","ur"]}}}
+function loadSettings(){
+ const d={fontSize:34,translationSize:18,tafsirSize:16,showTranslations:true,showTafsir:false,showWordByWord:false,autoScroll:true,autoPlayNext:true,layout:"cards",language:"en",selected:["en"],theme:"light"};
+ try{return {...d,...JSON.parse(localStorage.getItem(SETTINGS_KEY)||"{}")}}catch{return d}
+}
 function saveSettings(){localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings));}
 function allVerses(){let out=[],g=0,p=0;for(const s of LML_QURAN.surahs){for(let a=1;a<=s.ayahs;a++){out.push({key:`${s.number}:${a}`,surah:s.number,ayah:a,global:g,text:LML_QURAN.texts[p++]});g++}}return out}
 const QVERSES=allVerses(), BYKEY=new Map(QVERSES.map(v=>[v.key,v]));
@@ -104,8 +109,13 @@ async function loadSurah(n,focusAyah=1){
 async function loadSelectedTranslations(n){
  if(!settings.showTranslations||!settings.selected.length)return;
  const jobs=settings.selected.filter(k=>editions[k]).map(async k=>{
-  try{let j=await api(`${API}/surah/${n}/${editions[k].id}`);translations[k]=j.data.ayahs||[]}
-  catch(e){console.warn("Translation unavailable",k,e);translations[k]=[]}
+  try{
+   let j;
+   if(k==="hi") j=await api(`${QENC}/translation/sura/hi.hindi/${n}`);
+   else j=await api(`${API}/surah/${n}/${editions[k].id}`);
+   const arr=k==="hi"?(Array.isArray(j)?j:(j.data||[])):(j.data?.ayahs||[]);
+   translations[k]=arr.map(x=>({numberInSurah:x.numberInSurah??x.aya,text:x.text??x.translation??""}));
+  }catch(e){console.warn("Translation unavailable",k,e);translations[k]=[]}
  });
  await Promise.all(jobs);
 }
@@ -126,9 +136,9 @@ function verseHTML(v){
  return `<article class="ayah-card ${isBookmarked(v.key)?"bookmarked":""}" id="ayah-${v.key.replace(":","-")}" data-key="${v.key}">
  <div class="ayah-top"><span class="ayah-ref">${v.key}</span><span class="ayah-badges" id="meta-${v.key.replace(":","-")}"></span></div>
  <div class="ayah-arabic" style="font-size:${settings.fontSize}px" dir="rtl">${v.text}</div>
- ${settings.showTranslations?`<div class="translations">${trs||`<div class="translation muted">Translations are off or unavailable for this passage.</div>`}</div>`:""}
+ ${settings.showTranslations?`<div class="translations" style="font-size:${settings.translationSize}px">${trs||`<div class="translation muted">Translation is unavailable for this passage.</div>`}</div>`:""}
  <div class="ayah-actions">
-  <button data-action="play">▶ Listen</button><button data-action="word">🔤 Word-by-word</button><button data-action="tafsir">📚 Tafsir</button><button data-action="practice">🎯 Practice</button>
+  <button data-action="play">▶ Listen</button>${settings.showWordByWord?`<button data-action="word">🔤 Word-by-word</button>`:""}${settings.showTafsir?`<button data-action="tafsir">📚 Tafsir</button>`:""}<button data-action="practice">🎯 Practice</button>
   <button data-action="bookmark">${isBookmarked(v.key)?"🔖 Saved":"🔖 Bookmark"}</button><button data-action="copy">⧉ Copy</button><button data-action="share">↗ Share</button>
  </div><div class="ayah-extra" id="extra-${v.key.replace(":","-")}"></div></article>`;
 }
@@ -162,7 +172,7 @@ function playCurrentAudio(){
  const k=audioQueue[queueIndex];highlight(k);rememberProgress(k);
  if(audio){audio.pause();audio.src=""}
  audio=new Audio(audioUrl(k));audio.preload="auto";audio.playbackRate=+(document.getElementById("audioSpeed")?.value||1);audio.volume=+(document.getElementById("audioVolume")?.value||1);
- audio.onended=()=>{if(repeatMode==="ayah"){playCurrentAudio();return}if(queueIndex<audioQueue.length-1){queueIndex++;playCurrentAudio()}else if(repeatMode==="surah"){queueIndex=0;playCurrentAudio()}else stopAudio()};
+ audio.onended=()=>{if(repeatMode==="ayah"){playCurrentAudio();return}if(queueIndex<audioQueue.length-1){queueIndex++;playCurrentAudio()}else if(repeatMode==="surah"){queueIndex=0;playCurrentAudio()}else if(settings.autoPlayNext){stopAudio()}else stopAudio()};
  audio.onerror=()=>{status(`Audio could not be loaded for ${k}. Please check your connection and try again.`,"error")};
  audio.onplay=()=>status(`Playing Mishary Rashid Alafasy — ${k}`,"ok");
  audio.play().catch(()=>status("Tap Listen again to start audio. Browser autoplay rules may block playback.","warn"));
@@ -171,23 +181,33 @@ function stopAudio(){if(audio){audio.pause();audio.currentTime=0}document.queryS
 function playCurrentRepeat(k){audioQueue=[k];queueIndex=0;repeatMode="ayah";playCurrentAudio()}
 async function showWords(k){
  const box=document.querySelector("#extra-"+k.replace(":","-"));if(!box)return;
+ const lang=settings.language||"en";
  box.innerHTML=`<div class="loading">Loading word-by-word meanings…</div>`;
  try{
-  const j=await api(`${QDC}/verses/by_key/${encodeURIComponent(k)}?words=true&word_translation_language=en`);
+  const j=await api(`${QDC}/verses/by_key/${encodeURIComponent(k)}?words=true&word_translation_language=${encodeURIComponent(lang)}`);
   const words=(j.verse||j.data||{}).words||[];
   if(!words.length)throw new Error("No word data");
-  box.innerHTML=`<div class="word-panel"><b>Word-by-word English</b><div class="word-grid">${words.filter(w=>w.char_type_name==="word"||!w.char_type_name).map(w=>`<span><strong>${esc(w.text_uthmani||w.text)}</strong><small>${esc(w.translation?.text||w.translation_en||"")}</small></span>`).join("")}</div><small>Source: Quran.com/Quran Foundation word data via QDC.</small></div>`;
- }catch(e){box.innerHTML=`<div class="quran-error">Word-by-word data is temporarily unavailable. The Arabic and verse translations remain available.</div>`}
+  const label=lang==="ur"?"اردو":lang==="hi"?"हिन्दी":"English";
+  box.innerHTML=`<div class="word-panel ${lang!=="en"?"rtl-soft":""}"><b>Word-by-word — ${label}</b><div class="word-grid">${words.filter(w=>w.char_type_name==="word"||!w.char_type_name).map(w=>`<span><strong>${esc(w.text_uthmani||w.text)}</strong><small>${esc(w.translation?.text||w.translation_en||w.translation?.[lang]||"")}</small></span>`).join("")}</div><small>Source: Quran.com/QDC word data.</small></div>`;
+ }catch(e){box.innerHTML=`<div class="quran-error">Word-by-word data is temporarily unavailable for this language. Arabic and the selected verse translation remain available.</div>`}
 }
 async function showTafsir(k){
  const box=document.querySelector("#extra-"+k.replace(":","-"));if(!box)return;
- box.innerHTML=`<div class="loading">Loading Tafsir Ibn Kathir…</div>`;
+ const lang=settings.language||"en";
+ box.innerHTML=`<div class="loading">Loading verified Tafsir…</div>`;
  try{
-  const lang=settings.language==="ur"?"ur":"en";
-  const slug=lang==="ur"?"tafseer-ibn-e-kaseer-urdu":"en-tafisr-ibn-kathir";
-  const j=await fetch(`${TAFSIR}/${slug}/${k.split(":")[0]}/${k.split(":")[1]}.json`).then(r=>{if(!r.ok)throw new Error("not found");return r.json()});
-  const txt=typeof j==="string"?j:(j.text||j.tafsir||j.content||j.ayah||"");
-  box.innerHTML=`<div class="tafsir-panel ${lang==="ur"?"rtl":""}"><b>Tafsir Ibn Kathir — ${lang==="ur"?"اردو":"English"}</b><p>${esc(txt)}</p><small>Source: spa5k tafsir dataset, sourced from Quran.com. Tafsir is kept separate from translation.</small></div>`;
+  const [sn,an]=k.split(":").map(Number);
+  let title="",txt="",source="";
+  if(lang==="hi"){
+   const j=await api(`${QENC}/translation/aya/hindi_mokhtasar/${sn}/${an}`);
+   txt=j.translation||""; title="हिन्दी — Al-Mukhtasar"; source="QuranEnc.com — Hindi Al-Mukhtasar";
+  }else{
+   const slug=lang==="ur"?"tafseer-ibn-e-kaseer-urdu":"en-tafisr-ibn-kathir";
+   const j=await fetch(`${TAFSIR}/${slug}/${sn}/${an}.json`).then(r=>{if(!r.ok)throw new Error("not found");return r.json()});
+   txt=typeof j==="string"?j:(j.text||j.tafsir||j.content||j.ayah||""); title=lang==="ur"?"Tafsir Ibn Kathir — اردو":"Tafsir Ibn Kathir — English"; source="spa5k tafsir dataset, sourced from Quran.com";
+  }
+  if(!txt)throw new Error("empty");
+  box.innerHTML=`<div class="tafsir-panel ${lang==="ur"||lang==="hi"?"rtl":""}"><b>${title}</b><p>${esc(txt)}</p><small>Source: ${esc(source)}. Tafsir is displayed as source text and is not AI-generated.</small></div>`;
  }catch(e){box.innerHTML=`<div class="quran-error">Verified Tafsir text could not be loaded right now. No generated explanation is shown.</div>`}
 }
 function showPractice(k){
@@ -298,18 +318,47 @@ function renderBookmarks(){
  $("#quranList").querySelectorAll("[data-remove]").forEach(b=>b.onclick=()=>{toggleBookmark(b.dataset.remove);renderBookmarks()});
 }
 function openSettings(){
- const d=document.createElement("dialog");d.className="quran-settings";d.innerHTML=`<form method="dialog"><h3>Quran Reader Settings</h3>
- <label>Arabic font size <input id="fontSize" type="range" min="24" max="58" value="${settings.fontSize}"><output>${settings.fontSize}px</output></label>
- <label><input id="showTrans" type="checkbox" ${settings.showTranslations?"checked":""}> Show translations</label>
- <fieldset><legend>Translations</legend>${Object.entries(editions).map(([k,e])=>`<label><input type="checkbox" data-tr="${k}" ${settings.selected.includes(k)?"checked":""}> ${esc(e.label)}</label>`).join("")}</fieldset>
- <label><input id="autoScroll" type="checkbox" ${autoScroll?"checked":""}> Auto-scroll during audio</label>
- <label>Reader language <select id="readerLang"><option value="en" ${settings.language==="en"?"selected":""}>English</option><option value="ur" ${settings.language==="ur"?"selected":""}>اردو</option></select></label>
- <label>Reading layout <select id="readerLayout"><option value="cards" ${settings.layout==="cards"?"selected":""}>Ayah cards</option><option value="continuous" ${settings.layout==="continuous"?"selected":""}>Continuous</option></select></label>
- <div class="actions"><button value="cancel">Cancel</button><button id="saveQSettings" value="default" class="primary">Save settings</button></div>
+ const d=document.createElement("dialog");d.className="quran-settings";d.innerHTML=`<form method="dialog" class="settings-form">
+  <div class="settings-head"><div><span class="settings-kicker">LITTLE MUSLIM LEARNERS</span><h3>Quran Reader Settings</h3><p>Personal settings — saved only on this browser/device.</p></div><button value="cancel" class="settings-x">×</button></div>
+  <div class="settings-tabs"><button type="button" class="settings-tab active" data-panel="reading">📖 Reading</button><button type="button" class="settings-tab" data-panel="audio">🎧 Audio</button><button type="button" class="settings-tab" data-panel="display">✨ Display</button><button type="button" class="settings-tab" data-panel="personal">🔖 Personal</button></div>
+  <div class="settings-panel active" data-panel="reading">
+   <div class="setting-grid">
+    <label class="setting-card"><span>Reading language</span><select id="readerLang"><option value="en" ${settings.language==="en"?"selected":""}>English</option><option value="ur" ${settings.language==="ur"?"selected":""}>اردو</option><option value="hi" ${settings.language==="hi"?"selected":""}>हिन्दी</option></select><small>Translation, Tafsir and word-by-word follow this language.</small></label>
+    <label class="setting-card"><span>Translation</span><select id="primaryTranslation"><option value="auto">Use selected language</option>${Object.entries(editions).map(([k,e])=>`<option value="${k}" ${settings.selected.includes(k)&&settings.selected.length===1?"selected":""}>${esc(e.label)}</option>`).join("")}</select></label>
+   </div>
+   <label class="switch-row"><span><b>Show translation</b><small>Display the selected language translation below Arabic.</small></span><input id="showTrans" type="checkbox" ${settings.showTranslations?"checked":""}></label>
+   <label class="switch-row"><span><b>Show Tafsir button</b><small>Open verified source-based Tafsir for each Ayah.</small></span><input id="showTafsir" type="checkbox" ${settings.showTafsir?"checked":""}></label>
+   <label class="switch-row"><span><b>Show Word-by-Word</b><small>Enable word-by-word meaning for the selected language.</small></span><input id="showWord" type="checkbox" ${settings.showWordByWord?"checked":""}></label>
+  </div>
+  <div class="settings-panel" data-panel="audio">
+   <label class="switch-row"><span><b>Auto-play next Ayah</b><small>Continue to the next Ayah after audio ends.</small></span><input id="autoPlayNext" type="checkbox" ${settings.autoPlayNext?"checked":""}></label>
+   <label class="switch-row"><span><b>Auto-scroll & highlight</b><small>Follow the currently playing Ayah.</small></span><input id="autoScroll" type="checkbox" ${autoScroll?"checked":""}></label>
+   <div class="setting-card"><span>Playback speed</span><select id="defaultSpeed"><option value="0.75">0.75×</option><option value="1">1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option></select></div>
+  </div>
+  <div class="settings-panel" data-panel="display">
+   <div class="setting-grid">
+    <label class="setting-card"><span>Arabic font size <output id="arabicOut">${settings.fontSize}px</output></span><input id="fontSize" type="range" min="24" max="58" value="${settings.fontSize}"></label>
+    <label class="setting-card"><span>Translation size <output id="transOut">${settings.translationSize}px</output></span><input id="translationSize" type="range" min="14" max="30" value="${settings.translationSize}"></label>
+    <label class="setting-card"><span>Tafsir size <output id="tafsirOut">${settings.tafsirSize}px</output></span><input id="tafsirSize" type="range" min="13" max="28" value="${settings.tafsirSize}"></label>
+    <label class="setting-card"><span>Reading layout</span><select id="readerLayout"><option value="cards" ${settings.layout==="cards"?"selected":""}>Ayah cards</option><option value="continuous" ${settings.layout==="continuous"?"selected":""}>Continuous reading</option></select></label>
+   </div>
+  </div>
+  <div class="settings-panel" data-panel="personal">
+   <div class="personal-note"><b>🔒 Your settings are personal</b><p>Bookmarks, last reading, memorization and reader preferences are stored separately in this browser/device using local storage. They are not sent to Supabase or shared with other visitors.</p></div>
+   <button type="button" id="resetQSettings" class="danger-btn">Reset my Quran settings</button>
+  </div>
+  <div class="settings-footer"><button value="cancel">Cancel</button><button id="saveQSettings" value="default" class="primary">Save & Apply</button></div>
  </form>`;
  document.body.appendChild(d);d.showModal();
- const fs=d.querySelector("#fontSize"),out=d.querySelector("output");fs.oninput=()=>out.value=fs.value+"px";
- d.querySelector("#saveQSettings").onclick=()=>{settings.fontSize=+fs.value;settings.showTranslations=d.querySelector("#showTrans").checked;settings.autoScroll=d.querySelector("#autoScroll").checked;autoScroll=settings.autoScroll;settings.language=d.querySelector("#readerLang").value;settings.layout=d.querySelector("#readerLayout").value;settings.selected=[...d.querySelectorAll("[data-tr]:checked")].map(x=>x.dataset.tr);saveSettings();setTimeout(()=>loadSurah(currentSurah,1),50)};
+ const tabs=d.querySelectorAll(".settings-tab"),panels=d.querySelectorAll(".settings-panel");tabs.forEach(t=>t.onclick=()=>{tabs.forEach(x=>x.classList.toggle("active",x===t));panels.forEach(x=>x.classList.toggle("active",x.dataset.panel===t.dataset.panel))});
+ const sliders=[["fontSize","arabicOut","px"],["translationSize","transOut","px"],["tafsirSize","tafsirOut","px"]];sliders.forEach(([a,b,u])=>{const x=d.querySelector("#"+a),o=d.querySelector("#"+b);x.oninput=()=>o.value=x.value+u});
+ d.querySelector("#readerLang").onchange=e=>{const lang=e.target.value;d.querySelector("#primaryTranslation").value=lang;};
+ d.querySelector("#resetQSettings").onclick=()=>{localStorage.removeItem(SETTINGS_KEY);settings=loadSettings();d.close();setTimeout(()=>mount(),50)};
+ d.querySelector("#saveQSettings").onclick=()=>{
+  const lang=d.querySelector("#readerLang").value,primary=d.querySelector("#primaryTranslation").value;
+  settings.fontSize=+d.querySelector("#fontSize").value;settings.translationSize=+d.querySelector("#translationSize").value;settings.tafsirSize=+d.querySelector("#tafsirSize").value;settings.showTranslations=d.querySelector("#showTrans").checked;settings.showTafsir=d.querySelector("#showTafsir").checked;settings.showWordByWord=d.querySelector("#showWord").checked;settings.autoPlayNext=d.querySelector("#autoPlayNext").checked;settings.autoScroll=d.querySelector("#autoScroll").checked;autoScroll=settings.autoScroll;settings.language=lang;settings.layout=d.querySelector("#readerLayout").value;settings.selected=[primary!=="auto"?primary:lang];saveSettings();d.close();setTimeout(()=>loadSurah(currentSurah,1),50);
+ };
 }
+
 window.QuranLibrary={mount,quranHTML,validate:()=>({surahs:LML_QURAN.surahs.length,ayahs:QVERSES.length,ok:LML_QURAN.surahs.length===114&&QVERSES.length===6236})};
 })();
