@@ -1,0 +1,16 @@
+{
+  "name": "Little Muslim Learners",
+  "short_name": "Muslim Learners",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f8f5",
+  "theme_color": "#092b4b",
+  "icons": [
+    {
+      "src": "../assets/hr-logo-round.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
