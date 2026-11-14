@@ -1,4 +1,5 @@
 (()=>{"use strict";
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const API="https://api.alquran.cloud/v1";
 const QDC="https://api.qurancdn.com/api/qdc";
 const TAFSIR="https://cdn.jsdelivr.net/gh/spa5k/tafsir_api@main/tafsir";
@@ -25,7 +26,7 @@ function allVerses(){let out=[],g=0,p=0;for(const s of LML_QURAN.surahs){for(let
 const QVERSES=allVerses(), BYKEY=new Map(QVERSES.map(v=>[v.key,v]));
 function surahVerses(n){return QVERSES.filter(v=>v.surah===n)}
 function getSurah(n){return LML_QURAN.surahs[n-1]}
-async function api(url){const r=await fetch(url,{headers:{Accept:"application/json"}});if(!r.ok)throw new Error(`${r.status} ${r.statusText}`);return r.json()}
+async function api(url){const c=new AbortController();const t=setTimeout(()=>c.abort(),9000);try{const r=await fetch(url,{headers:{Accept:"application/json"},signal:c.signal});if(!r.ok)throw new Error(`${r.status} ${r.statusText}`);return await r.json()}finally{clearTimeout(t)}}
 function rememberProgress(key){try{localStorage.setItem("lml-quran-progress-v1",key)}catch{}}
 function readProgress(){return localStorage.getItem("lml-quran-progress-v1")||"1:1"}
 function bookmarks(){try{return JSON.parse(localStorage.getItem("lml-quran-bookmarks-v1")||"[]")}catch{return[]}}
@@ -92,11 +93,13 @@ function setProgressUI(){let p=readProgress();$("#qProgressKey").textContent=p;$
 async function loadSurah(n,focusAyah=1){
  currentSurah=n;$("#surahSelect").value=String(n);setProgressUI();status("Loading Surah…");
  const s=getSurah(n); verses=surahVerses(n);translations={};
- await loadSelectedTranslations(n);
+ // Render the complete local Arabic Quran immediately. External translations must never block the reader.
  renderHeader(s);renderVerses();
  if(focusAyah) setTimeout(()=>scrollToKey(`${n}:${focusAyah}`,false),100);
  loadMeta(n).then(()=>renderMetaBits()).catch(()=>{});
  status(`${s.name} loaded — ${s.ayahs} ayat`,"ok");
+ // Load optional translations in the background and refresh only after they arrive.
+ loadSelectedTranslations(n).then(()=>{renderVerses();if(focusAyah)setTimeout(()=>scrollToKey(`${n}:${focusAyah}`,false),50)}).catch(()=>{});
 }
 async function loadSelectedTranslations(n){
  if(!settings.showTranslations||!settings.selected.length)return;
