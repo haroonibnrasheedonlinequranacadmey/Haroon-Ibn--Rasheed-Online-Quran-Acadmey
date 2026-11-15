@@ -95,16 +95,7 @@
   function updateBranding() {
     document.querySelectorAll('.brand .logo, header .logo').forEach(replaceLogo);
     document.querySelectorAll('.form-logo').forEach(replaceLogo);
-    const brand = document.querySelector('.brand');
-    if (brand) {
-      let copy = brand.querySelector('.runtime-brand-copy');
-      if (!copy) {
-        copy = brand.querySelector(':scope > div:not(.logo)');
-        if (copy) copy.className = 'runtime-brand-copy';
-        else { copy = document.createElement('span'); copy.className='runtime-brand-copy'; brand.appendChild(copy); }
-      }
-      copy.innerHTML = '<span class="brand-name">Haroon Ibn Rasheed</span><span class="brand-sub">Online Quran Academy</span>';
-    }
+    // The academy name is already present in each page header; do not inject a duplicate.
     let favicon = document.querySelector('link[rel="icon"]');
     if (!favicon) { favicon = document.createElement('link'); favicon.rel='icon'; document.head.appendChild(favicon); }
     favicon.type='image/png'; favicon.href=logoUrl();
