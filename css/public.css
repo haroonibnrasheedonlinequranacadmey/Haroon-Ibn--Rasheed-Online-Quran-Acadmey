@@ -1595,3 +1595,65 @@ header .logo img {
  .public-header .header-action { min-height:50px !important; padding:6px 3px !important; }
  .public-header .header-action strong { font-size:9px !important; }
 }
+
+/* Final header correction: keep the academy name once and keep both apps separate. */
+.public-header{position:relative;z-index:50;background:#fffdf7;box-shadow:0 3px 16px rgba(7,35,55,.09)}
+.public-header .public-brand-row{background:#fffdf7}
+.public-header .public-brand-inner{width:min(96%,1500px);max-width:1500px;min-height:92px;margin:0 auto;padding:12px 0;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.public-header .brand{display:flex!important;align-items:center;flex:0 0 270px;width:270px;min-width:0;gap:12px;text-decoration:none!important}
+.public-header .brand .logo{display:block;flex:0 0 58px;width:58px;height:58px;min-width:58px;min-height:58px;border-radius:50%;background:url('../assets/hr-logo-round.png') center/cover no-repeat;border:2px solid #e8b94e}
+.public-header .brand-copy{display:flex!important;flex-direction:column;gap:2px;width:auto!important;min-width:0!important;max-width:none!important;overflow:visible!important}
+.public-header .brand-title{display:block!important;margin:0!important;padding:0!important;color:#07394a!important;font-family:Georgia,'Times New Roman',serif!important;font-size:20px!important;font-weight:800!important;line-height:1.08!important;white-space:normal!important;text-shadow:none!important}
+.public-header .brand-subtitle{display:block!important;margin:0!important;padding:0!important;color:#31515a!important;font-family:Georgia,'Times New Roman',serif!important;font-size:14px!important;font-weight:700!important;line-height:1.12!important;white-space:normal!important}
+.public-header .public-header-actions{display:flex!important;flex:1 1 auto!important;min-width:0;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:nowrap}
+.public-header .header-action{display:inline-flex!important;flex:0 1 auto!important;min-width:0;min-height:48px;align-items:center;justify-content:center;gap:7px;padding:8px 11px;border:1px solid #0b5360;border-radius:12px;background:#073f4d;color:#fff;text-decoration:none!important;white-space:nowrap;line-height:1.12;box-shadow:0 3px 9px rgba(4,47,60,.12);font-size:12px}
+.public-header .header-action strong{display:block;font-size:11px;line-height:1.15;font-weight:800}
+.public-header .header-action small{display:block;margin-top:2px;color:#d8edf0;font-size:9px;line-height:1.1}
+.public-header .header-action .action-icon{display:inline-block;color:#f4c65c;font-size:18px;line-height:1}
+.public-header .header-action.trial-action{background:#f4c65c;border-color:#e4b343;color:#173b45;cursor:pointer}
+.public-header .header-action.trial-action strong,.public-header .header-action.trial-action .action-icon{color:#173b45}
+.public-header .public-menu-row{display:block;width:100%;background:linear-gradient(90deg,#073b49,#064b58);border-bottom:3px solid #e8b94e}
+.public-header .public-menu-row nav.menu{width:min(96%,1500px);max-width:1500px;min-height:52px;margin:0 auto;padding:0;display:flex;flex-direction:row;flex-wrap:nowrap;align-items:stretch;justify-content:space-between;gap:2px;background:transparent}
+.public-header .public-menu-row nav.menu a{display:flex;flex:1 1 auto;min-width:0;align-items:center;justify-content:center;gap:6px;margin:0;padding:12px 7px;border:0;border-right:1px solid rgba(255,255,255,.16);border-radius:0;color:#fff;background:transparent;text-decoration:none;font-size:13px;font-weight:750;line-height:1.2;white-space:nowrap}
+.public-header .public-menu-row nav.menu a span{display:inline;font-size:13px}
+.public-header .public-menu-row nav.menu a.active,.public-header .public-menu-row nav.menu a:hover{color:#173b45;background:#f4c65c}
+.public-header .mobile{display:none}
+@media(max-width:1120px) and (min-width:901px){
+ .public-header .public-brand-inner{gap:10px}
+ .public-header .brand{flex-basis:220px;width:220px}
+ .public-header .brand .logo{flex-basis:50px;width:50px;height:50px;min-width:50px;min-height:50px}
+ .public-header .brand-title{font-size:17px!important}
+ .public-header .brand-subtitle{font-size:12px!important}
+ .public-header .public-header-actions{gap:5px}
+ .public-header .header-action{padding:7px 7px}
+ .public-header .header-action strong{font-size:10px}
+ .public-header .public-menu-row nav.menu a{padding-left:4px;padding-right:4px;font-size:11px}
+ .public-header .public-menu-row nav.menu a span{font-size:11px}
+}
+@media(max-width:900px){
+ .public-header .public-brand-inner{width:94%;min-height:0;padding:12px 0;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto;align-items:center;gap:12px 10px}
+ .public-header .brand{grid-column:1;grid-row:1;flex:none;width:auto;min-width:0;max-width:none;gap:9px}
+ .public-header .brand .logo{flex:0 0 52px;width:52px;height:52px;min-width:52px;min-height:52px}
+ .public-header .brand-title{font-size:clamp(14px,3.7vw,19px)!important;line-height:1.08!important}
+ .public-header .brand-subtitle{font-size:clamp(11px,2.9vw,14px)!important;line-height:1.1!important}
+ .public-header .mobile{display:inline-flex;grid-column:2;grid-row:1;align-items:center;justify-content:center;min-width:88px;padding:10px 12px;margin:0;border:1px solid #c9dfe2;border-radius:10px;background:#eaf4f4;color:#073f4d;font-size:14px;font-weight:800;white-space:nowrap}
+ .public-header .public-header-actions{grid-column:1/-1;grid-row:2;display:grid!important;width:100%;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+ .public-header .header-action{width:100%;min-width:0;min-height:52px;padding:7px 5px;gap:5px;white-space:normal;text-align:center;border-radius:11px}
+ .public-header .header-action strong{font-size:11px;text-align:center}
+ .public-header .header-action small{font-size:9px;text-align:center}
+ .public-header .header-action .action-icon{font-size:18px}
+ .public-header .header-action.trial-action{grid-column:1/-1}
+ .public-header .public-menu-row{display:none}
+ .public-header.menu-open .public-menu-row{display:block}
+ .public-header .public-menu-row nav.menu{display:flex;width:100%;min-height:0;max-height:65vh;overflow-y:auto;overflow-x:hidden;margin:0;padding:8px 3%;flex-direction:column;flex-wrap:nowrap;align-items:stretch;justify-content:flex-start;gap:0}
+ .public-header .public-menu-row nav.menu a{display:flex;width:100%;min-height:42px;flex:none;justify-content:flex-start;text-align:left;padding:10px 12px;border-right:0;border-bottom:1px solid rgba(255,255,255,.16);white-space:normal;font-size:14px}
+ .public-header .public-menu-row nav.menu a span{font-size:14px}
+}
+@media(max-width:390px){
+ .public-header .brand .logo{flex-basis:46px;width:46px;height:46px;min-width:46px;min-height:46px}
+ .public-header .brand-title{font-size:13px!important}
+ .public-header .brand-subtitle{font-size:10px!important}
+ .public-header .mobile{min-width:78px;padding:9px;font-size:12px}
+ .public-header .header-action{min-height:48px;padding:6px 3px}
+ .public-header .header-action strong{font-size:10px}
+}
