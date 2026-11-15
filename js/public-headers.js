@@ -95,7 +95,11 @@
   function updateBranding() {
     document.querySelectorAll('.brand .logo, header .logo').forEach(replaceLogo);
     document.querySelectorAll('.form-logo').forEach(replaceLogo);
-    // The academy name is already present in each page header; do not inject a duplicate.
+
+    // Keep the academy name already present in the HTML. Remove only the
+    // duplicate runtime block left by the previous header script.
+    document.querySelectorAll('.brand .runtime-brand-copy').forEach(function (node) { node.remove(); });
+
     let favicon = document.querySelector('link[rel="icon"]');
     if (!favicon) { favicon = document.createElement('link'); favicon.rel='icon'; document.head.appendChild(favicon); }
     favicon.type='image/png'; favicon.href=logoUrl();
