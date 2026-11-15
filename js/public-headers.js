@@ -2,20 +2,77 @@
   'use strict';
 
   const slides = {
-    home: ['https://images.unsplash.com/photo-1720654073347-e7c5ca2ecaa2?auto=format&fit=crop&fm=jpg&q=82&w=1800', 'https://images.unsplash.com/photo-1577792077974-0a424b741d34?auto=format&fit=crop&fm=jpg&q=82&w=1800', 'https://images.unsplash.com/photo-1673178643274-ecd2de1716bb?auto=format&fit=crop&fm=jpg&q=82&w=1800', 'https://images.unsplash.com/photo-1652064588708-2a3eefd68077?auto=format&fit=crop&fm=jpg&q=82&w=1800'],
-    about: ['https://upload.wikimedia.org/wikipedia/commons/9/97/Courtyard_of_Shah_Jahan_Mosque.JPG', 'https://images.unsplash.com/photo-1558542403-bb396707e7da?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&q=80&w=1600'],
-    courses: ['https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1585036156171-384164a8c675?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&q=80&w=1600'],
-    teachers: ['https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=1600'],
-    fees: ['https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1585036156171-384164a8c675?auto=format&fit=crop&q=80&w=1600', 'https://upload.wikimedia.org/wikipedia/commons/9/97/Courtyard_of_Shah_Jahan_Mosque.JPG'],
-    contact: ['https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&q=80&w=1600', 'https://upload.wikimedia.org/wikipedia/commons/9/97/Courtyard_of_Shah_Jahan_Mosque.JPG', 'https://images.unsplash.com/photo-1558542403-bb396707e7da?auto=format&fit=crop&q=80&w=1600'],
-    faq: ['https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/PUTRA_MOSQUE_ARCHITECTURE.jpg/1280px-PUTRA_MOSQUE_ARCHITECTURE.jpg', 'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1558542403-bb396707e7da?auto=format&fit=crop&q=80&w=1600'],
-    blog: ['https://images.unsplash.com/photo-1652964287112-438ece0a6acc?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&q=80&w=1600', 'https://upload.wikimedia.org/wikipedia/commons/9/97/Courtyard_of_Shah_Jahan_Mosque.JPG'],
-    reviews: ['https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80&w=1600', 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&q=80&w=1600']
+    home: [
+      'images/WhatsApp Image 2026-10-06 at 4.27.44 PM.jpeg',
+      'images/about-online-quran-class-1.png',
+      'images/quran-teachers-hero.jpg',
+      'images/WhatsApp Image 2026-10-07 at 6.31.03 AM.jpeg'
+    ],
+    about: [
+      'images/about-online-quran-class-1.png',
+      'images/about-online-quran-class-2.png',
+      'images/quran-teachers-hero.jpg',
+      'images/WhatsApp Image 2026-10-06 at 4.27.44 PM.jpeg'
+    ],
+    courses: [
+      'images/Double Fathah Quran Reading Exercise.png',
+      'images/about-online-quran-class-1.png',
+      'images/Online Quran Class with Expert Teachers.png',
+      'images/WhatsApp Image 2026-10-07 at 6.31.03 AM.jpeg'
+    ],
+    teachers: [
+      'images/quran-teachers-hero.jpg',
+      'images/teacher-male.jpg',
+      'images/teacher-female.jpg',
+      'images/about-online-quran-class-2.png'
+    ],
+    'female-teachers': [
+      'images/teacher-female.jpg',
+      'images/about-online-quran-class-2.png',
+      'images/teacher-female.jpg'
+    ],
+    'male-teachers': [
+      'images/teacher-male.jpg',
+      'images/quran-teachers-hero.jpg',
+      'images/teacher-male.jpg'
+    ],
+    fees: [
+      'images/Online Quran Academy Promotional Poster.png',
+      'images/about-online-quran-class-1.png',
+      'images/WhatsApp Image 2026-10-05 at 7.48.05 PM.jpeg',
+      'images/Online Quran Class with Expert Teachers.png'
+    ],
+    contact: [
+      'images/about-online-quran-class-2.png',
+      'images/WhatsApp Image 2026-10-06 at 4.27.44 PM.jpeg',
+      'images/quran-teachers-hero.jpg',
+      'images/Online Quran Academy Promotional Poster.png'
+    ],
+    faq: [
+      'images/WhatsApp Image 2026-10-07 at 5.32.14 PM.jpeg',
+      'images/about-online-quran-class-1.png',
+      'images/Double Fathah Quran Reading Exercise.png',
+      'images/quran-teachers-hero.jpg'
+    ],
+    blog: [
+      'images/WhatsApp Image 2026-10-07 at 6.31.03 AM.jpeg',
+      'images/Double Fathah Quran Reading Exercise.png',
+      'images/WhatsApp Image 2026-10-07 at 5.32.14 PM.jpeg',
+      'images/about-online-quran-class-1.png'
+    ],
+    reviews: [
+      'images/quran-teachers-hero.jpg',
+      'images/about-online-quran-class-2.png',
+      'images/teacher-male.jpg',
+      'images/teacher-female.jpg'
+    ]
   };
   const pageInfo = {
     about: ['ABOUT US', 'Learn, Understand & Live the Quran', 'Discover our mission, values and commitment to quality Quranic education.'],
     courses: ['QURAN COURSES', 'Learn With a Clear, Personal Path', 'Explore Quran reading, Tajweed, Hifz, translation and Islamic studies.'],
     teachers: ['OUR TEACHERS', 'Learn From Qualified Quran Teachers', 'Experienced teachers helping students learn with care, patience and consistency.'],
+    'female-teachers': ['FEMALE QURAN TEACHERS', 'Learn With Dedicated Female Tutors', 'Supportive female Quran teachers for girls, sisters and children.'],
+    'male-teachers': ['MALE QURAN TEACHERS', 'Learn With Dedicated Male Tutors', 'Experienced male Quran teachers for boys, brothers and children.'],
     fees: ['OUR FEES', 'Simple & Transparent Pricing', 'Choose a flexible learning plan that fits your Quran journey.'],
     contact: ['CONTACT US', 'We Are Here to Help', 'Reach out to Haroon Ibn Rasheed Online Quran Academy for admissions and support.'],
     faq: ['FAQS', 'Questions, Clearly Answered', 'Find quick answers about classes, courses, timings, fees and admissions.'],
@@ -66,9 +123,12 @@
         .page-public-header .ph-inner{padding:54px 0 48px;}
       }
       .page-public-header{isolation:isolate!important;min-height:330px!important;z-index:0!important;}
-      .page-public-header .ph-slides{z-index:-1!important;transition:opacity 1.4s ease-in-out!important;background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important;}
-      .page-public-header:after{z-index:0!important;pointer-events:none!important;}
+      .page-public-header .ph-slides{z-index:0!important;display:block!important;opacity:1!important;transition:opacity 1.4s ease-in-out!important;background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important;}
+      .page-public-header:after{z-index:1!important;pointer-events:none!important;}
       .page-public-header .ph-inner{z-index:2!important;}
+      .hero>.public-home-slideshow{z-index:0!important;display:block!important;opacity:1!important;background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important;}
+      .hero:after{z-index:1!important;}
+      .hero>.hero-content,.hero>.page-hero-content{z-index:2!important;}
       .page-public-header .ph-inner h1,.page-public-header .ph-inner p{position:relative;z-index:2;}
       main > .page-public-header{margin:0!important;width:100%!important;max-width:none!important;}
       main > .page-public-header + .page-public-header{display:none!important;}
@@ -95,11 +155,16 @@
   function updateBranding() {
     document.querySelectorAll('.brand .logo, header .logo').forEach(replaceLogo);
     document.querySelectorAll('.form-logo').forEach(replaceLogo);
-
-    // Keep the academy name already present in the HTML. Remove only the
-    // duplicate runtime block left by the previous header script.
-    document.querySelectorAll('.brand .runtime-brand-copy').forEach(function (node) { node.remove(); });
-
+    const brand = document.querySelector('.brand');
+    if (brand) {
+      let copy = brand.querySelector('.runtime-brand-copy');
+      if (!copy) {
+        copy = brand.querySelector(':scope > div:not(.logo)');
+        if (copy) copy.className = 'runtime-brand-copy';
+        else { copy = document.createElement('span'); copy.className='runtime-brand-copy'; brand.appendChild(copy); }
+      }
+      copy.innerHTML = '<span class="brand-name">Haroon Ibn Rasheed</span><span class="brand-sub">Online Quran Academy</span>';
+    }
     let favicon = document.querySelector('link[rel="icon"]');
     if (!favicon) { favicon = document.createElement('link'); favicon.rel='icon'; document.head.appendChild(favicon); }
     favicon.type='image/png'; favicon.href=logoUrl();
