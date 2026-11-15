@@ -1,0 +1,23 @@
+/* Page-specific content panels and home gallery. Does not alter public header/navigation. */
+.page-intro{padding:30px 20px 34px;background:linear-gradient(135deg,#f7faf9,#fff);border-bottom:1px solid #e7ecea}
+.page-intro-inner{max-width:1120px;margin:0 auto;text-align:center}
+.page-intro .eyebrow{color:#b88725;font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:.76rem}
+.page-intro h2{margin:8px 0 10px;color:#0b3f4a;font-size:clamp(1.35rem,2.4vw,2rem);line-height:1.2}
+.page-intro p{max-width:850px;margin:0 auto;color:#45545a;font-size:1rem;line-height:1.75}
+.page-related{padding:26px 20px;background:#f4f7f6;border-top:1px solid #e5ebea}
+.page-related-inner{max-width:1120px;margin:auto;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.page-related h2{font-size:1.12rem;color:#0b3f4a;margin:0 0 5px}
+.page-related p{margin:0;color:#526166;line-height:1.6}
+.page-related-links{display:flex;gap:10px;flex-wrap:wrap}
+.page-related-links a{display:inline-flex;align-items:center;padding:9px 14px;border-radius:24px;background:#0b4a56;color:#fff;text-decoration:none;font-weight:700;font-size:.9rem}
+.home-gallery{padding:54px 20px;background:#fff}
+.home-gallery-inner{max-width:1160px;margin:auto}
+.home-gallery .heading{text-align:center;margin-bottom:24px}
+.home-gallery .heading small{color:#b88725;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.home-gallery .heading h2{color:#0b3f4a;margin:8px 0}
+.home-gallery-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.home-gallery-card{margin:0;overflow:hidden;border-radius:15px;background:#f5f7f6;box-shadow:0 8px 24px rgba(5,35,43,.10)}
+.home-gallery-card img{display:block;width:100%;height:220px;object-fit:cover}
+.home-gallery-card figcaption{padding:12px 14px;color:#17434b;font-weight:700;text-align:center}
+@media(max-width:800px){.home-gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.home-gallery-card img{height:180px}.page-related-inner{display:block}.page-related-links{margin-top:14px}}
+@media(max-width:480px){.home-gallery-grid{grid-template-columns:1fr 1fr;gap:10px}.home-gallery-card img{height:135px}.home-gallery-card figcaption{font-size:.82rem;padding:9px 7px}.page-intro{padding:24px 16px}.page-intro p{font-size:.94rem}}
