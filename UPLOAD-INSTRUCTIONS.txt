@@ -1,0 +1,28 @@
+HAROON IBN RASHEED ONLINE QURAN ACADEMY — PUBLIC HEADER FIX
+
+Only these 13 files are updated. Upload/replace each file at the same path in your GitHub repository:
+
+HTML files (11):
+index.html
+about.html
+blog.html
+contact.html
+courses.html
+faq.html
+fees.html
+female-teachers.html
+male-teachers.html
+reviews.html
+teachers.html
+
+Shared assets (2):
+css/public.css
+js/public-headers.js
+
+What this update fixes:
+- Removes the extra academy name that was being injected beside the existing name in the header.
+- Keeps the correct visible academy name: Haroon Ibn Rasheed Online Quran Academy.
+- Replaces the old text symbols in the public navigation with consistent professional outline icons.
+- Applies the same navigation update to all 11 public pages.
+
+Do not replace or upload the rest of the website. Keep the folder paths exactly as shown.
