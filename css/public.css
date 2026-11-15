@@ -1657,3 +1657,13 @@ header .logo img {
  .public-header .header-action{min-height:48px;padding:6px 3px}
  .public-header .header-action strong{font-size:10px}
 }
+
+
+/* Professional consistent icons for the public website navigation */
+.public-header .menu a .nav-icon{
+  width:16px;height:16px;flex:0 0 16px;display:inline-block;
+  fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;
+  vertical-align:middle;opacity:.98;
+}
+.public-header .menu a{gap:8px}
+@media(max-width:820px){.public-header .menu a .nav-icon{width:17px;height:17px;flex-basis:17px}}
