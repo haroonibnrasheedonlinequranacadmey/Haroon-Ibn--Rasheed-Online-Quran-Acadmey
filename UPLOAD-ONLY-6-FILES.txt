@@ -1,0 +1,15 @@
+AL-BAYAN — ONLY FILES TO ADD/REPLACE IN GITHUB
+
+Replace these files at the same paths:
+1. little-muslim-learners/index.html
+2. little-muslim-learners/app.js
+3. little-muslim-learners/style.css
+4. little-muslim-learners/sw.js
+5. little-muslim-learners/quran-library.js
+
+Add this new PDF file:
+6. little-muslim-learners/assets/namaz-e-nabavi.pdf
+
+The Quran tab opens a 30 Juz gallery with individual preview images. Each Juz opens its own 16-line PDF in a single-page reader with previous/next, page jump, zoom and fullscreen. The Listen button uses the existing Mishary Rashid Alafasy audio engine. The original searchable Quran remains under Quran Text. Salah includes the supplied Namaz-e-Nabawi PDF.
+
+The 16-line Quran source repository states educational, non-commercial use only. Verify permission before public/commercial use. The supplied Namaz-e-Nabawi PDF retains its original publisher/website attribution; confirm permission for public redistribution.
