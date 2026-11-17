@@ -1,4 +1,4 @@
-const CACHE = 'albayan-static-v13';
+const CACHE = 'albayan-static-v14';
 const CORE_FILES = [
   './',
   './index.html',

@@ -161,3 +161,39 @@ footer{background:var(--ab-navy)!important;color:#e9eff2!important;border-top:2p
  .namaz-book:fullscreen,.juz-reader:fullscreen{padding:8px}
  .namaz-book:fullscreen .namaz-canvas-wrap,.juz-reader:fullscreen .juz-canvas-wrap{min-height:75vh}
 }
+
+
+/* Watch Tafseer Tutorial: fixed floating action and responsive video modal */
+.tafseer-tutorial-fab{
+  position:fixed;right:max(18px,env(safe-area-inset-right));bottom:max(20px,env(safe-area-inset-bottom));
+  z-index:1000;display:flex;align-items:center;gap:10px;max-width:calc(100vw - 28px);
+  padding:13px 18px;border:0;border-radius:999px;background:#0b8f8b;color:#fff;
+  box-shadow:0 8px 24px #092b4b45;font:800 14px/1.2 system-ui,Arial,sans-serif;
+  cursor:pointer;transition:transform .18s ease,box-shadow .18s ease;
+}
+.tafseer-tutorial-fab:hover{transform:translateY(-2px);box-shadow:0 11px 28px #092b4b55}
+.tafseer-tutorial-fab:focus-visible,.tafseer-video-close:focus-visible{outline:3px solid #e7a33e;outline-offset:3px}
+.tafseer-fab-icon{width:25px;height:25px;display:grid;place-items:center;border-radius:50%;background:#ffffff27;font-size:12px}
+.tafseer-video-modal{position:fixed;inset:0;z-index:1100;display:none;align-items:center;justify-content:center;padding:20px}
+.tafseer-video-modal.is-open{display:flex}
+.tafseer-video-backdrop{position:absolute;inset:0;background:#061a2bdc;backdrop-filter:blur(3px)}
+.tafseer-video-panel{position:relative;z-index:1;width:min(900px,100%);overflow:hidden;border-radius:18px;background:#fff;box-shadow:0 22px 70px #0008}
+.tafseer-video-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;background:#092b4b;color:#fff}
+.tafseer-video-heading h2{margin:0;color:inherit;font-size:clamp(16px,2.5vw,21px)}
+.tafseer-video-close{flex:0 0 38px;width:38px;height:38px;border:0;border-radius:50%;background:#ffffff20;color:#fff;font-size:30px;line-height:1;cursor:pointer}
+.tafseer-video-close:hover{background:#ffffff35}
+.tafseer-video-frame{position:relative;width:100%;aspect-ratio:16/9;background:#000}
+.tafseer-video-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+body.tafseer-video-open{overflow:hidden}
+@media(max-width:520px){
+ .tafseer-tutorial-fab{right:12px;bottom:max(14px,env(safe-area-inset-bottom));padding:11px 14px;font-size:12px;gap:8px}
+ .tafseer-video-modal{padding:12px}
+ .tafseer-video-panel{border-radius:14px}
+ .tafseer-video-heading{padding:9px 11px}
+ .tafseer-video-close{width:34px;height:34px;flex-basis:34px}
+}
+@media(orientation:landscape) and (max-height:520px){
+ .tafseer-video-modal{padding:8px}
+ .tafseer-video-panel{width:min(900px,94vw);max-height:94vh}
+ .tafseer-video-frame{max-height:calc(94vh - 56px);aspect-ratio:16/9}
+}
