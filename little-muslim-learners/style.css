@@ -87,38 +87,31 @@ footer{background:var(--ab-navy)!important;color:#e9eff2!important;border-top:2p
 .juz-library{max-width:1180px;margin:0 auto;padding:12px 0 30px}.juz-library-head{text-align:center;padding:20px 10px}.juz-library-head h2{color:#07394a;margin:7px 0;font-size:clamp(24px,4vw,34px)}.juz-library-head p{color:#617783;margin:0}.juz-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}.juz-card{border:1px solid #e1d7c4;background:#fff;border-radius:16px;padding:8px;box-shadow:0 7px 20px #17394a12;cursor:pointer;text-align:center;min-width:0;transition:transform .18s,box-shadow .18s}.juz-card:hover{transform:translateY(-3px);box-shadow:0 12px 26px #17394a22}.juz-cover{position:relative;display:block;aspect-ratio:3/4;overflow:hidden;border-radius:10px;background:#f4ecd9;border:1px solid #d7c18f}.juz-cover:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#092d3b22,#092d3b88)}.juz-cover img{width:100%;height:100%;object-fit:cover;display:block}.juz-cover-title{position:absolute;z-index:1;left:5px;right:5px;top:50%;transform:translateY(-50%);color:#fff;font-family:serif;font-weight:900;font-size:clamp(17px,2vw,25px);text-shadow:0 2px 7px #001d2a;line-height:1.5}.juz-number{display:block;padding:9px 3px 4px;color:#07394a;font-weight:900;font-size:15px}.juz-reader{margin:16px auto;padding:12px;background:#fffdf7;border:1px solid #e5dfd1;border-radius:18px}.juz-reader-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:8px 2px 14px}.juz-reader-head>div{display:flex;flex-direction:column;align-items:center;gap:2px;color:#07394a}.juz-reader-head>div b{font-size:24px}.juz-reader-head button,.juz-page-toolbar button,.juz-page-bottom button{border:0;border-radius:9px;background:#07394a;color:#fff;padding:10px 13px;font-weight:800;cursor:pointer}.juz-page-toolbar{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;background:#f1f6f5;border:1px solid #dce9e6;border-radius:12px;padding:10px;margin-bottom:12px}.juz-page-toolbar label{font-weight:800;color:#24485a}.juz-page-toolbar input{width:62px;padding:8px;border:1px solid #cbd9d5;border-radius:8px;text-align:center}.juz-page-toolbar span{font-size:13px;font-weight:800;color:#24485a}.juz-canvas-wrap{display:flex;align-items:center;justify-content:center;min-height:260px;max-height:calc(100dvh - 230px);overflow:auto;background:#eee9dc;border:1px solid #ddd3bd;border-radius:12px;padding:10px}.juz-canvas-wrap canvas{display:block;max-width:none;height:auto;box-shadow:0 5px 22px #0002}.juz-canvas-wrap #juzPdfStatus{color:#536879;font-weight:800;text-align:center;padding:20px}.juz-page-bottom{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:12px 0}.juz-page-bottom span{font-weight:900;color:#24485a}.juz-audio-note{text-align:center;color:#426070;font-size:13px;padding:8px}.namaz-book{display:flex;align-items:center;justify-content:space-between;margin:12px 0 18px;background:linear-gradient(135deg,#fff,#f5f8f3)}.namaz-book h3{color:#07394a}.namaz-pdf-link{display:inline-block;margin:5px 7px 5px 0;padding:11px 15px;border-radius:10px;background:#07394a;color:white;text-decoration:none;font-weight:800}.namaz-pdf-link.secondary{background:#0b8f8b}
 @media(max-width:900px){.juz-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}@media(max-width:620px){.juz-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.juz-card{padding:5px;border-radius:12px}.juz-cover{border-radius:8px}.juz-number{font-size:13px;padding:7px 2px}.juz-reader{padding:7px}.juz-reader-head{justify-content:center}.juz-reader-head>div{order:-1;width:100%}.juz-page-toolbar{gap:5px;padding:7px}.juz-page-toolbar button{padding:9px;font-size:12px}.juz-canvas-wrap{padding:4px;min-height:220px}.juz-page-bottom{justify-content:center;flex-wrap:wrap}.juz-page-bottom span{width:100%;text-align:center;order:-1}}
 
-
-/* Independent prayer-book reader and 16-line Tajweed Para cards */
-.namaz-section{max-width:1180px;margin:0 auto;padding:12px 0 34px}
-.namaz-brand-head{text-align:center;padding:18px 12px 12px}
-.namaz-brand-head>span{display:inline-block;color:#b78325;font-weight:900;font-size:12px;letter-spacing:.09em}
-.namaz-brand-head h2{margin:7px 0;color:#092b4b;font-size:clamp(25px,4vw,36px)}
-.namaz-brand-head p{margin:0;color:#587082}
-.namaz-book{margin:10px 0 20px;padding:clamp(12px,2vw,22px);border:1px solid #dce8e7}
-.namaz-book-top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+/* In-page readers: no external PDF/download navigation */
+.namaz-section{max-width:1180px;margin:0 auto;padding:10px 0 32px}
+.namaz-brand-head{text-align:center;padding:18px 10px}
+.namaz-brand-head span{color:#b78325;font-weight:900;font-size:12px;letter-spacing:.08em}
+.namaz-brand-head h2{margin:8px 0;color:#092b4b;font-size:clamp(25px,4vw,36px)}
+.namaz-brand-head p{color:#587082;margin:0}
+.namaz-book{padding:clamp(10px,2vw,22px);border:1px solid #dce8e7}
+.namaz-book-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .namaz-book-top h3{margin:0;color:#0b7778;font-size:22px}
-.namaz-book-top p{margin:4px 0;color:#647987}
-.namaz-book-actions{display:flex;gap:8px;flex-wrap:wrap}
-.namaz-pdf-link{display:inline-block;text-decoration:none;background:#0b8f8b;color:#fff;padding:9px 13px;border-radius:10px;font-weight:750}
-.namaz-pdf-link.secondary{background:#e7eeee;color:#17334a}
 .namaz-toolbar,.namaz-bottom-controls{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;padding:12px 0}
-.namaz-toolbar button,.namaz-bottom-controls button{border:0;border-radius:9px;background:#092b4b;color:white;padding:9px 12px;font-weight:750;cursor:pointer}
-.namaz-toolbar label{display:flex;align-items:center;gap:5px;font-weight:700}
-.namaz-toolbar input{width:68px;padding:8px;border:1px solid #c9d7dc;border-radius:8px}
-.namaz-canvas-wrap{min-height:320px;max-height:78vh;overflow:auto;display:flex;align-items:flex-start;justify-content:center;padding:12px;background:#f1eadb;border:1px solid #dfd1b8;border-radius:12px}
-#namazCanvas{display:block;max-width:none;background:white;box-shadow:0 4px 18px #17334a22}
-#namazStatus{align-self:center;text-align:center;padding:28px;color:#587082}
+.namaz-toolbar button,.namaz-bottom-controls button,.juz-page-toolbar button,.juz-page-bottom button{border:0;border-radius:9px;background:#092b4b;color:#fff;padding:9px 12px;font-weight:750;cursor:pointer}
+.namaz-toolbar label,.juz-page-toolbar label{display:flex;align-items:center;gap:5px;font-weight:700}
+.namaz-toolbar input,.juz-page-toolbar input{width:65px;padding:8px;border:1px solid #c9d7dc;border-radius:8px}
+.namaz-canvas-wrap{min-height:300px;max-height:78vh;overflow:auto;display:flex;align-items:flex-start;justify-content:center;padding:12px;background:#f1eadb;border:1px solid #dfd1b8;border-radius:12px}
+#namazCanvas{display:block;max-width:none;background:#fff;box-shadow:0 4px 18px #17334a22}
+#namazStatus{text-align:center;align-self:center;padding:25px;color:#587082}
 .namaz-bottom-controls{justify-content:space-between}
-.namaz-credit{text-align:center;color:#647987;font-size:12px;margin:4px 0 0}
-.namaz-guides{margin-top:18px}
-.juz-card-new{cursor:default;padding:10px}
-.juz-cover-new{aspect-ratio:4/3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:linear-gradient(145deg,#fff9e9,#f1e1bb);border:2px solid #cba75d}
-.juz-cover-new:after{background:linear-gradient(145deg,#092d3b08,#092d3b20)}
-.juz-cover-ornament{font-size:32px;color:#0b8f8b;z-index:1}
-.juz-cover-new .juz-cover-title{position:static;color:#092b4b;font-size:22px;text-shadow:none;font-weight:900}
-.juz-cover-new .juz-number{position:static;color:#a06b17;font-weight:900;font-size:12px;letter-spacing:.12em}
-.juz-card-actions{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;padding-top:10px}
-.juz-open-colour,.juz-listen-button{border:0;border-radius:9px;background:#0b8f8b;color:white;padding:9px 11px;text-decoration:none;font-size:13px;font-weight:800;cursor:pointer}
-.juz-listen-button{background:#092b4b}
-.juz-listen-button:disabled{opacity:.65;cursor:wait}
-@media(max-width:760px){.namaz-toolbar{gap:6px}.namaz-toolbar button,.namaz-bottom-controls button{padding:8px 9px;font-size:12px}.namaz-book-top{align-items:flex-start}.namaz-canvas-wrap{max-height:72vh;padding:7px}.namaz-bottom-controls{justify-content:center}.namaz-bottom-controls span{width:100%;text-align:center;order:-1}}
+.juz-canvas-wrap{overflow:auto;max-height:78vh;display:flex;align-items:flex-start;justify-content:center;background:#f1eadb;padding:12px;border-radius:12px}
+#juzPdfCanvas{display:block;max-width:none;background:#fff;box-shadow:0 4px 18px #17334a22}
+#juzPdfStatus{text-align:center;align-self:center;padding:25px;color:#587082}
+.juz-page-toolbar,.juz-page-bottom{display:flex;justify-content:center;align-items:center;gap:7px;flex-wrap:wrap;padding:12px 0}
+.juz-page-bottom{justify-content:space-between}
+.juz-audio-note{text-align:center;padding:10px;color:#0b7778;font-weight:700}
+.juz-reader-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.juz-reader-head>div{display:grid;text-align:center}
+.juz-reader-head button{border:0;border-radius:9px;background:#092b4b;color:white;padding:9px 12px}
+.juz-cover img{width:100%;height:100%;object-fit:cover}
+@media(max-width:700px){.namaz-toolbar button,.juz-page-toolbar button,.namaz-bottom-controls button,.juz-page-bottom button{padding:8px 9px;font-size:12px}.namaz-canvas-wrap,.juz-canvas-wrap{padding:6px;max-height:72vh}.namaz-bottom-controls,.juz-page-bottom{justify-content:center}.namaz-bottom-controls span,.juz-page-bottom span{width:100%;text-align:center;order:-1}}

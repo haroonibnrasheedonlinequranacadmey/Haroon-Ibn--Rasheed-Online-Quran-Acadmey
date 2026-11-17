@@ -32,19 +32,57 @@ const JUZ_INFO=[
 const JUZ_THUMB_PAGES=[2,20,38,56,74,92,110,128,146,164,182,200,218,236,254,272,290,308,326,344,362,380,398,416,434,452,470,488,506,528];
 function mushafHTML(){
  return `<section class="juz-library" aria-label="Thirty Para colour Tajweed Quran">
-  <div class="juz-library-head"><span class="mushaf-kicker">HAROON IBN RASHEED ONLINE QURAN ACADEMY</span><h2>تجویدی قرآن مجید · 16 Lines</h2><p>رنگین 16 لائن انڈو پاک مصحف — اپنا پارہ منتخب کریں، اصل صفحہ وار قرآن کھولیں اور تلاوت سنیں۔</p></div>
-  <div class="juz-grid">${JUZ_INFO.map((j,i)=>`<article class="juz-card juz-card-new"><div class="juz-cover juz-cover-new"><span class="juz-cover-ornament">۞</span><span class="juz-cover-title" lang="ar" dir="rtl">${j[0]}</span><span class="juz-number">PARA ${i+1}</span></div><div class="juz-card-actions"><a class="juz-open-colour" href="https://www.tajweediquran.com/16-line-quran/para/${i+1}" target="_blank" rel="noopener">Open Colour Quran</a><button type="button" class="juz-listen-button" data-listen-juz="${i+1}">▶ Listen</button></div></article>`).join('')}</div>
-  <p class="mushaf-credit">The colour-coded 16-line reader opens from TajweediQuran, which identifies its edition as the Indo-Pak 16-line Taj Company layout. Its reader includes page turning and magnification. Audio is provided here through the existing Mishary Alafasy recitation integration.</p>
+  <div class="juz-library-head"><span class="mushaf-kicker">HAROON IBN RASHEED ONLINE QURAN ACADEMY</span><h2>تجویدی قرآن مجید · 16 Lines</h2><p>اپنا پارہ منتخب کریں۔ قرآن اسی ویب سائٹ کے اندر صفحہ وار کھلے گا۔</p></div>
+  <div class="juz-grid">${JUZ_INFO.map((j,i)=>`<button class="juz-card" type="button" data-juz="${i+1}" aria-label="پارہ ${i+1} کھولیں"><span class="juz-cover"><img src="https://github.com/vincenzoh-gh/16-Line-Quran/releases/download/v2/${String(JUZ_THUMB_PAGES[i]).padStart(3,'0')}.webp" alt="پارہ ${i+1} کا رنگین صفحہ" loading="lazy"><span class="juz-cover-title" lang="ar" dir="rtl">${j[0]}</span></span><span class="juz-number">پارہ ${i+1}</span></button>`).join('')}</div>
+  <div id="juzReader" class="juz-reader" hidden></div>
+  <p class="mushaf-credit">رنگین 16 لائن مصحف: تعلیمی اور غیر تجارتی استعمال کے لیے فراہم کردہ ڈیجیٹل مجموعہ۔</p>
  </section>`;
 }
 function bindMushaf(){
- const grid=$('.juz-grid');if(!grid)return;
- grid.querySelectorAll('[data-listen-juz]').forEach(btn=>btn.addEventListener('click',async()=>{
-  const n=Number(btn.dataset.listenJuz),old=btn.textContent;btn.disabled=true;btn.textContent='Loading…';
-  try{if(!window.__albayanAudioMounted){window.__albayanAudioMounted=true;await window.QuranLibrary?.mountAudioBridge()}await window.QuranLibrary?.playJuz(n);btn.textContent=`Playing Para ${n}`;}
-  catch(e){btn.textContent='Audio unavailable';}
-  setTimeout(()=>{btn.disabled=false;if(btn.textContent==='Playing Para '+n)btn.textContent=old},3500);
- }));
+ const grid=$('.juz-grid'),reader=$('#juzReader'); if(!grid||!reader)return;
+ if(window.pdfjsLib)pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+ grid.querySelectorAll('[data-juz]').forEach(btn=>btn.addEventListener('click',()=>openJuz(+btn.dataset.juz)));
+ async function openJuz(n){
+  const info=JUZ_INFO[n-1];grid.hidden=true;reader.hidden=false;
+  reader.innerHTML=`<div class="juz-reader-head"><button type="button" id="backToJuz">← تمام 30 پارے</button><div><b lang="ar" dir="rtl">${info[0]}</b><span>پارہ ${n} · ${info[1]}</span></div><button type="button" id="listenJuz">▶ مشاری راشد العفاسی</button></div>
+   <div class="juz-page-toolbar"><button id="juzPrev">← پچھلا صفحہ</button><label>صفحہ <input id="juzPageNo" type="number" min="1" value="1"></label><span id="juzPageCount">/ —</span><button id="juzGo">جائیں</button><button id="juzNext">اگلا صفحہ →</button><button id="juzZoomOut" aria-label="Zoom out">−</button><span id="juzZoomValue">Fit</span><button id="juzZoomIn" aria-label="Zoom in">+</button><button id="juzFit">Fit</button><button id="juzFull">فل اسکرین</button></div>
+   <div class="juz-canvas-wrap" id="juzCanvasWrap"><div id="juzPdfStatus">پارہ لوڈ ہو رہا ہے…</div><canvas id="juzPdfCanvas" aria-label="رنگین قرآن کا صفحہ"></canvas></div>
+   <div class="juz-page-bottom"><button id="juzPrevBottom">← پچھلا صفحہ</button><span id="juzPageStatus">صفحہ 1</span><button id="juzNextBottom">اگلا صفحہ →</button></div>
+   <p class="juz-audio-note" id="juzAudioNote" aria-live="polite">مشاری راشد العفاسی کی تلاوت سننے کے لیے اوپر Listen دبائیں۔</p>`;
+  $('#backToJuz').onclick=()=>{reader.hidden=true;grid.hidden=false;};
+  $('#listenJuz').onclick=async()=>{const note=$('#juzAudioNote');note.textContent='تلاوت لوڈ ہو رہی ہے…';try{if(!window.__albayanAudioMounted){window.__albayanAudioMounted=true;await window.QuranLibrary?.mountAudioBridge()}await window.QuranLibrary?.playJuz(n);note.textContent=`پارہ ${n} کی مشاری راشد العفاسی کی تلاوت چل رہی ہے۔`}catch(e){note.textContent='آڈیو شروع نہیں ہو سکی۔ انٹرنیٹ کنکشن چیک کریں۔'}};
+  const status=$('#juzPdfStatus'),canvas=$('#juzPdfCanvas'),ctx=canvas.getContext('2d'),input=$('#juzPageNo');
+  let pdf=null,page=1,scale=-1,renderTask=null,rendering=false;
+  const source=`https://github.com/vincenzoh-gh/16-Line-Quran/releases/download/v1/${String(n).padStart(2,'0')}.pdf`;
+  async function paint(){
+   if(!pdf||rendering)return;
+   page=Math.max(1,Math.min(pdf.numPages,Math.floor(+page||1)));input.value=page;
+   $('#juzPageCount').textContent='/ '+pdf.numPages;$('#juzPageStatus').textContent=`صفحہ ${page} / ${pdf.numPages}`;
+   status.textContent=`صفحہ ${page} دکھایا جا رہا ہے…`;
+   try{
+    const pg=await pdf.getPage(page),base=pg.getViewport({scale:1});
+    const maxW=Math.max(260,Math.min($('#juzCanvasWrap').clientWidth-24,1050));
+    const factor=scale===-1?maxW/base.width:scale,viewport=pg.getViewport({scale:factor});
+    const ratio=Math.min(window.devicePixelRatio||1,2);
+    canvas.width=Math.round(viewport.width*ratio);canvas.height=Math.round(viewport.height*ratio);
+    canvas.style.width=viewport.width+'px';canvas.style.height=viewport.height+'px';
+    if(renderTask){try{renderTask.cancel()}catch{}}
+    renderTask=pg.render({canvasContext:ctx,viewport,transform:ratio!==1?[ratio,0,0,ratio,0,0]:null});
+    rendering=true;await renderTask.promise;rendering=false;status.textContent='';
+    $('#juzZoomValue').textContent=scale===-1?'Fit':Math.round(scale*100)+'%';
+   }catch(e){rendering=false;if(e?.name!=='RenderingCancelledException')status.textContent='صفحہ لوڈ نہیں ہو سکا۔ دوبارہ کوشش کریں۔'}
+  }
+  const step=d=>{page+=d;paint()},go=()=>{page=+input.value;paint()};
+  $('#juzPrev').onclick=$('#juzPrevBottom').onclick=()=>step(-1);
+  $('#juzNext').onclick=$('#juzNextBottom').onclick=()=>step(1);
+  $('#juzGo').onclick=go;input.onkeydown=e=>{if(e.key==='Enter')go()};
+  $('#juzZoomIn').onclick=()=>{scale=scale===-1?1.15:Math.min(3,scale+.15);paint()};
+  $('#juzZoomOut').onclick=()=>{scale=scale===-1?.85:Math.max(.5,scale-.15);paint()};
+  $('#juzFit').onclick=()=>{scale=-1;paint()};
+  $('#juzFull').onclick=()=>$('#juzCanvasWrap').requestFullscreen?.().catch(()=>{});
+  if(!window.pdfjsLib){status.textContent='قرآن ریڈر لوڈ نہیں ہو سکا۔ صفحہ دکھانے کے لیے انٹرنیٹ درکار ہے۔';return}
+  try{pdf=await pdfjsLib.getDocument({url:source}).promise;await paint()}catch(e){status.textContent='اس پارے کے صفحات لوڈ نہیں ہو سکے۔ انٹرنیٹ کنکشن چیک کریں۔'}
+ }
 }
 function bindMushaf(){
  const grid=$('.juz-grid'),reader=$('#juzReader'); if(!grid||!reader)return;
@@ -82,54 +120,46 @@ const duas=[
 ];
 function prayerHTML(){return `<section class="namaz-section">
  <div class="namaz-brand-head"><span>HAROON IBN RASHEED ONLINE QURAN ACADEMY</span><h2>Namaz-e-Nabawi ﷺ</h2><p>نمازِ نبوی ﷺ — اصل فراہم کردہ کتاب</p></div>
- <section class="namaz-book card" aria-label="Namaz-e-Nabawi PDF reader">
-  <div class="namaz-book-top"><div><h3>نمازِ نبوی ﷺ</h3><p>Read the original book page by page. Use zoom controls for comfortable reading.</p></div><div class="namaz-book-actions"><a class="namaz-pdf-link" href="assets/namaz-e-nabavi.pdf" target="_blank" rel="noopener">Open PDF separately</a><a class="namaz-pdf-link secondary" href="assets/namaz-e-nabavi.pdf" download>Download PDF</a></div></div>
-  <div class="namaz-toolbar" role="toolbar" aria-label="Book page controls">
-   <button type="button" id="namazPrev">← Previous</button><label>Page <input id="namazPageInput" type="number" min="1" value="1"></label><span id="namazPageCount">/ —</span><button type="button" id="namazGo">Go</button><button type="button" id="namazNext">Next →</button>
-   <button type="button" id="namazZoomOut" aria-label="Zoom out">−</button><span id="namazZoomValue">Fit</span><button type="button" id="namazZoomIn" aria-label="Zoom in">+</button><button type="button" id="namazFit">Fit</button><button type="button" id="namazFull">Full screen</button>
-  </div>
-  <div class="namaz-canvas-wrap" id="namazCanvasWrap"><div id="namazStatus" role="status">Loading Namaz-e-Nabawi…</div><canvas id="namazCanvas" aria-label="Namaz-e-Nabawi book page" hidden></canvas></div>
-  <div class="namaz-bottom-controls"><button type="button" id="namazPrevBottom">← Previous page</button><span id="namazPageStatus">Page 1</span><button type="button" id="namazNextBottom">Next page →</button></div>
-  <p class="namaz-credit">Haroon Ibn Rasheed Online Quran Academy · The supplied PDF is shown in its original page colours and layout.</p>
+ <section class="namaz-book card"><div class="namaz-book-top"><h3>نمازِ نبوی ﷺ</h3><span>اصل کتاب · ویب سائٹ کے اندر مطالعہ</span></div>
+  <div class="namaz-toolbar"><button type="button" id="namazPrev">← پچھلا</button><label>صفحہ <input id="namazPageInput" type="number" min="1" value="1"></label><span id="namazPageCount">/ —</span><button type="button" id="namazGo">جائیں</button><button type="button" id="namazNext">اگلا →</button><button type="button" id="namazZoomOut">−</button><span id="namazZoomValue">Fit</span><button type="button" id="namazZoomIn">+</button><button type="button" id="namazFit">Fit</button><button type="button" id="namazFull">فل اسکرین</button></div>
+  <div class="namaz-canvas-wrap" id="namazCanvasWrap"><div id="namazStatus">نمازِ نبوی کتاب لوڈ ہو رہی ہے…</div><canvas id="namazCanvas" hidden aria-label="نمازِ نبوی کا صفحہ"></canvas></div>
+  <div class="namaz-bottom-controls"><button type="button" id="namazPrevBottom">← پچھلا صفحہ</button><span id="namazPageStatus">صفحہ 1</span><button type="button" id="namazNextBottom">اگلا صفحہ →</button></div>
  </section>
  <div class="cards namaz-guides"><article class="card"><h3>💧 Wudu learning</h3><ol><li>Make intention in your heart.</li><li>Wash hands.</li><li>Rinse mouth and nose.</li><li>Wash face.</li><li>Wash arms to elbows.</li><li>Wipe head and ears.</li><li>Wash feet to ankles.</li></ol><p>Learn the details and differences with your family or qualified teacher.</p><button onclick="window.LML.done('wudu-guide')">I reviewed wudu</button></article><article class="card"><h3>🕌 Prayer basics</h3><ol><li>Prepare with cleanliness and face the Qiblah.</li><li>Begin with Takbir.</li><li>Recite while standing.</li><li>Perform ruku and stand again.</li><li>Perform sujood and sit as taught.</li><li>Complete the prayer with salaam.</li></ol><p>Prayer has detailed conditions and recitations; practise with a trusted teacher.</p><button onclick="window.LML.done('prayer-basics')">I reviewed prayer basics</button></article></div>
  </section>`}
 function bindPrayerBook(){
  const canvas=$('#namazCanvas'),wrap=$('#namazCanvasWrap'),status=$('#namazStatus'),input=$('#namazPageInput');
  if(!canvas||!wrap||!status)return;
- if(!window.pdfjsLib){status.textContent='PDF reader could not load. Use Open PDF separately above.';return}
+ if(!window.pdfjsLib){status.textContent='PDF viewer library load نہیں ہوئی۔';return}
  pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
- let pdf=null,page=1,zoom=-1,renderTask=null,rendering=false;
- const source='assets/namaz-e-nabavi.pdf';
+ let pdf=null,page=1,scale=-1,renderTask=null,rendering=false;
  async function paint(){
   if(!pdf||rendering)return;
-  page=Math.max(1,Math.min(pdf.numPages,Math.floor(Number(page)||1)));
-  input.value=page;$('#namazPageCount').textContent='/ '+pdf.numPages;$('#namazPageStatus').textContent=`Page ${page} of ${pdf.numPages}`;
-  status.textContent=`Rendering page ${page}…`;canvas.hidden=false;
+  page=Math.max(1,Math.min(pdf.numPages,Math.floor(+page||1)));input.value=page;
+  $('#namazPageCount').textContent='/ '+pdf.numPages;$('#namazPageStatus').textContent=`صفحہ ${page} / ${pdf.numPages}`;
+  status.textContent=`صفحہ ${page} لوڈ ہو رہا ہے…`;
   try{
-   if(renderTask){try{renderTask.cancel()}catch{}}
    const pg=await pdf.getPage(page),base=pg.getViewport({scale:1});
-   const maxWidth=Math.max(260,Math.min(wrap.clientWidth-24,1100));
-   const scale=zoom===-1?maxWidth/base.width:Math.max(.5,Math.min(3,zoom));
-   const viewport=pg.getViewport({scale}),ratio=Math.min(window.devicePixelRatio||1,2);
+   const maxW=Math.max(260,Math.min(wrap.clientWidth-24,1050));
+   const factor=scale===-1?maxW/base.width:scale,viewport=pg.getViewport({scale:factor});
+   const ratio=Math.min(window.devicePixelRatio||1,2);
    canvas.width=Math.round(viewport.width*ratio);canvas.height=Math.round(viewport.height*ratio);
    canvas.style.width=viewport.width+'px';canvas.style.height=viewport.height+'px';
-   const ctx=canvas.getContext('2d');
-   renderTask=pg.render({canvasContext:ctx,viewport,transform:ratio!==1?[ratio,0,0,ratio,0,0]:null});
+   if(renderTask){try{renderTask.cancel()}catch{}}
+   renderTask=pg.render({canvasContext:canvas.getContext('2d'),viewport,transform:ratio!==1?[ratio,0,0,ratio,0,0]:null});
    rendering=true;await renderTask.promise;rendering=false;status.textContent='';
-   $('#namazZoomValue').textContent=zoom===-1?'Fit':Math.round(zoom*100)+'%';
-  }catch(e){rendering=false;if(e?.name!=='RenderingCancelledException')status.textContent='This page could not be displayed. Use Open PDF separately above.'}
+   $('#namazZoomValue').textContent=scale===-1?'Fit':Math.round(scale*100)+'%';
+  }catch(e){rendering=false;if(e?.name!=='RenderingCancelledException')status.textContent='یہ صفحہ دکھایا نہیں جا سکا۔'}
  }
- const go=()=>{page=Number(input.value)||1;paint()},step=d=>{page+=d;paint()};
+ const step=d=>{page+=d;paint()},go=()=>{page=+input.value;paint()};
  $('#namazPrev').onclick=$('#namazPrevBottom').onclick=()=>step(-1);
  $('#namazNext').onclick=$('#namazNextBottom').onclick=()=>step(1);
  $('#namazGo').onclick=go;input.onkeydown=e=>{if(e.key==='Enter')go()};
- $('#namazZoomIn').onclick=()=>{zoom=zoom===-1?1.15:Math.min(3,zoom+.15);paint()};
- $('#namazZoomOut').onclick=()=>{zoom=zoom===-1?.85:Math.max(.5,zoom-.15);paint()};
- $('#namazFit').onclick=()=>{zoom=-1;paint()};
+ $('#namazZoomIn').onclick=()=>{scale=scale===-1?1.15:Math.min(3,scale+.15);paint()};
+ $('#namazZoomOut').onclick=()=>{scale=scale===-1?.85:Math.max(.5,scale-.15);paint()};
+ $('#namazFit').onclick=()=>{scale=-1;paint()};
  $('#namazFull').onclick=()=>wrap.requestFullscreen?.().catch(()=>{});
- window.addEventListener('resize',()=>{if(zoom===-1)paint()},{passive:true});
- pdfjsLib.getDocument({url:source}).promise.then(doc=>{pdf=doc;paint()}).catch(()=>{status.textContent='Could not load the supplied PDF. Please check that assets/namaz-e-nabavi.pdf is uploaded.'});
+ pdfjsLib.getDocument({url:'assets/namaz-e-nabavi.pdf'}).promise.then(doc=>{pdf=doc;paint()}).catch(()=>{status.textContent='نمازِ نبوی کی PDF assets/namaz-e-nabavi.pdf میں نہیں ملی۔'});
 }
 function mannersHTML(){let a=['Respect your parents and speak gently.','Tell the truth, even when it is difficult.','Share with others and help those in need.','Keep yourself, your clothes and your place clean.','Be kind to people, animals and the environment.','Listen respectfully to your teachers.'];return `<h2>Good Manners Garden</h2><div class="cards">${a.map((x,i)=>`<article class="card"><h3>${['💗 Respect','🌱 Honesty','🤝 Sharing','🫧 Cleanliness','🌼 Kindness','📚 Respect teachers'][i]}</h3><p>${x}</p><button onclick="window.LML.done('manners-${i}')">I practised this</button></article>`).join('')}</div>`}
 function ramadanHTML(){return `<h2>Ramadan World 🌙</h2><div class="cards"><article class="card"><h3>Learn about Ramadan</h3><p>Ramadan is the ninth month of the Islamic lunar calendar. Muslims fast from dawn to sunset, with exemptions and rulings explained by qualified scholars.</p><button onclick="window.LML.done('ramadan-learn')">Complete learning</button></article><article class="card"><h3>Good deeds challenge</h3><p>Choose one kind action: help at home, share food, speak kindly or make dua.</p><button onclick="window.LML.done('ramadan-kindness')">I did a good deed</button></article><article class="card"><h3>Ramadan quiz</h3><p>Which month do Muslims fast in?</p><button onclick="window.LML.quizSimple('Ramadan','Shawwal','Ramadan')">Ramadan</button><button onclick="window.LML.quizSimple('Muharram','Shawwal','Ramadan')">Muharram</button><button onclick="window.LML.quizSimple('Shawwal','Shawwal','Ramadan')">Shawwal</button></article></div>`}
