@@ -44,6 +44,9 @@ function bindMushaf(){
  grid.querySelectorAll('[data-juz]').forEach(btn=>btn.addEventListener('click',()=>openJuz(+btn.dataset.juz)));
  async function openJuz(n){
   const info=JUZ_INFO[n-1];grid.hidden=true;reader.hidden=false;
+  // This function is called directly by the learner's tap/click, so request
+  // fullscreen before awaiting the remote PDF (browsers require user activation).
+  try{if(!document.fullscreenElement)reader.requestFullscreen?.().catch(()=>{})}catch{}
   reader.innerHTML=`<div class="juz-reader-head"><button type="button" id="backToJuz">← تمام 30 پارے</button><div><b lang="ar" dir="rtl">${info[0]}</b><span>پارہ ${n} · ${info[1]}</span></div><button type="button" id="listenJuz">▶ مشاری راشد العفاسی</button></div>
    <div class="juz-page-toolbar"><button id="juzPrev">← پچھلا صفحہ</button><label>صفحہ <input id="juzPageNo" type="number" min="1" value="1"></label><span id="juzPageCount">/ —</span><button id="juzGo">جائیں</button><button id="juzNext">اگلا صفحہ →</button><button id="juzZoomOut" aria-label="Zoom out">−</button><span id="juzZoomValue">Fit</span><button id="juzZoomIn" aria-label="Zoom in">+</button><button id="juzFit">Fit</button><button id="juzFull">فل اسکرین</button></div>
    <div class="juz-canvas-wrap" id="juzCanvasWrap"><div id="juzPdfStatus">پارہ لوڈ ہو رہا ہے…</div><canvas id="juzPdfCanvas" aria-label="رنگین قرآن کا صفحہ"></canvas></div>
@@ -79,9 +82,10 @@ function bindMushaf(){
   $('#juzZoomIn').onclick=()=>{scale=scale===-1?1.15:Math.min(3,scale+.15);paint()};
   $('#juzZoomOut').onclick=()=>{scale=scale===-1?.85:Math.max(.5,scale-.15);paint()};
   $('#juzFit').onclick=()=>{scale=-1;paint()};
-  $('#juzFull').onclick=()=>$('#juzCanvasWrap').requestFullscreen?.().catch(()=>{});
+  $('#juzFull').onclick=async()=>{try{if(document.fullscreenElement){await document.exitFullscreen()}else{await reader.requestFullscreen()}}catch(e){status.textContent='فل اسکرین دستیاب نہیں۔ براؤزر کی اجازت چیک کریں۔'}};
+  document.addEventListener('fullscreenchange',()=>{if(document.fullscreenElement===reader){scale=-1;setTimeout(paint,120)}else if(!document.fullscreenElement)setTimeout(paint,120)});
   if(!window.pdfjsLib){status.textContent='قرآن ریڈر لوڈ نہیں ہو سکا۔ صفحہ دکھانے کے لیے انٹرنیٹ درکار ہے۔';return}
-  try{pdf=await pdfjsLib.getDocument({url:source}).promise;await paint()}catch(e){status.textContent='اس پارے کے صفحات لوڈ نہیں ہو سکے۔ انٹرنیٹ کنکشن چیک کریں۔'}
+  try{pdf=await pdfjsLib.getDocument({url:source}).promise;await paint()}catch(e){console.error('[Al-Bayan Tajweed PDF]',e);status.textContent='یہ پارہ لوڈ نہیں ہو سکا۔ انٹرنیٹ کنکشن چیک کریں، پھر دوبارہ کوشش کریں۔ اگر مسئلہ برقرار رہے تو PDF فائل کی میزبانی دستیاب نہیں۔'}
  }
 }
 const duas=[
@@ -104,6 +108,8 @@ function prayerHTML(){return `<section class="namaz-section">
 function bindPrayerBook(){
  const canvas=$('#namazCanvas'),wrap=$('#namazCanvasWrap'),status=$('#namazStatus'),input=$('#namazPageInput');
  if(!canvas||!wrap||!status)return;
+ // The Salah tab click is the user gesture that opens the book.
+ try{const book=wrap.closest('.namaz-book');if(book&&!document.fullscreenElement)book.requestFullscreen?.().catch(()=>{})}catch{}
  if(!window.pdfjsLib){status.textContent='PDF viewer library load نہیں ہوئی۔';return}
  pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
  let pdf=null,page=1,scale=-1,renderTask=null,rendering=false;
@@ -132,8 +138,9 @@ function bindPrayerBook(){
  $('#namazZoomIn').onclick=()=>{scale=scale===-1?1.15:Math.min(3,scale+.15);paint()};
  $('#namazZoomOut').onclick=()=>{scale=scale===-1?.85:Math.max(.5,scale-.15);paint()};
  $('#namazFit').onclick=()=>{scale=-1;paint()};
- $('#namazFull').onclick=()=>wrap.requestFullscreen?.().catch(()=>{});
- pdfjsLib.getDocument({url:'assets/namaz-e-nabavi.pdf'}).promise.then(doc=>{pdf=doc;paint()}).catch(()=>{status.textContent='نمازِ نبوی کی PDF assets/namaz-e-nabavi.pdf میں نہیں ملی۔'});
+ $('#namazFull').onclick=async()=>{try{const book=wrap.closest('.namaz-book');if(document.fullscreenElement){await document.exitFullscreen()}else{await book.requestFullscreen()}}catch(e){status.textContent='فل اسکرین دستیاب نہیں۔ براؤزر کی اجازت چیک کریں۔'}};
+ document.addEventListener('fullscreenchange',()=>{if(document.fullscreenElement===wrap.closest('.namaz-book')){scale=-1;setTimeout(paint,120)}else if(!document.fullscreenElement)setTimeout(paint,120)});
+ pdfjsLib.getDocument({url:'assets/namaz-e-nabavi.pdf'}).promise.then(doc=>{pdf=doc;paint()}).catch(e=>{console.error('[Al-Bayan Salah PDF]',e);status.textContent='نمازِ نبوی PDF لوڈ نہیں ہوئی۔ براہِ کرم صفحہ دوبارہ کھولیں۔'});
 }
 function mannersHTML(){let a=['Respect your parents and speak gently.','Tell the truth, even when it is difficult.','Share with others and help those in need.','Keep yourself, your clothes and your place clean.','Be kind to people, animals and the environment.','Listen respectfully to your teachers.'];return `<h2>Good Manners Garden</h2><div class="cards">${a.map((x,i)=>`<article class="card"><h3>${['💗 Respect','🌱 Honesty','🤝 Sharing','🫧 Cleanliness','🌼 Kindness','📚 Respect teachers'][i]}</h3><p>${x}</p><button onclick="window.LML.done('manners-${i}')">I practised this</button></article>`).join('')}</div>`}
 function ramadanHTML(){return `<h2>Ramadan World 🌙</h2><div class="cards"><article class="card"><h3>Learn about Ramadan</h3><p>Ramadan is the ninth month of the Islamic lunar calendar. Muslims fast from dawn to sunset, with exemptions and rulings explained by qualified scholars.</p><button onclick="window.LML.done('ramadan-learn')">Complete learning</button></article><article class="card"><h3>Good deeds challenge</h3><p>Choose one kind action: help at home, share food, speak kindly or make dua.</p><button onclick="window.LML.done('ramadan-kindness')">I did a good deed</button></article><article class="card"><h3>Ramadan quiz</h3><p>Which month do Muslims fast in?</p><button onclick="window.LML.quizSimple('Ramadan','Shawwal','Ramadan')">Ramadan</button><button onclick="window.LML.quizSimple('Muharram','Shawwal','Ramadan')">Muharram</button><button onclick="window.LML.quizSimple('Shawwal','Shawwal','Ramadan')">Shawwal</button></article></div>`}
@@ -159,5 +166,8 @@ function clear(){if(!confirm('Delete ALL local learner profiles and progress fro
 $$('.tab').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));$('#newProfile').onclick=()=>$('#profileDialog').showModal();$('#saveProfile').onclick=e=>{e.preventDefault();createProfile()};$('#profileSelect').onchange=e=>{state.active=e.target.value||null;save();renderProfiles();renderStats();showTab('home')};$('#parentBtn').onclick=()=>{$('#pinMessage').textContent=state.pinHash?'Enter your parent PIN.':'Create a parent PIN to protect this area.';$('#parentDialog').showModal()};$('#unlockParent').onclick=e=>{e.preventDefault();parentUnlock()};$('#closeParent').onclick=()=>$('#parentPanel').close();$('#exportData').onclick=exportBackup;$('#importData').onchange=e=>e.target.files[0]&&importBackup(e.target.files[0]);$('#clearData').onclick=clear;$('#langBtn').onclick=()=>{state.lang=state.lang==='en'?'ur':'en';document.documentElement.lang=state.lang;document.documentElement.dir=state.lang==='ur'?'rtl':'ltr';$$('[data-en]').forEach(e=>e.textContent=e.dataset[state.lang]);$('#langBtn').textContent=state.lang==='en'?'اردو':'English';save()};$('#soundBtn').onclick=()=>{state.sound=!state.sound;$('#soundBtn').textContent='♫ Sound: '+(state.sound?'On':'Off');if(!state.sound&&'speechSynthesis'in window)speechSynthesis.cancel();save()};$('#avatar').onclick=()=>{let a=$('#avatar');a.animate([{transform:'translateY(0) rotate(0)'},{transform:'translateY(-25px) rotate(12deg)'},{transform:'translateY(0) rotate(0)'}],{duration:550});if(state.sound)speak('Assalamu alaikum!','en')};
 window.LML={tab:showTab,story,storyLang,speak,done,game,gameAnswer,flip,quizSimple,answer,current:0,currentStoryText:()=>stories[window.LML.current]?.[state.lang]||stories[window.LML.current]?.en};
 if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+// Paint the public learning area immediately. A slow or blocked IndexedDB request
+// must never leave the page showing only its header and navigation.
+try{showTab('home')}catch(e){console.error('[Al-Bayan] Initial screen could not render:',e);const v=$('#view');if(v)v.innerHTML='<section class="card"><h2>Al-Bayan is starting…</h2><p>Please refresh the page. If the problem continues, check that JavaScript files have loaded.</p></section>'}
 load();
 })();
