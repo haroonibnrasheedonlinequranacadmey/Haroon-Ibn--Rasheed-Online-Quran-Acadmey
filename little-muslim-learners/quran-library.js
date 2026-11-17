@@ -39,7 +39,7 @@ function saveBookmarks(a){localStorage.setItem("lml-quran-bookmarks-v1",JSON.str
 function isBookmarked(k){return bookmarks().includes(k)}
 function toggleBookmark(k){let b=bookmarks();b=b.includes(k)?b.filter(x=>x!==k):[...b,k];saveBookmarks(b);renderVerseActions(k)}
 function quranHTML(){return `<div id="quranLibrary" data-reader-mode="quran"></div>`}
-function setMode(mode){readerMode=mode==="tafsir"?"tafsir":"quran"; if(root)applyReaderMode()}
+function setMode(mode){readerMode=mode==="tafsir"?"tafsir":"quran"; if(root?.isConnected)applyReaderMode()}
 
 async function mount(targetId="quranLibrary"){
  root=document.getElementById(targetId);if(!root)return;
@@ -108,15 +108,17 @@ function bindShell(){
  $("#nextSurah").onclick=()=>currentSurah<114&&loadSurah(currentSurah+1,1);
 }
 function applyReaderMode(){
- if(!root)return;
+ if(!root?.isConnected)return;
  const taf=readerMode==="tafsir";
+ const one=s=>root.querySelector(s);
  root.classList.toggle("is-tafsir-mode",taf);
- const q=$("#modeQuran"),t=$("#modeTafseer");
+ const q=one("#modeQuran"),t=one("#modeTafseer");
  if(q){q.classList.toggle("active",!taf);q.setAttribute("aria-selected",String(!taf))}
  if(t){t.classList.toggle("active",taf);t.setAttribute("aria-selected",String(taf))}
- $("#readerHeading").textContent=taf?"Tafseer Study":"Quran Reader";
- $("#readerSubheading").textContent=taf?"Explore the meaning of selected Ayat through the existing source-based Tafseer.":"A calm, focused space to read, listen, reflect and study the Qur'an.";
- const studio=$("#tafsirStudio"),list=$("#quranList"),head=$("#surahHead"),search=$(".quran-search");
+ const heading=one("#readerHeading"),subheading=one("#readerSubheading");
+ if(heading)heading.textContent=taf?"Tafseer Study":"Quran Reader";
+ if(subheading)subheading.textContent=taf?"Explore the meaning of selected Ayat through the existing source-based Tafseer.":"A calm, focused space to read, listen, reflect and study the Qur'an.";
+ const studio=one("#tafsirStudio"),list=one("#quranList"),head=one("#surahHead"),search=one(".quran-search");
  if(studio)studio.hidden=!taf;
  if(list)list.hidden=taf;
  if(head)head.hidden=taf;
