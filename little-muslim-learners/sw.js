@@ -40,12 +40,7 @@ self.addEventListener('fetch', event => {
           caches.open(CACHE).then(cache => cache.put(event.request, copy));
         }
         return response;
-      }).catch(() => {
-        // Only navigation requests may fall back to the app shell.
-        // Never answer a PDF, JavaScript, CSS, or image request with index.html.
-        if (event.request.mode === 'navigate') return caches.match('./index.html');
-        return Response.error();
-      });
+      }).catch(() => caches.match('./index.html'));
     })
   );
 });

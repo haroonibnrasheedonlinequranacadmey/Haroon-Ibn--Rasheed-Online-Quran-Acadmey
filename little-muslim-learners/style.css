@@ -145,31 +145,19 @@ footer{background:var(--ab-navy)!important;color:#e9eff2!important;border-top:2p
 }
 
 
-/* Al-Bayan full-screen PDF readers: keep navigation controls visible with the page. */
-.namaz-book:fullscreen,
-.juz-reader:fullscreen{
-  width:100vw;height:100vh;max-width:none;max-height:none;margin:0;padding:12px;
-  border:0;border-radius:0;background:#f4f0e7;overflow:hidden;
-  display:flex;flex-direction:column;gap:8px;
-}
-.namaz-book:fullscreen .namaz-book-top,
-.juz-reader:fullscreen .juz-reader-head{flex:0 0 auto}
-.namaz-book:fullscreen .namaz-toolbar,
-.juz-reader:fullscreen .juz-page-toolbar{position:sticky;top:0;z-index:3;flex:0 0 auto;margin:0}
-.namaz-book:fullscreen .namaz-canvas-wrap,
-.juz-reader:fullscreen .juz-canvas-wrap{
-  flex:1 1 auto;min-height:0;max-height:none;height:auto;overflow:auto;
-  align-items:flex-start;justify-content:center;border-radius:10px;
-}
-.namaz-book:fullscreen .namaz-bottom-controls,
-.juz-reader:fullscreen .juz-page-bottom,
-.juz-reader:fullscreen .juz-audio-note{flex:0 0 auto;margin:0;padding:4px 0}
-.namaz-book:fullscreen #namazCanvas,
-.juz-reader:fullscreen #juzPdfCanvas{max-width:none}
-@media(max-width:760px){
- .namaz-book:fullscreen,.juz-reader:fullscreen{padding:6px;gap:5px}
- .namaz-book:fullscreen .namaz-toolbar,
- .juz-reader:fullscreen .juz-page-toolbar{gap:4px;padding:6px}
- .namaz-book:fullscreen .namaz-toolbar button,
- .juz-reader:fullscreen .juz-page-toolbar button{padding:8px;font-size:12px}
+/* Al-Bayan reader finishing touches */
+.albayan-load-error{margin:24px auto;max-width:760px;text-align:center}
+.section-heading{margin:8px 0 22px}
+.section-heading h2{margin:8px 0;color:#102b46}
+.section-heading p{color:#64748b}
+.game-area{margin-top:18px}
+.dua-card{display:flex;flex-direction:column;gap:10px}
+.dua-arabic{font-size:clamp(25px,3vw,38px);line-height:2.1;color:#123b50;text-align:center}
+.namaz-book:fullscreen,.juz-reader:fullscreen{background:#f7f5ef;color:#102b46;overflow:auto;padding:18px;box-sizing:border-box}
+.namaz-book:fullscreen .namaz-canvas-wrap,.juz-reader:fullscreen .juz-canvas-wrap{max-height:none;min-height:65vh}
+.namaz-book:fullscreen #namazCanvas,.juz-reader:fullscreen #juzPdfCanvas{max-width:100%;height:auto}
+.namaz-book:fullscreen .namaz-toolbar,.juz-reader:fullscreen .juz-page-toolbar{position:sticky;top:0;z-index:5}
+@media(max-width:700px){
+ .namaz-book:fullscreen,.juz-reader:fullscreen{padding:8px}
+ .namaz-book:fullscreen .namaz-canvas-wrap,.juz-reader:fullscreen .juz-canvas-wrap{min-height:75vh}
 }
