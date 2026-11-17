@@ -1,4 +1,4 @@
-const CACHE = 'albayan-static-v6';
+const CACHE = 'albayan-static-v7';
 const FILES = [
   './',
   './index.html',
@@ -6,7 +6,7 @@ const FILES = [
   './app.js',
   './quran-data.js',
   './quran-validation.js',
-  './quran-library.js',
+  './quran-library.js','./assets/namaz-e-nabavi.pdf',
   '../assets/hr-logo-round.png'
 ];
 

@@ -41,8 +41,8 @@ function toggleBookmark(k){let b=bookmarks();b=b.includes(k)?b.filter(x=>x!==k):
 function quranHTML(){return `<div id="quranLibrary" data-reader-mode="quran"></div>`}
 function setMode(mode){readerMode=mode==="tafsir"?"tafsir":"quran"; if(root)applyReaderMode()}
 
-async function mount(){
- root=document.getElementById("quranLibrary");if(!root)return;
+async function mount(targetId="quranLibrary"){
+ root=document.getElementById(targetId);if(!root)return;
  autoScroll=settings.autoScroll!==false;
  renderShell();
  const p=readProgress(); const [ps,pa]=p.split(":").map(Number);
@@ -401,5 +401,5 @@ function openSettings(){
  };
 }
 
-window.QuranLibrary={mount,quranHTML,setMode,validate:()=>({surahs:LML_QURAN.surahs.length,ayahs:QVERSES.length,ok:LML_QURAN.surahs.length===114&&QVERSES.length===6236})};
+window.QuranLibrary={mount,mountAudioBridge:()=>mount("quranAudioLibrary"),quranHTML,setMode,playJuz:async n=>{await loadJuz(n);const b=document.getElementById("playJuz");if(b)b.click();},validate:()=>({surahs:LML_QURAN.surahs.length,ayahs:QVERSES.length,ok:LML_QURAN.surahs.length===114&&QVERSES.length===6236})};
 })();
