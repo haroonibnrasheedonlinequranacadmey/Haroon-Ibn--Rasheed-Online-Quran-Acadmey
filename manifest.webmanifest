@@ -1,26 +1,16 @@
 {
-  "id": "./",
-  "name": "Haroon Ibn Rasheed Online Quran Academy",
-  "short_name": "Haroon Quran",
-  "description": "Online Quran classes, student portal and teacher portal.",
+  "name": "Mishkat Al-Bayan – Quran & Islamic Learning",
+  "short_name": "Mishkat Al-Bayan",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "orientation": "portrait-primary",
-  "background_color": "#071a35",
-  "theme_color": "#0b1f3a",
+  "background_color": "#f7f4ec",
+  "theme_color": "#102b46",
   "icons": [
     {
-      "src": "assets/hr-logo-round.png",
+      "src": "../assets/hr-logo-round.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "assets/hr-logo-round.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
+      "type": "image/png"
     }
   ]
 }
