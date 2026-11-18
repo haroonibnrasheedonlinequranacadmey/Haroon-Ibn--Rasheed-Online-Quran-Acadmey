@@ -283,3 +283,43 @@ body.tafseer-video-open{overflow:hidden}
 
 .brand-fallback{display:grid;place-items:center;flex:0 0 42px;width:42px;height:42px;border-radius:50%;background:#e4f3f0;color:#0b7d77;font-size:27px;font-weight:700}
 @media(max-width:600px){.brand-fallback{width:36px;height:36px;flex-basis:36px}}
+
+
+/* Mishkat Al-Bayan branded header and navigation */
+.mishkat-top{min-height:76px;padding:10px clamp(14px,3vw,38px);gap:16px}
+.mishkat-brand{min-width:0;gap:13px}
+.mishkat-logo{display:grid;place-items:center;width:52px;height:52px;flex:0 0 52px;border-radius:16px;background:linear-gradient(145deg,#174b62,#092b4b);border:1px solid #d9b66f;box-shadow:0 5px 16px #001b3338}
+.mishkat-logo svg{width:43px;height:43px;display:block}
+.mishkat-brand .brand-copy{display:flex;flex-direction:column;line-height:1.2}
+.mishkat-brand .brand-copy strong{font-size:clamp(17px,2.1vw,23px);font-weight:850;letter-spacing:.1px;color:#fff}
+.mishkat-brand .brand-copy small{font-size:12px;margin-top:5px;color:#e8d59c;font-weight:550}
+.mishkat-header-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-left:auto;flex-shrink:0}
+.mishkat-header-actions button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:42px;padding:9px 13px;background:#194969;color:#fff;border:1px solid #ffffff45;border-radius:12px;font-weight:750;cursor:pointer}
+.mishkat-header-actions button:hover{background:#236181}
+.mishkat-header-actions .header-settings{background:#b58b3c;color:#102b46;border-color:#e9d49e}
+.tabs.menu-open{display:flex}
+.tabs{scrollbar-width:thin}
+.albayan-welcome h1{letter-spacing:.1px}
+@media(max-width:640px){
+ .mishkat-top{padding:9px 12px;gap:8px;min-height:68px}
+ .mishkat-logo{width:43px;height:43px;flex-basis:43px;border-radius:13px}
+ .mishkat-logo svg{width:36px;height:36px}
+ .mishkat-brand{gap:8px}
+ .mishkat-brand .brand-copy strong{font-size:16px}
+ .mishkat-brand .brand-copy small{font-size:10px}
+ .mishkat-header-actions{gap:5px}
+ .mishkat-header-actions button{min-height:39px;padding:8px 9px;font-size:13px}
+ .mishkat-header-actions button span{font-size:12px}
+ .tabs{display:none;flex-wrap:wrap;overflow:visible;padding:10px 12px;max-width:none;background:#fff;border-bottom:1px solid #dce8e7}
+ .tabs.menu-open{display:flex}
+ .tabs button{flex:1 1 auto}
+}
+@media(max-width:380px){
+ .mishkat-header-actions button{padding:7px;font-size:12px}
+ .mishkat-header-actions button span{display:none}
+ .mishkat-brand .brand-copy small{max-width:130px}
+}
+
+/* Keep the complete Surah directory in normal page flow: no nested scrolling panel. */
+.surah-catalog-grid{max-height:none!important;height:auto!important;overflow:visible!important;overflow-y:visible!important}
+#surahCatalog{overflow:visible!important}

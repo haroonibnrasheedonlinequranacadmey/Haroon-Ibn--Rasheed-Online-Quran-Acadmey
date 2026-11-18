@@ -64,7 +64,7 @@ async function mount(targetId="quranLibrary"){
 }
 function renderShell(){
  root.innerHTML=`<section class="quran-app">
-  <div class="quran-hero"><div class="quran-hero-copy"><span class="quran-eyebrow">LITTLE MUSLIM LEARNERS · QURAN</span><h2 id="readerHeading">Quran Reader</h2><p id="readerSubheading">A calm, focused space to read, listen, reflect and study the Qur'an.</p><div class="quran-mode-switch" role="tablist" aria-label="Quran study mode"><button type="button" id="modeQuran" role="tab">Quran Reading</button><button type="button" id="modeTafseer" role="tab">Tafseer Study</button></div></div><div class="quran-progress-box"><b id="qProgressText">Continue reading</b><span id="qProgressKey"></span><button id="continueBtn">Continue Reading</button></div></div>
+  <div class="quran-hero"><div class="quran-hero-copy"><span class="quran-eyebrow">MISHKAT AL-BAYAN · QURAN</span><h2 id="readerHeading">Quran Reader</h2><p id="readerSubheading">A calm, focused space to read, listen, reflect and study the Qur'an.</p><div class="quran-mode-switch" role="tablist" aria-label="Quran study mode"><button type="button" id="modeQuran" role="tab">Quran Reading</button><button type="button" id="modeTafseer" role="tab">Tafseer Study</button></div></div><div class="quran-progress-box"><b id="qProgressText">Continue reading</b><span id="qProgressKey"></span><button id="continueBtn">Continue Reading</button></div></div>
   <section class="surah-catalog" id="surahCatalog" aria-label="Surah directory">
    <div class="catalog-heading"><div><span class="settings-kicker">THE HOLY QURAN</span><h3>Choose a Surah</h3><p>Browse all 114 Surahs, search by name or number, and continue your reading.</p></div><button type="button" id="catalogContinue">↗ Continue Reading</button></div>
    <div class="catalog-tools"><input id="surahSearch" type="search" placeholder="Search Surah name or number…" aria-label="Search Surah"><div class="catalog-view-switch"><button type="button" class="active" id="surahListView">☷ List</button><button type="button" id="surahGridView">▦ Grid</button></div></div>
@@ -82,7 +82,7 @@ function renderShell(){
   <div class="quran-search" hidden><input id="qSearch" placeholder="Search Arabic, English or Urdu…"><select id="searchScope"><option value="local">Arabic in full Quran</option><option value="en">English translation</option><option value="ur">Urdu translation</option></select><button id="searchBtn">Search</button></div>
   <div id="quranStatus" class="quran-status" role="status" hidden></div>
   <section id="tafsirStudio" class="tafsir-studio" aria-label="Tafseer study workspace">
-   <div class="tafsir-studio-head"><span class="tafsir-kicker">LITTLE MUSLIM LEARNERS · TAFSEER</span><h3>Study an Ayah in depth</h3><p>Select a Surah and Ayah to view the existing source-based Tafseer. Quran text and source content are not rewritten.</p></div>
+   <div class="tafsir-studio-head"><span class="tafsir-kicker">MISHKAT AL-BAYAN · TAFSEER</span><h3>Study an Ayah in depth</h3><p>Select a Surah and Ayah to view the existing source-based Tafseer. Quran text and source content are not rewritten.</p></div>
    <div class="tafsir-selectors"><label>Surah<select id="tafsirSurahSelect">${LML_QURAN.surahs.map(s=>`<option value="${s.number}">${s.number}. ${esc(s.name)}</option>`).join("")}</select></label><label>Ayah number<input id="tafsirAyahSelect" type="number" min="1" value="1"></label><label>Language<select id="tafsirLanguage"><option value="ur">اردو</option><option value="en">English</option><option value="hi">हिन्दी</option></select></label><button type="button" id="loadTafseerStudio">Open Tafseer</button></div>
    <div id="tafsirAyahPreview" class="tafsir-ayah-preview" aria-live="polite"></div>
    <div id="tafsirStudioContent" class="tafsir-studio-content"><div class="tafsir-empty"><span>۞</span><b>Select an Ayah to begin</b><p>Your existing Tafseer source will appear here when available.</p></div></div>
@@ -459,7 +459,7 @@ function renderBookmarks(){
 }
 function openSettings(){
  const d=document.createElement("dialog");d.className="quran-settings";d.innerHTML=`<form method="dialog" class="settings-form">
-  <div class="settings-head"><div><span class="settings-kicker">LITTLE MUSLIM LEARNERS · QURAN</span><h3>Little Muslim Learners — Reading Settings</h3><p>Personal settings — saved only on this browser/device.</p></div><button value="cancel" class="settings-x">×</button></div>
+  <div class="settings-head"><div><span class="settings-kicker">MISHKAT AL-BAYAN · QURAN</span><h3>Little Muslim Learners — Reading Settings</h3><p>Personal settings — saved only on this browser/device.</p></div><button value="cancel" class="settings-x">×</button></div>
   <div class="settings-tabs"><button type="button" class="settings-tab active" data-panel="reading">📖 Reading</button><button type="button" class="settings-tab" data-panel="audio">🎧 Audio</button><button type="button" class="settings-tab" data-panel="display">✨ Display</button><button type="button" class="settings-tab" data-panel="personal">🔖 Personal</button></div>
   <div class="settings-panel active" data-panel="reading">
    <div class="setting-grid">
