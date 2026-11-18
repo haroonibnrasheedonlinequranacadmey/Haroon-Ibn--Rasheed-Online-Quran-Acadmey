@@ -46,7 +46,7 @@
 
 
 /* =========================================================
-   AL-BAYAN PREMIUM ISLAMIC LEARNING UI
+   MISHKAT AL-BAYAN PREMIUM ISLAMIC LEARNING UI
    Presentation-only overrides. Quran and Tafseer data logic is unchanged.
    ========================================================= */
 :root{--ab-navy:#102b46;--ab-navy-2:#173c59;--ab-teal:#087f86;--ab-teal-soft:#e8f3f1;--ab-gold:#c5a15a;--ab-cream:#f7f4ec;--ab-ink:#26394b;--ab-muted:#6d7c89;--ab-line:#e5e1d7;--ab-paper:#fffdfa}
@@ -76,14 +76,14 @@ footer{background:var(--ab-navy)!important;color:#e9eff2!important;border-top:2p
 @media(max-width:760px){.app-menu-toggle{display:block}.top{flex-wrap:wrap}.top-actions{display:none!important;width:100%;padding-top:10px}.top-actions.menu-open{display:flex!important;flex-wrap:wrap}.top-actions button{flex:1}.albayan-welcome{margin:14px 12px 10px;border-radius:18px}.tabs{margin:10px 10px 16px!important;flex-wrap:nowrap!important;overflow-x:auto!important;justify-content:flex-start!important}.tabs .tab{padding:10px 13px!important}.view{padding:0 10px!important}.albayan-home-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.albayan-home-card{min-height:145px;padding:16px}.quran-hero{border-radius:18px!important}.quran-progress-box{width:100%}.quran-toolbar{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))}.quran-toolbar label{min-width:0}.quran-toolbar button{min-height:40px}.quran-search{display:grid!important;grid-template-columns:1fr 1fr}.quran-search input{grid-column:1/-1}.quran-search select{min-width:0;width:100%}.tafsir-selectors{grid-template-columns:1fr 1fr}.tafsir-selectors label:first-child{grid-column:1/-1}.tafsir-selectors button{grid-column:1/-1}.ayah-card{padding:15px!important}.audio-dock{position:sticky;bottom:5px;max-height:42vh;overflow:auto}.audio-dock b{width:100%}}
 @media(max-width:420px){.top .brand span{font-size:13px}.top .brand small{font-size:9px}.albayan-home-grid{grid-template-columns:1fr 1fr}.albayan-home-card{min-height:138px;padding:13px}.albayan-home-card b{font-size:16px}.tafsir-selectors{grid-template-columns:1fr}.tafsir-selectors label:first-child,.tafsir-selectors button{grid-column:auto}.quran-toolbar{grid-template-columns:1fr 1fr}.quran-mode-switch button{flex:1}.tafsir-studio{padding:15px}}
 
-/* Al-Bayan: single-page 16-line Tajweed Mushaf reader */
+/* Mishkat Al-Bayan: single-page 16-line Tajweed Mushaf reader */
 .mushaf-reader{max-width:980px;margin:0 auto;padding:clamp(14px,3vw,28px);background:#fffdf7;border:1px solid #e5dfd1;border-radius:22px;box-shadow:0 12px 34px #102b4610;color:#17334a}
 .mushaf-heading{text-align:center;margin:0 auto 18px}.mushaf-kicker{font-size:10px;letter-spacing:1.5px;font-weight:900;color:#0b9fbb}.mushaf-heading h2{font-size:clamp(23px,4vw,34px);margin:7px 0;color:#07394a}.mushaf-heading p{margin:0;color:#697985;font-size:13px}
 .mushaf-controls{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:9px;margin:12px 0;padding:12px;background:#f1f6f5;border:1px solid #dce9e6;border-radius:14px}.mushaf-controls button{border:0;border-radius:9px;background:#07394a;color:#fff;padding:11px 15px;font-weight:800;cursor:pointer}.mushaf-controls label{display:flex;align-items:center;gap:7px;font-weight:800;color:#24485a}.mushaf-controls input{width:78px;min-height:40px;border:1px solid #cbd9d5;border-radius:8px;padding:7px;text-align:center;font:inherit;background:#fff}.mushaf-total{color:#687985;font-weight:700}
 .mushaf-page-wrap{position:relative;display:flex;align-items:center;justify-content:center;width:100%;min-height:240px;padding:10px;background:#eee9dc;border:1px solid #ddd3bd;border-radius:14px;overflow:hidden;cursor:zoom-in}.mushaf-page-wrap img{display:block;width:auto;max-width:100%;height:auto;max-height:calc(100vh - 190px);object-fit:contain;margin:auto;box-shadow:0 5px 22px #0002}.mushaf-page-wrap img[hidden]{display:none}.mushaf-loading{padding:50px 10px;text-align:center;color:#536879;font-weight:750}.mushaf-bottom-controls{justify-content:space-between}.mushaf-bottom-controls span{font-weight:850;color:#24485a}.mushaf-note,.mushaf-credit{font-size:12px;line-height:1.65;color:#697985;text-align:center;margin:12px auto 0;max-width:760px}.mushaf-fallback{padding:12px;border-radius:10px;background:#fff4e9;color:#8a4a22;text-align:center}.mushaf-fallback a{color:#075b72;font-weight:800}
 @media(max-width:600px){.mushaf-reader{padding:10px;border-radius:14px}.mushaf-controls{gap:6px;padding:9px}.mushaf-controls button{padding:10px 11px;font-size:12px}.mushaf-page-wrap{padding:4px;border-radius:9px;min-height:180px}.mushaf-page-wrap img{width:100%;max-height:calc(100dvh - 210px)}.mushaf-bottom-controls{justify-content:center}.mushaf-bottom-controls span{width:100%;text-align:center;order:-1}}
 
-/* Al-Bayan 30 Juz gallery and single-page PDF reader */
+/* Mishkat Al-Bayan 30 Juz gallery and single-page PDF reader */
 .juz-library{max-width:1180px;margin:0 auto;padding:12px 0 30px}.juz-library-head{text-align:center;padding:20px 10px}.juz-library-head h2{color:#07394a;margin:7px 0;font-size:clamp(24px,4vw,34px)}.juz-library-head p{color:#617783;margin:0}.juz-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}.juz-card{border:1px solid #e1d7c4;background:#fff;border-radius:16px;padding:8px;box-shadow:0 7px 20px #17394a12;cursor:pointer;text-align:center;min-width:0;transition:transform .18s,box-shadow .18s}.juz-card:hover{transform:translateY(-3px);box-shadow:0 12px 26px #17394a22}.juz-cover{position:relative;display:block;aspect-ratio:3/4;overflow:hidden;border-radius:10px;background:#f4ecd9;border:1px solid #d7c18f}.juz-cover:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#092d3b22,#092d3b88)}.juz-cover img{width:100%;height:100%;object-fit:cover;display:block}.juz-cover-title{position:absolute;z-index:1;left:5px;right:5px;top:50%;transform:translateY(-50%);color:#fff;font-family:serif;font-weight:900;font-size:clamp(17px,2vw,25px);text-shadow:0 2px 7px #001d2a;line-height:1.5}.juz-number{display:block;padding:9px 3px 4px;color:#07394a;font-weight:900;font-size:15px}.juz-reader{margin:16px auto;padding:12px;background:#fffdf7;border:1px solid #e5dfd1;border-radius:18px}.juz-reader-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:8px 2px 14px}.juz-reader-head>div{display:flex;flex-direction:column;align-items:center;gap:2px;color:#07394a}.juz-reader-head>div b{font-size:24px}.juz-reader-head button,.juz-page-toolbar button,.juz-page-bottom button{border:0;border-radius:9px;background:#07394a;color:#fff;padding:10px 13px;font-weight:800;cursor:pointer}.juz-page-toolbar{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;background:#f1f6f5;border:1px solid #dce9e6;border-radius:12px;padding:10px;margin-bottom:12px}.juz-page-toolbar label{font-weight:800;color:#24485a}.juz-page-toolbar input{width:62px;padding:8px;border:1px solid #cbd9d5;border-radius:8px;text-align:center}.juz-page-toolbar span{font-size:13px;font-weight:800;color:#24485a}.juz-canvas-wrap{display:flex;align-items:center;justify-content:center;min-height:260px;max-height:calc(100dvh - 230px);overflow:auto;background:#eee9dc;border:1px solid #ddd3bd;border-radius:12px;padding:10px}.juz-canvas-wrap canvas{display:block;max-width:none;height:auto;box-shadow:0 5px 22px #0002}.juz-canvas-wrap #juzPdfStatus{color:#536879;font-weight:800;text-align:center;padding:20px}.juz-page-bottom{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:12px 0}.juz-page-bottom span{font-weight:900;color:#24485a}.juz-audio-note{text-align:center;color:#426070;font-size:13px;padding:8px}.namaz-book{display:flex;align-items:center;justify-content:space-between;margin:12px 0 18px;background:linear-gradient(135deg,#fff,#f5f8f3)}.namaz-book h3{color:#07394a}.namaz-pdf-link{display:inline-block;margin:5px 7px 5px 0;padding:11px 15px;border-radius:10px;background:#07394a;color:white;text-decoration:none;font-weight:800}.namaz-pdf-link.secondary{background:#0b8f8b}
 @media(max-width:900px){.juz-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}@media(max-width:620px){.juz-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.juz-card{padding:5px;border-radius:12px}.juz-cover{border-radius:8px}.juz-number{font-size:13px;padding:7px 2px}.juz-reader{padding:7px}.juz-reader-head{justify-content:center}.juz-reader-head>div{order:-1;width:100%}.juz-page-toolbar{gap:5px;padding:7px}.juz-page-toolbar button{padding:9px;font-size:12px}.juz-canvas-wrap{padding:4px;min-height:220px}.juz-page-bottom{justify-content:center;flex-wrap:wrap}.juz-page-bottom span{width:100%;text-align:center;order:-1}}
 
@@ -145,7 +145,7 @@ footer{background:var(--ab-navy)!important;color:#e9eff2!important;border-top:2p
 }
 
 
-/* Al-Bayan reader finishing touches */
+/* Mishkat Al-Bayan reader finishing touches */
 .albayan-load-error{margin:24px auto;max-width:760px;text-align:center}
 .section-heading{margin:8px 0 22px}
 .section-heading h2{margin:8px 0;color:#102b46}
@@ -198,128 +198,32 @@ body.tafseer-video-open{overflow:hidden}
  .tafseer-video-frame{max-height:calc(94vh - 56px);aspect-ratio:16/9}
 }
 
-
-/* Surah-first Quran library and expanded reader preferences */
-.surah-catalog{margin:22px 0 28px;padding:clamp(16px,3vw,28px);border:1px solid #dce8e6;border-radius:22px;background:#fff;box-shadow:0 12px 34px rgba(16,43,70,.07)}
-.catalog-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px}
-.catalog-heading h3{margin:5px 0;font-size:clamp(22px,3vw,30px);color:#102b46}
-.catalog-heading p{margin:0;color:#667985}
-.catalog-heading>button,.catalog-foot button{border:0;border-radius:12px;padding:11px 15px;background:#102b46;color:white;font-weight:700;cursor:pointer}
-.catalog-tools{display:flex;gap:12px;align-items:center;margin:16px 0}
-.catalog-tools input{flex:1;min-width:0;padding:13px 15px;border:1px solid #d7e2e0;border-radius:12px;font:inherit}
-.catalog-view-switch{display:flex;gap:5px;padding:4px;background:#eef4f3;border-radius:12px}
-.catalog-view-switch button{border:0;border-radius:9px;padding:9px 12px;background:transparent;color:#38515e;cursor:pointer}
-.catalog-view-switch button.active{background:#fff;color:#102b46;box-shadow:0 2px 8px #102b4617}
-.surah-catalog-grid{display:grid;grid-template-columns:1fr;gap:8px}
-.surah-catalog-grid.is-grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
-.surah-catalog-card{display:flex;align-items:center;gap:13px;width:100%;min-width:0;padding:12px 14px;border:1px solid #e2eae8;border-radius:13px;background:#fbfdfc;text-align:left;color:#17394b;cursor:pointer;transition:transform .15s,border-color .15s,background .15s}
-.surah-catalog-card:hover{transform:translateY(-1px);border-color:#8dbbb2;background:#f4faf8}
-.catalog-number{display:grid;place-items:center;flex:0 0 40px;height:40px;border-radius:12px;background:#e8f2ef;color:#155b55;font-weight:800}
-.catalog-info{display:flex;flex:1;min-width:0;flex-direction:column;gap:3px}
-.catalog-info b{font-size:15px}
-.catalog-info small{color:#71818a}
-.catalog-arabic{font-size:20px;font-weight:600;color:#155b55}
-.catalog-open{white-space:nowrap;color:#2b766d;font-size:13px;font-weight:700}
-.catalog-foot{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px}
-.catalog-foot button{background:#eaf3f0;color:#155b55}
-.quran-app[data-theme="dark"]{--q-bg:#14212b;--q-panel:#1d303b;--q-text:#edf4f3;--q-muted:#b4c4c8;--q-border:#354c58;background:var(--q-bg);color:var(--q-text);border-radius:18px;padding:10px}
-.quran-app[data-theme="dark"] .surah-catalog,.quran-app[data-theme="dark"] .ayah-card,.quran-app[data-theme="dark"] .quran-toolbar,.quran-app[data-theme="dark"] .audio-dock,.quran-app[data-theme="dark"] .tafsir-studio{background:var(--q-panel);color:var(--q-text);border-color:var(--q-border)}
-.quran-app[data-theme="dark"] .catalog-heading h3,.quran-app[data-theme="dark"] .ayah-card h3{color:var(--q-text)}
-.quran-app[data-theme="dark"] .catalog-heading p,.quran-app[data-theme="dark"] .catalog-info small{color:var(--q-muted)}
-.quran-app[data-theme="dark"] .surah-catalog-card{background:#203641;color:var(--q-text);border-color:var(--q-border)}
-.quran-app[data-theme="dark"] .catalog-number{background:#31534f;color:#e8fffa}
-.quran-app[data-theme="sepia"]{background:#f3ead7;color:#493b2a;border-radius:18px;padding:10px}
-.quran-app[data-theme="sepia"] .surah-catalog,.quran-app[data-theme="sepia"] .ayah-card,.quran-app[data-theme="sepia"] .quran-toolbar,.quran-app[data-theme="sepia"] .audio-dock,.quran-app[data-theme="sepia"] .tafsir-studio{background:#fbf4e6;color:#493b2a;border-color:#ddcfb5}
-.quran-app[data-theme="sepia"] .surah-catalog-card{background:#f8efdf;color:#493b2a;border-color:#ddcfb5}
-.quran-app[data-theme="auto"] .surah-catalog{background:Canvas;color:CanvasText}
-.quran-app #quranList .ayah-arabic{font-family:var(--ayah-font-family,serif);line-height:var(--ayah-line-height,2.05)}
-.translation-choice-card{min-width:0}
-.translation-choice-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-top:10px;max-height:220px;overflow:auto}
-.translation-choice-list label{display:flex;align-items:flex-start;gap:8px;padding:8px;border-radius:9px;background:#f2f7f5;font-size:13px}
-.translation-choice-list input{margin-top:3px}
-@media(max-width:640px){
- .catalog-heading{align-items:flex-start;flex-direction:column}
- .catalog-tools{align-items:stretch;flex-direction:column}
- .catalog-view-switch{align-self:flex-start}
- .surah-catalog-grid.is-grid{grid-template-columns:1fr}
- .catalog-open{font-size:12px}
- .surah-catalog{padding:14px}
-}
-
-
-/* Little Muslim Learners — integrated Quran reader navigation */
-.lml-reader-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;margin:0 0 18px;border:1px solid #dce8e6;border-radius:18px;background:#fff;box-shadow:0 8px 24px rgba(16,43,70,.06);position:relative;z-index:5}
-.lml-reader-brand{display:flex;align-items:center;gap:11px;color:#17394b;text-decoration:none;min-width:0}
-.lml-brand-mark{display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:#e5f3f0;color:#14766c;font-size:27px}
-.lml-reader-brand b{display:block;font-size:16px}.lml-reader-brand small{display:block;color:#71818a;font-size:11px;margin-top:2px}
-.lml-reader-header-actions{display:flex;gap:8px}.lml-reader-header-actions button{width:42px;height:42px;border:1px solid #dce8e6;border-radius:12px;background:#f7fbfa;color:#174c50;font-size:20px;cursor:pointer}
-.lml-reader-drawer{position:fixed;z-index:10002;inset:0 0 0 auto;width:min(340px,88vw);padding:18px;background:#fff;box-shadow:-16px 0 50px #102b4630;display:flex;flex-direction:column;gap:7px;overflow:auto}
-.lml-reader-drawer[hidden],.lml-reader-scrim[hidden]{display:none}
-.lml-reader-scrim{position:fixed;z-index:10001;inset:0;background:#102b4666}
-.lml-drawer-heading{display:flex;align-items:center;justify-content:space-between;padding:5px 2px 15px;margin-bottom:6px;border-bottom:1px solid #e4ecea;color:#17394b}
-.lml-drawer-heading button{border:0;background:transparent;font-size:27px;cursor:pointer}
-.lml-reader-drawer>button{border:0;border-radius:11px;padding:13px;text-align:left;background:#f4f9f7;color:#214b4c;font:inherit;font-weight:650;cursor:pointer}
-.lml-reader-drawer>button:hover{background:#e4f2ee}
-.lml-drawer-note{margin-top:auto;padding:13px 4px 4px;color:#71818a;font-size:12px;line-height:1.5}
-.lml-juz-directory{margin:22px 0;padding:clamp(16px,3vw,26px);border:1px solid #dce8e6;border-radius:20px;background:#fff}
-.lml-juz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:12px}
-.lml-juz-card{display:flex;flex-direction:column;align-items:flex-start;gap:7px;padding:15px;border:1px solid #dce8e6;border-radius:15px;background:#f9fcfb;color:#17394b;text-align:left;cursor:pointer}
-.lml-juz-card:hover{border-color:#75b4a7;background:#f0f8f5;transform:translateY(-1px)}
-.lml-juz-num{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:#e2f1ec;color:#176c62;font-weight:800}
-.lml-juz-card small{color:#71818a}
-.quran-app .lml-reader-header{color:#17394b}
-.quran-app[data-theme="dark"] .lml-reader-header,.quran-app[data-theme="dark"] .lml-juz-directory{background:var(--q-panel);border-color:var(--q-border);color:var(--q-text)}
-.quran-app[data-theme="dark"] .lml-reader-brand,.quran-app[data-theme="dark"] .lml-drawer-heading{color:var(--q-text)}
-.quran-app[data-theme="dark"] .lml-reader-brand small{color:var(--q-muted)}
-.quran-app[data-theme="dark"] .lml-reader-header-actions button,.quran-app[data-theme="dark"] .lml-juz-card{background:#203641;color:var(--q-text);border-color:var(--q-border)}
-.quran-app[data-theme="sepia"] .lml-reader-header,.quran-app[data-theme="sepia"] .lml-juz-directory{background:#fbf4e6;border-color:#ddcfb5;color:#493b2a}
-@media(max-width:640px){
- .lml-reader-header{padding:9px 11px;border-radius:14px}
- .lml-reader-brand b{font-size:14px}.lml-reader-brand small{font-size:10px}
- .lml-brand-mark{width:38px;height:38px}
- .lml-reader-header-actions button{width:40px;height:40px}
- .lml-juz-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
-
-.brand-fallback{display:grid;place-items:center;flex:0 0 42px;width:42px;height:42px;border-radius:50%;background:#e4f3f0;color:#0b7d77;font-size:27px;font-weight:700}
-@media(max-width:600px){.brand-fallback{width:36px;height:36px;flex-basis:36px}}
-
-
-/* Mishkat Al-Bayan branded header and navigation */
-.mishkat-top{min-height:76px;padding:10px clamp(14px,3vw,38px);gap:16px}
-.mishkat-brand{min-width:0;gap:13px}
-.mishkat-logo{display:grid;place-items:center;width:52px;height:52px;flex:0 0 52px;border-radius:16px;background:linear-gradient(145deg,#174b62,#092b4b);border:1px solid #d9b66f;box-shadow:0 5px 16px #001b3338}
-.mishkat-logo svg{width:43px;height:43px;display:block}
-.mishkat-brand .brand-copy{display:flex;flex-direction:column;line-height:1.2}
-.mishkat-brand .brand-copy strong{font-size:clamp(17px,2.1vw,23px);font-weight:850;letter-spacing:.1px;color:#fff}
-.mishkat-brand .brand-copy small{font-size:12px;margin-top:5px;color:#e8d59c;font-weight:550}
-.mishkat-header-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-left:auto;flex-shrink:0}
-.mishkat-header-actions button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:42px;padding:9px 13px;background:#194969;color:#fff;border:1px solid #ffffff45;border-radius:12px;font-weight:750;cursor:pointer}
-.mishkat-header-actions button:hover{background:#236181}
-.mishkat-header-actions .header-settings{background:#b58b3c;color:#102b46;border-color:#e9d49e}
-.tabs.menu-open{display:flex}
-.tabs{scrollbar-width:thin}
-.albayan-welcome h1{letter-spacing:.1px}
-@media(max-width:640px){
- .mishkat-top{padding:9px 12px;gap:8px;min-height:68px}
- .mishkat-logo{width:43px;height:43px;flex-basis:43px;border-radius:13px}
- .mishkat-logo svg{width:36px;height:36px}
- .mishkat-brand{gap:8px}
- .mishkat-brand .brand-copy strong{font-size:16px}
- .mishkat-brand .brand-copy small{font-size:10px}
- .mishkat-header-actions{gap:5px}
- .mishkat-header-actions button{min-height:39px;padding:8px 9px;font-size:13px}
- .mishkat-header-actions button span{font-size:12px}
- .tabs{display:none;flex-wrap:wrap;overflow:visible;padding:10px 12px;max-width:none;background:#fff;border-bottom:1px solid #dce8e7}
- .tabs.menu-open{display:flex}
- .tabs button{flex:1 1 auto}
-}
-@media(max-width:380px){
- .mishkat-header-actions button{padding:7px;font-size:12px}
- .mishkat-header-actions button span{display:none}
- .mishkat-brand .brand-copy small{max-width:130px}
-}
-
-/* Keep the complete Surah directory in normal page flow: no nested scrolling panel. */
-.surah-catalog-grid{max-height:none!important;height:auto!important;overflow:visible!important;overflow-y:visible!important}
-#surahCatalog{overflow:visible!important}
+/* Mishkat Mishkat Al-Bayan Quran.com-inspired navigation refinements */
+.header-controls{display:flex;align-items:center;gap:8px;margin-left:auto}
+.app-menu-toggle,.header-settings{display:inline-flex!important;align-items:center;justify-content:center;gap:7px;min-height:42px;padding:9px 14px;border:1px solid #d7e4e5;border-radius:11px;background:#fff;color:#10384d;font-weight:850;cursor:pointer}
+.app-menu-toggle span,.header-settings span{font-size:13px}
+.top-actions{display:none!important}
+.tabs.menu-open{display:flex!important}
+.surah-picker{background:#fff;border:1px solid #dce6e4;border-radius:16px;padding:14px;margin:12px 0 16px;box-shadow:0 6px 20px #102b4608}
+.surah-picker[hidden]{display:none!important}
+.surah-picker-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.surah-picker-head>div{display:flex;flex-direction:column;color:#12384c}.surah-picker-head small{font-size:12px;color:#71818a}
+.surah-picker-head input{min-width:210px;max-width:340px;width:45%;padding:10px 12px;border:1px solid #d9e2e3;border-radius:10px;font:inherit}
+.surah-picker-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-height:350px;overflow:auto;padding:2px}
+.surah-choice{display:flex;align-items:center;gap:10px;text-align:left;padding:9px;border:1px solid #e3e9e7;border-radius:11px;background:#fbfcfa;color:#15384b;cursor:pointer;min-width:0}
+.surah-choice[hidden]{display:none!important}.surah-choice:hover{border-color:#bca36c;background:#fbf8ef}
+.surah-choice-num{display:grid;place-items:center;flex:0 0 34px;height:34px;border-radius:9px;background:#edf4f1;color:#0b7778;font-weight:900}
+.surah-choice>span:last-child{display:flex;flex-direction:column;min-width:0}.surah-choice b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.surah-choice small{font-size:10px;color:#7b8990;margin-top:3px}
+.quran-navline{align-items:end}
+.surah-header.surah-collapsible{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.surah-collapse-toggle{display:flex;align-items:center;gap:12px;flex:1;min-width:0;border:0;background:transparent;text-align:left;padding:0;color:inherit;cursor:pointer}
+.surah-title-block{min-width:0}.surah-title-block h3{margin:0}.surah-title-block p{margin:3px 0 0}.surah-chevron{font-size:24px;color:#6e858a;padding:0 10px}
+.surah-tools[hidden]{display:none!important}.opening-bismillah{text-align:center;padding:20px 10px 14px;margin:8px auto 12px;color:#163b50;font-family:"Amiri","Noto Naskh Arabic",serif;font-size:clamp(27px,4vw,36px);line-height:1.8}
+.audio-dock{position:sticky;bottom:6px;backdrop-filter:blur(12px)}
+@media(max-width:760px){.header-controls{gap:6px}.app-menu-toggle,.header-settings{padding:8px 10px;min-height:40px}.app-menu-toggle span,.header-settings span{font-size:12px}.tabs{display:none}.tabs.menu-open{display:flex!important}.surah-picker-head{align-items:stretch;flex-direction:column}.surah-picker-head input{width:100%;max-width:none}.surah-picker-grid{grid-template-columns:repeat(2,minmax(0,1fr));max-height:42vh}.surah-header.surah-collapsible{align-items:flex-start;flex-wrap:wrap}.surah-collapse-toggle{width:100%}.surah-tools{width:100%}}
+@media(max-width:390px){.app-menu-toggle,.header-settings{font-size:12px;padding:7px 8px}.surah-picker-grid{grid-template-columns:1fr}}
+/* The hamburger opens the main navigation drawer on desktop and mobile. */
+.header-controls{order:-1;margin-left:0;margin-right:12px}
+.tabs{display:none!important}
+.tabs.menu-open{display:flex!important;flex-wrap:wrap;position:absolute;top:76px;left:12px;right:12px;z-index:30;padding:12px;background:#fff;border:1px solid #dce6e4;border-radius:14px;box-shadow:0 16px 35px #102b4626}
+@media(max-width:760px){.tabs.menu-open{top:68px;left:8px;right:8px;display:flex!important;flex-wrap:wrap;max-height:70vh;overflow:auto}}

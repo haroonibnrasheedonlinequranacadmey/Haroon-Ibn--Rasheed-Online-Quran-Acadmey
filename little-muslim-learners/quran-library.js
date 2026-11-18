@@ -23,28 +23,18 @@ let audioQueue=[], queueIndex=0, repeatMode="none", repeatFrom=null, repeatTo=nu
 
 function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
 function loadSettings(){
- const d={fontSize:34,translationSize:18,tafsirSize:16,showTranslations:true,showTafsir:false,showWordByWord:false,autoScroll:true,autoPlayNext:true,layout:"cards",language:"en",selected:["en"],theme:"light",arabicFont:"serif",lineHeight:2.05};
+ const d={fontSize:34,translationSize:18,tafsirSize:16,showTranslations:true,showTafsir:false,showWordByWord:false,autoScroll:true,autoPlayNext:true,layout:"cards",language:"en",selected:["en"],theme:"light"};
  try{return {...d,...JSON.parse(localStorage.getItem(SETTINGS_KEY)||"{}")}}catch{return d}
 }
 function saveSettings(){localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings));}
-function allVerses(){let out=[],g=0,p=0;for(const s of LML_QURAN.surahs){for(let a=1;a<=s.ayahs;a++){out.push({key:`${s.number}:${a}`,surah:s.number,ayah:a,global:g,text:LML_QURAN.texts[p++]});g++}}return out}
+function allVerses(){let out=[],g=0,p=0;for(const s of LML_QURAN.surahs){for(let a=1;a<=s.ayahs;a++){let text=LML_QURAN.texts[p++];
+ if(a===1 && s.number!==1 && s.number!==9){text=text.replace(/^بِسْمِ\s+ٱللَّهِ\s+ٱلرَّحْمَـٰنِ\s+ٱلرَّحِيمِ\s*/u,"").replace(/^بِسْمِ\s+اللَّهِ\s+الرَّحْمَٰنِ\s+الرَّحِيمِ\s*/u,"")}
+ out.push({key:`${s.number}:${a}`,surah:s.number,ayah:a,global:g,text});g++}}return out}
 const QVERSES=allVerses(), BYKEY=new Map(QVERSES.map(v=>[v.key,v]));
 function surahVerses(n){return QVERSES.filter(v=>v.surah===n)}
 function getSurah(n){return LML_QURAN.surahs[n-1]}
 async function api(url){const c=new AbortController();const t=setTimeout(()=>c.abort(),9000);try{const r=await fetch(url,{headers:{Accept:"application/json"},signal:c.signal});if(!r.ok)throw new Error(`${r.status} ${r.statusText}`);return await r.json()}finally{clearTimeout(t)}}
-function rememberProgress(key){
- try{
-  localStorage.setItem("lml-quran-progress-v1",key);
-  const h=JSON.parse(localStorage.getItem("lml-quran-history-v1")||"[]");
-  const next=[key,...h.filter(x=>x!==key)].slice(0,100);
-  localStorage.setItem("lml-quran-history-v1",JSON.stringify(next));
- }catch{}
-}
-function readHistory(){try{return JSON.parse(localStorage.getItem("lml-quran-history-v1")||"[]")}catch{return[]}}
-function applyReaderTheme(){
- if(!root)return;
- root.querySelector(".quran-app")?.setAttribute("data-theme",settings.theme||"light");
-}
+function rememberProgress(key){try{localStorage.setItem("lml-quran-progress-v1",key)}catch{}}
 function readProgress(){return localStorage.getItem("lml-quran-progress-v1")||"1:1"}
 function bookmarks(){try{return JSON.parse(localStorage.getItem("lml-quran-bookmarks-v1")||"[]")}catch{return[]}}
 function saveBookmarks(a){localStorage.setItem("lml-quran-bookmarks-v1",JSON.stringify(a))}
@@ -59,28 +49,26 @@ async function mount(targetId="quranLibrary"){
  renderShell();
  const p=readProgress(); const [ps,pa]=p.split(":").map(Number);
  currentSurah=ps||1;
- if(readerMode==="tafsir"){const c=$("#surahCatalog");if(c)c.hidden=true;await loadSurah(currentSurah,pa||1);}
- else showSurahCatalog();
+ await loadSurah(currentSurah,pa||1);
+ const picker=document.getElementById("surahPicker"),toggle=document.getElementById("surahListToggle");if(picker){picker.hidden=false;toggle?.setAttribute("aria-expanded","true")}
 }
 function renderShell(){
  root.innerHTML=`<section class="quran-app">
-  <div class="quran-hero"><div class="quran-hero-copy"><span class="quran-eyebrow">MISHKAT AL-BAYAN · QURAN</span><h2 id="readerHeading">Quran Reader</h2><p id="readerSubheading">A calm, focused space to read, listen, reflect and study the Qur'an.</p><div class="quran-mode-switch" role="tablist" aria-label="Quran study mode"><button type="button" id="modeQuran" role="tab">Quran Reading</button><button type="button" id="modeTafseer" role="tab">Tafseer Study</button></div></div><div class="quran-progress-box"><b id="qProgressText">Continue reading</b><span id="qProgressKey"></span><button id="continueBtn">Continue Reading</button></div></div>
-  <section class="surah-catalog" id="surahCatalog" aria-label="Surah directory">
-   <div class="catalog-heading"><div><span class="settings-kicker">THE HOLY QURAN</span><h3>Choose a Surah</h3><p>Browse all 114 Surahs, search by name or number, and continue your reading.</p></div><button type="button" id="catalogContinue">↗ Continue Reading</button></div>
-   <div class="catalog-tools"><input id="surahSearch" type="search" placeholder="Search Surah name or number…" aria-label="Search Surah"><div class="catalog-view-switch"><button type="button" class="active" id="surahListView">☷ List</button><button type="button" id="surahGridView">▦ Grid</button></div></div>
-   <div class="surah-catalog-grid" id="surahCatalogItems"></div>
-   <div class="catalog-foot"><button type="button" id="catalogJuz">Browse 30 Juz / Para</button><button type="button" id="catalogSettings">⚙ Reading Settings</button><button type="button" id="catalogBookmarks">My Bookmarks</button><button type="button" id="catalogHistory">Reading History</button></div>
-  </section>
-  <div class="quran-toolbar" hidden>
+  <div class="quran-hero"><div class="quran-hero-copy"><span class="quran-eyebrow">MISHKAT AL-BAYAN · QURAN & ISLAMIC LEARNING</span><h2 id="readerHeading">Quran Reader</h2><p id="readerSubheading">A calm, focused space to read, listen, reflect and study the Qur'an.</p><div class="quran-mode-switch" role="tablist" aria-label="Quran study mode"><button type="button" id="modeQuran" role="tab">Quran Reading</button><button type="button" id="modeTafseer" role="tab">Tafseer Study</button></div></div><div class="quran-progress-box"><b id="qProgressText">Continue reading</b><span id="qProgressKey"></span><button id="continueBtn">Continue Reading</button></div></div>
+  <div class="quran-toolbar quran-navline">
+   <button id="surahListToggle" type="button" aria-expanded="true">☷ Surah List</button>
    <label>Surah <select id="surahSelect">${LML_QURAN.surahs.map(s=>`<option value="${s.number}">${s.number}. ${esc(s.name)} — ${s.ayahs}</option>`).join("")}</select></label>
-   <label>Juz <select id="juzSelect"><option value="">Choose Juz</option>${Array.from({length:30},(_,i)=>`<option value="${i+1}">Juz ${i+1}</option>`).join("")}</select></label><label>Hizb <select id="hizbSelect"><option value="">Choose Hizb</option>${Array.from({length:60},(_,i)=>`<option value="${i+1}">Hizb ${i+1}</option>`).join("")}</select></label><label>Page <input id="pageJump" type="number" min="1" max="604" placeholder="1–604"></label><button id="pageBtn">Go</button>
+   <label>Juz <select id="juzSelect"><option value="">Select Juz</option>${Array.from({length:30},(_,i)=>`<option value="${i+1}">Juz ${i+1}</option>`).join("")}</select></label>
+   <label>Page <input id="pageJump" type="number" min="1" max="604" placeholder="1–604"></label><button id="pageBtn">Go</button>
    <label>Ayah <input id="ayahJump" type="number" min="1" placeholder="Ayah"></label><button id="jumpBtn">Go</button>
-   <label>Range <input id="rangeFrom" type="number" min="1" placeholder="From"></label><label>to <input id="rangeTo" type="number" min="1" placeholder="To"></label><button id="rangeBtn">▶ Range</button>
-   <button id="backCatalog">☷ Surah List</button><button id="bookmarkView">🔖 Bookmarks</button>
-   <button id="settingsBtn">⚙ Settings</button>
+   <button id="bookmarkView">🔖 Bookmarks</button>
   </div>
-  <div class="quran-search" hidden><input id="qSearch" placeholder="Search Arabic, English or Urdu…"><select id="searchScope"><option value="local">Arabic in full Quran</option><option value="en">English translation</option><option value="ur">Urdu translation</option></select><button id="searchBtn">Search</button></div>
-  <div id="quranStatus" class="quran-status" role="status" hidden></div>
+  <section class="surah-picker" id="surahPicker" aria-label="All 114 Surahs">
+   <div class="surah-picker-head"><div><b>114 Surahs</b><small>Choose a Surah to begin reading</small></div><input id="surahFilter" type="search" placeholder="Search Surah name or number"></div>
+   <div class="surah-picker-grid" id="surahPickerGrid">${LML_QURAN.surahs.map(s=>`<button type="button" class="surah-choice" data-surah="${s.number}"><span class="surah-choice-num">${s.number}</span><span><b>${esc(s.name)}</b><small>${s.ayahs} Ayat · ${s.revelation}</small></span></button>`).join("")}</div>
+  </section>
+  <div class="quran-search"><input id="qSearch" placeholder="Search Arabic, English or Urdu…"><select id="searchScope"><option value="local">Arabic in full Quran</option><option value="en">English translation</option><option value="ur">Urdu translation</option></select><button id="searchBtn">Search</button></div>
+  <div id="quranStatus" class="quran-status" role="status"></div>
   <section id="tafsirStudio" class="tafsir-studio" aria-label="Tafseer study workspace">
    <div class="tafsir-studio-head"><span class="tafsir-kicker">MISHKAT AL-BAYAN · TAFSEER</span><h3>Study an Ayah in depth</h3><p>Select a Surah and Ayah to view the existing source-based Tafseer. Quran text and source content are not rewritten.</p></div>
    <div class="tafsir-selectors"><label>Surah<select id="tafsirSurahSelect">${LML_QURAN.surahs.map(s=>`<option value="${s.number}">${s.number}. ${esc(s.name)}</option>`).join("")}</select></label><label>Ayah number<input id="tafsirAyahSelect" type="number" min="1" value="1"></label><label>Language<select id="tafsirLanguage"><option value="ur">اردو</option><option value="en">English</option><option value="hi">हिन्दी</option></select></label><button type="button" id="loadTafseerStudio">Open Tafseer</button></div>
@@ -104,23 +92,11 @@ function bindShell(){
  $("#tafsirSurahSelect").onchange=()=>{const sn=+$("#tafsirSurahSelect").value;$("#tafsirAyahSelect").max=getSurah(sn).ayahs;$("#tafsirAyahSelect").value=1};
  $("#tafsirLanguage").onchange=e=>{settings.language=e.target.value;saveSettings()};
  applyReaderMode();
- $("#catalogContinue").onclick=()=>{const [s,a]=readProgress().split(":").map(Number);openSurahReader(s||1,a||1)};
- $("#surahSearch").oninput=renderSurahCatalogItems;
- $("#surahListView").onclick=()=>setCatalogView("list");
- $("#surahGridView").onclick=()=>setCatalogView("grid");
- $("#catalogBookmarks").onclick=()=>{showReaderArea();renderBookmarks()};
- $("#catalogHistory").onclick=()=>{showReaderArea();renderHistory()};
- $("#catalogJuz").onclick=renderJuzDirectory;
- $("#catalogSettings").onclick=openSettings;
- $("#readerSettingsTop").onclick=openSettings;
- const menu=$("#readerMenuToggle"),drawer=$("#readerDrawer"),scrim=$("#readerScrim");
- const closeDrawer=()=>{drawer.hidden=true;scrim.hidden=true;menu?.setAttribute("aria-expanded","false")};
- menu.onclick=()=>{drawer.hidden=!drawer.hidden;scrim.hidden=drawer.hidden;menu.setAttribute("aria-expanded",String(!drawer.hidden))};
- $("#readerDrawerClose").onclick=closeDrawer;scrim.onclick=closeDrawer;
- drawer.querySelectorAll("[data-reader-nav]").forEach(b=>b.onclick=()=>{closeDrawer();const action=b.dataset.readerNav;
-  if(action==="surah")showSurahCatalog();else if(action==="juz")renderJuzDirectory();else if(action==="bookmarks"){showReaderArea();renderBookmarks()}else if(action==="history"){showReaderArea();renderHistory()}else if(action==="settings")openSettings();else if(action==="tafsir")setMode("tafsir");else if(action==="search"){showReaderArea();$(".quran-search").hidden=false;$("#qSearch").focus()}else if(action==="pages"){showReaderArea();$("#pageJump").focus();status("Enter a Mushaf page number from 1 to 604.","ok")}
- });
  $("#surahSelect").onchange=()=>loadSurah(+$("#surahSelect").value,1);
+ const picker=$("#surahPicker");
+ $("#surahListToggle").onclick=()=>{const open=picker.hidden;picker.hidden=!open;$("#surahListToggle").setAttribute("aria-expanded",String(open));};
+ $("#surahPickerGrid").querySelectorAll("[data-surah]").forEach(b=>b.onclick=()=>loadSurah(+b.dataset.surah,1));
+ $("#surahFilter").oninput=e=>{const q=e.target.value.trim().toLowerCase();$("#surahPickerGrid").querySelectorAll("[data-surah]").forEach(b=>{b.hidden=!(`${b.dataset.surah} ${b.innerText}`).toLowerCase().includes(q)})};
  $("#juzSelect").onchange=async e=>{if(e.target.value)await loadJuz(+e.target.value)};
  $("#hizbSelect").onchange=async e=>{if(e.target.value)await loadHizb(+e.target.value)};
  $("#pageBtn").onclick=async()=>{const n=+$("#pageJump").value;if(n)await loadPage(n)};
@@ -135,71 +111,12 @@ function bindShell(){
  $("#audioVolume").oninput=e=>{if(audio)audio.volume=+e.target.value};
  $("#audioScroll").onchange=e=>{autoScroll=e.target.checked;settings.autoScroll=autoScroll;saveSettings()};
  $("#continueBtn").onclick=()=>{let [s,a]=readProgress().split(":").map(Number);loadSurah(s,a)};
- $("#backCatalog").onclick=showSurahCatalog;
  $("#bookmarkView").onclick=renderBookmarks;
- $("#settingsBtn").onclick=openSettings;
+ const settingsBtn=$("#settingsBtn");if(settingsBtn)settingsBtn.onclick=openSettings;
  $("#searchBtn").onclick=searchQuran;
  $("#qSearch").onkeydown=e=>{if(e.key==="Enter")searchQuran()};
  $("#prevSurah").onclick=()=>currentSurah>1&&loadSurah(currentSurah-1,1);
  $("#nextSurah").onclick=()=>currentSurah<114&&loadSurah(currentSurah+1,1);
-}
-function showSurahCatalog(){
- const catalog=$("#surahCatalog");if(!catalog)return;
- catalog.hidden=false;
- ["#quran-toolbar",".quran-toolbar",".quran-search","#quranStatus","#tafsirStudio","#surahHead","#quranList",".audio-dock",".quran-bottom"].forEach(sel=>{const el=root.querySelector(sel);if(el)el.hidden=true});
- renderSurahCatalogItems();
- applyReaderTheme();
-}
-function showReaderArea(){
- const catalog=$("#surahCatalog");if(catalog)catalog.hidden=true;
- const studio=$("#tafsirStudio");if(studio)studio.hidden=true;
- [".quran-toolbar",".quran-search","#quranStatus","#surahHead","#quranList",".audio-dock",".quran-bottom"].forEach(sel=>{const el=root.querySelector(sel);if(el)el.hidden=false});
-}
-function openSurahReader(n,ayah=1){
- showReaderArea();
- const studio=$("#tafsirStudio");if(studio)studio.hidden=true;
- loadSurah(n,ayah);
-}
-function renderJuzDirectory(){
- const catalog=$("#surahCatalog");if(catalog)catalog.hidden=true;
- [".quran-toolbar",".quran-search","#quranStatus","#tafsirStudio","#surahHead","#quranList",".audio-dock",".quran-bottom"].forEach(sel=>{const el=root.querySelector(sel);if(el)el.hidden=true});
- const old=$("#lmlJuzDirectory");if(old)old.remove();
- const panel=document.createElement("section");panel.id="lmlJuzDirectory";panel.className="lml-juz-directory";
- panel.innerHTML=`<div class="catalog-heading"><div><span class="settings-kicker">THE HOLY QURAN</span><h3>30 Juz / Para</h3><p>Select a Juz to open its authentic Quran text and available translations.</p></div><button type="button" id="juzBackSurahs">← Surah List</button></div><div class="lml-juz-grid">${Array.from({length:30},(_,i)=>`<button type="button" class="lml-juz-card" data-open-juz="${i+1}"><span class="lml-juz-num">${String(i+1).padStart(2,"0")}</span><b>Juz ${i+1}</b><small>Open Para ${i+1}</small></button>`).join("")}</div>`;
- root.querySelector(".quran-app").insertBefore(panel,root.querySelector(".quran-toolbar"));
- $("#juzBackSurahs").onclick=()=>{panel.remove();showSurahCatalog()};
- panel.querySelectorAll("[data-open-juz]").forEach(b=>b.onclick=async()=>{panel.remove();showReaderArea();await loadJuz(+b.dataset.openJuz)});
-}
-function setCatalogView(mode){
- const grid=$("#surahCatalogItems");if(!grid)return;
- grid.classList.toggle("is-grid",mode==="grid");
- $("#surahListView").classList.toggle("active",mode==="list");
- $("#surahGridView").classList.toggle("active",mode==="grid");
- try{localStorage.setItem("lml-quran-catalog-view-v1",mode)}catch{}
-}
-async function renderSurahCatalogItems(){
- const box=$("#surahCatalogItems");if(!box)return;
- const q=($("#surahSearch")?.value||"").trim().toLowerCase();
- const list=LML_QURAN.surahs.filter(s=>!q||String(s.number)===q||s.name.toLowerCase().includes(q));
- box.innerHTML=list.map(s=>`<button class="surah-catalog-card" type="button" data-surah="${s.number}">
-  <span class="catalog-number">${s.number}</span><span class="catalog-info"><b>${esc(s.name)}</b><small>${s.ayahs} Ayat · ${s.revelation}</small></span><span class="catalog-open">Open <span aria-hidden="true">→</span></span>
- </button>`).join("")||'<p class="empty-state">No Surah matches your search.</p>';
- box.querySelectorAll("[data-surah]").forEach(b=>b.onclick=()=>openSurahReader(+b.dataset.surah,1));
- const saved=localStorage.getItem("lml-quran-catalog-view-v1")||"list";setCatalogView(saved);
- // Enrich the catalogue with Arabic chapter names when the metadata service is reachable.
- if(!window.__lmlSurahArabicNames){
-  window.__lmlSurahArabicNames={};
-  api(`${API}/surah`).then(j=>{
-   (j.data||[]).forEach(s=>window.__lmlSurahArabicNames[s.number]=s.name);
-   box.querySelectorAll("[data-surah]").forEach(b=>{const s=LML_QURAN.surahs[+b.dataset.surah-1],ar=window.__lmlSurahArabicNames[s.number];if(ar){const info=b.querySelector(".catalog-info");if(info&&!info.querySelector(".catalog-arabic"))info.insertAdjacentHTML("afterbegin",`<strong class="catalog-arabic" lang="ar" dir="rtl">${esc(ar)}</strong>`)}});
-  }).catch(()=>{});
- }else box.querySelectorAll("[data-surah]").forEach(b=>{const ar=window.__lmlSurahArabicNames[b.dataset.surah];if(ar)b.querySelector(".catalog-info")?.insertAdjacentHTML("afterbegin",`<strong class="catalog-arabic" lang="ar" dir="rtl">${esc(ar)}</strong>`)});
-}
-function renderHistory(){
- const hs=readHistory();$("#surahHead").innerHTML=`<div class="search-head"><h3>Reading History</h3><p>Recently opened Ayat saved on this device.</p><button id="closeSearch">← Back to Surah</button></div>`;
- $("#closeSearch").onclick=showSurahCatalog;
- $("#quranList").innerHTML=hs.length?hs.map(k=>{const v=BYKEY.get(k);return `<article class="search-result"><b>${k}</b><p class="arabic-small" dir="rtl">${esc(v?.text||"")}</p><button data-open="${k}">Open Ayah</button></article>`}).join(""):'<div class="empty-state">No reading history yet.</div>';
- $("#quranList").querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>{const [s,a]=b.dataset.open.split(":").map(Number);openSurahReader(s,a)});
 }
 function applyReaderMode(){
  if(!root?.isConnected)return;
@@ -222,6 +139,7 @@ function status(t,type=""){let el=$("#quranStatus");if(el){el.textContent=t;el.c
 function setProgressUI(){let p=readProgress();$("#qProgressKey").textContent=p;$("#qProgressText").textContent=`Last position: ${p}`}
 
 async function loadSurah(n,focusAyah=1){
+ const picker=$("#surahPicker");if(picker)picker.hidden=true;const listToggle=$("#surahListToggle");if(listToggle)listToggle.setAttribute("aria-expanded","false");
  currentSurah=n;$("#surahSelect").value=String(n);if($("#tafsirSurahSelect")){$("#tafsirSurahSelect").value=String(n);$("#tafsirAyahSelect").max=getSurah(n).ayahs}setProgressUI();status("Loading Surah…");
  const s=getSurah(n); verses=surahVerses(n);translations={};
  // Render the complete local Arabic Quran immediately. External translations must never block the reader.
@@ -247,17 +165,15 @@ async function loadSelectedTranslations(n){
 }
 function renderHeader(s){
  const lang=settings.language||"en";
- $("#surahHead").innerHTML=`<div class="surah-header"><div><span class="surah-number">${s.number}</span><div><h3>${esc(s.name)}</h3><p>${s.ayahs} Ayat · ${s.revelation} · <span id="surahMeta">Juz metadata loading…</span> · <span id="memoryMeta">Memorized 0/${s.ayahs}</span></p></div></div><div class="surah-tools"><button id="infoBtn">ℹ Surah info</button><button id="playSurah">▶ Play Surah</button><button id="stopAudio">■ Stop</button></div></div>`;
+ $("#surahHead").innerHTML=`<div class="surah-header surah-collapsible"><button type="button" class="surah-collapse-toggle" id="surahCollapseToggle" aria-expanded="true"><span class="surah-number">${s.number}</span><span class="surah-title-block"><h3>${esc(s.name)}</h3><p>${s.ayahs} Ayat · ${s.revelation} · <span id="surahMeta">Juz metadata loading…</span> · <span id="memoryMeta">Memorized 0/${s.ayahs}</span></p></span><span class="surah-chevron">⌄</span></button><div class="surah-tools" id="surahHeaderTools"><button id="infoBtn">ℹ Surah info</button><button id="playSurah">▶ Play Surah</button><button id="stopAudio">■ Stop</button></div></div>${s.number!==1&&s.number!==9?`<div class="opening-bismillah" lang="ar" dir="rtl">بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ</div>`:""}`;
+ $("#surahCollapseToggle").onclick=()=>{const tools=$("#surahHeaderTools"),open=tools.hidden;tools.hidden=!open;$("#surahCollapseToggle").setAttribute("aria-expanded",String(open));};
  $("#infoBtn").onclick=()=>loadSurahInfo(s.number,lang);
  $("#playSurah").onclick=()=>{audioQueue=verses.map(v=>v.key);queueIndex=0;repeatMode="surah";playCurrentAudio()};
  $("#stopAudio").onclick=stopAudio;
 }
 function renderVerses(){
  const list=$("#quranList"); if(!list)return;
- list.classList.toggle("quran-continuous",settings.layout==="continuous");
- list.style.setProperty("--ayah-line-height",String(settings.lineHeight||2.05));
- list.style.setProperty("--ayah-font-family",settings.arabicFont==="naskh"?"'Noto Naskh Arabic',serif":settings.arabicFont==="amiri"?"'Amiri',serif":"serif");
- list.innerHTML=verses.map(v=>verseHTML(v)).join("");applyReaderTheme();
+ list.classList.toggle("quran-continuous",settings.layout==="continuous");list.innerHTML=verses.map(v=>verseHTML(v)).join("");
  bindVerseButtons();
 }
 function verseHTML(v){
@@ -459,12 +375,12 @@ function renderBookmarks(){
 }
 function openSettings(){
  const d=document.createElement("dialog");d.className="quran-settings";d.innerHTML=`<form method="dialog" class="settings-form">
-  <div class="settings-head"><div><span class="settings-kicker">MISHKAT AL-BAYAN · QURAN</span><h3>Little Muslim Learners — Reading Settings</h3><p>Personal settings — saved only on this browser/device.</p></div><button value="cancel" class="settings-x">×</button></div>
+  <div class="settings-head"><div><span class="settings-kicker">MISHKAT AL-BAYAN · QURAN & ISLAMIC LEARNING</span><h3>Mishkat Al-Bayan Reading Settings</h3><p>Personal settings — saved only on this browser/device.</p></div><button value="cancel" class="settings-x">×</button></div>
   <div class="settings-tabs"><button type="button" class="settings-tab active" data-panel="reading">📖 Reading</button><button type="button" class="settings-tab" data-panel="audio">🎧 Audio</button><button type="button" class="settings-tab" data-panel="display">✨ Display</button><button type="button" class="settings-tab" data-panel="personal">🔖 Personal</button></div>
   <div class="settings-panel active" data-panel="reading">
    <div class="setting-grid">
     <label class="setting-card"><span>Reading language</span><select id="readerLang"><option value="en" ${settings.language==="en"?"selected":""}>English</option><option value="ur" ${settings.language==="ur"?"selected":""}>اردو</option><option value="hi" ${settings.language==="hi"?"selected":""}>हिन्दी</option></select><small>Translation, Tafseer and word-by-word follow this language.</small></label>
-    <div class="setting-card translation-choice-card"><span>Translations (select one or more)</span><div class="translation-choice-list">${Object.entries(editions).map(([k,e])=>`<label><input type="checkbox" name="translationChoice" value="${k}" ${settings.selected.includes(k)?"checked":""}><span>${esc(e.label)}</span></label>`).join("")}</div></div>
+    <label class="setting-card"><span>Translation</span><select id="primaryTranslation"><option value="auto">Use selected language</option>${Object.entries(editions).map(([k,e])=>`<option value="${k}" ${settings.selected.includes(k)&&settings.selected.length===1?"selected":""}>${esc(e.label)}</option>`).join("")}</select></label>
    </div>
    <label class="switch-row"><span><b>Show translation</b><small>Display the selected language translation below Arabic.</small></span><input id="showTrans" type="checkbox" ${settings.showTranslations?"checked":""}></label>
    <label class="switch-row"><span><b>Show Tafseer button</b><small>Open verified source-based Tafseer for each Ayah.</small></span><input id="showTafsir" type="checkbox" ${settings.showTafsir?"checked":""}></label>
@@ -481,9 +397,6 @@ function openSettings(){
     <label class="setting-card"><span>Translation size <output id="transOut">${settings.translationSize}px</output></span><input id="translationSize" type="range" min="14" max="30" value="${settings.translationSize}"></label>
     <label class="setting-card"><span>Tafseer size <output id="tafsirOut">${settings.tafsirSize}px</output></span><input id="tafsirSize" type="range" min="13" max="28" value="${settings.tafsirSize}"></label>
     <label class="setting-card"><span>Reading layout</span><select id="readerLayout"><option value="cards" ${settings.layout==="cards"?"selected":""}>Ayah cards</option><option value="continuous" ${settings.layout==="continuous"?"selected":""}>Continuous reading</option></select></label>
-    <label class="setting-card"><span>Appearance</span><select id="readerTheme"><option value="light" ${settings.theme==="light"?"selected":""}>Light</option><option value="dark" ${settings.theme==="dark"?"selected":""}>Dark</option><option value="sepia" ${settings.theme==="sepia"?"selected":""}>Sepia</option><option value="auto" ${settings.theme==="auto"?"selected":""}>System / Auto</option></select></label>
-    <label class="setting-card"><span>Arabic font</span><select id="arabicFont"><option value="serif" ${settings.arabicFont==="serif"?"selected":""}>Traditional Serif</option><option value="naskh" ${settings.arabicFont==="naskh"?"selected":""}>Naskh (if installed)</option><option value="amiri" ${settings.arabicFont==="amiri"?"selected":""}>Amiri (if installed)</option></select></label>
-    <label class="setting-card"><span>Arabic line spacing</span><input id="lineHeight" type="range" min="1.5" max="3" step=".05" value="${settings.lineHeight||2.05}"></label>
    </div>
   </div>
   <div class="settings-panel" data-panel="personal">
@@ -495,15 +408,13 @@ function openSettings(){
  document.body.appendChild(d);d.showModal();
  const tabs=d.querySelectorAll(".settings-tab"),panels=d.querySelectorAll(".settings-panel");tabs.forEach(t=>t.onclick=()=>{tabs.forEach(x=>x.classList.toggle("active",x===t));panels.forEach(x=>x.classList.toggle("active",x.dataset.panel===t.dataset.panel))});
  const sliders=[["fontSize","arabicOut","px"],["translationSize","transOut","px"],["tafsirSize","tafsirOut","px"]];sliders.forEach(([a,b,u])=>{const x=d.querySelector("#"+a),o=d.querySelector("#"+b);x.oninput=()=>o.value=x.value+u});
- d.querySelector("#readerLang").onchange=e=>{const lang=e.target.value;const cb=d.querySelector(`input[name="translationChoice"][value="${lang}"]`);if(cb)cb.checked=true;};
+ d.querySelector("#readerLang").onchange=e=>{const lang=e.target.value;d.querySelector("#primaryTranslation").value=lang;};
  d.querySelector("#resetQSettings").onclick=()=>{localStorage.removeItem(SETTINGS_KEY);settings=loadSettings();d.close();setTimeout(()=>mount(),50)};
  d.querySelector("#saveQSettings").onclick=()=>{
-  const lang=d.querySelector("#readerLang").value,selected=[...d.querySelectorAll('input[name="translationChoice"]:checked')].map(x=>x.value);
-  settings.fontSize=+d.querySelector("#fontSize").value;settings.translationSize=+d.querySelector("#translationSize").value;settings.tafsirSize=+d.querySelector("#tafsirSize").value;settings.showTranslations=d.querySelector("#showTrans").checked;settings.showTafsir=d.querySelector("#showTafsir").checked;settings.showWordByWord=d.querySelector("#showWord").checked;settings.autoPlayNext=d.querySelector("#autoPlayNext").checked;settings.autoScroll=d.querySelector("#autoScroll").checked;autoScroll=settings.autoScroll;settings.language=lang;settings.layout=d.querySelector("#readerLayout").value;settings.selected=selected.length?selected:[lang];settings.theme=d.querySelector("#readerTheme").value;settings.arabicFont=d.querySelector("#arabicFont").value;settings.lineHeight=+d.querySelector("#lineHeight").value;saveSettings();d.close();
-  const catalogVisible=!$("#surahCatalog")?.hidden;
-  setTimeout(()=>{applyReaderTheme();if(!catalogVisible)loadSurah(currentSurah,1)},50);
+  const lang=d.querySelector("#readerLang").value,primary=d.querySelector("#primaryTranslation").value;
+  settings.fontSize=+d.querySelector("#fontSize").value;settings.translationSize=+d.querySelector("#translationSize").value;settings.tafsirSize=+d.querySelector("#tafsirSize").value;settings.showTranslations=d.querySelector("#showTrans").checked;settings.showTafsir=d.querySelector("#showTafsir").checked;settings.showWordByWord=d.querySelector("#showWord").checked;settings.autoPlayNext=d.querySelector("#autoPlayNext").checked;settings.autoScroll=d.querySelector("#autoScroll").checked;autoScroll=settings.autoScroll;settings.language=lang;settings.layout=d.querySelector("#readerLayout").value;settings.selected=[primary!=="auto"?primary:lang];saveSettings();d.close();setTimeout(()=>loadSurah(currentSurah,1),50);
  };
 }
 
-window.QuranLibrary={mount,mountAudioBridge:()=>mount("quranAudioLibrary"),quranHTML,setMode,playJuz:async n=>{await loadJuz(n);const b=document.getElementById("playJuz");if(b)b.click();},validate:()=>({surahs:LML_QURAN.surahs.length,ayahs:QVERSES.length,ok:LML_QURAN.surahs.length===114&&QVERSES.length===6236})};
+window.QuranLibrary={mount,mountAudioBridge:()=>mount("quranAudioLibrary"),quranHTML,setMode,openSettings,playJuz:async n=>{await loadJuz(n);const b=document.getElementById("playJuz");if(b)b.click();},validate:()=>({surahs:LML_QURAN.surahs.length,ayahs:QVERSES.length,ok:LML_QURAN.surahs.length===114&&QVERSES.length===6236})};
 })();
