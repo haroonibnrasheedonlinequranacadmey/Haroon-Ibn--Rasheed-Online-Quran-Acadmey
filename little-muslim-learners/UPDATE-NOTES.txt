@@ -19,16 +19,3 @@ Font package update:
 
 Testing limitation:
 - Static checks do not replace interactive browser testing on a real Android phone and laptop. External translation, Tafseer and recitation services still require internet access.
-
-
-Screenshot follow-up layout pass:
-- Header controls are explicitly anchored to the left; academy logo/name are explicitly anchored to the right.
-- The 114-Surah chooser has a dedicated independently scrolling grid (3 columns on desktop, 2 on mobile, 1 on very narrow screens).
-- Each rendered ayah has its own separate circular end marker after its own Arabic text, with the ayah number in Arabic-Indic digits.
-- The fixed bottom audio dock and floating Tafseer tutorial overlay are hidden. Individual ayah Listen and Play Surah controls are retained.
-- The supplied KFGQPC KSA Regular font remains embedded; it is not the exact Uthmanic Script HAFS family.
-
-Validation:
-- ZIP integrity and required local font asset verified.
-- JavaScript syntax checks are performed on packaged JavaScript files where Node.js is available.
-- Real interactive rendering still needs confirmation in Android Chrome and desktop Chrome; static checks cannot certify visual rendering on those devices.
