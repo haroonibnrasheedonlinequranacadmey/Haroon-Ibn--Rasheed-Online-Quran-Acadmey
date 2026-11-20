@@ -248,3 +248,107 @@ body.tafseer-video-open{overflow:hidden}
 .quran-ayah-end{display:inline-block;white-space:nowrap;direction:rtl;unicode-bidi:isolate;margin-inline-start:.32em;font-family:inherit;font-size:.78em;line-height:1;vertical-align:baseline;color:#9a762e;font-weight:600}
 .audio-dock{display:none!important}
 @media(max-width:760px){.top{flex-wrap:nowrap!important;justify-content:space-between!important}.top .header-controls{order:0!important;margin:0!important}.top .brand{order:1!important;margin-left:auto!important;max-width:72%;text-align:right}.top .brand span{font-size:13px!important}.top .brand small{font-size:9px!important}.surah-picker-grid{max-height:48vh!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}.ayah-arabic{font-size:clamp(25px,6vw,34px)!important;line-height:2.15!important;text-align:justify;text-align-last:center}.quran-ayah-end{font-size:.76em;margin-inline-start:.25em}}
+
+
+/* Final screenshot-matched header and Quran reader layout */
+.top{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  direction:ltr!important;
+  gap:12px!important;
+}
+.top .header-controls{
+  order:0!important;
+  margin:0 auto 0 0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  flex:0 0 auto!important;
+}
+.top .brand{
+  order:2!important;
+  margin:0 0 0 auto!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  direction:ltr!important;
+  text-align:right!important;
+  min-width:0!important;
+}
+.top .brand span{ text-align:right!important; }
+.top .top-actions{ display:none!important; }
+
+/* The Surah chooser scrolls independently; its list stays visible as a panel. */
+.surah-picker{
+  display:flex!important;
+  flex-direction:column!important;
+  min-height:0!important;
+}
+.surah-picker-grid{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  max-height:min(56vh,460px)!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior:contain!important;
+  scrollbar-gutter:stable!important;
+  padding-right:8px!important;
+}
+.surah-choice{min-height:54px!important;}
+
+/* Verse-end symbol: visually distinct, attached to the end of its own ayah. */
+.ayah-arabic{
+  direction:rtl!important;
+  unicode-bidi:plaintext!important;
+  text-align:justify!important;
+  text-align-last:center!important;
+  line-height:2.3!important;
+  word-spacing:.04em!important;
+}
+.ayah-arabic-text{unicode-bidi:isolate!important;}
+.quran-ayah-end{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  vertical-align:middle!important;
+  white-space:nowrap!important;
+  unicode-bidi:isolate!important;
+  direction:rtl!important;
+  min-width:1.9em!important;
+  min-height:1.9em!important;
+  margin-inline-start:.22em!important;
+  border:1px solid currentColor!important;
+  border-radius:50%!important;
+  padding:.08em!important;
+  box-sizing:border-box!important;
+  font-size:.68em!important;
+  line-height:1!important;
+  color:#9a762e!important;
+}
+
+/* The screenshot-marked fixed audio dock and tutorial overlay are removed;
+   per-ayah Listen buttons and Play Surah remain available. */
+.audio-dock,
+.tafseer-tutorial-fab,
+.tafseer-video-modal,
+#tafseerTutorialModal,
+#tafseerTutorialFab{display:none!important;}
+
+@media(max-width:760px){
+  .top{flex-wrap:nowrap!important;gap:6px!important;}
+  .top .header-controls{margin:0 auto 0 0!important;gap:5px!important;}
+  .top .brand{max-width:72%!important;margin-left:auto!important;}
+  .top .brand span{font-size:13px!important;}
+  .top .brand small{font-size:9px!important;}
+  .surah-picker-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    max-height:48vh!important;
+  }
+  .ayah-arabic{font-size:clamp(25px,6vw,34px)!important;line-height:2.2!important;}
+  .quran-ayah-end{min-width:1.8em!important;min-height:1.8em!important;}
+}
+@media(max-width:390px){
+  .surah-picker-grid{grid-template-columns:1fr!important;}
+  .top .brand{max-width:66%!important;}
+}
