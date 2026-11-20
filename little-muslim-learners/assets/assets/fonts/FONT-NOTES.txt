@@ -1,0 +1,18 @@
+KFGQPC KSA Regular
+===================
+
+Embedded file: KFGQPC-KSA-Regular.ttf
+Font family metadata: KFGQPC KSA Regular
+Publisher/foundry identified in the supplied package: King Fahd Quran Complex
+Version reported by the supplied package: 0.03
+
+The supplied package describes this font as "The Kingdom Series Quranic text face"
+and states that redistribution is allowed. The original README.html supplied by
+the user is retained alongside this note.
+
+Important distinction:
+This file is KFGQPC KSA Regular. It is NOT identified by its metadata as
+"KFGQPC Uthmanic Script HAFS". It has limited glyph coverage and does not contain
+several Quranic annotation/waqf codepoints; browsers therefore use the remaining
+font-family fallbacks for unsupported glyphs. Do not label this file as the
+Uthmanic Script HAFS font.
