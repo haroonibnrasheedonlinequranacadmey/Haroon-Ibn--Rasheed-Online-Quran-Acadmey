@@ -1,22 +1,21 @@
 MISHKAT AL-BAYAN — UPDATE NOTES
 
-Changes in this update:
-- Header now uses Menu and Settings controls; Learner Profile and Urdu controls are no longer shown in the header. Legacy learner/profile logic and hidden DOM hooks remain intact.
-- Main navigation opens from the hamburger menu.
-- Quran Text opens with a searchable list of all 114 Surahs. Selecting a Surah closes the list.
-- Surah title area is a compact collapsible header.
-- Top reader navigation includes Surah, Juz, Page and Ayah controls.
-- Audio dock remains at the bottom of the Quran reader.
-- Bismillah is displayed separately at the start of Surahs other than Al-Fatiha and At-Tawbah. A prefixed Bismillah is removed from the displayed first Ayah only; the original bundled quran-data.js remains unchanged. An-Naml 27:30 is not altered.
-- Existing Quran data, Tafseer, translations, With Meaning/other sections, PDF and other assets are retained.
+Changes in this package:
+- Added an individual end-of-ayah marker (۝ plus that verse’s Arabic-Indic number) to each of the 6,236 rendered ayat. The bundled Quran source text remains unchanged.
+- Corrected the marker position so it is appended after the Arabic text of its own ayah, not before the ayah or attached to the next ayah.
+- Moved Menu and Settings controls to the left and the academy brand/logo to the right in the top header.
+- Kept the 114-Surah picker in its own independently scrollable area.
+- Removed the fixed bottom audio control dock and floating Tafseer tutorial button/modal as marked in the supplied screenshots. Per-ayah Listen and Play Surah actions remain in the reader.
+- Preserved the supplied Quran text, translations/Tafseer code, bookmarks, search, learner data, PDF and other existing learning sections.
 
-Checks performed:
-- JavaScript syntax checks passed for app.js, quran-library.js, quran-data.js, quran-validation.js and sw.js.
-- manifest.webmanifest JSON validation passed.
-- HTML parser check passed; no duplicate element IDs found.
-- Bundled Quran dataset count verified: 114 Surahs and 6,236 Ayat.
-- Bismillah rule checks passed for Al-Fatiha, Al-Baqarah, An-Nisa, At-Tawbah and An-Naml 27:30.
+Validation performed:
+- Verified bundled source contains 114 Surahs and 6,236 non-empty ayat.
+- Verified the source Quran text contains no pre-existing end-of-ayah glyphs, so each rendered ayah receives exactly one separate marker.
+- JavaScript syntax and JSON/manifest checks are run during packaging.
 
-Limitations:
-- Full interactive browser testing could not be completed in this execution environment because Chromium navigation was blocked by the environment.
-- External translation, Tafseer, recitation and Mushaf/PDF network resources were not live-verified here and require internet access.
+Font package update:
+- Added the user-supplied KFGQPC-KSA-Regular.ttf at assets/fonts/KFGQPC-KSA-Regular.ttf and registered it with @font-face.
+- The supplied font metadata identifies it as KFGQPC KSA Regular, not KFGQPC Uthmanic Script HAFS. It has limited Quranic glyph coverage; unsupported Quranic marks and symbols use CSS fallback fonts. The exact requested Uthmanic Script HAFS font is still not included.
+
+Testing limitation:
+- Static checks do not replace interactive browser testing on a real Android phone and laptop. External translation, Tafseer and recitation services still require internet access.

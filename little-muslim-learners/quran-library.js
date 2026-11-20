@@ -33,6 +33,7 @@ function allVerses(){let out=[],g=0,p=0;for(const s of LML_QURAN.surahs){for(let
 const QVERSES=allVerses(), BYKEY=new Map(QVERSES.map(v=>[v.key,v]));
 function surahVerses(n){return QVERSES.filter(v=>v.surah===n)}
 function getSurah(n){return LML_QURAN.surahs[n-1]}
+function arabicIndicNumber(n){return String(n).replace(/[0-9]/g,d=>'٠١٢٣٤٥٦٧٨٩'[Number(d)]);}
 async function api(url){const c=new AbortController();const t=setTimeout(()=>c.abort(),9000);try{const r=await fetch(url,{headers:{Accept:"application/json"},signal:c.signal});if(!r.ok)throw new Error(`${r.status} ${r.statusText}`);return await r.json()}finally{clearTimeout(t)}}
 function rememberProgress(key){try{localStorage.setItem("lml-quran-progress-v1",key)}catch{}}
 function readProgress(){return localStorage.getItem("lml-quran-progress-v1")||"1:1"}
@@ -76,7 +77,7 @@ function renderShell(){
    <div id="tafsirStudioContent" class="tafsir-studio-content"><div class="tafsir-empty"><span>۞</span><b>Select an Ayah to begin</b><p>Your existing Tafseer source will appear here when available.</p></div></div>
   </section>
   <div id="surahHead"></div><div id="quranList"></div>
-  <div class="audio-dock"><b>Audio Recitation · Mishary Rashid Alafasy</b><button id="prevAudio">← Ayah</button><button id="nextAudio">Ayah →</button><button id="pauseAudio">Ⅱ Pause</button><button id="repeatAyah">↻ Ayah</button><button id="repeatOff">↻ Off</button><label>Speed <select id="audioSpeed"><option>0.75</option><option selected>1</option><option>1.25</option><option>1.5</option></select></label><label>Volume <input id="audioVolume" type="range" min="0" max="1" step=".05" value="1"></label><label><input id="audioScroll" type="checkbox" ${autoScroll?"checked":""}> Auto-scroll</label></div>
+
   <div class="quran-bottom"><button id="prevSurah">← Previous Surah</button><button id="nextSurah">Next Surah →</button></div>
   <div class="quran-credit">Qur'an text: local Tanzil/Uthmani dataset supplied with this project. Translations and recitation are streamed from AlQuran Cloud / Islamic Network. Tafseer source: existing spa5k Quran.com tafsir dataset. Translation copyrights remain with their respective translators.</div>
  </section>`;
@@ -102,14 +103,14 @@ function bindShell(){
  $("#pageBtn").onclick=async()=>{const n=+$("#pageJump").value;if(n)await loadPage(n)};
  $("#jumpBtn").onclick=()=>{let a=+$("#ayahJump").value;if(a)scrollToKey(`${currentSurah}:${a}`)};
  $("#rangeBtn").onclick=()=>{let a=+$("#rangeFrom").value,b=+$("#rangeTo").value;if(a&&b)playRange(`${currentSurah}:${a}`,`${currentSurah}:${b}`)};
- $("#prevAudio").onclick=()=>stepAudio(-1);
- $("#nextAudio").onclick=()=>stepAudio(1);
- $("#pauseAudio").onclick=()=>audio?.pause();
- $("#repeatAyah").onclick=()=>{if(audioQueue.length){repeatMode="ayah";audio?.play()}};
- $("#repeatOff").onclick=()=>{repeatMode="none"};
- $("#audioSpeed").onchange=e=>{if(audio)audio.playbackRate=+e.target.value};
- $("#audioVolume").oninput=e=>{if(audio)audio.volume=+e.target.value};
- $("#audioScroll").onchange=e=>{autoScroll=e.target.checked;settings.autoScroll=autoScroll;saveSettings()};
+ if($("#prevAudio"))$("#prevAudio").onclick=()=>stepAudio(-1);
+ if($("#nextAudio"))$("#nextAudio").onclick=()=>stepAudio(1);
+ if($("#pauseAudio"))$("#pauseAudio").onclick=()=>audio?.pause();
+ if($("#repeatAyah"))$("#repeatAyah").onclick=()=>{if(audioQueue.length){repeatMode="ayah";audio?.play()}};
+ if($("#repeatOff"))$("#repeatOff").onclick=()=>{repeatMode="none"};
+ if($("#audioSpeed"))$("#audioSpeed").onchange=e=>{if(audio)audio.playbackRate=+e.target.value};
+ if($("#audioVolume"))$("#audioVolume").oninput=e=>{if(audio)audio.volume=+e.target.value};
+ if($("#audioScroll"))$("#audioScroll").onchange=e=>{autoScroll=e.target.checked;settings.autoScroll=autoScroll;saveSettings()};
  $("#continueBtn").onclick=()=>{let [s,a]=readProgress().split(":").map(Number);loadSurah(s,a)};
  $("#bookmarkView").onclick=renderBookmarks;
  const settingsBtn=$("#settingsBtn");if(settingsBtn)settingsBtn.onclick=openSettings;
@@ -180,7 +181,7 @@ function verseHTML(v){
  const trs=Object.entries(translations).map(([k,arr])=>{let source=translations[`${k}:${v.surah}`]||arr;let x=source.find(a=>a.numberInSurah===v.ayah);return x?`<div class="translation ${editions[k].dir}" data-lang="${k}"><small>${esc(editions[k].label)}</small><div>${x.text}</div></div>`:""}).join("");
  return `<article class="ayah-card ${isBookmarked(v.key)?"bookmarked":""}" id="ayah-${v.key.replace(":","-")}" data-key="${v.key}">
  <div class="ayah-top"><span class="ayah-ref">${v.key}</span><span class="ayah-badges" id="meta-${v.key.replace(":","-")}"></span></div>
- <div class="ayah-arabic" style="font-size:${settings.fontSize}px" dir="rtl">${v.text}</div>
+ <div class="ayah-arabic" style="font-size:${settings.fontSize}px" dir="rtl" lang="ar"><span class="ayah-arabic-text">${v.text}</span><span class="quran-ayah-end" aria-label="آیت ${arabicIndicNumber(v.ayah)}">۝${arabicIndicNumber(v.ayah)}</span></div>
  ${settings.showTranslations?`<div class="translations" style="font-size:${settings.translationSize}px">${trs||`<div class="translation muted">Translation is unavailable for this passage.</div>`}</div>`:""}
  <div class="ayah-actions">
   <button data-action="play">▶ Listen</button>${settings.showWordByWord?`<button data-action="word">🔤 Word-by-word</button>`:""}${settings.showTafsir?`<button data-action="tafsir">📚 Tafseer</button>`:""}<button data-action="practice">🎯 Practice</button>

@@ -1,4 +1,4 @@
-const CACHE = 'albayan-static-v15';
+const CACHE = 'albayan-static-v16';
 const CORE_FILES = [
   './',
   './index.html',
@@ -8,7 +8,8 @@ const CORE_FILES = [
   './quran-validation.js',
   './quran-library.js',
   './manifest.webmanifest',
-  './assets/namaz-e-nabavi.pdf'
+  './assets/namaz-e-nabavi.pdf',
+  './assets/fonts/KFGQPC-KSA-Regular.ttf',
 ];
 
 self.addEventListener('install', event => {
@@ -43,9 +44,9 @@ self.addEventListener('fetch', event => {
   if (url.origin !== self.location.origin) return;
 
   const path = url.pathname;
-  const isPage = request.mode === 'navigate' || /\\.(html?)$/i.test(path);
-  const isCode = /\\.(js|css)$/i.test(path);
-  const isPdfOrAsset = /\\.(pdf|png|jpe?g|webp|svg|woff2?)$/i.test(path);
+  const isPage = request.mode === 'navigate' || /\.(html?)$/i.test(path);
+  const isCode = /\.(js|css)$/i.test(path);
+  const isPdfOrAsset = /\.(pdf|png|jpe?g|webp|svg|woff2?|ttf)$/i.test(path);
 
   if (isPage || isCode) {
     event.respondWith((async () => {

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#102b46"><meta name="description" content="Mishkat Al-Bayan Quran and Islamic Learning by Haroon Ibn Rasheed Online Quran Academy. Learn, understand and practice."><title>Mishkat Al-Bayan – Quran &amp; Islamic Learning | Haroon Ibn Rasheed Online Quran Academy</title><link rel="stylesheet" href="style.css?v=14"><link rel="manifest" href="manifest.webmanifest"></head>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#102b46"><meta name="description" content="Mishkat Al-Bayan Quran and Islamic Learning by Haroon Ibn Rasheed Online Quran Academy. Learn, understand and practice."><title>Mishkat Al-Bayan – Quran &amp; Islamic Learning | Haroon Ibn Rasheed Online Quran Academy</title><link rel="stylesheet" href="style.css?v=16"><link rel="manifest" href="manifest.webmanifest"></head>
 <body>
 <header class="top"><a class="brand" href="../index.html"><img src="../assets/hr-logo-round.png" alt="Haroon Ibn Rasheed Online Quran Academy"> <span>Mishkat Al-Bayan – Quran &amp; Islamic Learning<small>By Haroon Ibn Rasheed Online Quran Academy · Learn • Understand • Practice</small></span></a><div class="header-controls"><button class="app-menu-toggle" id="appMenuToggle" type="button" aria-label="Open menu" aria-expanded="false">☰ <span>Menu</span></button><button class="header-settings" id="headerSettingsBtn" type="button" aria-label="Open Quran settings">⚙️ <span>Settings</span></button></div><nav class="top-actions" id="appTopActions"><button id="soundBtn">♫ Sound: Off</button></nav></header>
 <div class="legacy-state-store" hidden aria-hidden="true"><button id="langBtn" type="button">اردو</button><button id="parentBtn" type="button">Learner Profile</button><select id="profileSelect"><option value="">Choose learner</option></select><p id="profileHint"></p><span id="avatar">🧒</span><b id="starsCount">0</b><b id="pointsCount">0</b><b id="lessonsCount">0</b><b id="streakCount">0</b><button id="newProfile" type="button">Create learner profile</button></div>
@@ -18,64 +18,4 @@
 <dialog id="parentDialog"><form method="dialog" id="parentForm"><h2>Parent area</h2><p>Set a 4-digit PIN the first time. Keep it private.</p><label>Parent PIN<input id="pinInput" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" required type="password" placeholder="4 digits"></label><p id="pinMessage" class="hint"></p><div class="actions"><button value="cancel">Close</button><button class="primary" id="unlockParent" value="default">Continue</button></div></form></dialog>
 <dialog id="parentPanel"><div class="panel"><h2>Parent dashboard</h2><div id="parentStats"></div><div class="actions"><button id="exportData">Export backup</button><label class="filebtn">Restore backup<input id="importData" type="file" accept="application/json"></label><button id="clearData" class="danger">Clear learner data</button><button id="closeParent">Close</button></div><p class="hint">Backups include profiles and learning progress stored in this browser. Keep exported files private.</p></div></dialog>
 
-<!-- Tafseer tutorial floating video -->
-<button class="tafseer-tutorial-fab" id="tafseerTutorialOpen" type="button"
-  aria-haspopup="dialog" aria-controls="tafseerTutorialDialog">
-  <span class="tafseer-fab-icon" aria-hidden="true">▶</span>
-  <span>Watch Tafseer Tutorial</span>
-</button>
-<div class="tafseer-video-modal" id="tafseerTutorialDialog" role="dialog"
-  aria-modal="true" aria-labelledby="tafseerTutorialTitle" aria-hidden="true">
-  <div class="tafseer-video-backdrop" data-tafseer-close></div>
-  <section class="tafseer-video-panel">
-    <div class="tafseer-video-heading">
-      <h2 id="tafseerTutorialTitle">Watch Tafseer Tutorial</h2>
-      <button class="tafseer-video-close" id="tafseerTutorialClose" type="button"
-        aria-label="Close video">×</button>
-    </div>
-    <div class="tafseer-video-frame">
-      <iframe id="tafseerTutorialFrame"
-        title="Tafseer Tutorial"
-        src="about:blank"
-        data-src="https://www.youtube-nocookie.com/embed/Yj-7o5InwBE?autoplay=1&rel=0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        referrerpolicy="strict-origin-when-cross-origin"
-        allowfullscreen></iframe>
-    </div>
-  </section>
-</div>
-<script>
-(()=> {
-  const openButton=document.getElementById('tafseerTutorialOpen');
-  const closeButton=document.getElementById('tafseerTutorialClose');
-  const modal=document.getElementById('tafseerTutorialDialog');
-  const frame=document.getElementById('tafseerTutorialFrame');
-  if(!openButton||!closeButton||!modal||!frame)return;
-  let previousFocus=null;
-  const open=()=>{
-    previousFocus=document.activeElement;
-    modal.classList.add('is-open');
-    modal.setAttribute('aria-hidden','false');
-    document.body.classList.add('tafseer-video-open');
-    frame.src=frame.dataset.src;
-    closeButton.focus();
-  };
-  const close=()=>{
-    if(!modal.classList.contains('is-open'))return;
-    modal.classList.remove('is-open');
-    modal.setAttribute('aria-hidden','true');
-    document.body.classList.remove('tafseer-video-open');
-    frame.src='about:blank';
-    openButton.focus();
-    if(previousFocus&&previousFocus!==document.body)previousFocus.focus();
-  };
-  openButton.addEventListener('click',open);
-  closeButton.addEventListener('click',close);
-  modal.querySelectorAll('[data-tafseer-close]').forEach(el=>el.addEventListener('click',close));
-  document.addEventListener('keydown',event=>{
-    if(event.key==='Escape'&&modal.classList.contains('is-open'))close();
-  });
-})();
-</script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script><script src="quran-data.js"></script><script src="quran-validation.js"></script><script src="quran-library.js?v=7"></script><script src="app.js?v=13"></script></body></html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script><script src="quran-data.js"></script><script src="quran-validation.js"></script><script src="quran-library.js?v=9"></script><script src="app.js?v=15"></script></body></html>
