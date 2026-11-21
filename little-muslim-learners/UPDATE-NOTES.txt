@@ -1,21 +1,26 @@
-MISHKAT AL-BAYAN — UPDATE NOTES
+MISHKAT AL-BAYAN — UPDATED PACKAGE NOTES
 
-Changes in this package:
-- Added an individual end-of-ayah marker (۝ plus that verse’s Arabic-Indic number) to each of the 6,236 rendered ayat. The bundled Quran source text remains unchanged.
-- Corrected the marker position so it is appended after the Arabic text of its own ayah, not before the ayah or attached to the next ayah.
-- Moved Menu and Settings controls to the left and the academy brand/logo to the right in the top header.
-- Kept the 114-Surah picker in its own independently scrollable area.
-- Removed the fixed bottom audio control dock and floating Tafseer tutorial button/modal as marked in the supplied screenshots. Per-ayah Listen and Play Surah actions remain in the reader.
-- Preserved the supplied Quran text, translations/Tafseer code, bookmarks, search, learner data, PDF and other existing learning sections.
+Original supplied project files and data are retained. Existing Quran source dataset, current translation/Tafseer integration, learner app, PDF, audio logic, bookmarks, PWA and offline worker remain in place.
 
-Validation performed:
-- Verified bundled source contains 114 Surahs and 6,236 non-empty ayat.
-- Verified the source Quran text contains no pre-existing end-of-ayah glyphs, so each rendered ayah receives exactly one separate marker.
-- JavaScript syntax and JSON/manifest checks are run during packaging.
+Changes in this update:
+- Header controls remain on the right and academy/project brand remains on the left.
+- Added Arabic / Translation / Word By Word settings tabs.
+- Added Arabic font-style selector, size controls, line-count preference, translation display/language/size/layout controls, word-by-word toggle, theme selector and reciter status.
+- Default first-run Arabic size is Normal (30px), and default reader font-style preference is Uthmani text style with system fallback.
+- Added local My Quran page with saved-ayah list, recent position and persistent notes.
+- Added Reading Goals page with a persistent daily ayah target and last-position display.
+- Added Light, Dark, Sepia and Auto theme styling for key reader surfaces.
+- Updated cache version and asset query versions.
 
-Font package update:
-- Added the user-supplied KFGQPC-KSA-Regular.ttf at assets/fonts/KFGQPC-KSA-Regular.ttf and registered it with @font-face.
-- The supplied font metadata identifies it as KFGQPC KSA Regular, not KFGQPC Uthmanic Script HAFS. It has limited Quranic glyph coverage; unsupported Quranic marks and symbols use CSS fallback fonts. The exact requested Uthmanic Script HAFS font is still not included.
+IMPORTANT DATA / FEATURE LIMITATIONS — NOT CLAIMED AS COMPLETE:
+1. The supplied font file is KFGQPC KSA Regular, not verified Uthmanic Script HAFS; it is not relabelled as an authentic Uthmani font. The selector uses browser/system fallback stacks. IndoPak and Tajweed font files were not supplied and are not bundled.
+2. The only Urdu translation edition already configured in the source integration is Fateh Muhammad Jalandhri. The other requested Urdu translator/tafsir works were not fabricated or added without verified source datasets/edition IDs and redistribution rights. Fi Zilal, Bayan-ul-Quran and Tafheem-ul-Quran are tafsir works, not interchangeable translation editions.
+3. Word-by-word meanings continue to load from the existing Quran.com QDC online integration; offline word data is not bundled.
+4. The reader's existing audio endpoint remains Mishary Rashid Alafasy. Additional reciters are not configured.
+5. The existing source did not contain complete revelation-order metadata, full Arabic Surah names, or a complete page/juz index as local data. Page/Juz navigation continues to depend on the existing AlQuran Cloud service.
+6. Annual plan completion analytics, multi-position reading bookmarks, collections, full lesson/reflection/answers/hadith/related-content database, and per-ayah study tabs have not been fully implemented. The Reading Goals page explicitly avoids claiming automatic completion tracking.
+7. The new My Quran notes and goals use browser localStorage and do not sync between devices.
+8. The supplied ZIP does not contain ../assets/hr-logo-round.png; the original academy logo reference is retained but the image itself is expected from the parent academy site.
+9. Interactive testing on a physical Android phone, iPhone and laptop was not possible in this environment. External services require internet access.
 
-Testing limitation:
-- Static checks do not replace interactive browser testing on a real Android phone and laptop. External translation, Tafseer and recitation services still require internet access.
+Validation performed for this package: JavaScript syntax checks, manifest JSON validation, Quran data structure/count checks, archive integrity check. These are static checks, not a substitute for real-device/browser testing.
